@@ -126,8 +126,17 @@ export const protectedProcedure = t.procedure
     }
     return next({
       ctx: {
-        // infers the `session` as non-nullable
         session: { ...ctx.session, user: ctx.session.user },
       },
     });
   });
+
+export const superAdminProcedure = protectedProcedure.use(({ ctx, next }) => {
+  if (ctx.session.user.role !== "SUPER_ADMIN") {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Only super admins can perform this action",
+    });
+  }
+  return next({ ctx });
+});
