@@ -1,25 +1,17 @@
-import { type DefaultSession, type NextAuthConfig } from "next-auth";
+import { type NextAuthConfig } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 
 import { db } from "~/server/db";
 import { type UserRole } from "../../../generated/prisma";
+import { edgeAuthConfig } from "./edge-config";
 
-declare module "next-auth" {
-  interface Session extends DefaultSession {
-    user: {
-      id: string;
-      role: UserRole;
-      sessionId: string;
-    } & DefaultSession["user"];
-  }
-
-  interface User {
-    role: UserRole;
-  }
-}
-
+/**
+ * Full auth config — extends the edge config with DB-dependent providers,
+ * callbacks, and events. Only used in the Node.js runtime (API routes / RSC).
+ */
 export const authConfig = {
+  ...edgeAuthConfig,
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -58,13 +50,9 @@ export const authConfig = {
       },
     }),
   ],
-  session: {
-    strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-  },
   callbacks: {
+    ...edgeAuthConfig.callbacks,
     jwt: async ({ token, user }) => {
-      // On sign-in, store user data in token
       if (user) {
         token.id = user.id;
         token.role = user.role;
@@ -91,12 +79,11 @@ export const authConfig = {
         ...session.user,
         id: token.id as string,
         role: token.role as UserRole,
-        sessionId: token.sessionId as string,
+        sessionId: (token.sessionId as string) ?? "",
       },
     }),
   },
   events: {
-    // Clean up DB session on sign out
     signOut: async (message) => {
       if ("token" in message && message.token?.sessionId) {
         await db.userSession
@@ -108,8 +95,5 @@ export const authConfig = {
           });
       }
     },
-  },
-  pages: {
-    signIn: "/login",
   },
 } satisfies NextAuthConfig;
