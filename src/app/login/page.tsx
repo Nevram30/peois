@@ -1,11 +1,9 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -35,14 +33,17 @@ export default function LoginPage() {
 
     const role = session?.user?.role;
 
+    // Full page reload so the server picks up the new JWT cookie.
+    // router.push() does a soft client-side navigation that can miss
+    // the freshly-set cookie, causing the dashboard to get stuck.
     if (role === "SUPER_ADMIN") {
-      router.push("/dashboard/super-admin");
+      window.location.href = "/dashboard/super-admin";
     } else if (role === "ADMIN") {
-      router.push("/dashboard/admin");
+      window.location.href = "/dashboard/admin";
     } else if (role === "ADMIN_ASSISTANT") {
-      router.push("/dashboard/admin-assistant");
+      window.location.href = "/dashboard/admin-assistant";
     } else {
-      router.push("/dashboard");
+      window.location.href = "/dashboard";
     }
   };
 
