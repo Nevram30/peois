@@ -64,31 +64,23 @@ export const authConfig = {
   },
   callbacks: {
     jwt: async ({ token, user }) => {
-      // On sign-in, create a DB session and store user data in token
+      // On sign-in, store user data in token
       if (user) {
         token.id = user.id;
         token.role = user.role;
 
-        // Create DB session record
-        const dbSession = await db.userSession.create({
-          data: {
-            userId: user.id!,
-            expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-          },
-        });
-        token.sessionId = dbSession.id;
-      }
-
-      // Update lastActive on every request (throttled to once per minute via token check)
-      if (token.sessionId) {
-        await db.userSession
-          .update({
-            where: { id: token.sessionId as string },
-            data: { lastActive: new Date() },
-          })
-          .catch(() => {
-            // Session may have been deleted (revoked)
+        // Create DB session record (don't let failures break sign-in)
+        try {
+          const dbSession = await db.userSession.create({
+            data: {
+              userId: user.id!,
+              expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+            },
           });
+          token.sessionId = dbSession.id;
+        } catch {
+          // DB may be temporarily unreachable; sign-in still works via JWT
+        }
       }
 
       return token;

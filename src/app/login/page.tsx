@@ -14,36 +14,39 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
 
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
 
-    if (result?.error) {
-      setError("Invalid email or password");
+      if (result?.error) {
+        setError("Invalid email or password");
+        setLoading(false);
+        return;
+      }
+
+      const res = await fetch("/api/auth/session");
+      const session = (await res.json()) as {
+        user?: { role?: string };
+      };
+
+      const role = session?.user?.role;
+
+      // Full page reload so the server picks up the new JWT cookie.
+      if (role === "SUPER_ADMIN") {
+        window.location.href = "/dashboard/super-admin";
+      } else if (role === "ADMIN") {
+        window.location.href = "/dashboard/admin";
+      } else if (role === "ADMIN_ASSISTANT") {
+        window.location.href = "/dashboard/admin-assistant";
+      } else {
+        window.location.href = "/dashboard";
+      }
+    } catch {
+      setError("Something went wrong. Please try again.");
       setLoading(false);
-      return;
-    }
-
-    const res = await fetch("/api/auth/session");
-    const session = (await res.json()) as {
-      user?: { role?: string };
-    };
-
-    const role = session?.user?.role;
-
-    // Full page reload so the server picks up the new JWT cookie.
-    // router.push() does a soft client-side navigation that can miss
-    // the freshly-set cookie, causing the dashboard to get stuck.
-    if (role === "SUPER_ADMIN") {
-      window.location.href = "/dashboard/super-admin";
-    } else if (role === "ADMIN") {
-      window.location.href = "/dashboard/admin";
-    } else if (role === "ADMIN_ASSISTANT") {
-      window.location.href = "/dashboard/admin-assistant";
-    } else {
-      window.location.href = "/dashboard";
     }
   };
 
