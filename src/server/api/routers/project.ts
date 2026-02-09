@@ -198,11 +198,17 @@ export const projectRouter = createTRPCRouter({
     }),
 
   getStats: protectedProcedure.query(async ({ ctx }) => {
-    const [total, ongoing, completed] = await Promise.all([
-      ctx.db.project.count(),
-      ctx.db.project.count({ where: { status: "ON_GOING" } }),
-      ctx.db.project.count({ where: { status: "COMPLETED" } }),
-    ]);
-    return { total, ongoing, completed };
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const [total, ongoing, completed, documents, todayCount] =
+      await Promise.all([
+        ctx.db.project.count(),
+        ctx.db.project.count({ where: { status: "ON_GOING" } }),
+        ctx.db.project.count({ where: { status: "COMPLETED" } }),
+        ctx.db.project.count(),
+        ctx.db.project.count({ where: { createdAt: { gte: today } } }),
+      ]);
+    return { total, ongoing, completed, documents, todayCount };
   }),
 });
