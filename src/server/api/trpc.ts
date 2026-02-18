@@ -140,3 +140,15 @@ export const superAdminProcedure = protectedProcedure.use(({ ctx, next }) => {
   }
   return next({ ctx });
 });
+
+export const adminAssistantProcedure = protectedProcedure.use(
+  ({ ctx, next }) => {
+    if (ctx.session.user.role !== "ADMIN_ASSISTANT") {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Only admin assistants can perform this action",
+      });
+    }
+    return next({ ctx });
+  },
+);

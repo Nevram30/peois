@@ -12,6 +12,21 @@ enum UserRole {
     SUPER_ADMIN
     ADMIN
     ADMIN_ASSISTANT
+    DIVISION_CLERK
+    DIVISION_HEAD
+    SECTION_HEAD
+    PROVINCIAL_ENGR
+}
+
+enum UserStatus {
+    ACTIVE
+    INACTIVE
+    PENDING
+}
+
+enum Sex {
+    MALE
+    FEMALE
 }
 
 enum ModeOfImplementation {
@@ -52,12 +67,29 @@ enum ProjectStatus {
     SUSPENDED
 }
 
+enum DocumentType {
+    POW
+    PURCHASE_REQUEST
+}
+
+enum DocumentStatus {
+    DRAFT
+    FOR_REVIEW
+    REVISION
+    RELEASED
+}
+
 model User {
     id            String        @id @default(cuid())
     name          String?
     email         String        @unique
     password      String
     role          UserRole      @default(ADMIN)
+    employeeId    String?       @unique
+    designation   String?
+    division      String?
+    sex           Sex?
+    status        UserStatus    @default(PENDING)
     emailVerified DateTime?
     image         String?
     createdAt     DateTime      @default(now())
@@ -65,6 +97,7 @@ model User {
     posts         Post[]
     projects      Project[]
     sessions      UserSession[]
+    documents     Document[]
 }
 
 model UserSession {
@@ -115,6 +148,38 @@ model Project {
 
     @@index([title])
     @@index([status])
+    @@index([createdById])
+}
+
+model Document {
+    id             String         @id @default(cuid())
+    documentCode   String         @unique
+    type           DocumentType
+    title          String
+    description    String?
+    status         DocumentStatus @default(DRAFT)
+
+    filePath       String?
+    fileName       String?
+    fileSize       Int?
+
+    amount         Float?
+    purpose        String?
+
+    district       District
+    projectRef     String?
+
+    releasedAt     DateTime?
+    releasedTo     String?
+
+    createdBy      User           @relation(fields: [createdById], references: [id])
+    createdById    String
+    createdAt      DateTime       @default(now())
+    updatedAt      DateTime       @updatedAt
+
+    @@index([type])
+    @@index([status])
+    @@index([district])
     @@index([createdById])
 }
 

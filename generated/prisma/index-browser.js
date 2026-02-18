@@ -127,6 +127,11 @@ exports.Prisma.UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   role: 'role',
+  employeeId: 'employeeId',
+  designation: 'designation',
+  division: 'division',
+  sex: 'sex',
+  status: 'status',
   emailVerified: 'emailVerified',
   image: 'image',
   createdAt: 'createdAt',
@@ -175,6 +180,27 @@ exports.Prisma.ProjectScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.DocumentScalarFieldEnum = {
+  id: 'id',
+  documentCode: 'documentCode',
+  type: 'type',
+  title: 'title',
+  description: 'description',
+  status: 'status',
+  filePath: 'filePath',
+  fileName: 'fileName',
+  fileSize: 'fileSize',
+  amount: 'amount',
+  purpose: 'purpose',
+  district: 'district',
+  projectRef: 'projectRef',
+  releasedAt: 'releasedAt',
+  releasedTo: 'releasedTo',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.PostScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -200,7 +226,22 @@ exports.Prisma.NullsOrder = {
 exports.UserRole = exports.$Enums.UserRole = {
   SUPER_ADMIN: 'SUPER_ADMIN',
   ADMIN: 'ADMIN',
-  ADMIN_ASSISTANT: 'ADMIN_ASSISTANT'
+  ADMIN_ASSISTANT: 'ADMIN_ASSISTANT',
+  DIVISION_CLERK: 'DIVISION_CLERK',
+  DIVISION_HEAD: 'DIVISION_HEAD',
+  SECTION_HEAD: 'SECTION_HEAD',
+  PROVINCIAL_ENGR: 'PROVINCIAL_ENGR'
+};
+
+exports.Sex = exports.$Enums.Sex = {
+  MALE: 'MALE',
+  FEMALE: 'FEMALE'
+};
+
+exports.UserStatus = exports.$Enums.UserStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  PENDING: 'PENDING'
 };
 
 exports.ProjectSubType = exports.$Enums.ProjectSubType = {
@@ -241,10 +282,23 @@ exports.ProjectStatus = exports.$Enums.ProjectStatus = {
   SUSPENDED: 'SUSPENDED'
 };
 
+exports.DocumentType = exports.$Enums.DocumentType = {
+  POW: 'POW',
+  PURCHASE_REQUEST: 'PURCHASE_REQUEST'
+};
+
+exports.DocumentStatus = exports.$Enums.DocumentStatus = {
+  DRAFT: 'DRAFT',
+  FOR_REVIEW: 'FOR_REVIEW',
+  REVISION: 'REVISION',
+  RELEASED: 'RELEASED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   UserSession: 'UserSession',
   Project: 'Project',
+  Document: 'Document',
   Post: 'Post'
 };
 

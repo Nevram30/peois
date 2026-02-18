@@ -99,6 +99,11 @@ exports.Prisma.UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   role: 'role',
+  employeeId: 'employeeId',
+  designation: 'designation',
+  division: 'division',
+  sex: 'sex',
+  status: 'status',
   emailVerified: 'emailVerified',
   image: 'image',
   createdAt: 'createdAt',
@@ -147,6 +152,27 @@ exports.Prisma.ProjectScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.DocumentScalarFieldEnum = {
+  id: 'id',
+  documentCode: 'documentCode',
+  type: 'type',
+  title: 'title',
+  description: 'description',
+  status: 'status',
+  filePath: 'filePath',
+  fileName: 'fileName',
+  fileSize: 'fileSize',
+  amount: 'amount',
+  purpose: 'purpose',
+  district: 'district',
+  projectRef: 'projectRef',
+  releasedAt: 'releasedAt',
+  releasedTo: 'releasedTo',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.PostScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -172,7 +198,22 @@ exports.Prisma.NullsOrder = {
 exports.UserRole = exports.$Enums.UserRole = {
   SUPER_ADMIN: 'SUPER_ADMIN',
   ADMIN: 'ADMIN',
-  ADMIN_ASSISTANT: 'ADMIN_ASSISTANT'
+  ADMIN_ASSISTANT: 'ADMIN_ASSISTANT',
+  DIVISION_CLERK: 'DIVISION_CLERK',
+  DIVISION_HEAD: 'DIVISION_HEAD',
+  SECTION_HEAD: 'SECTION_HEAD',
+  PROVINCIAL_ENGR: 'PROVINCIAL_ENGR'
+};
+
+exports.UserStatus = exports.$Enums.UserStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  PENDING: 'PENDING'
+};
+
+exports.Sex = exports.$Enums.Sex = {
+  MALE: 'MALE',
+  FEMALE: 'FEMALE'
 };
 
 exports.ModeOfImplementation = exports.$Enums.ModeOfImplementation = {
@@ -213,10 +254,23 @@ exports.ProjectStatus = exports.$Enums.ProjectStatus = {
   SUSPENDED: 'SUSPENDED'
 };
 
+exports.DocumentType = exports.$Enums.DocumentType = {
+  POW: 'POW',
+  PURCHASE_REQUEST: 'PURCHASE_REQUEST'
+};
+
+exports.DocumentStatus = exports.$Enums.DocumentStatus = {
+  DRAFT: 'DRAFT',
+  FOR_REVIEW: 'FOR_REVIEW',
+  REVISION: 'REVISION',
+  RELEASED: 'RELEASED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   UserSession: 'UserSession',
   Project: 'Project',
+  Document: 'Document',
   Post: 'Post'
 };
 /**
@@ -266,13 +320,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum UserRole {\n  SUPER_ADMIN\n  ADMIN\n  ADMIN_ASSISTANT\n}\n\nenum ModeOfImplementation {\n  BY_ADMINISTRATION\n  BY_CONTRACT\n}\n\nenum SourceOfFund {\n  GENERAL_FUND\n  SEF\n  TRUST_FUND\n  TWENTY_PERCENT_DEV_FUND\n  AID\n  LOAN\n  OTHERS\n}\n\nenum District {\n  DISTRICT_I\n  DISTRICT_II\n}\n\nenum ProjectSubType {\n  WATER_SYSTEMS\n  GOVERNMENT_BUILDINGS\n  ELECTRIFICATION\n  RESPONSE_CAMP_MGMT\n  SUPPLEMENTAL_BUDGET_2\n  PARK_AND_DEVELOPMENT\n  DOH\n  PROVINCIAL_GOVT_OFFICE\n}\n\nenum ProjectStatus {\n  NOT_YET_STARTED\n  ON_GOING\n  COMPLETED\n  SUSPENDED\n}\n\nmodel User {\n  id            String        @id @default(cuid())\n  name          String?\n  email         String        @unique\n  password      String\n  role          UserRole      @default(ADMIN)\n  emailVerified DateTime?\n  image         String?\n  createdAt     DateTime      @default(now())\n  updatedAt     DateTime      @updatedAt\n  posts         Post[]\n  projects      Project[]\n  sessions      UserSession[]\n}\n\nmodel UserSession {\n  id         String   @id @default(cuid())\n  userId     String\n  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  ipAddress  String?\n  userAgent  String?\n  createdAt  DateTime @default(now())\n  expiresAt  DateTime\n  lastActive DateTime @default(now())\n\n  @@index([userId])\n  @@index([expiresAt])\n}\n\nmodel Project {\n  id                     String               @id @default(cuid())\n  projectCode            String               @unique\n  title                  String\n  subType                ProjectSubType?\n  modeOfImplementation   ModeOfImplementation\n  locationImplementation District\n  sourceOfFund           SourceOfFund\n  contractCost           Float                @default(0)\n  projectEngineer        String?\n  dateStarted            DateTime?\n  targetCompletionDate   DateTime?\n  duration               Int                  @default(0)\n  revisedCompletionDate  DateTime?\n  dateCompleted          DateTime?\n  daysSuspended          Int                  @default(0)\n  daysExtended           Int                  @default(0)\n  numFemale              Int                  @default(0)\n  numMale                Int                  @default(0)\n  numPersons             Int                  @default(0)\n  numManDays             Int                  @default(0)\n  district               District?\n  cityMunicipality       String?\n  barangay               String?\n  sitio                  String?\n  description            String?\n  status                 ProjectStatus        @default(NOT_YET_STARTED)\n  createdBy              User                 @relation(fields: [createdById], references: [id])\n  createdById            String\n  createdAt              DateTime             @default(now())\n  updatedAt              DateTime             @updatedAt\n\n  @@index([title])\n  @@index([status])\n  @@index([createdById])\n}\n\nmodel Post {\n  id        Int      @id @default(autoincrement())\n  name      String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  createdBy   User   @relation(fields: [createdById], references: [id])\n  createdById String\n\n  @@index([name])\n}\n",
-  "inlineSchemaHash": "a0425069020b9d539d3bb0c3344449102563dc11cab95326b1fb6845d56228f9",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum UserRole {\n  SUPER_ADMIN\n  ADMIN\n  ADMIN_ASSISTANT\n  DIVISION_CLERK\n  DIVISION_HEAD\n  SECTION_HEAD\n  PROVINCIAL_ENGR\n}\n\nenum UserStatus {\n  ACTIVE\n  INACTIVE\n  PENDING\n}\n\nenum Sex {\n  MALE\n  FEMALE\n}\n\nenum ModeOfImplementation {\n  BY_ADMINISTRATION\n  BY_CONTRACT\n}\n\nenum SourceOfFund {\n  GENERAL_FUND\n  SEF\n  TRUST_FUND\n  TWENTY_PERCENT_DEV_FUND\n  AID\n  LOAN\n  OTHERS\n}\n\nenum District {\n  DISTRICT_I\n  DISTRICT_II\n}\n\nenum ProjectSubType {\n  WATER_SYSTEMS\n  GOVERNMENT_BUILDINGS\n  ELECTRIFICATION\n  RESPONSE_CAMP_MGMT\n  SUPPLEMENTAL_BUDGET_2\n  PARK_AND_DEVELOPMENT\n  DOH\n  PROVINCIAL_GOVT_OFFICE\n}\n\nenum ProjectStatus {\n  NOT_YET_STARTED\n  ON_GOING\n  COMPLETED\n  SUSPENDED\n}\n\nenum DocumentType {\n  POW\n  PURCHASE_REQUEST\n}\n\nenum DocumentStatus {\n  DRAFT\n  FOR_REVIEW\n  REVISION\n  RELEASED\n}\n\nmodel User {\n  id            String        @id @default(cuid())\n  name          String?\n  email         String        @unique\n  password      String\n  role          UserRole      @default(ADMIN)\n  employeeId    String?       @unique\n  designation   String?\n  division      String?\n  sex           Sex?\n  status        UserStatus    @default(PENDING)\n  emailVerified DateTime?\n  image         String?\n  createdAt     DateTime      @default(now())\n  updatedAt     DateTime      @updatedAt\n  posts         Post[]\n  projects      Project[]\n  sessions      UserSession[]\n  documents     Document[]\n}\n\nmodel UserSession {\n  id         String   @id @default(cuid())\n  userId     String\n  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  ipAddress  String?\n  userAgent  String?\n  createdAt  DateTime @default(now())\n  expiresAt  DateTime\n  lastActive DateTime @default(now())\n\n  @@index([userId])\n  @@index([expiresAt])\n}\n\nmodel Project {\n  id                     String               @id @default(cuid())\n  projectCode            String               @unique\n  title                  String\n  subType                ProjectSubType?\n  modeOfImplementation   ModeOfImplementation\n  locationImplementation District\n  sourceOfFund           SourceOfFund\n  contractCost           Float                @default(0)\n  projectEngineer        String?\n  dateStarted            DateTime?\n  targetCompletionDate   DateTime?\n  duration               Int                  @default(0)\n  revisedCompletionDate  DateTime?\n  dateCompleted          DateTime?\n  daysSuspended          Int                  @default(0)\n  daysExtended           Int                  @default(0)\n  numFemale              Int                  @default(0)\n  numMale                Int                  @default(0)\n  numPersons             Int                  @default(0)\n  numManDays             Int                  @default(0)\n  district               District?\n  cityMunicipality       String?\n  barangay               String?\n  sitio                  String?\n  description            String?\n  status                 ProjectStatus        @default(NOT_YET_STARTED)\n  createdBy              User                 @relation(fields: [createdById], references: [id])\n  createdById            String\n  createdAt              DateTime             @default(now())\n  updatedAt              DateTime             @updatedAt\n\n  @@index([title])\n  @@index([status])\n  @@index([createdById])\n}\n\nmodel Document {\n  id           String         @id @default(cuid())\n  documentCode String         @unique\n  type         DocumentType\n  title        String\n  description  String?\n  status       DocumentStatus @default(DRAFT)\n\n  filePath String?\n  fileName String?\n  fileSize Int?\n\n  amount  Float?\n  purpose String?\n\n  district   District\n  projectRef String?\n\n  releasedAt DateTime?\n  releasedTo String?\n\n  createdBy   User     @relation(fields: [createdById], references: [id])\n  createdById String\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  @@index([type])\n  @@index([status])\n  @@index([district])\n  @@index([createdById])\n}\n\nmodel Post {\n  id        Int      @id @default(autoincrement())\n  name      String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  createdBy   User   @relation(fields: [createdById], references: [id])\n  createdById String\n\n  @@index([name])\n}\n",
+  "inlineSchemaHash": "2fe62062d254c27260d7556bf6ac0e7f243adf4894b5bf39760de0ddcc2be893",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"UserRole\"},{\"name\":\"emailVerified\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"image\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"posts\",\"kind\":\"object\",\"type\":\"Post\",\"relationName\":\"PostToUser\"},{\"name\":\"projects\",\"kind\":\"object\",\"type\":\"Project\",\"relationName\":\"ProjectToUser\"},{\"name\":\"sessions\",\"kind\":\"object\",\"type\":\"UserSession\",\"relationName\":\"UserToUserSession\"}],\"dbName\":null},\"UserSession\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserToUserSession\"},{\"name\":\"ipAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userAgent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"lastActive\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Project\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"projectCode\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"subType\",\"kind\":\"enum\",\"type\":\"ProjectSubType\"},{\"name\":\"modeOfImplementation\",\"kind\":\"enum\",\"type\":\"ModeOfImplementation\"},{\"name\":\"locationImplementation\",\"kind\":\"enum\",\"type\":\"District\"},{\"name\":\"sourceOfFund\",\"kind\":\"enum\",\"type\":\"SourceOfFund\"},{\"name\":\"contractCost\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"projectEngineer\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"dateStarted\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"targetCompletionDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"duration\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"revisedCompletionDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"dateCompleted\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"daysSuspended\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"daysExtended\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"numFemale\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"numMale\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"numPersons\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"numManDays\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"district\",\"kind\":\"enum\",\"type\":\"District\"},{\"name\":\"cityMunicipality\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"barangay\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sitio\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"ProjectStatus\"},{\"name\":\"createdBy\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ProjectToUser\"},{\"name\":\"createdById\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Post\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdBy\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"PostToUser\"},{\"name\":\"createdById\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"UserRole\"},{\"name\":\"employeeId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"designation\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"division\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sex\",\"kind\":\"enum\",\"type\":\"Sex\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"UserStatus\"},{\"name\":\"emailVerified\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"image\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"posts\",\"kind\":\"object\",\"type\":\"Post\",\"relationName\":\"PostToUser\"},{\"name\":\"projects\",\"kind\":\"object\",\"type\":\"Project\",\"relationName\":\"ProjectToUser\"},{\"name\":\"sessions\",\"kind\":\"object\",\"type\":\"UserSession\",\"relationName\":\"UserToUserSession\"},{\"name\":\"documents\",\"kind\":\"object\",\"type\":\"Document\",\"relationName\":\"DocumentToUser\"}],\"dbName\":null},\"UserSession\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserToUserSession\"},{\"name\":\"ipAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userAgent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"lastActive\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Project\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"projectCode\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"subType\",\"kind\":\"enum\",\"type\":\"ProjectSubType\"},{\"name\":\"modeOfImplementation\",\"kind\":\"enum\",\"type\":\"ModeOfImplementation\"},{\"name\":\"locationImplementation\",\"kind\":\"enum\",\"type\":\"District\"},{\"name\":\"sourceOfFund\",\"kind\":\"enum\",\"type\":\"SourceOfFund\"},{\"name\":\"contractCost\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"projectEngineer\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"dateStarted\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"targetCompletionDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"duration\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"revisedCompletionDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"dateCompleted\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"daysSuspended\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"daysExtended\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"numFemale\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"numMale\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"numPersons\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"numManDays\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"district\",\"kind\":\"enum\",\"type\":\"District\"},{\"name\":\"cityMunicipality\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"barangay\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sitio\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"ProjectStatus\"},{\"name\":\"createdBy\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ProjectToUser\"},{\"name\":\"createdById\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Document\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"documentCode\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"enum\",\"type\":\"DocumentType\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"DocumentStatus\"},{\"name\":\"filePath\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fileName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fileSize\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"purpose\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"district\",\"kind\":\"enum\",\"type\":\"District\"},{\"name\":\"projectRef\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"releasedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"releasedTo\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdBy\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"DocumentToUser\"},{\"name\":\"createdById\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Post\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdBy\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"PostToUser\"},{\"name\":\"createdById\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),
