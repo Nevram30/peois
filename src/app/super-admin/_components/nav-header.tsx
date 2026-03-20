@@ -46,10 +46,10 @@ const NAV_ITEMS = [
   },
 ];
 
-export function NavHeader({ user }: { user: { name?: string | null; email?: string | null } }) {
+export function NavHeader({ user, userId }: { user: { name?: string | null; email?: string | null }; userId: string }) {
   const pathname = usePathname();
 
-  const activeLabel = NAV_ITEMS.find((item) => {
+  const _activeLabel = NAV_ITEMS.find((item) => {
     if (item.href === "/super-admin/dashboard") {
       return pathname === "/super-admin/dashboard";
     }
@@ -91,7 +91,7 @@ export function NavHeader({ user }: { user: { name?: string | null; email?: stri
         </div>
 
         {/* Navigation Tabs */}
-        <nav className="flex items-center gap-1 px-6">
+        <nav className="flex items-center gap-1 px-6 mb-5">
           {NAV_ITEMS.map((item) => {
             const isActive =
               item.href === "/super-admin/dashboard"
@@ -100,7 +100,7 @@ export function NavHeader({ user }: { user: { name?: string | null; email?: stri
             return (
               <Link
                 key={item.href}
-                href={item.href}
+                href={`${item.href}?id=${userId}`}
                 className={`relative flex items-center gap-2 px-4 py-3 text-sm font-medium transition ${
                   isActive
                     ? "text-blue-600"
@@ -117,17 +117,6 @@ export function NavHeader({ user }: { user: { name?: string | null; email?: stri
           })}
         </nav>
       </header>
-
-      {/* Breadcrumb */}
-      <div className="px-6 pt-6 pb-1">
-        <nav className="flex items-center gap-2 text-sm text-gray-500">
-          <span>Home</span>
-          <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-          </svg>
-          <span className="font-medium text-blue-600">{activeLabel}</span>
-        </nav>
-      </div>
     </>
   );
 }

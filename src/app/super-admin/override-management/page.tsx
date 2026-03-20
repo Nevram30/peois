@@ -1,12 +1,23 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
+
 export default function OverrideManagementPage() {
+  const searchParams = useSearchParams();
+  const userId = searchParams.get("id");
+
   return (
     <>
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Override Management</h2>
         <p className="mt-1 text-sm text-gray-500">
-          Manage system overrides and special permissions.
+          Manage system overrides and special permissions
+          {userId && (
+            <>
+              {" "}for user <span className="font-mono text-gray-700">{userId}</span>
+            </>
+          )}
+          .
         </p>
       </div>
 

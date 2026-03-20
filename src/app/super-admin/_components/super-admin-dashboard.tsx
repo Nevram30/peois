@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import { api } from "~/trpc/react";
 
 type RoleType =
@@ -108,7 +109,7 @@ function AddUserModal({
   const [sex, setSex] = useState<"MALE" | "FEMALE" | "">("");
   const [designation, setDesignation] = useState("");
   const [division, setDivision] = useState("");
-  const [employeeId, setEmployeeId] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -120,6 +121,10 @@ function AddUserModal({
   const passwordStrength = getPasswordStrength(password);
   const passwordsMatch = confirmPassword === "" || password === confirmPassword;
 
+  const { data: nextEmployeeId } = api.user.getNextEmployeeId.useQuery(undefined, {
+    enabled: open,
+  });
+
   const utils = api.useUtils();
 
   const createUser = api.user.create.useMutation({
@@ -130,6 +135,7 @@ function AddUserModal({
       void utils.user.getAll.invalidate();
       void utils.user.getStats.invalidate();
       void utils.user.getDivisions.invalidate();
+      void utils.user.getNextEmployeeId.invalidate();
       setTimeout(() => {
         setMessage("");
         onClose();
@@ -149,7 +155,7 @@ function AddUserModal({
     setSex("");
     setDesignation("");
     setDivision("");
-    setEmployeeId("");
+    setEmail("");
     setPassword("");
     setConfirmPassword("");
     setRole("ADMIN");
@@ -182,7 +188,7 @@ function AddUserModal({
       sex,
       designation,
       division,
-      employeeId,
+      email,
       password,
       role,
     });
@@ -403,7 +409,7 @@ function AddUserModal({
 
             <div className="mb-3">
               <label className={labelClass}>
-                Employee ID / Username <span className="text-red-500">*</span>
+                Employee ID
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -411,17 +417,36 @@ function AddUserModal({
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" />
                   </svg>
                 </div>
+                <div className="block w-full rounded-lg border border-gray-200 bg-gray-50 py-2.5 pl-10 pr-3.5 font-mono text-sm text-gray-600">
+                  {nextEmployeeId ?? "Generating..."}
+                </div>
+              </div>
+              <p className="mt-1 text-xs text-gray-400">
+                Auto-generated. This will be used for system login and audit logs.
+              </p>
+            </div>
+
+            <div className="mb-3">
+              <label className={labelClass}>
+                Email <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                  </svg>
+                </div>
                 <input
-                  type="text"
+                  type="email"
                   required
-                  value={employeeId}
-                  onChange={(e) => setEmployeeId(e.target.value)}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className={`${inputClass} pl-10`}
-                  placeholder="e.g. 2023-00123"
+                  placeholder="e.g. juan@peo.gov.ph"
                 />
               </div>
               <p className="mt-1 text-xs text-gray-400">
-                This will be used for system login and audit logs.
+                This will be used for sign-in.
               </p>
             </div>
 
@@ -800,6 +825,16 @@ function ActionsDropdown({
             </svg>
             Update User
           </button>
+          <Link
+            href={`/super-admin/override-management?id=${userId}`}
+            onClick={() => setOpen(false)}
+            className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
+            </svg>
+            Override Management
+          </Link>
           <div className="my-1 border-t border-gray-100" />
           {userStatus !== "ACTIVE" && (
             <button onClick={() => { updateStatus.mutate({ id: userId, status: "ACTIVE" }); setOpen(false); }} className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50">
@@ -842,7 +877,7 @@ export function UserManagementContent() {
   const [page, setPage] = useState(1);
   const pageSize = 10;
 
-  const { data: statsData } = api.user.getStats.useQuery();
+  const { data: _statsData } = api.user.getStats.useQuery();
   const { data: divisions } = api.user.getDivisions.useQuery();
 
   const { data, isLoading } = api.user.getAll.useQuery({
@@ -912,63 +947,6 @@ export function UserManagementContent() {
           </svg>
           Add New User
         </button>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-          <div>
-            <p className="text-sm font-medium text-gray-500">Total Users</p>
-            <p className="mt-1 text-3xl font-bold text-gray-900">{statsData?.total ?? 0}</p>
-          </div>
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50">
-            <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
-            </svg>
-          </div>
-        </div>
-        <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-          <div>
-            <p className="text-sm font-medium text-gray-500">Active Users</p>
-            <p className="mt-1 text-3xl font-bold text-gray-900">{statsData?.active ?? 0}</p>
-          </div>
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-green-50">
-            <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-            </svg>
-          </div>
-        </div>
-        <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-          <div>
-            <p className="text-sm font-medium text-gray-500">Inactive Users</p>
-            <p className="mt-1 text-3xl font-bold text-gray-900">{statsData?.inactive ?? 0}</p>
-            <p className="mt-0.5 text-xs text-gray-400">Accounts disabled</p>
-          </div>
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100">
-            <svg className="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M22 10.5h-6m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM4 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 10.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
-            </svg>
-          </div>
-        </div>
-        <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-          <div>
-            <p className="text-sm font-medium text-gray-500">Pending Approvals</p>
-            <p className="mt-1 text-3xl font-bold text-gray-900">{statsData?.pending ?? 0}</p>
-            {(statsData?.pending ?? 0) > 0 && (
-              <p className="mt-0.5 flex items-center gap-1 text-xs font-medium text-red-600">
-                <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 6a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 6zm0 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                </svg>
-                Requires action
-              </p>
-            )}
-          </div>
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-50">
-            <svg className="h-6 w-6 text-orange-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-            </svg>
-          </div>
-        </div>
       </div>
 
       {/* Search & Filters */}
