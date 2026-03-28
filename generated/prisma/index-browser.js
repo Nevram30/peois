@@ -175,9 +175,21 @@ exports.Prisma.ProjectScalarFieldEnum = {
   sitio: 'sitio',
   description: 'description',
   status: 'status',
+  completionPercentage: 'completionPercentage',
+  imageUrl: 'imageUrl',
+  documentUrl: 'documentUrl',
+  documentName: 'documentName',
   createdById: 'createdById',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ProjectActivityScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  description: 'description',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.DocumentScalarFieldEnum = {
@@ -226,11 +238,7 @@ exports.Prisma.NullsOrder = {
 exports.UserRole = exports.$Enums.UserRole = {
   SUPER_ADMIN: 'SUPER_ADMIN',
   ADMIN: 'ADMIN',
-  ADMIN_ASSISTANT: 'ADMIN_ASSISTANT',
-  DIVISION_CLERK: 'DIVISION_CLERK',
-  DIVISION_HEAD: 'DIVISION_HEAD',
-  SECTION_HEAD: 'SECTION_HEAD',
-  PROVINCIAL_ENGR: 'PROVINCIAL_ENGR'
+  USER: 'USER'
 };
 
 exports.Sex = exports.$Enums.Sex = {
@@ -298,6 +306,7 @@ exports.Prisma.ModelName = {
   User: 'User',
   UserSession: 'UserSession',
   Project: 'Project',
+  ProjectActivity: 'ProjectActivity',
   Document: 'Document',
   Post: 'Post'
 };

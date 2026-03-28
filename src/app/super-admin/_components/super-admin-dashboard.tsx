@@ -4,13 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { api } from "~/trpc/react";
 
-type RoleType =
-  | "ADMIN"
-  | "ADMIN_ASSISTANT"
-  | "DIVISION_CLERK"
-  | "DIVISION_HEAD"
-  | "SECTION_HEAD"
-  | "PROVINCIAL_ENGR";
+type RoleType = "ADMIN" | "USER";
 
 const STATUS_STYLES: Record<string, { bg: string; dot: string; text: string }> = {
   ACTIVE: { bg: "bg-green-50", dot: "bg-green-500", text: "text-green-700" },
@@ -48,18 +42,11 @@ function getAvatarColor(name?: string | null): string {
 // ─── Constants ─────────────────────────────────────────────────────────────────
 
 const DESIGNATIONS = [
-  "Provincial Engineer",
-  "Assistant Provincial Engineer",
-  "Admin Officer IV",
-  "Admin Officer III",
-  "Admin Officer II",
-  "Admin Officer I",
-  "Planning Officer",
-  "Project Engineer II",
-  "Project Engineer I",
-  "Construction Foreman",
-  "Utility Worker",
-  "Driver",
+  "Admin Assistant",
+  "Division Clerk",
+  "Division Head",
+  "Section Head",
+  "Provincial Engr.",
 ];
 
 const DIVISIONS = [
@@ -350,7 +337,7 @@ function AddUserModal({
               </h3>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3">
               <div>
                 <label className={labelClass}>
                   Designation <span className="text-red-500">*</span>
@@ -389,6 +376,23 @@ function AddUserModal({
                         {d}
                       </option>
                     ))}
+                  </select>
+                  {selectChevron}
+                </div>
+              </div>
+              <div>
+                <label className={labelClass}>
+                  Role <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <select
+                    required
+                    value={role}
+                    onChange={(e) => setRole(e.target.value as RoleType)}
+                    className={selectClass}
+                  >
+                    <option value="ADMIN">Admin</option>
+                    <option value="USER">User</option>
                   </select>
                   {selectChevron}
                 </div>
@@ -720,11 +724,7 @@ function EditUserModal({
               <label className="mb-1 block text-sm font-medium text-gray-700">Role <span className="text-red-500">*</span></label>
               <select value={role} onChange={(e) => setRole(e.target.value as RoleType)} className="block w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
                 <option value="ADMIN">Admin</option>
-                <option value="ADMIN_ASSISTANT">Admin Assistant</option>
-                <option value="DIVISION_CLERK">Division Clerk</option>
-                <option value="DIVISION_HEAD">Division Head</option>
-                <option value="SECTION_HEAD">Section Head</option>
-                <option value="PROVINCIAL_ENGR">Provincial Engr.</option>
+                <option value="USER">User</option>
               </select>
             </div>
             <div>
@@ -877,7 +877,7 @@ export function UserManagementContent() {
   const [page, setPage] = useState(1);
   const pageSize = 10;
 
-  const { data: _statsData } = api.user.getStats.useQuery();
+  api.user.getStats.useQuery();
   const { data: divisions } = api.user.getDivisions.useQuery();
 
   const { data, isLoading } = api.user.getAll.useQuery({
@@ -967,11 +967,7 @@ export function UserManagementContent() {
           <option value="">All Roles</option>
           <option value="SUPER_ADMIN">Super Admin</option>
           <option value="ADMIN">Admin</option>
-          <option value="ADMIN_ASSISTANT">Admin Assistant</option>
-          <option value="DIVISION_CLERK">Division Clerk</option>
-          <option value="DIVISION_HEAD">Division Head</option>
-          <option value="SECTION_HEAD">Section Head</option>
-          <option value="PROVINCIAL_ENGR">Provincial Engr.</option>
+          <option value="USER">User</option>
         </select>
         <select value={divisionFilter} onChange={(e) => handleFilterChange(setDivisionFilter, e.target.value)} className="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
           <option value="">All Divisions</option>
@@ -1009,6 +1005,7 @@ export function UserManagementContent() {
               <tr className="border-b border-gray-200 bg-gray-50/50">
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">User Name</th>
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Employee ID</th>
+                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Role</th>
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Designation</th>
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Division</th>
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Sex</th>
@@ -1020,7 +1017,7 @@ export function UserManagementContent() {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-12 text-center text-gray-500">
+                  <td colSpan={9} className="px-4 py-12 text-center text-gray-500">
                     <div className="flex flex-col items-center gap-2">
                       <svg className="h-6 w-6 animate-spin text-blue-600" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
@@ -1032,7 +1029,7 @@ export function UserManagementContent() {
                 </tr>
               ) : users.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-12 text-center text-gray-500">No users found.</td>
+                  <td colSpan={9} className="px-4 py-12 text-center text-gray-500">No users found.</td>
                 </tr>
               ) : (
                 users.map((u) => {
@@ -1051,6 +1048,17 @@ export function UserManagementContent() {
                         </div>
                       </td>
                       <td className="px-4 py-3"><span className="font-mono text-xs text-gray-600">{u.employeeId ?? "—"}</span></td>
+                      <td className="px-4 py-3">
+                        <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${
+                          u.role === "SUPER_ADMIN"
+                            ? "bg-purple-50 text-purple-700"
+                            : u.role === "ADMIN"
+                              ? "bg-blue-50 text-blue-700"
+                              : "bg-gray-100 text-gray-700"
+                        }`}>
+                          {u.role === "SUPER_ADMIN" ? "Super Admin" : u.role === "ADMIN" ? "Admin" : "User"}
+                        </span>
+                      </td>
                       <td className="px-4 py-3 text-gray-600">{u.designation ?? "—"}</td>
                       <td className="px-4 py-3 text-gray-600">{u.division ?? "—"}</td>
                       <td className="px-4 py-3 text-gray-600">{u.sex ? (u.sex === "MALE" ? "Male" : "Female") : "—"}</td>

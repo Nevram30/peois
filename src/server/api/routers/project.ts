@@ -62,6 +62,12 @@ export const projectRouter = createTRPCRouter({
         barangay: z.string().optional(),
         sitio: z.string().optional(),
         description: z.string().optional(),
+        status: z
+          .enum(["NOT_YET_STARTED", "ON_GOING", "COMPLETED", "SUSPENDED"])
+          .optional(),
+        imageUrl: z.string().optional(),
+        documentUrl: z.string().optional(),
+        documentName: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -117,6 +123,7 @@ export const projectRouter = createTRPCRouter({
           barangay: input.barangay,
           sitio: input.sitio,
           description: input.description,
+          status: input.status ?? "ON_GOING",
           createdById: ctx.session.user.id,
         },
       });
@@ -167,6 +174,13 @@ export const projectRouter = createTRPCRouter({
         barangay: z.string().optional(),
         sitio: z.string().optional(),
         description: z.string().optional(),
+        status: z
+          .enum(["NOT_YET_STARTED", "ON_GOING", "COMPLETED", "SUSPENDED"])
+          .optional(),
+        completionPercentage: z.number().int().min(0).max(100).optional(),
+        imageUrl: z.string().optional(),
+        documentUrl: z.string().optional(),
+        documentName: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -191,6 +205,96 @@ export const projectRouter = createTRPCRouter({
       });
     }),
 
+  updateProgress: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        status: z.enum(["NOT_YET_STARTED", "ON_GOING", "COMPLETED", "SUSPENDED"]),
+        completionPercentage: z.number().int().min(0).max(100),
+        imageUrl: z.string().optional(),
+        documentUrl: z.string().optional(),
+        documentName: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id, ...data } = input;
+      return ctx.db.project.update({ where: { id }, data });
+    }),
+
+  superAdminOverride: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        reason: z.string().min(1, "Reason is required"),
+        title: z.string().min(1),
+        modeOfImplementation: z.enum(["BY_ADMINISTRATION", "BY_CONTRACT"]),
+        locationImplementation: z.enum(["DISTRICT_I", "DISTRICT_II"]),
+        sourceOfFund: z.enum([
+          "GENERAL_FUND",
+          "SEF",
+          "TRUST_FUND",
+          "TWENTY_PERCENT_DEV_FUND",
+          "AID",
+          "LOAN",
+          "OTHERS",
+        ]),
+        subType: z
+          .enum([
+            "WATER_SYSTEMS",
+            "GOVERNMENT_BUILDINGS",
+            "ELECTRIFICATION",
+            "RESPONSE_CAMP_MGMT",
+            "SUPPLEMENTAL_BUDGET_2",
+            "PARK_AND_DEVELOPMENT",
+            "DOH",
+            "PROVINCIAL_GOVT_OFFICE",
+          ])
+          .optional()
+          .nullable(),
+        status: z.enum(["NOT_YET_STARTED", "ON_GOING", "COMPLETED", "SUSPENDED"]).optional(),
+        contractCost: z.number().min(0).default(0),
+        projectEngineer: z.string().optional(),
+        dateStarted: z.date().optional().nullable(),
+        targetCompletionDate: z.date().optional().nullable(),
+        revisedCompletionDate: z.date().optional().nullable(),
+        numFemale: z.number().int().min(0).default(0),
+        numMale: z.number().int().min(0).default(0),
+        numManDays: z.number().int().min(0).default(0),
+        district: z.enum(["DISTRICT_I", "DISTRICT_II"]).optional().nullable(),
+        cityMunicipality: z.string().optional(),
+        barangay: z.string().optional(),
+        sitio: z.string().optional(),
+        description: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id, reason, ...data } = input;
+      const numPersons = data.numFemale + data.numMale;
+      const duration =
+        data.dateStarted && data.targetCompletionDate
+          ? Math.ceil(
+              (data.targetCompletionDate.getTime() - data.dateStarted.getTime()) /
+                (1000 * 60 * 60 * 24),
+            )
+          : 0;
+
+      const [project] = await ctx.db.$transaction([
+        ctx.db.project.update({
+          where: { id },
+          data: { ...data, numPersons, duration },
+        }),
+        ctx.db.projectActivity.create({
+          data: {
+            projectId: id,
+            description: `[OVERRIDE] ${reason}`,
+            createdById: ctx.session.user.id,
+          },
+        }),
+      ]);
+
+      return project;
+    }),
+
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
@@ -201,14 +305,15 @@ export const projectRouter = createTRPCRouter({
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const [total, ongoing, completed, documents, todayCount] =
+    const [total, ongoing, completed, suspended, notYetStarted, todayCount] =
       await Promise.all([
         ctx.db.project.count(),
         ctx.db.project.count({ where: { status: "ON_GOING" } }),
         ctx.db.project.count({ where: { status: "COMPLETED" } }),
-        ctx.db.project.count(),
+        ctx.db.project.count({ where: { status: "SUSPENDED" } }),
+        ctx.db.project.count({ where: { status: "NOT_YET_STARTED" } }),
         ctx.db.project.count({ where: { createdAt: { gte: today } } }),
       ]);
-    return { total, ongoing, completed, documents, todayCount };
+    return { total, ongoing, completed, suspended, notYetStarted, todayCount };
   }),
 });

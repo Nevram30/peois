@@ -9,14 +9,25 @@ interface User {
   name?: string | null;
   email?: string | null;
   role: string;
+  designation?: string | null;
 }
 
+const DESIGNATION_CONFIG: Record<string, { label: string; color: string }> = {
+  "Admin Assistant": { label: "Admin Assistant", color: "bg-blue-100 text-blue-700" },
+  "Division Clerk": { label: "Division Clerk", color: "bg-green-100 text-green-700" },
+  "Division Head": { label: "Division Head", color: "bg-purple-100 text-purple-700" },
+  "Section Head": { label: "Section Head", color: "bg-orange-100 text-orange-700" },
+  "Provincial Engr.": { label: "Provincial Engineer", color: "bg-red-100 text-red-700" },
+};
+
 const navItems = [
-  { label: "Dashboard", href: "/admin-assistant/dashboard" },
-  { label: "Documents", href: "/admin-assistant/dashboard/documents" },
+  { label: "Dashboard", href: "/user/dashboard" },
+  { label: "Projects", href: "/user/dashboard/projects" },
+  { label: "Documents", href: "/user/dashboard/documents" },
+  { label: "Reports", href: "/user/dashboard/reports" },
 ];
 
-export function AdminAssistantShell({
+export function UserShell({
   user,
   children,
 }: {
@@ -26,13 +37,17 @@ export function AdminAssistantShell({
   const pathname = usePathname();
 
   const isActive = (href: string) => {
-    if (href === "/admin-assistant/dashboard")
-      return pathname === "/admin-assistant/dashboard";
+    if (href === "/user/dashboard") return pathname === "/user/dashboard";
     return pathname.startsWith(href);
   };
 
+  const designationInfo = user.designation
+    ? DESIGNATION_CONFIG[user.designation] ?? { label: user.designation, color: "bg-gray-100 text-gray-700" }
+    : null;
+
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Top Header */}
       <header className="bg-[#1e3a4f] text-white">
         <div className="flex items-center justify-between px-6 py-3">
           <div className="flex items-center gap-3">
@@ -81,7 +96,13 @@ export function AdminAssistantShell({
                 <p className="text-sm font-medium leading-tight">
                   {user.name ?? user.email}
                 </p>
-                <p className="text-xs text-white/60">Document Initiator</p>
+                <div className="flex items-center justify-end gap-2">
+                  {designationInfo && (
+                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${designationInfo.color}`}>
+                      {designationInfo.label}
+                    </span>
+                  )}
+                </div>
               </div>
               <button
                 onClick={() => signOut({ callbackUrl: "/login" })}
@@ -106,6 +127,7 @@ export function AdminAssistantShell({
         </div>
       </header>
 
+      {/* Navigation Tabs */}
       <nav className="border-b border-gray-200 bg-white">
         <div className="flex gap-0 px-6">
           {navItems.map((item) => (
@@ -124,6 +146,7 @@ export function AdminAssistantShell({
         </div>
       </nav>
 
+      {/* Page Content */}
       <main>{children}</main>
     </div>
   );

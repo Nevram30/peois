@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { api } from "~/trpc/react";
 
 const STATUS_LABELS: Record<string, { label: string; className: string }> = {
@@ -20,29 +19,7 @@ const STATUS_LABELS: Record<string, { label: string; className: string }> = {
 
 export function ProjectsList() {
   const router = useRouter();
-  const utils = api.useUtils();
   const { data: projects, isLoading } = api.project.getAll.useQuery();
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-
-  const deleteProject = api.project.delete.useMutation({
-    onSuccess: () => {
-      void utils.project.getAll.invalidate();
-      setDeletingId(null);
-    },
-  });
-
-  const handleDelete = (id: string, title: string) => {
-
-    // <AlertMessage
-    //   id={id}
-    //   title={title}
-    // />
-
-    if (window.confirm(`Are you sure you want to delete "${title}"? This action cannot be undone.`)) {
-      setDeletingId(id);
-      deleteProject.mutate({ id });
-    }
-  };
 
   return (
     <div className="space-y-6 px-6 py-8">
@@ -130,25 +107,14 @@ export function ProjectsList() {
                         {p.createdBy.name ?? p.createdBy.email}
                       </td>
                       <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() =>
-                              router.push(
-                                `/admin/dashboard/projects/${p.id}/edit`,
-                              )
-                            }
-                            className="rounded-md bg-blue-50 px-2.5 py-1.5 text-xs font-medium text-blue-700 transition hover:bg-blue-100"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDelete(p.id, p.title)}
-                            disabled={deletingId === p.id}
-                            className="rounded-md bg-red-50 px-2.5 py-1.5 text-xs font-medium text-red-700 transition hover:bg-red-100 disabled:opacity-50"
-                          >
-                            {deletingId === p.id ? "Deleting..." : "Delete"}
-                          </button>
-                        </div>
+                        <button
+                          onClick={() =>
+                            router.push(`/admin/dashboard/projects/${p.id}`)
+                          }
+                          className="rounded-md bg-gray-100 px-2.5 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-200"
+                        >
+                          View
+                        </button>
                       </td>
                     </tr>
                   );

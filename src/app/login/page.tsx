@@ -39,16 +39,8 @@ export default function LoginPage() {
         window.location.href = "/super-admin/dashboard";
       } else if (role === "ADMIN") {
         window.location.href = "/admin/dashboard";
-      } else if (role === "ADMIN_ASSISTANT") {
-        window.location.href = "/admin-assistant/dashboard";
-      } else if (role === "DIVISION_CLERK") {
-        window.location.href = "/division-clerk/dashboard";
-      } else if (role === "DIVISION_HEAD") {
-        window.location.href = "/division-head/dashboard";
-      } else if (role === "SECTION_HEAD") {
-        window.location.href = "/section-head/dashboard";
-      } else if (role === "PROVINCIAL_ENGR") {
-        window.location.href = "/provincial-engr/dashboard";
+      } else if (role === "USER") {
+        window.location.href = "/user/dashboard";
       } else {
         window.location.href = "/login";
       }

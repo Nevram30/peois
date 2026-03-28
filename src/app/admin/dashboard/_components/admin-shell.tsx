@@ -9,6 +9,7 @@ interface User {
   name?: string | null;
   email?: string | null;
   role: string;
+  designation?: string | null;
 }
 
 const navItems = [
@@ -84,7 +85,7 @@ export function AdminShell({
                 <p className="text-sm font-medium leading-tight">
                   {user.name ?? user.email}
                 </p>
-                <p className="text-xs text-white/60">Administrator</p>
+                <p className="text-xs text-white/60">{user.designation ?? "Administrator"}</p>
               </div>
               <button
                 onClick={() => signOut({ callbackUrl: "/login" })}

@@ -5,7 +5,7 @@ import { auth } from "~/server/auth";
 
 export async function POST(request: NextRequest) {
   const session = await auth();
-  if (!session?.user || session.user.role !== "ADMIN_ASSISTANT") {
+  if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -21,6 +21,8 @@ export async function POST(request: NextRequest) {
     "image/jpeg",
     "image/png",
     "image/webp",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   ];
   if (!allowedTypes.includes(file.type)) {
     return NextResponse.json(

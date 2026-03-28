@@ -6,12 +6,14 @@ declare module "next-auth" {
     user: {
       id: string;
       role: UserRole;
+      designation: string | null;
       sessionId: string;
     } & DefaultSession["user"];
   }
 
   interface User {
     role: UserRole;
+    designation?: string | null;
   }
 }
 
@@ -33,6 +35,7 @@ export const edgeAuthConfig = {
       if (user) {
         token.id = user.id;
         token.role = user.role;
+        token.designation = user.designation ?? null;
       }
       return token;
     },
@@ -42,6 +45,7 @@ export const edgeAuthConfig = {
         ...session.user,
         id: token.id as string,
         role: token.role as UserRole,
+        designation: (token.designation as string) ?? null,
         sessionId: (token.sessionId as string) ?? "",
       },
     }),

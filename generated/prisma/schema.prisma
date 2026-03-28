@@ -11,11 +11,7 @@ datasource db {
 enum UserRole {
   SUPER_ADMIN
   ADMIN
-  ADMIN_ASSISTANT
-  DIVISION_CLERK
-  DIVISION_HEAD
-  SECTION_HEAD
-  PROVINCIAL_ENGR
+  USER
 }
 
 enum UserStatus {
@@ -80,24 +76,25 @@ enum DocumentStatus {
 }
 
 model User {
-  id            String        @id @default(cuid())
-  name          String?
-  email         String        @unique
-  password      String
-  role          UserRole      @default(ADMIN)
-  employeeId    String?       @unique
-  designation   String?
-  division      String?
-  sex           Sex?
-  status        UserStatus    @default(PENDING)
-  emailVerified DateTime?
-  image         String?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  posts         Post[]
-  projects      Project[]
-  sessions      UserSession[]
-  documents     Document[]
+  id                String            @id @default(cuid())
+  name              String?
+  email             String            @unique
+  password          String
+  role              UserRole          @default(ADMIN)
+  employeeId        String?           @unique
+  designation       String?
+  division          String?
+  sex               Sex?
+  status            UserStatus        @default(PENDING)
+  emailVerified     DateTime?
+  image             String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  posts             Post[]
+  projects          Project[]
+  sessions          UserSession[]
+  documents         Document[]
+  projectActivities ProjectActivity[]
 }
 
 model UserSession {
@@ -141,13 +138,31 @@ model Project {
   sitio                  String?
   description            String?
   status                 ProjectStatus        @default(NOT_YET_STARTED)
+  completionPercentage   Int                  @default(0)
+  imageUrl               String?
+  documentUrl            String?
+  documentName           String?
   createdBy              User                 @relation(fields: [createdById], references: [id])
   createdById            String
   createdAt              DateTime             @default(now())
   updatedAt              DateTime             @updatedAt
+  activities             ProjectActivity[]
 
   @@index([title])
   @@index([status])
+  @@index([createdById])
+}
+
+model ProjectActivity {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  description String
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime @default(now())
+
+  @@index([projectId])
   @@index([createdById])
 }
 

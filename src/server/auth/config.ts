@@ -46,6 +46,7 @@ export const authConfig = {
           email: user.email,
           name: user.name,
           role: user.role,
+          designation: user.designation,
         };
       },
     }),
@@ -56,6 +57,7 @@ export const authConfig = {
       if (user) {
         token.id = user.id;
         token.role = user.role;
+        token.designation = user.designation ?? null;
 
         // Create DB session record (don't let failures break sign-in)
         try {
@@ -79,6 +81,7 @@ export const authConfig = {
         ...session.user,
         id: token.id as string,
         role: token.role as UserRole,
+        designation: (token.designation as string) ?? null,
         sessionId: (token.sessionId as string) ?? "",
       },
     }),

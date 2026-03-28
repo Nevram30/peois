@@ -3,18 +3,18 @@ import { TRPCError } from "@trpc/server";
 
 import {
   createTRPCRouter,
-  adminAssistantProcedure,
+  protectedProcedure,
 } from "~/server/api/trpc";
 
 export const documentRouter = createTRPCRouter({
-  getAll: adminAssistantProcedure.query(async ({ ctx }) => {
+  getAll: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.document.findMany({
       include: { createdBy: { select: { name: true, email: true } } },
       orderBy: { createdAt: "desc" },
     });
   }),
 
-  getById: adminAssistantProcedure
+  getById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       return ctx.db.document.findUnique({
@@ -23,7 +23,7 @@ export const documentRouter = createTRPCRouter({
       });
     }),
 
-  create: adminAssistantProcedure
+  create: protectedProcedure
     .input(
       z.object({
         type: z.enum(["POW", "PURCHASE_REQUEST"]),
@@ -73,7 +73,7 @@ export const documentRouter = createTRPCRouter({
       });
     }),
 
-  update: adminAssistantProcedure
+  update: protectedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -103,7 +103,7 @@ export const documentRouter = createTRPCRouter({
       return ctx.db.document.update({ where: { id }, data });
     }),
 
-  updateStatus: adminAssistantProcedure
+  updateStatus: protectedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -145,7 +145,7 @@ export const documentRouter = createTRPCRouter({
       });
     }),
 
-  delete: adminAssistantProcedure
+  delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const doc = await ctx.db.document.findUnique({
@@ -163,7 +163,7 @@ export const documentRouter = createTRPCRouter({
       return ctx.db.document.delete({ where: { id: input.id } });
     }),
 
-  getStats: adminAssistantProcedure.query(async ({ ctx }) => {
+  getStats: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session.user.id;
     const today = new Date();
     today.setHours(0, 0, 0, 0);

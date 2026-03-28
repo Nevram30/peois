@@ -1,159 +1,113 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState, useMemo, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import { api } from "~/trpc/react";
 
-const inputClass =
-  "mt-1 block w-full rounded-lg border border-gray-200 bg-gray-50 px-3.5 py-2.5 text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-[#1e3a4f] focus:bg-white focus:ring-2 focus:ring-[#1e3a4f]/20 focus:outline-none";
-const labelClass = "block text-sm font-semibold text-gray-700";
-const sectionTitleClass = "text-lg font-semibold text-[#1e3a4f]";
+const STATUS_BADGE: Record<string, string> = {
+  NOT_YET_STARTED: "bg-gray-500 text-white",
+  ON_GOING: "bg-green-500 text-white",
+  COMPLETED: "bg-blue-500 text-white",
+  SUSPENDED: "bg-red-500 text-white",
+};
 
-function formatDateForInput(date: Date | string | null | undefined): string {
-  if (!date) return "";
-  const d = new Date(date);
-  return d.toISOString().split("T")[0] ?? "";
+const STATUS_LABEL: Record<string, string> = {
+  NOT_YET_STARTED: "Not Yet Started",
+  ON_GOING: "On-going",
+  COMPLETED: "Completed",
+  SUSPENDED: "Suspended",
+};
+
+function timeAgo(d: Date | string) {
+  const diff = Date.now() - new Date(d).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins} minute${mins !== 1 ? "s" : ""} ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs} hour${hrs !== 1 ? "s" : ""} ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days} day${days !== 1 ? "s" : ""} ago`;
 }
 
-export function EditProjectForm({ projectId }: { projectId: string }) {
-  const router = useRouter();
-  const { data: project, isLoading } = api.project.getById.useQuery({
-    id: projectId,
+function fmt(d: Date | string | null | undefined) {
+  if (!d) return "—";
+  return new Date(d).toLocaleDateString("en-PH", {
+    month: "short", day: "numeric", year: "numeric",
   });
+}
 
-  const [title, setTitle] = useState("");
-  const [subType, setSubType] = useState("");
-  const [modeOfImplementation, setModeOfImplementation] = useState("");
-  const [locationImplementation, setLocationImplementation] = useState("");
-  const [sourceOfFund, setSourceOfFund] = useState("");
-  const [contractCost, setContractCost] = useState("0.00");
-  const [projectEngineer, setProjectEngineer] = useState("");
-  const [dateStarted, setDateStarted] = useState("");
-  const [targetCompletionDate, setTargetCompletionDate] = useState("");
-  const [revisedCompletionDate, setRevisedCompletionDate] = useState("");
-  const [dateCompleted, setDateCompleted] = useState("");
-  const [daysSuspended, setDaysSuspended] = useState("0");
-  const [daysExtended, setDaysExtended] = useState("0");
-  const [numFemale, setNumFemale] = useState("0");
-  const [numMale, setNumMale] = useState("0");
-  const [numManDays, setNumManDays] = useState("0");
-  const [district, setDistrict] = useState("");
-  const [cityMunicipality, setCityMunicipality] = useState("");
-  const [barangay, setBarangay] = useState("");
-  const [sitio, setSitio] = useState("");
-  const [description, setDescription] = useState("");
+const card = "rounded-xl border border-gray-200 bg-white p-6 shadow-sm";
+
+export function EditProjectForm({ projectId }: { projectId: string }) {
+  const utils = api.useUtils();
+  const mediaInputRef = useRef<HTMLInputElement>(null);
+
+  const { data: project, isLoading } = api.project.getById.useQuery({ id: projectId });
+  const { data: activities } = api.projectActivity.getByProjectId.useQuery({ projectId });
+
+  const [completion, setCompletion] = useState(0);
+  const [status, setStatus] = useState("ON_GOING");
+  const [mediaUrl, setMediaUrl] = useState("");
+  const [mediaName, setMediaName] = useState("");
+  const [isUploadingMedia, setIsUploadingMedia] = useState(false);
+  const [comment, setComment] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
-    if (project) {
-      setTitle(project.title);
-      setSubType(project.subType ?? "");
-      setModeOfImplementation(project.modeOfImplementation);
-      setLocationImplementation(project.locationImplementation);
-      setSourceOfFund(project.sourceOfFund);
-      setContractCost(String(project.contractCost));
-      setProjectEngineer(project.projectEngineer ?? "");
-      setDateStarted(formatDateForInput(project.dateStarted));
-      setTargetCompletionDate(
-        formatDateForInput(project.targetCompletionDate),
-      );
-      setRevisedCompletionDate(
-        formatDateForInput(project.revisedCompletionDate),
-      );
-      setDateCompleted(formatDateForInput(project.dateCompleted));
-      setDaysSuspended(String(project.daysSuspended));
-      setDaysExtended(String(project.daysExtended));
-      setNumFemale(String(project.numFemale));
-      setNumMale(String(project.numMale));
-      setNumManDays(String(project.numManDays));
-      setDistrict(project.district ?? "");
-      setCityMunicipality(project.cityMunicipality ?? "");
-      setBarangay(project.barangay ?? "");
-      setSitio(project.sitio ?? "");
-      setDescription(project.description ?? "");
-    }
+    if (!project) return;
+    setCompletion(project.completionPercentage);
+    setStatus(project.status);
+    setMediaUrl(project.imageUrl ?? "");
+    setMediaName(project.documentName ?? "");
   }, [project]);
 
-  const duration = useMemo(() => {
-    if (!dateStarted || !targetCompletionDate) return 0;
-    const start = new Date(dateStarted);
-    const end = new Date(targetCompletionDate);
-    return Math.max(
-      0,
-      Math.ceil(
-        (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24),
-      ),
-    );
-  }, [dateStarted, targetCompletionDate]);
-
-  const numPersons = useMemo(() => {
-    return (parseInt(numFemale) || 0) + (parseInt(numMale) || 0);
-  }, [numFemale, numMale]);
-
-  const updateProject = api.project.update.useMutation({
+  const updateProject = api.project.updateProgress.useMutation({
     onSuccess: () => {
-      router.push("/admin/dashboard/projects");
+      void utils.project.getById.invalidate({ id: projectId });
+      setShowSuccess(true);
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const addActivity = api.projectActivity.create.useMutation({
+    onSuccess: () => {
+      setComment("");
+      void utils.projectActivity.getByProjectId.invalidate({ projectId });
+    },
+  });
+
+  const handleMediaUpload = async (file: File) => {
+    setIsUploadingMedia(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      const data = (await res.json()) as { filePath?: string };
+      if (data.filePath) { setMediaUrl(data.filePath); setMediaName(file.name); }
+    } finally {
+      setIsUploadingMedia(false);
+    }
+  };
+
+  const handleSaveChanges = () => {
+    if (!project) return;
     updateProject.mutate({
       id: projectId,
-      title,
-      subType: subType
-        ? (subType as
-            | "WATER_SYSTEMS"
-            | "GOVERNMENT_BUILDINGS"
-            | "ELECTRIFICATION"
-            | "RESPONSE_CAMP_MGMT"
-            | "SUPPLEMENTAL_BUDGET_2"
-            | "PARK_AND_DEVELOPMENT"
-            | "DOH"
-            | "PROVINCIAL_GOVT_OFFICE")
-        : null,
-      modeOfImplementation: modeOfImplementation as
-        | "BY_ADMINISTRATION"
-        | "BY_CONTRACT",
-      locationImplementation: locationImplementation as
-        | "DISTRICT_I"
-        | "DISTRICT_II",
-      sourceOfFund: sourceOfFund as
-        | "GENERAL_FUND"
-        | "SEF"
-        | "TRUST_FUND"
-        | "TWENTY_PERCENT_DEV_FUND"
-        | "AID"
-        | "LOAN"
-        | "OTHERS",
-      contractCost: parseFloat(contractCost) || 0,
-      projectEngineer: projectEngineer || undefined,
-      dateStarted: dateStarted ? new Date(dateStarted) : null,
-      targetCompletionDate: targetCompletionDate
-        ? new Date(targetCompletionDate)
-        : null,
-      revisedCompletionDate: revisedCompletionDate
-        ? new Date(revisedCompletionDate)
-        : null,
-      dateCompleted: dateCompleted ? new Date(dateCompleted) : null,
-      daysSuspended: parseInt(daysSuspended) || 0,
-      daysExtended: parseInt(daysExtended) || 0,
-      numFemale: parseInt(numFemale) || 0,
-      numMale: parseInt(numMale) || 0,
-      numManDays: parseInt(numManDays) || 0,
-      district: district
-        ? (district as "DISTRICT_I" | "DISTRICT_II")
-        : null,
-      cityMunicipality: cityMunicipality || undefined,
-      barangay: barangay || undefined,
-      sitio: sitio || undefined,
-      description: description || undefined,
+      status: status as "NOT_YET_STARTED" | "ON_GOING" | "COMPLETED" | "SUSPENDED",
+      completionPercentage: completion,
+      imageUrl: mediaUrl || undefined,
+      documentUrl: mediaUrl || undefined,
+      documentName: mediaName || undefined,
     });
+  };
+
+  const handlePostComment = () => {
+    if (!comment.trim()) return;
+    addActivity.mutate({ projectId, description: comment.trim() });
   };
 
   if (isLoading) {
     return (
-      <div className="px-6 py-8 text-center text-gray-500">
+      <div className="flex min-h-75 items-center justify-center text-gray-400">
         Loading project...
       </div>
     );
@@ -161,418 +115,315 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
 
   if (!project) {
     return (
-      <div className="px-6 py-8 text-center text-gray-500">
-        Project not found.
+      <div className="flex min-h-75 flex-col items-center justify-center gap-3 text-gray-400">
+        <p>Project not found.</p>
+        <Link href="/admin/dashboard/projects" className="text-sm font-medium text-blue-600 hover:underline">
+          Back to Projects
+        </Link>
       </div>
     );
   }
 
+  const badgeClass = STATUS_BADGE[project.status] ?? "bg-gray-500 text-white";
+  const statusLabel = STATUS_LABEL[project.status] ?? project.status;
+
   return (
-    <div className="px-6 py-8">
-      <Link
-        href="/admin/dashboard/projects"
-        className="inline-flex items-center gap-1 text-sm text-[#1e3a4f] hover:underline"
-      >
-        <svg
-          className="h-4 w-4"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={2}
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M15.75 19.5 8.25 12l7.5-7.5"
-          />
-        </svg>
-        Back to Projects
-      </Link>
+    <div className="min-h-screen bg-gray-50 px-6 py-8">
 
-      <h2 className="mt-2 text-2xl font-bold text-gray-900">Edit Project</h2>
-      <p className="mt-1 text-sm text-gray-500">
-        {project.projectCode}
-      </p>
-
-      <form onSubmit={handleSubmit} className="mt-6">
-        <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
-          <div className="space-y-10 p-8">
-            {/* === Basic Information === */}
-            <section>
-              <h3 className={sectionTitleClass}>Basic Information</h3>
-              <hr className="mt-2 mb-6 border-gray-200" />
-
-              <div className="space-y-5">
-                <div>
-                  <label className={labelClass}>
-                    Project Title/Document Name *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className={inputClass}
-                  />
-                </div>
-                <div>
-                  <label className={labelClass}>Sub-Type</label>
-                  <select
-                    value={subType}
-                    onChange={(e) => setSubType(e.target.value)}
-                    className={inputClass}
-                  >
-                    <option value="">Select sub-type</option>
-                    <option value="WATER_SYSTEMS">Water Systems</option>
-                    <option value="GOVERNMENT_BUILDINGS">
-                      Government Buildings
-                    </option>
-                    <option value="ELECTRIFICATION">Electrification</option>
-                    <option value="RESPONSE_CAMP_MGMT">
-                      Response (Camp Mgmt)
-                    </option>
-                    <option value="SUPPLEMENTAL_BUDGET_2">
-                      Supplemental Budget #2
-                    </option>
-                    <option value="PARK_AND_DEVELOPMENT">
-                      Park and Development
-                    </option>
-                    <option value="DOH">DOH</option>
-                    <option value="PROVINCIAL_GOVT_OFFICE">
-                      Provincial Govt Office
-                    </option>
-                  </select>
-                </div>
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                  <div>
-                    <label className={labelClass}>
-                      Mode of Implementation *
-                    </label>
-                    <select
-                      required
-                      value={modeOfImplementation}
-                      onChange={(e) =>
-                        setModeOfImplementation(e.target.value)
-                      }
-                      className={inputClass}
-                    >
-                      <option value="">Select mode</option>
-                      <option value="BY_ADMINISTRATION">
-                        By Administration
-                      </option>
-                      <option value="BY_CONTRACT">By Contract</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className={labelClass}>
-                      Location Implementation *
-                    </label>
-                    <select
-                      required
-                      value={locationImplementation}
-                      onChange={(e) =>
-                        setLocationImplementation(e.target.value)
-                      }
-                      className={inputClass}
-                    >
-                      <option value="">Select district</option>
-                      <option value="DISTRICT_I">District I</option>
-                      <option value="DISTRICT_II">District II</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* === Source of Fund === */}
-            <section>
-              <h3 className={sectionTitleClass}>Source of Fund</h3>
-              <hr className="mt-2 mb-6 border-gray-200" />
-
-              <div>
-                <label className={labelClass}>Source of Fund *</label>
-                <select
-                  required
-                  value={sourceOfFund}
-                  onChange={(e) => setSourceOfFund(e.target.value)}
-                  className={inputClass}
-                >
-                  <option value="">Select source</option>
-                  <option value="GENERAL_FUND">General Fund</option>
-                  <option value="SEF">SEF</option>
-                  <option value="TRUST_FUND">Trust Fund</option>
-                  <option value="TWENTY_PERCENT_DEV_FUND">
-                    20% Development Fund
-                  </option>
-                  <option value="AID">Aid</option>
-                  <option value="LOAN">Loan</option>
-                  <option value="OTHERS">Others</option>
-                </select>
-              </div>
-            </section>
-
-            {/* === Project Data === */}
-            <section>
-              <h3 className={sectionTitleClass}>Project Data</h3>
-              <hr className="mt-2 mb-6 border-gray-200" />
-
-              <div className="space-y-5">
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                  <div>
-                    <label className={labelClass}>Contract Cost</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={contractCost}
-                      onChange={(e) => setContractCost(e.target.value)}
-                      className={inputClass}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClass}>Project Engineer</label>
-                    <input
-                      type="text"
-                      value={projectEngineer}
-                      onChange={(e) => setProjectEngineer(e.target.value)}
-                      className={inputClass}
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
-                  <div>
-                    <label className={labelClass}>Date Started</label>
-                    <input
-                      type="date"
-                      value={dateStarted}
-                      onChange={(e) => setDateStarted(e.target.value)}
-                      className={inputClass}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClass}>
-                      Target Completion Date
-                    </label>
-                    <input
-                      type="date"
-                      value={targetCompletionDate}
-                      onChange={(e) =>
-                        setTargetCompletionDate(e.target.value)
-                      }
-                      className={inputClass}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClass}>
-                      Duration (Auto-calculated)
-                    </label>
-                    <input
-                      type="text"
-                      readOnly
-                      value={`${duration} days`}
-                      className={`${inputClass} cursor-not-allowed bg-gray-100 text-gray-500`}
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                  <div>
-                    <label className={labelClass}>
-                      Revised Completion Date
-                    </label>
-                    <input
-                      type="date"
-                      value={revisedCompletionDate}
-                      onChange={(e) =>
-                        setRevisedCompletionDate(e.target.value)
-                      }
-                      className={inputClass}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClass}>Date Completed</label>
-                    <input
-                      type="date"
-                      value={dateCompleted}
-                      onChange={(e) => setDateCompleted(e.target.value)}
-                      className={inputClass}
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                  <div>
-                    <label className={labelClass}>
-                      Number of Days Suspended
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={daysSuspended}
-                      onChange={(e) => setDaysSuspended(e.target.value)}
-                      className={inputClass}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClass}>
-                      Number of Days Extended
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={daysExtended}
-                      onChange={(e) => setDaysExtended(e.target.value)}
-                      className={inputClass}
-                    />
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* === Employment Generated === */}
-            <section>
-              <h3 className={sectionTitleClass}>Employment Generated</h3>
-              <hr className="mt-2 mb-6 border-gray-200" />
-
-              <div className="space-y-5">
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                  <div>
-                    <label className={labelClass}>Number of Female</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={numFemale}
-                      onChange={(e) => setNumFemale(e.target.value)}
-                      className={inputClass}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClass}>Number of Male</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={numMale}
-                      onChange={(e) => setNumMale(e.target.value)}
-                      className={inputClass}
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                  <div>
-                    <label className={labelClass}>
-                      Number of Persons (Auto-calculated)
-                    </label>
-                    <input
-                      type="number"
-                      readOnly
-                      value={numPersons}
-                      className={`${inputClass} cursor-not-allowed bg-gray-100 text-gray-500`}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClass}>Number of Man-days</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={numManDays}
-                      onChange={(e) => setNumManDays(e.target.value)}
-                      className={inputClass}
-                    />
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* === Location of the Project === */}
-            <section>
-              <h3 className={sectionTitleClass}>Location of the Project</h3>
-              <hr className="mt-2 mb-6 border-gray-200" />
-
-              <div className="space-y-5">
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                  <div>
-                    <label className={labelClass}>
-                      District I or District II
-                    </label>
-                    <select
-                      value={district}
-                      onChange={(e) => setDistrict(e.target.value)}
-                      className={inputClass}
-                    >
-                      <option value="">Select district</option>
-                      <option value="DISTRICT_I">District I</option>
-                      <option value="DISTRICT_II">District II</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className={labelClass}>City or Municipality</label>
-                    <input
-                      type="text"
-                      value={cityMunicipality}
-                      onChange={(e) => setCityMunicipality(e.target.value)}
-                      className={inputClass}
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                  <div>
-                    <label className={labelClass}>Barangay</label>
-                    <input
-                      type="text"
-                      value={barangay}
-                      onChange={(e) => setBarangay(e.target.value)}
-                      className={inputClass}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClass}>Sitio</label>
-                    <input
-                      type="text"
-                      value={sitio}
-                      onChange={(e) => setSitio(e.target.value)}
-                      className={inputClass}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className={labelClass}>Description</label>
-                  <textarea
-                    rows={3}
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Enter detailed location description..."
-                    className={inputClass}
-                  />
-                </div>
-              </div>
-            </section>
-          </div>
-
-          {/* Footer */}
-          <div className="flex items-center justify-end gap-3 border-t border-gray-200 px-8 py-5">
-            <Link
-              href="/admin/dashboard/projects"
-              className="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
-            >
-              Cancel
-            </Link>
+      {/* Success Modal */}
+      {showSuccess && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="mx-4 w-full max-w-sm rounded-2xl bg-white p-8 shadow-2xl text-center">
+            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+              <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+              </svg>
+            </div>
+            <h3 className="mb-2 text-xl font-bold text-gray-900">Changes Saved Successfully!</h3>
+            <p className="mb-6 text-sm text-gray-500">The project details have been updated in the system.</p>
             <button
-              type="submit"
-              disabled={updateProject.isPending}
-              className="rounded-lg bg-[#1e3a4f] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#2a4d66] disabled:cursor-not-allowed disabled:opacity-50"
+              type="button"
+              onClick={() => setShowSuccess(false)}
+              className="w-full rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
             >
-              {updateProject.isPending ? "Saving..." : "Update Project"}
+              Close
             </button>
           </div>
         </div>
+      )}
 
+      {/* Breadcrumb */}
+      <nav className="mb-5 flex items-center gap-1.5 text-sm text-gray-500">
+        <Link href="/admin/dashboard/projects" className="hover:text-gray-700">Projects</Link>
+        <span>/</span>
+        <span className="font-medium text-gray-900">Project Details</span>
+      </nav>
+
+      <div className="space-y-6">
+
+        {/* ── Hero Card ── */}
+        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+          <div className="flex flex-col sm:flex-row">
+            {/* Image */}
+            <div className="relative h-64 w-full shrink-0 sm:h-auto sm:w-72">
+              {project.imageUrl ? (
+                <Image src={project.imageUrl} alt={project.title} fill className="object-cover" />
+              ) : (
+                <div className="flex h-full min-h-64 w-full items-center justify-center bg-gray-200">
+                  <svg className="h-20 w-20 text-gray-300" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Z" />
+                  </svg>
+                </div>
+              )}
+              <span className={`absolute top-4 left-4 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-widest shadow ${badgeClass}`}>
+                {statusLabel}
+              </span>
+            </div>
+
+            {/* Info */}
+            <div className="flex flex-1 flex-col justify-between p-7">
+              <div>
+                <div className="mb-1 flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-widest text-blue-600">Active Project</span>
+                  <span className="text-xs text-gray-400">Last updated: {timeAgo(project.updatedAt)}</span>
+                </div>
+                <h1 className="mt-1 text-2xl font-extrabold leading-snug text-gray-900">{project.title}</h1>
+              </div>
+
+              {/* 4 info boxes */}
+              <div className="mt-6 grid grid-cols-2 gap-3">
+                <div className="flex items-center gap-3 rounded-xl bg-gray-50 px-4 py-3">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50">
+                    <svg className="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M7.864 4.243A7.5 7.5 0 0 1 19.5 10.5c0 2.92-.556 5.709-1.568 8.268M5.742 6.364A7.465 7.465 0 0 0 4.5 10.5a7.464 7.464 0 0 1-1.15 3.993m1.989 3.559A11.209 11.209 0 0 0 8.25 10.5a3.75 3.75 0 1 1 7.5 0c0 .527-.021 1.049-.064 1.565M12 10.5a14.94 14.94 0 0 1-3.6 9.75m6.633-4.596a18.666 18.666 0 0 1-2.485 5.33" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Tracking Number</p>
+                    <p className="mt-0.5 font-mono text-sm font-bold text-gray-900">{project.projectCode}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 rounded-xl bg-gray-50 px-4 py-3">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50">
+                    <svg className="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Project Cost</p>
+                    <p className="mt-0.5 text-sm font-bold text-gray-900">
+                      ₱ {project.contractCost.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 rounded-xl bg-gray-50 px-4 py-3">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50">
+                    <svg className="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Implementer</p>
+                    <p className="mt-0.5 text-sm font-bold text-gray-900">
+                      {project.modeOfImplementation === "BY_ADMINISTRATION" ? "By Administration" : "By Contract"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 rounded-xl bg-gray-50 px-4 py-3">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50">
+                    <svg className="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Target Completion</p>
+                    <p className="mt-0.5 text-sm font-bold text-gray-900">{fmt(project.targetCompletionDate)}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Progress + Media ── */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+
+          {/* Update Project Progress */}
+          <section className={card}>
+            <div className="mb-5 flex items-center gap-2">
+              <svg className="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
+              </svg>
+              <h2 className="text-base font-semibold text-gray-900">Update Project Progress</h2>
+            </div>
+
+            <div className="space-y-5">
+              <div>
+                <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">Current Completion Status</p>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="range" min={0} max={100} value={completion}
+                    onChange={(e) => setCompletion(Number(e.target.value))}
+                    className="h-2 flex-1 cursor-pointer appearance-none rounded-full bg-gray-200 accent-blue-600"
+                  />
+                  <div className="flex w-20 items-center gap-1 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5">
+                    <span className="text-lg font-bold text-blue-600">{completion}</span>
+                    <span className="text-sm font-medium text-blue-400">%</span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">Project Status</p>
+                <div className="relative">
+                  <select
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                    className="block w-full appearance-none rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 pr-10 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  >
+                    <option value="NOT_YET_STARTED">Not Yet Started</option>
+                    <option value="ON_GOING">On-going</option>
+                    <option value="COMPLETED">Completed</option>
+                    <option value="SUSPENDED">Suspended</option>
+                  </select>
+                  <svg className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Update Documentation & Media */}
+          <section className={card}>
+            <div className="mb-5 flex items-center gap-2">
+              <svg className="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m6.75 12-3-3m0 0-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+              </svg>
+              <h2 className="text-base font-semibold text-gray-900">Update Documentation &amp; Media</h2>
+            </div>
+            <div
+              onClick={() => mediaInputRef.current?.click()}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) void handleMediaUpload(f); }}
+              className="flex h-48 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-gray-200 px-6 transition hover:border-blue-300 hover:bg-blue-50"
+            >
+              {isUploadingMedia ? (
+                <p className="text-sm text-blue-500">Uploading...</p>
+              ) : mediaName ? (
+                <>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
+                    <svg className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                    </svg>
+                  </div>
+                  <p className="text-sm font-medium text-gray-700">{mediaName}</p>
+                  <p className="text-xs text-gray-400">Click to replace</p>
+                </>
+              ) : (
+                <>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
+                    <svg className="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z" />
+                    </svg>
+                  </div>
+                  <p className="text-sm font-medium text-gray-700">Click to upload or drag and drop</p>
+                  <p className="text-xs text-gray-400">New project photos, site reports, or blueprints (PDF, PNG, JPG)</p>
+                </>
+              )}
+              <input
+                ref={mediaInputRef} type="file" accept="image/jpeg,image/png,application/pdf"
+                className="hidden"
+                onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleMediaUpload(f); }}
+              />
+            </div>
+          </section>
+        </div>
+
+        {/* ── Project History & Activity Log ── */}
+        <section className={card}>
+          <div className="mb-5 flex items-center gap-2">
+            <svg className="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+            <h2 className="text-base font-semibold text-gray-900">Project History &amp; Activity Log</h2>
+          </div>
+
+          {/* Comment input */}
+          <div className="mb-6">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">Add New Activity / Comment</p>
+            <textarea
+              rows={4} value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder="Enter details about the latest site visit or project milestone..."
+              className="block w-full rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            />
+            <div className="mt-3 flex justify-end">
+              <button
+                type="button" onClick={handlePostComment}
+                disabled={addActivity.isPending || !comment.trim()}
+                className="rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {addActivity.isPending ? "Posting..." : "Post Comment"}
+              </button>
+            </div>
+          </div>
+
+          {/* Activity table */}
+          {activities && activities.length > 0 ? (
+            <div className="border-t border-gray-100">
+              {/* Header */}
+              <div className="grid grid-cols-[140px_1fr_140px] py-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
+                <span>Date</span>
+                <span>Description</span>
+                <span className="text-right">User</span>
+              </div>
+              {/* Rows */}
+              <div className="max-h-210 divide-y divide-gray-100 overflow-y-auto">
+                {activities.map((a) => (
+                  <div key={a.id} className="grid grid-cols-[140px_1fr_140px] items-center py-4">
+                    <span className="text-sm text-gray-500">
+                      {new Date(a.createdAt).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" })}
+                    </span>
+                    <span className="text-sm text-gray-800">{a.description}</span>
+                    <span className="text-right text-sm font-medium text-blue-600">
+                      {a.createdBy.name ?? a.createdBy.email}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <p className="py-6 text-center text-sm text-gray-400">No activity logged yet.</p>
+          )}
+        </section>
+
+        {/* ── Footer ── */}
         {updateProject.isError && (
-          <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+          <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
             {updateProject.error.message}
           </div>
         )}
-      </form>
+        <div className="flex items-center justify-end gap-3 border-t border-gray-200 pt-4 pb-8">
+          <Link
+            href={`/admin/dashboard/projects/${projectId}`}
+            className="rounded-xl border border-gray-300 bg-white px-8 py-3 text-sm font-semibold uppercase tracking-wider text-gray-700 shadow-sm transition hover:bg-gray-50"
+          >
+            Cancel
+          </Link>
+          <button
+            type="button" onClick={handleSaveChanges}
+            disabled={updateProject.isPending}
+            className="rounded-xl bg-blue-600 px-8 py-3 text-sm font-semibold uppercase tracking-wider text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-50"
+          >
+            {updateProject.isPending ? "Saving..." : "Save Changes"}
+          </button>
+        </div>
+
+      </div>
     </div>
   );
 }
