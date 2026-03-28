@@ -56,6 +56,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
       | "OTHERS",
     subType: "" as string,
     contractCost: 0,
+    contractorName: "",
     projectEngineer: "",
     dateStarted: "",
     targetCompletionDate: "",
@@ -72,6 +73,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
 
   const [reason, setReason] = useState("");
   const [success, setSuccess] = useState(false);
+  const [contractCostDisplay, setContractCostDisplay] = useState("");
 
   useEffect(() => {
     if (project) {
@@ -83,6 +85,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
         sourceOfFund: project.sourceOfFund,
         subType: project.subType ?? "",
         contractCost: project.contractCost,
+        contractorName: project.contractorName ?? "",
         projectEngineer: project.projectEngineer ?? "",
         dateStarted: formatDate(project.dateStarted),
         targetCompletionDate: formatDate(project.targetCompletionDate),
@@ -96,6 +99,9 @@ export function OverrideForm({ projectId }: { projectId: string }) {
         sitio: project.sitio ?? "",
         description: project.description ?? "",
       });
+      setContractCostDisplay(
+        project.contractCost.toLocaleString("en-PH", { minimumFractionDigits: 2 }),
+      );
     }
   }, [project]);
 
@@ -127,6 +133,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
             | "PROVINCIAL_GOVT_OFFICE")
         : null,
       contractCost: form.contractCost,
+      contractorName: form.modeOfImplementation === "BY_CONTRACT" ? form.contractorName || undefined : undefined,
       projectEngineer: form.projectEngineer || undefined,
       dateStarted: form.dateStarted ? new Date(form.dateStarted) : null,
       targetCompletionDate: form.targetCompletionDate
@@ -221,7 +228,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
         <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-400">
           Current Project Context
         </p>
-        <div className="grid grid-cols-4 gap-6">
+        <div className="grid grid-cols-5 gap-6">
           <div>
             <p className="text-xs text-gray-400">Project ID</p>
             <p className="mt-0.5 font-mono text-sm font-semibold text-gray-800">
@@ -247,6 +254,12 @@ export function OverrideForm({ projectId }: { projectId: string }) {
             >
               {STATUS_LABELS[project.status] ?? project.status}
             </span>
+          </div>
+          <div>
+            <p className="text-xs text-gray-400">Progress</p>
+            <p className="mt-0.5 text-sm font-semibold text-gray-800">
+              {project.completionPercentage}%
+            </p>
           </div>
         </div>
       </div>
@@ -319,6 +332,20 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                     <option value="BY_CONTRACT">By Contract</option>
                     <option value="BY_ADMINISTRATION">By Administration</option>
                   </select>
+                  {form.modeOfImplementation === "BY_CONTRACT" && (
+                    <div className="mt-2">
+                      <label className="mb-1 block text-xs font-medium text-gray-600">
+                        Contractor Name <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={form.contractorName}
+                        onChange={(e) => set("contractorName", e.target.value)}
+                        placeholder="Enter contractor name"
+                        className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-gray-600">
@@ -462,10 +489,18 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                   <div className="flex items-center rounded-lg border border-gray-200 focus-within:ring-2 focus-within:ring-blue-500">
                     <span className="px-3 text-sm text-gray-400">₱</span>
                     <input
-                      type="number"
-                      min={0}
-                      value={form.contractCost}
-                      onChange={(e) => set("contractCost", parseFloat(e.target.value) || 0)}
+                      type="text"
+                      value={contractCostDisplay}
+                      onChange={(e) => {
+                        const raw = e.target.value.replace(/,/g, "");
+                        setContractCostDisplay(raw);
+                        set("contractCost", parseFloat(raw) || 0);
+                      }}
+                      onBlur={() => {
+                        setContractCostDisplay(
+                          form.contractCost.toLocaleString("en-PH", { minimumFractionDigits: 2 }),
+                        );
+                      }}
                       className="flex-1 rounded-r-lg py-2 pr-3 text-sm text-gray-800 focus:outline-none"
                     />
                   </div>

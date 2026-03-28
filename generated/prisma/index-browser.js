@@ -157,6 +157,7 @@ exports.Prisma.ProjectScalarFieldEnum = {
   locationImplementation: 'locationImplementation',
   sourceOfFund: 'sourceOfFund',
   contractCost: 'contractCost',
+  contractorName: 'contractorName',
   projectEngineer: 'projectEngineer',
   dateStarted: 'dateStarted',
   targetCompletionDate: 'targetCompletionDate',

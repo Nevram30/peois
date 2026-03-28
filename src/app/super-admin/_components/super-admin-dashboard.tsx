@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
 import { api } from "~/trpc/react";
 
 type RoleType = "ADMIN" | "USER";
@@ -102,15 +101,12 @@ function AddUserModal({
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [role, setRole] = useState<RoleType>("ADMIN");
+  const [employeeId, setEmployeeId] = useState("");
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error">("success");
 
   const passwordStrength = getPasswordStrength(password);
   const passwordsMatch = confirmPassword === "" || password === confirmPassword;
-
-  const { data: nextEmployeeId } = api.user.getNextEmployeeId.useQuery(undefined, {
-    enabled: open,
-  });
 
   const utils = api.useUtils();
 
@@ -146,6 +142,7 @@ function AddUserModal({
     setPassword("");
     setConfirmPassword("");
     setRole("ADMIN");
+    setEmployeeId("");
     setMessage("");
   };
 
@@ -421,12 +418,16 @@ function AddUserModal({
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" />
                   </svg>
                 </div>
-                <div className="block w-full rounded-lg border border-gray-200 bg-gray-50 py-2.5 pl-10 pr-3.5 font-mono text-sm text-gray-600">
-                  {nextEmployeeId ?? "Generating..."}
-                </div>
+                <input
+                  type="text"
+                  value={employeeId}
+                  onChange={(e) => setEmployeeId(e.target.value)}
+                  className={`${inputClass} pl-10 font-mono`}
+                  placeholder="e.g. EMP-00001"
+                />
               </div>
               <p className="mt-1 text-xs text-gray-400">
-                Auto-generated. This will be used for system login and audit logs.
+                Enter the employee ID manually.
               </p>
             </div>
 
@@ -825,7 +826,7 @@ function ActionsDropdown({
             </svg>
             Update User
           </button>
-          <Link
+          {/* <Link
             href={`/super-admin/override-management?id=${userId}`}
             onClick={() => setOpen(false)}
             className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
@@ -834,7 +835,7 @@ function ActionsDropdown({
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
             </svg>
             Override Management
-          </Link>
+          </Link> */}
           <div className="my-1 border-t border-gray-100" />
           {userStatus !== "ACTIVE" && (
             <button onClick={() => { updateStatus.mutate({ id: userId, status: "ACTIVE" }); setOpen(false); }} className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50">

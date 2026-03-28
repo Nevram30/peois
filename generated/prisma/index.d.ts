@@ -3983,6 +3983,7 @@ export namespace Prisma {
     locationImplementation: $Enums.District | null
     sourceOfFund: $Enums.SourceOfFund | null
     contractCost: number | null
+    contractorName: string | null
     projectEngineer: string | null
     dateStarted: Date | null
     targetCompletionDate: Date | null
@@ -4019,6 +4020,7 @@ export namespace Prisma {
     locationImplementation: $Enums.District | null
     sourceOfFund: $Enums.SourceOfFund | null
     contractCost: number | null
+    contractorName: string | null
     projectEngineer: string | null
     dateStarted: Date | null
     targetCompletionDate: Date | null
@@ -4055,6 +4057,7 @@ export namespace Prisma {
     locationImplementation: number
     sourceOfFund: number
     contractCost: number
+    contractorName: number
     projectEngineer: number
     dateStarted: number
     targetCompletionDate: number
@@ -4117,6 +4120,7 @@ export namespace Prisma {
     locationImplementation?: true
     sourceOfFund?: true
     contractCost?: true
+    contractorName?: true
     projectEngineer?: true
     dateStarted?: true
     targetCompletionDate?: true
@@ -4153,6 +4157,7 @@ export namespace Prisma {
     locationImplementation?: true
     sourceOfFund?: true
     contractCost?: true
+    contractorName?: true
     projectEngineer?: true
     dateStarted?: true
     targetCompletionDate?: true
@@ -4189,6 +4194,7 @@ export namespace Prisma {
     locationImplementation?: true
     sourceOfFund?: true
     contractCost?: true
+    contractorName?: true
     projectEngineer?: true
     dateStarted?: true
     targetCompletionDate?: true
@@ -4312,6 +4318,7 @@ export namespace Prisma {
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
     contractCost: number
+    contractorName: string | null
     projectEngineer: string | null
     dateStarted: Date | null
     targetCompletionDate: Date | null
@@ -4367,6 +4374,7 @@ export namespace Prisma {
     locationImplementation?: boolean
     sourceOfFund?: boolean
     contractCost?: boolean
+    contractorName?: boolean
     projectEngineer?: boolean
     dateStarted?: boolean
     targetCompletionDate?: boolean
@@ -4406,6 +4414,7 @@ export namespace Prisma {
     locationImplementation?: boolean
     sourceOfFund?: boolean
     contractCost?: boolean
+    contractorName?: boolean
     projectEngineer?: boolean
     dateStarted?: boolean
     targetCompletionDate?: boolean
@@ -4443,6 +4452,7 @@ export namespace Prisma {
     locationImplementation?: boolean
     sourceOfFund?: boolean
     contractCost?: boolean
+    contractorName?: boolean
     projectEngineer?: boolean
     dateStarted?: boolean
     targetCompletionDate?: boolean
@@ -4480,6 +4490,7 @@ export namespace Prisma {
     locationImplementation?: boolean
     sourceOfFund?: boolean
     contractCost?: boolean
+    contractorName?: boolean
     projectEngineer?: boolean
     dateStarted?: boolean
     targetCompletionDate?: boolean
@@ -4507,7 +4518,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectCode" | "title" | "subType" | "modeOfImplementation" | "locationImplementation" | "sourceOfFund" | "contractCost" | "projectEngineer" | "dateStarted" | "targetCompletionDate" | "duration" | "revisedCompletionDate" | "dateCompleted" | "daysSuspended" | "daysExtended" | "numFemale" | "numMale" | "numPersons" | "numManDays" | "district" | "cityMunicipality" | "barangay" | "sitio" | "description" | "status" | "completionPercentage" | "imageUrl" | "documentUrl" | "documentName" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
+  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectCode" | "title" | "subType" | "modeOfImplementation" | "locationImplementation" | "sourceOfFund" | "contractCost" | "contractorName" | "projectEngineer" | "dateStarted" | "targetCompletionDate" | "duration" | "revisedCompletionDate" | "dateCompleted" | "daysSuspended" | "daysExtended" | "numFemale" | "numMale" | "numPersons" | "numManDays" | "district" | "cityMunicipality" | "barangay" | "sitio" | "description" | "status" | "completionPercentage" | "imageUrl" | "documentUrl" | "documentName" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
   export type ProjectInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
     activities?: boolean | Project$activitiesArgs<ExtArgs>
@@ -4535,6 +4546,7 @@ export namespace Prisma {
       locationImplementation: $Enums.District
       sourceOfFund: $Enums.SourceOfFund
       contractCost: number
+      contractorName: string | null
       projectEngineer: string | null
       dateStarted: Date | null
       targetCompletionDate: Date | null
@@ -4993,6 +5005,7 @@ export namespace Prisma {
     readonly locationImplementation: FieldRef<"Project", 'District'>
     readonly sourceOfFund: FieldRef<"Project", 'SourceOfFund'>
     readonly contractCost: FieldRef<"Project", 'Float'>
+    readonly contractorName: FieldRef<"Project", 'String'>
     readonly projectEngineer: FieldRef<"Project", 'String'>
     readonly dateStarted: FieldRef<"Project", 'DateTime'>
     readonly targetCompletionDate: FieldRef<"Project", 'DateTime'>
@@ -8935,6 +8948,7 @@ export namespace Prisma {
     locationImplementation: 'locationImplementation',
     sourceOfFund: 'sourceOfFund',
     contractCost: 'contractCost',
+    contractorName: 'contractorName',
     projectEngineer: 'projectEngineer',
     dateStarted: 'dateStarted',
     targetCompletionDate: 'targetCompletionDate',
@@ -9428,6 +9442,7 @@ export namespace Prisma {
     locationImplementation?: EnumDistrictFilter<"Project"> | $Enums.District
     sourceOfFund?: EnumSourceOfFundFilter<"Project"> | $Enums.SourceOfFund
     contractCost?: FloatFilter<"Project"> | number
+    contractorName?: StringNullableFilter<"Project"> | string | null
     projectEngineer?: StringNullableFilter<"Project"> | string | null
     dateStarted?: DateTimeNullableFilter<"Project"> | Date | string | null
     targetCompletionDate?: DateTimeNullableFilter<"Project"> | Date | string | null
@@ -9466,6 +9481,7 @@ export namespace Prisma {
     locationImplementation?: SortOrder
     sourceOfFund?: SortOrder
     contractCost?: SortOrder
+    contractorName?: SortOrderInput | SortOrder
     projectEngineer?: SortOrderInput | SortOrder
     dateStarted?: SortOrderInput | SortOrder
     targetCompletionDate?: SortOrderInput | SortOrder
@@ -9507,6 +9523,7 @@ export namespace Prisma {
     locationImplementation?: EnumDistrictFilter<"Project"> | $Enums.District
     sourceOfFund?: EnumSourceOfFundFilter<"Project"> | $Enums.SourceOfFund
     contractCost?: FloatFilter<"Project"> | number
+    contractorName?: StringNullableFilter<"Project"> | string | null
     projectEngineer?: StringNullableFilter<"Project"> | string | null
     dateStarted?: DateTimeNullableFilter<"Project"> | Date | string | null
     targetCompletionDate?: DateTimeNullableFilter<"Project"> | Date | string | null
@@ -9545,6 +9562,7 @@ export namespace Prisma {
     locationImplementation?: SortOrder
     sourceOfFund?: SortOrder
     contractCost?: SortOrder
+    contractorName?: SortOrderInput | SortOrder
     projectEngineer?: SortOrderInput | SortOrder
     dateStarted?: SortOrderInput | SortOrder
     targetCompletionDate?: SortOrderInput | SortOrder
@@ -9589,6 +9607,7 @@ export namespace Prisma {
     locationImplementation?: EnumDistrictWithAggregatesFilter<"Project"> | $Enums.District
     sourceOfFund?: EnumSourceOfFundWithAggregatesFilter<"Project"> | $Enums.SourceOfFund
     contractCost?: FloatWithAggregatesFilter<"Project"> | number
+    contractorName?: StringNullableWithAggregatesFilter<"Project"> | string | null
     projectEngineer?: StringNullableWithAggregatesFilter<"Project"> | string | null
     dateStarted?: DateTimeNullableWithAggregatesFilter<"Project"> | Date | string | null
     targetCompletionDate?: DateTimeNullableWithAggregatesFilter<"Project"> | Date | string | null
@@ -10070,6 +10089,7 @@ export namespace Prisma {
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
     contractCost?: number
+    contractorName?: string | null
     projectEngineer?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
@@ -10107,6 +10127,7 @@ export namespace Prisma {
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
     contractCost?: number
+    contractorName?: string | null
     projectEngineer?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
@@ -10144,6 +10165,7 @@ export namespace Prisma {
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
     contractCost?: FloatFieldUpdateOperationsInput | number
+    contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -10181,6 +10203,7 @@ export namespace Prisma {
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
     contractCost?: FloatFieldUpdateOperationsInput | number
+    contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -10218,6 +10241,7 @@ export namespace Prisma {
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
     contractCost?: number
+    contractorName?: string | null
     projectEngineer?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
@@ -10254,6 +10278,7 @@ export namespace Prisma {
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
     contractCost?: FloatFieldUpdateOperationsInput | number
+    contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -10289,6 +10314,7 @@ export namespace Prisma {
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
     contractCost?: FloatFieldUpdateOperationsInput | number
+    contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -10949,6 +10975,7 @@ export namespace Prisma {
     locationImplementation?: SortOrder
     sourceOfFund?: SortOrder
     contractCost?: SortOrder
+    contractorName?: SortOrder
     projectEngineer?: SortOrder
     dateStarted?: SortOrder
     targetCompletionDate?: SortOrder
@@ -10997,6 +11024,7 @@ export namespace Prisma {
     locationImplementation?: SortOrder
     sourceOfFund?: SortOrder
     contractCost?: SortOrder
+    contractorName?: SortOrder
     projectEngineer?: SortOrder
     dateStarted?: SortOrder
     targetCompletionDate?: SortOrder
@@ -11033,6 +11061,7 @@ export namespace Prisma {
     locationImplementation?: SortOrder
     sourceOfFund?: SortOrder
     contractCost?: SortOrder
+    contractorName?: SortOrder
     projectEngineer?: SortOrder
     dateStarted?: SortOrder
     targetCompletionDate?: SortOrder
@@ -12253,6 +12282,7 @@ export namespace Prisma {
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
     contractCost?: number
+    contractorName?: string | null
     projectEngineer?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
@@ -12289,6 +12319,7 @@ export namespace Prisma {
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
     contractCost?: number
+    contractorName?: string | null
     projectEngineer?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
@@ -12483,6 +12514,7 @@ export namespace Prisma {
     locationImplementation?: EnumDistrictFilter<"Project"> | $Enums.District
     sourceOfFund?: EnumSourceOfFundFilter<"Project"> | $Enums.SourceOfFund
     contractCost?: FloatFilter<"Project"> | number
+    contractorName?: StringNullableFilter<"Project"> | string | null
     projectEngineer?: StringNullableFilter<"Project"> | string | null
     dateStarted?: DateTimeNullableFilter<"Project"> | Date | string | null
     targetCompletionDate?: DateTimeNullableFilter<"Project"> | Date | string | null
@@ -12855,6 +12887,7 @@ export namespace Prisma {
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
     contractCost?: number
+    contractorName?: string | null
     projectEngineer?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
@@ -12891,6 +12924,7 @@ export namespace Prisma {
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
     contractCost?: number
+    contractorName?: string | null
     projectEngineer?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
@@ -12990,6 +13024,7 @@ export namespace Prisma {
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
     contractCost?: FloatFieldUpdateOperationsInput | number
+    contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -13026,6 +13061,7 @@ export namespace Prisma {
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
     contractCost?: FloatFieldUpdateOperationsInput | number
+    contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -13322,6 +13358,7 @@ export namespace Prisma {
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
     contractCost?: number
+    contractorName?: string | null
     projectEngineer?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
@@ -13413,6 +13450,7 @@ export namespace Prisma {
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
     contractCost?: FloatFieldUpdateOperationsInput | number
+    contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -13449,6 +13487,7 @@ export namespace Prisma {
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
     contractCost?: FloatFieldUpdateOperationsInput | number
+    contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -13485,6 +13524,7 @@ export namespace Prisma {
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
     contractCost?: FloatFieldUpdateOperationsInput | number
+    contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

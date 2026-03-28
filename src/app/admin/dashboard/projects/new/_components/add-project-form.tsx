@@ -42,6 +42,7 @@ export function AddProjectForm() {
   // Project Information
   const [title, setTitle] = useState("");
   const [modeOfImplementation, setModeOfImplementation] = useState("");
+  const [contractorName, setContractorName] = useState("");
   const [district, setDistrict] = useState(""); // locationImplementation
   const [status, setStatus] = useState("ON_GOING");
 
@@ -78,6 +79,9 @@ export function AddProjectForm() {
 
   const imageInputRef = useRef<HTMLInputElement>(null);
   const docInputRef = useRef<HTMLInputElement>(null);
+
+  // Tracking
+  const [trackingNumber, setTrackingNumber] = useState("");
 
   // Auto-calculated
   const duration = useMemo(() => {
@@ -187,7 +191,8 @@ export function AddProjectForm() {
         | "AID"
         | "LOAN"
         | "OTHERS",
-      contractCost: parseFloat(contractCost) || 0,
+      contractCost: parseFloat(contractCost.replace(/,/g, "")) || 0,
+      contractorName: modeOfImplementation === "BY_CONTRACT" ? contractorName || undefined : undefined,
       projectEngineer: engineers.join(", ") || undefined,
       dateStarted: dateStarted ? new Date(dateStarted) : null,
       targetCompletionDate: targetCompletionDate
@@ -216,6 +221,7 @@ export function AddProjectForm() {
       imageUrl: imageUrl || undefined,
       documentUrl: docUrl || undefined,
       documentName: docFile?.name ?? undefined,
+      projectCode: trackingNumber || undefined,
     });
   };
 
@@ -292,10 +298,10 @@ export function AddProjectForm() {
                   </span>
                   <input
                     type="text"
-                    readOnly
-                    value=""
+                    value={trackingNumber}
+                    onChange={(e) => setTrackingNumber(e.target.value)}
                     placeholder="PEO-2025-XXXXX"
-                    className={`${inputClass} cursor-not-allowed pl-7 bg-gray-50 text-gray-400`}
+                    className={`${inputClass} pl-7`}
                   />
                 </div>
               </div>
@@ -310,13 +316,30 @@ export function AddProjectForm() {
                 <select
                   required
                   value={modeOfImplementation}
-                  onChange={(e) => setModeOfImplementation(e.target.value)}
+                  onChange={(e) => {
+                    setModeOfImplementation(e.target.value);
+                    if (e.target.value !== "BY_CONTRACT") setContractorName("");
+                  }}
                   className={inputClass}
                 >
                   <option value="">Select Mode</option>
                   <option value="BY_ADMINISTRATION">By Administration</option>
                   <option value="BY_CONTRACT">By Contract</option>
                 </select>
+                {modeOfImplementation === "BY_CONTRACT" && (
+                  <div className="mt-3">
+                    <label className={labelClass}>
+                      Contractor Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={contractorName}
+                      onChange={(e) => setContractorName(e.target.value)}
+                      placeholder="Enter contractor name"
+                      className={inputClass}
+                    />
+                  </div>
+                )}
               </div>
               <div>
                 <label className={labelClass}>
@@ -563,11 +586,29 @@ export function AddProjectForm() {
                     ₱
                   </span>
                   <input
-                    type="number"
-                    step="0.01"
-                    min="0"
+                    type="text"
+                    inputMode="decimal"
                     value={contractCost}
-                    onChange={(e) => setContractCost(e.target.value)}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/[^0-9.]/g, "");
+                      setContractCost(raw);
+                    }}
+                    onBlur={() => {
+                      const num = parseFloat(contractCost.replace(/,/g, ""));
+                      if (!isNaN(num)) {
+                        setContractCost(
+                          num.toLocaleString("en-US", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          }),
+                        );
+                      } else {
+                        setContractCost("0.00");
+                      }
+                    }}
+                    onFocus={() => {
+                      setContractCost(contractCost.replace(/,/g, ""));
+                    }}
                     className={`${inputClass} pl-7 text-right`}
                   />
                 </div>

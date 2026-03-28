@@ -7,8 +7,8 @@ import { api } from "~/trpc/react";
 
 const STATUS_BADGE: Record<string, string> = {
   NOT_YET_STARTED: "bg-gray-500 text-white",
-  ON_GOING: "bg-green-500 text-white",
-  COMPLETED: "bg-blue-500 text-white",
+  ON_GOING: "bg-orange-500 text-white",
+  COMPLETED: "bg-green-500 text-white",
   SUSPENDED: "bg-red-500 text-white",
 };
 

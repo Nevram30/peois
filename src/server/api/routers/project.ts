@@ -47,6 +47,7 @@ export const projectRouter = createTRPCRouter({
           "OTHERS",
         ]),
         contractCost: z.number().min(0).default(0),
+        contractorName: z.string().optional(),
         projectEngineer: z.string().optional(),
         dateStarted: z.date().optional().nullable(),
         targetCompletionDate: z.date().optional().nullable(),
@@ -68,6 +69,7 @@ export const projectRouter = createTRPCRouter({
         imageUrl: z.string().optional(),
         documentUrl: z.string().optional(),
         documentName: z.string().optional(),
+        projectCode: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -82,30 +84,16 @@ export const projectRouter = createTRPCRouter({
 
       const numPersons = input.numFemale + input.numMale;
 
-      // Auto-generate project code: PEO-YYYY-XXXXX
-      const year = new Date().getFullYear();
-      const lastProject = await ctx.db.project.findFirst({
-        where: { projectCode: { startsWith: `PEO-${year}-` } },
-        orderBy: { projectCode: "desc" },
-        select: { projectCode: true },
-      });
-
-      let seq = 1;
-      if (lastProject) {
-        const lastSeq = parseInt(lastProject.projectCode.split("-")[2]!, 10);
-        if (!isNaN(lastSeq)) seq = lastSeq + 1;
-      }
-      const projectCode = `PEO-${year}-${String(seq).padStart(5, "0")}`;
-
       return ctx.db.project.create({
         data: {
-          projectCode,
+          projectCode: input.projectCode ?? "",
           title: input.title,
           subType: input.subType,
           modeOfImplementation: input.modeOfImplementation,
           locationImplementation: input.locationImplementation,
           sourceOfFund: input.sourceOfFund,
           contractCost: input.contractCost,
+          contractorName: input.contractorName,
           projectEngineer: input.projectEngineer,
           dateStarted: input.dateStarted,
           targetCompletionDate: input.targetCompletionDate,
@@ -159,6 +147,7 @@ export const projectRouter = createTRPCRouter({
           "OTHERS",
         ]),
         contractCost: z.number().min(0).default(0),
+        contractorName: z.string().optional(),
         projectEngineer: z.string().optional(),
         dateStarted: z.date().optional().nullable(),
         targetCompletionDate: z.date().optional().nullable(),
@@ -253,6 +242,7 @@ export const projectRouter = createTRPCRouter({
           .nullable(),
         status: z.enum(["NOT_YET_STARTED", "ON_GOING", "COMPLETED", "SUSPENDED"]).optional(),
         contractCost: z.number().min(0).default(0),
+        contractorName: z.string().optional(),
         projectEngineer: z.string().optional(),
         dateStarted: z.date().optional().nullable(),
         targetCompletionDate: z.date().optional().nullable(),

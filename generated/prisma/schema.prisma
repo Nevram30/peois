@@ -120,6 +120,7 @@ model Project {
   locationImplementation District
   sourceOfFund           SourceOfFund
   contractCost           Float                @default(0)
+  contractorName         String?
   projectEngineer        String?
   dateStarted            DateTime?
   targetCompletionDate   DateTime?

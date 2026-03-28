@@ -57,7 +57,7 @@ export function AdminShell({
             </div>
             <div>
               <h1 className="text-lg font-semibold leading-tight">
-                Provincial Engineering Office Information System
+                PEO - Project Management Information System
               </h1>
               <p className="text-xs text-white/60">
                 Provincial Government of Davao del Norte
