@@ -72,8 +72,8 @@ export default function LoginPage() {
             <h1 className="text-2xl font-bold text-gray-900">
               Provincial Engineers Office
             </h1>
-            <p className="mt-0.5 text-sm font-semibold uppercase tracking-widest text-blue-500">
-              Management Information System
+            <p className="mt-0.5 text-sm font-semibold uppercase text-blue-500">
+              Project Management Information System
             </p>
             <div className="mt-3 h-px w-16 bg-gray-300" />
           </div>
