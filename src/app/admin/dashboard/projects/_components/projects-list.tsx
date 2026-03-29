@@ -341,6 +341,7 @@ export function ProjectsList() {
                   <th className="px-4 py-3 font-medium">Year</th>
                   <th className="px-4 py-3 font-medium">Status</th>
                   <th className="px-4 py-3 font-medium">Progress</th>
+                  <th className="px-4 py-3 font-medium">Involved Users</th>
                   <th className="px-4 py-3 font-medium">Actions</th>
                 </tr>
               </thead>
@@ -401,6 +402,59 @@ export function ProjectsList() {
                             {p.completionPercentage ?? 0}%
                           </span>
                         </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        {(() => {
+                          const seen = new Set<string>();
+                          const contributors: { id: string; name: string | null; email: string; image: string | null }[] = [];
+                          const allUsers = [p.createdBy, ...p.activities.map((a) => a.createdBy)];
+                          for (const u of allUsers) {
+                            if (!seen.has(u.id)) {
+                              seen.add(u.id);
+                              contributors.push(u);
+                            }
+                          }
+                          const MAX_SHOW = 4;
+                          const visible = contributors.slice(0, MAX_SHOW);
+                          const extra = contributors.length - MAX_SHOW;
+                          const colors = ["bg-blue-500", "bg-emerald-500", "bg-violet-500", "bg-orange-500"];
+                          return (
+                            <div className="flex items-center">
+                              {visible.map((u, i) => {
+                                const initials = (u.name ?? u.email)
+                                  .split(" ")
+                                  .map((w) => w[0])
+                                  .join("")
+                                  .slice(0, 2)
+                                  .toUpperCase();
+                                return (
+                                  <div
+                                    key={u.id}
+                                    style={{ zIndex: visible.length - i, marginLeft: i === 0 ? 0 : "-8px" }}
+                                    className={`group relative flex h-7 w-7 items-center justify-center rounded-full ring-2 ring-white text-white text-[10px] font-bold cursor-default ${colors[i % colors.length]}`}
+                                  >
+                                    {u.image ? (
+                                      <img src={u.image} alt={u.name ?? u.email} className="h-full w-full rounded-full object-cover" />
+                                    ) : (
+                                      initials
+                                    )}
+                                    <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-[11px] text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+                                      {u.name ?? u.email}
+                                    </span>
+                                  </div>
+                                );
+                              })}
+                              {extra > 0 && (
+                                <div
+                                  style={{ zIndex: 0, marginLeft: "-8px" }}
+                                  className="relative flex h-7 w-7 items-center justify-center rounded-full ring-2 ring-white bg-gray-200 text-gray-600 text-[10px] font-bold"
+                                >
+                                  +{extra}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })()}
                       </td>
                       <td className="px-4 py-3">
                         <button

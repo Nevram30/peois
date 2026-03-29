@@ -4,7 +4,14 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 export const projectRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.project.findMany({
-      include: { createdBy: { select: { name: true, email: true } } },
+      include: {
+        createdBy: { select: { id: true, name: true, email: true, image: true } },
+        activities: {
+          include: {
+            createdBy: { select: { id: true, name: true, email: true, image: true } },
+          },
+        },
+      },
       orderBy: { createdAt: "desc" },
     });
   }),
