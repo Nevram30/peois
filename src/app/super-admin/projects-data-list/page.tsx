@@ -91,7 +91,7 @@ export default function ProjectsDataListPage() {
           </svg>
           <input
             type="text"
-            placeholder="Search by name or ID..."
+            placeholder="Search by name or Tracking Num..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); resetPage(); }}
             className="w-full rounded-lg border border-gray-200 bg-white py-2 pl-10 pr-4 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -176,7 +176,7 @@ export default function ProjectsDataListPage() {
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50">
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Project ID
+                Tracking Number
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
                 Project Name
