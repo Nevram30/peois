@@ -48,9 +48,6 @@ export function UserDashboardContent() {
         <h2 className="text-2xl font-bold text-gray-900">
           Welcome, {me?.name ?? "User"}
         </h2>
-        <p className="mt-1 text-sm text-gray-500">
-          Here is your dashboard overview.
-        </p>
       </div>
 
       {/* Designation Card */}

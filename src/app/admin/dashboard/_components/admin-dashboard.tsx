@@ -61,7 +61,7 @@ export function AdminDashboardContent() {
   const { data: projects, isLoading } = api.project.getAll.useQuery();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const PAGE_SIZE = 10;
+  const [pageSize, setPageSize] = useState(20);
 
   const filteredProjects = projects?.filter((p) => {
     if (!search) return true;
@@ -75,10 +75,10 @@ export function AdminDashboardContent() {
   });
 
   const totalFiltered = filteredProjects?.length ?? 0;
-  const totalPages = Math.max(1, Math.ceil(totalFiltered / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(totalFiltered / pageSize));
   const paginatedProjects = filteredProjects?.slice(
-    (page - 1) * PAGE_SIZE,
-    page * PAGE_SIZE,
+    (page - 1) * pageSize,
+    page * pageSize,
   );
 
   const statCards = [
@@ -173,15 +173,9 @@ export function AdminDashboardContent() {
       {/* Header */}
       <div className="mb-6 flex items-start justify-between">
         <div>
-          <p className="mb-1 text-xs font-medium uppercase tracking-widest text-gray-400">
-            HOME &rsaquo; DASHBOARD
-          </p>
           <h1 className="text-3xl font-bold text-gray-900">
             Dashboard Overview
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Real-time status of provincial engineering infrastructure projects.
-          </p>
         </div>
 
         {/* Search */}
@@ -242,19 +236,10 @@ export function AdminDashboardContent() {
       <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
         <div className="flex items-center justify-between border-b border-gray-100 px-6 py-5">
           <div>
-            <h2 className="text-lg font-bold text-gray-900">
+            <h2 className="text-md font-semibold text-gray-900">
               Recent Project Updates
             </h2>
-            <p className="text-sm text-gray-400">
-              Summary of latest changes across all districts
-            </p>
           </div>
-          <Link
-            href="/admin/dashboard/projects/new"
-            className="flex items-center gap-1.5 rounded-lg bg-[#1e3a4f] px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#2a4d66]"
-          >
-            <span className="text-base leading-none">+</span> Add Project
-          </Link>
         </div>
 
         {/* Table */}
@@ -401,11 +386,21 @@ export function AdminDashboardContent() {
         {/* Pagination Footer */}
         {!isLoading && totalFiltered > 0 && (
           <div className="flex items-center justify-between border-t border-gray-100 px-6 py-4">
-            <p className="text-sm text-gray-500">
-              SHOWING {Math.min((page - 1) * PAGE_SIZE + 1, totalFiltered)}–
-              {Math.min(page * PAGE_SIZE, totalFiltered)} OF {totalFiltered}{" "}
-              TOTAL PROJECTS
-            </p>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <span>Rows per page:</span>
+              <select
+                value={pageSize}
+                onChange={(e) => {
+                  setPageSize(Number(e.target.value));
+                  setPage(1);
+                }}
+                className="rounded-md border border-gray-200 bg-white px-2 py-1 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e3a4f]/20"
+              >
+                {[10, 20, 50, 100].map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+            </div>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -414,6 +409,19 @@ export function AdminDashboardContent() {
               >
                 &lsaquo;
               </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setPage(p)}
+                  className={`flex h-8 w-8 items-center justify-center rounded-lg border text-sm font-medium transition ${
+                    p === page
+                      ? "border-blue-500 bg-white text-blue-600 ring-1 ring-blue-500"
+                      : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                  }`}
+                >
+                  {p}
+                </button>
+              ))}
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}

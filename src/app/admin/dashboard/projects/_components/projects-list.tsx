@@ -33,9 +33,13 @@ export function ProjectsList() {
   const filterToday = searchParams.get("filter") === "today";
 
   const [search, setSearch] = useState("");
-  const [roleFilter, setRoleFilter] = useState("");
-  const [divisionFilter, setDivisionFilter] = useState("");
+  const [sourceOfFundFilter, setSourceOfFundFilter] = useState("");
+  const [subTypeFilter, setSubTypeFilter] = useState("");
+  const [districtFilter, setDistrictFilter] = useState("");
   const [statusLocal, setStatusLocal] = useState("");
+  const [yearFilter, setYearFilter] = useState("");
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 20;
 
   const { data: projects, isLoading } = api.project.getAll.useQuery();
 
@@ -52,9 +56,17 @@ export function ProjectsList() {
     }
     if (statusFilter && p.status !== statusFilter) return false;
     if (statusLocal && p.status !== statusLocal) return false;
-    if (divisionFilter && p.locationImplementation !== divisionFilter)
+    if (districtFilter && p.locationImplementation !== districtFilter)
       return false;
-    if (roleFilter && p.modeOfImplementation !== roleFilter) return false;
+    if (sourceOfFundFilter && p.sourceOfFund !== sourceOfFundFilter)
+      return false;
+    if (subTypeFilter && p.subType !== subTypeFilter) return false;
+    if (yearFilter) {
+      const projectYear = p.dateStarted
+        ? new Date(p.dateStarted).getFullYear().toString()
+        : new Date(p.createdAt).getFullYear().toString();
+      if (projectYear !== yearFilter) return false;
+    }
     if (search) {
       const q = search.toLowerCase();
       if (
@@ -65,6 +77,9 @@ export function ProjectsList() {
     }
     return true;
   });
+
+  const totalPages = Math.max(1, Math.ceil((filtered?.length ?? 0) / PAGE_SIZE));
+  const paginated = filtered?.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const handleExport = () => {
     if (!filtered) return;
@@ -105,19 +120,27 @@ export function ProjectsList() {
       ? STATUS_TITLES.today
       : statusFilter
         ? (STATUS_TITLES[statusFilter] ?? "Projects")
-        : "All Projects";
+        : "Projects Overview";
 
   return (
     <div className="space-y-6 px-6 py-8">
       <div className="flex items-center justify-between">
         <div>
-          <p className="mb-1 text-xs font-medium uppercase tracking-widest text-gray-400">
-            <Link href="/admin/dashboard" className="hover:underline">Dashboard</Link> &rsaquo; Projects
-          </p>
+          <div className="text-xs font-medium tracking-widest mb-2 text-gray-400">
+            {/* Breadcrumb */}
+            <div className="mb-4 flex items-center gap-1.5 text-sm text-gray-500">
+              <Link href="/admin/dashboard" className="hover:text-gray-700">
+                Dashboard
+              </Link>
+              <span>/</span>
+              <p
+                className="hover:text-gray-700"
+              >
+                Projects
+              </p>
+            </div>
+          </div>
           <h2 className="text-2xl font-bold text-gray-900">{pageTitle}</h2>
-          <p className="mt-1 text-gray-500">
-            Manage all projects and documents
-          </p>
         </div>
         <div className="flex items-center gap-3">
           {(statusFilter ?? filterToday) && (
@@ -138,107 +161,163 @@ export function ProjectsList() {
       </div>
 
       {/* Advanced filter bar */}
-      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
-        {/* Search */}
-        <div className="relative flex-1 min-w-55">
-          <svg
-            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"
-            />
-          </svg>
-          <input
-            type="text"
-            placeholder="Search by name or ID..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-lg border border-gray-200 py-2 pl-9 pr-3 text-sm text-gray-700 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-          />
+      <div className="rounded-xl border border-gray-200 bg-white px-5 py-4 shadow-sm">
+        <div className="flex flex-wrap items-end gap-4">
+          {/* Search */}
+          <div className="flex-1 min-w-48">
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Search</p>
+            <div className="relative">
+              <svg
+                className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"
+                />
+              </svg>
+              <input
+                type="text"
+                placeholder="Project Code or Name..."
+                value={search}
+                onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                className="w-full rounded-lg border border-gray-200 py-2 pl-9 pr-3 text-sm text-gray-700 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              />
+            </div>
+          </div>
+
+          {/* Source of Fund */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Source of Fund</p>
+            <select
+              value={sourceOfFundFilter}
+              onChange={(e) => { setSourceOfFundFilter(e.target.value); setPage(1); }}
+              className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            >
+              <option value="">All Sources</option>
+              <option value="GENERAL_FUND">General Fund</option>
+              <option value="SEF">SEF</option>
+              <option value="TRUST_FUND">Trust Fund</option>
+              <option value="TWENTY_PERCENT_DEV_FUND">20% Development Fund</option>
+              <option value="AID">AID</option>
+              <option value="LOAN">Loan</option>
+              <option value="OTHERS">Others</option>
+            </select>
+          </div>
+
+          {/* Sub-Category */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Sub-Category</p>
+            <select
+              value={subTypeFilter}
+              onChange={(e) => { setSubTypeFilter(e.target.value); setPage(1); }}
+              className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            >
+              <option value="">All Sub-Categories</option>
+              <option value="WATER_SYSTEMS">Water Systems</option>
+              <option value="GOVERNMENT_BUILDINGS">Government Buildings</option>
+              <option value="ELECTRIFICATION">Electrification</option>
+              <option value="RESPONSE_CAMP_MGMT">Response Camp Mgmt</option>
+              <option value="SUPPLEMENTAL_BUDGET_2">Supplemental Budget 2</option>
+              <option value="PARK_AND_DEVELOPMENT">Park and Development</option>
+              <option value="DOH">DOH</option>
+              <option value="PROVINCIAL_GOVT_OFFICE">Provincial Govt Office</option>
+            </select>
+          </div>
+
+          {/* District */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">District</p>
+            <select
+              value={districtFilter}
+              onChange={(e) => { setDistrictFilter(e.target.value); setPage(1); }}
+              className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            >
+              <option value="">All Districts</option>
+              <option value="DISTRICT_I">District I</option>
+              <option value="DISTRICT_II">District II</option>
+            </select>
+          </div>
+
+          {/* Status */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Status</p>
+            <select
+              value={statusLocal}
+              onChange={(e) => { setStatusLocal(e.target.value); setPage(1); }}
+              className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            >
+              <option value="">All Statuses</option>
+              <option value="NOT_YET_STARTED">Not Yet Started</option>
+              <option value="ON_GOING">On-going</option>
+              <option value="COMPLETED">Completed</option>
+              <option value="SUSPENDED">Suspended</option>
+            </select>
+          </div>
+
+          {/* Year */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Year</p>
+            <select
+              value={yearFilter}
+              onChange={(e) => { setYearFilter(e.target.value); setPage(1); }}
+              className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            >
+              <option value="">All Years</option>
+              {Array.from({ length: new Date().getFullYear() - 2019 }, (_, i) => new Date().getFullYear() - i).map((y) => (
+                <option key={y} value={y.toString()}>{y}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Export */}
+          <div className="flex items-end gap-2">
+            <button
+              onClick={handleExport}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+            >
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
+                />
+              </svg>
+              Export
+            </button>
+
+            {/* Print */}
+            <button
+              onClick={handlePrint}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+            >
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.056 48.056 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z"
+                />
+              </svg>
+              Print
+            </button>
+          </div>
         </div>
-
-        {/* All Roles */}
-        <select
-          value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value)}
-          className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-        >
-          <option value="">All Roles</option>
-          <option value="BY_ADMINISTRATION">By Administration</option>
-          <option value="BY_CONTRACT">By Contract</option>
-        </select>
-
-        {/* All Divisions */}
-        <select
-          value={divisionFilter}
-          onChange={(e) => setDivisionFilter(e.target.value)}
-          className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-        >
-          <option value="">All Divisions</option>
-          <option value="DISTRICT_I">District I</option>
-          <option value="DISTRICT_II">District II</option>
-        </select>
-
-        {/* All Status */}
-        <select
-          value={statusLocal}
-          onChange={(e) => setStatusLocal(e.target.value)}
-          className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-        >
-          <option value="">All Status</option>
-          <option value="NOT_YET_STARTED">Not Yet Started</option>
-          <option value="ON_GOING">On-going</option>
-          <option value="COMPLETED">Completed</option>
-          <option value="SUSPENDED">Suspended</option>
-        </select>
-
-        {/* Export */}
-        <button
-          onClick={handleExport}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
-        >
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
-            />
-          </svg>
-          Export
-        </button>
-
-        {/* Print */}
-        <button
-          onClick={handlePrint}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
-        >
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.056 48.056 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z"
-            />
-          </svg>
-          Print
-        </button>
       </div>
 
       <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
@@ -254,21 +333,19 @@ export function ProjectsList() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-gray-200 bg-gray-50 text-gray-500">
-                  <th className="px-4 py-3 font-medium">Tracking Number</th>
-                  <th className="px-4 py-3 font-medium">Project Title</th>
-                  <th className="px-4 py-3 font-medium">Contract Cost</th>
-                  <th className="px-4 py-3 font-medium">Mode</th>
+                <tr className="border-b border-gray-200 bg-gray-50 text-gray-500 uppercase text-xs tracking-wider">
+                  <th className="px-4 py-3 font-medium">Project Name & Location</th>
+                  <th className="px-4 py-3 font-medium">Implementation Type</th>
                   <th className="px-4 py-3 font-medium">District</th>
-                  <th className="px-4 py-3 font-medium">Date Started</th>
-                  <th className="px-4 py-3 font-medium">Created By</th>
+                  <th className="px-4 py-3 font-medium">Source / Sub</th>
+                  <th className="px-4 py-3 font-medium">Year</th>
                   <th className="px-4 py-3 font-medium">Status</th>
                   <th className="px-4 py-3 font-medium">Progress</th>
                   <th className="px-4 py-3 font-medium">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((p) => {
+                {paginated?.map((p) => {
                   const status = STATUS_LABELS[p.status] ?? {
                     label: p.status,
                     className: "bg-gray-100 text-gray-700",
@@ -278,30 +355,32 @@ export function ProjectsList() {
                       key={p.id}
                       className="border-b border-gray-100 hover:bg-gray-50"
                     >
-                      <td className="px-4 py-3 font-mono text-sm text-blue-700">
-                        {p.projectCode}
-                      </td>
-                      <td className="px-4 py-3 font-medium text-gray-900">
-                        {p.title}
-                      </td>
-                      <td className="px-4 py-3 text-gray-600">
-                        ₱{p.contractCost.toLocaleString("en-PH", {
-                          minimumFractionDigits: 2,
-                        })}
+                      <td className="px-4 py-3">
+                        <p className="font-medium text-gray-900">{p.title}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">
+                          {p.projectCode}
+                          {p.barangay ? ` · Brgy. ${p.barangay}` : ""}
+                        </p>
                       </td>
                       <td className="px-4 py-3 text-gray-600">
-                        {p.modeOfImplementation.replace("_", " ")}
+                        <p>{p.modeOfImplementation.replace(/_/g, " ")}</p>
+                        {p.modeOfImplementation === "BY_CONTRACT" && p.contractorName && (
+                          <p className="text-xs text-gray-400 mt-0.5">{p.contractorName}</p>
+                        )}
                       </td>
                       <td className="px-4 py-3 text-gray-600">
-                        {p.locationImplementation.replace("_", " ")}
+                        {p.locationImplementation.replace(/_/g, " ")}
                       </td>
-                      <td className="px-4 py-3 text-gray-500">
+                      <td className="px-4 py-3 text-gray-600">
+                        <p>{p.sourceOfFund?.replace(/_/g, " ") ?? "—"}</p>
+                        {p.subType && (
+                          <p className="text-xs text-gray-400">{p.subType.replace(/_/g, " ")}</p>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-gray-600">
                         {p.dateStarted
-                          ? new Date(p.dateStarted).toLocaleDateString()
-                          : "—"}
-                      </td>
-                      <td className="px-4 py-3 text-gray-500">
-                        {p.createdBy.name ?? p.createdBy.email}
+                          ? new Date(p.dateStarted).getFullYear()
+                          : new Date(p.createdAt).getFullYear()}
                       </td>
                       <td className="px-4 py-3">
                         <span
@@ -356,6 +435,62 @@ export function ProjectsList() {
                 })}
               </tbody>
             </table>
+
+            {/* Pagination */}
+            <div className="flex items-center justify-between border-t border-gray-200 px-4 py-3">
+              {/* Rows per page */}
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <span>Rows per page:</span>
+                <select
+                  value={PAGE_SIZE}
+                  disabled
+                  className="rounded border border-gray-300 px-2 py-1 text-sm text-gray-700 focus:outline-none"
+                >
+                  <option value={20}>20</option>
+                </select>
+              </div>
+
+              {/* Page controls */}
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className="flex h-8 w-8 items-center justify-center rounded border border-gray-300 text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  ‹
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+                  .reduce<(number | "…")[]>((acc, p, idx, arr) => {
+                    if (idx > 0 && p - arr[idx - 1]! > 1) acc.push("…");
+                    acc.push(p);
+                    return acc;
+                  }, [])
+                  .map((item, idx) =>
+                    item === "…" ? (
+                      <span key={`ellipsis-${idx}`} className="flex h-8 w-8 items-center justify-center text-sm text-gray-400">…</span>
+                    ) : (
+                      <button
+                        key={item}
+                        onClick={() => setPage(item)}
+                        className={`flex h-8 w-8 items-center justify-center rounded border text-sm font-medium transition ${page === item
+                            ? "border-blue-500 text-blue-600"
+                            : "border-gray-300 text-gray-600 hover:bg-gray-50"
+                          }`}
+                      >
+                        {item}
+                      </button>
+                    )
+                  )}
+                <button
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                  className="flex h-8 w-8 items-center justify-center rounded border border-gray-300 text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  ›
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
