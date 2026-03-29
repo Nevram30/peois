@@ -21,6 +21,7 @@ async function main() {
       email: "superadmin@peomis.gov.ph",
       password: hashedPassword,
       role: "SUPER_ADMIN",
+      employeeId: "SA-00001",
     },
   });
 
