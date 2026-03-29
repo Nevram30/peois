@@ -154,7 +154,11 @@ export function ProjectDetail({ projectId }: Props) {
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Implementer</p>
                     <p className="mt-0.5 text-sm font-bold text-gray-900">
-                      {project.modeOfImplementation === "BY_ADMINISTRATION" ? "By Administration" : "By Contract"}
+                      {project.modeOfImplementation === "BY_ADMINISTRATION"
+                        ? "By Administration"
+                        : project.contractorName
+                          ? `By Contract — ${project.contractorName}`
+                          : "By Contract"}
                     </p>
                   </div>
                 </div>
