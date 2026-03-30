@@ -294,7 +294,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/nevram/Desktop/peois/generated/prisma",
+      "value": "/Users/nevram/peois/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -308,7 +308,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/nevram/Desktop/peois/prisma/schema.prisma",
+    "sourceFilePath": "/Users/nevram/peois/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

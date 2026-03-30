@@ -31,15 +31,15 @@ const STATUS_CONFIG: Record<
 > = {
   ON_GOING: {
     label: "Ongoing",
-    dot: "bg-blue-500",
-    text: "text-blue-700",
-    badge: "bg-blue-50 text-blue-700",
+    dot: "bg-orange-500",
+    text: "text-orange-700",
+    badge: "bg-orange-50 text-orange-700",
   },
   NOT_YET_STARTED: {
     label: "For Bidding",
-    dot: "bg-orange-400",
-    text: "text-orange-600",
-    badge: "bg-orange-50 text-orange-600",
+    dot: "bg-blue-400",
+    text: "text-blue-600",
+    badge: "bg-blue-50 text-blue-600",
   },
   COMPLETED: {
     label: "Completed",
@@ -49,9 +49,9 @@ const STATUS_CONFIG: Record<
   },
   SUSPENDED: {
     label: "Suspended",
-    dot: "bg-gray-400",
-    text: "text-gray-600",
-    badge: "bg-gray-100 text-gray-600",
+    dot: "bg-red-500",
+    text: "text-red-600",
+    badge: "bg-red-50 text-red-600",
   },
 };
 
@@ -340,7 +340,7 @@ export function AdminDashboardContent() {
                         <div className="flex items-center gap-2">
                           <div className="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
                             <div
-                              className="h-full rounded-full bg-blue-500"
+                              className={`h-full rounded-full ${p.status === "SUSPENDED" ? "bg-red-500" : (p.completionPercentage ?? 0) >= 100 ? "bg-green-500" : "bg-orange-500"}`}
                               style={{ width: `${p.completionPercentage ?? 0}%` }}
                             />
                           </div>

@@ -70,9 +70,6 @@ export default function ProjectsDataListPage() {
       <div className="mb-4 flex items-start justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Projects Data List</h2>
-          <p className="mt-1 text-sm text-gray-500">
-            View and manage all project records. Click Override to modify a project.
-          </p>
         </div>
       </div>
 

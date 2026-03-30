@@ -8,9 +8,9 @@ import { api } from "~/trpc/react";
 const STATUS_LABELS: Record<string, { label: string; className: string }> = {
   NOT_YET_STARTED: {
     label: "Not Yet Started",
-    className: "bg-gray-100 text-gray-700",
+    className: "bg-blue-100 text-blue-700",
   },
-  ON_GOING: { label: "On-going", className: "bg-blue-100 text-blue-700" },
+  ON_GOING: { label: "On-going", className: "bg-orange-100 text-orange-700" },
   COMPLETED: {
     label: "Completed",
     className: "bg-green-100 text-green-700",
@@ -394,7 +394,7 @@ export function ProjectsList() {
                         <div className="flex items-center gap-2">
                           <div className="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
                             <div
-                              className="h-full rounded-full bg-blue-500"
+                              className={`h-full rounded-full ${p.status === "SUSPENDED" ? "bg-red-500" : (p.completionPercentage ?? 0) >= 100 ? "bg-green-500" : "bg-orange-500"}`}
                               style={{ width: `${p.completionPercentage ?? 0}%` }}
                             />
                           </div>
