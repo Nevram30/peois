@@ -51,6 +51,7 @@ export function NavHeader({ user, userId }: { user: { name?: string | null; emai
   const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
@@ -204,10 +205,20 @@ export function NavHeader({ user, userId }: { user: { name?: string | null; emai
                 Cancel
               </button>
               <button
-                onClick={() => signOut({ callbackUrl: "/login" })}
-                className="flex-1 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700"
+                onClick={async () => {
+                  setSigningOut(true);
+                  await signOut({ callbackUrl: "/login" });
+                }}
+                disabled={signingOut}
+                className="flex-1 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Sign out
+                {signingOut && (
+                  <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                )}
+                {signingOut ? "Signing out..." : "Sign out"}
               </button>
             </div>
           </div>
