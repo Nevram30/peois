@@ -8,7 +8,7 @@ export const projectActivityRouter = createTRPCRouter({
       return ctx.db.projectActivity.findMany({
         where: { projectId: input.projectId },
         include: {
-          createdBy: { select: { name: true, email: true } },
+          createdBy: { select: { name: true, email: true, image: true } },
         },
         orderBy: { createdAt: "desc" },
       });
@@ -29,7 +29,7 @@ export const projectActivityRouter = createTRPCRouter({
           createdById: ctx.session.user.id,
         },
         include: {
-          createdBy: { select: { name: true, email: true } },
+          createdBy: { select: { name: true, email: true, image: true } },
         },
       });
     }),

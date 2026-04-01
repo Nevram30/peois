@@ -132,6 +132,7 @@ export const userRouter = createTRPCRouter({
         designation: z.string().min(1, "Designation is required"),
         division: z.string().min(1, "Division is required"),
         sex: z.enum(["MALE", "FEMALE"]),
+        image: z.string().url().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -195,6 +196,7 @@ export const userRouter = createTRPCRouter({
           division: input.division,
           sex: input.sex,
           status: "ACTIVE",
+          image: input.image ?? null,
         },
         select: {
           id: true,
@@ -329,6 +331,7 @@ export const userRouter = createTRPCRouter({
         role: true,
         designation: true,
         division: true,
+        image: true,
       },
     });
   }),

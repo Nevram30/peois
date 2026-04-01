@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import { api } from "~/trpc/react";
+import { useUploadThing } from "~/lib/uploadthing";
 
 type RoleType = "ADMIN" | "USER";
 
@@ -104,6 +106,12 @@ function AddUserModal({
   const [employeeId, setEmployeeId] = useState("");
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error">("success");
+  const [imageUrl, setImageUrl] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+
+  const { startUpload } = useUploadThing("imageUploader");
 
   const passwordStrength = getPasswordStrength(password);
   const passwordsMatch = confirmPassword === "" || password === confirmPassword;
@@ -144,9 +152,11 @@ function AddUserModal({
     setRole("ADMIN");
     setEmployeeId("");
     setMessage("");
+    setImageUrl("");
+    setImageFile(null);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage("");
 
@@ -164,6 +174,21 @@ function AddUserModal({
 
     if (sex !== "MALE" && sex !== "FEMALE") return;
 
+    let uploadedImageUrl: string | undefined;
+    if (imageFile) {
+      setIsUploading(true);
+      try {
+        const result = await startUpload([imageFile]);
+        uploadedImageUrl = result?.[0]?.url;
+      } catch {
+        setMessage("Image upload failed. Please try again.");
+        setMessageType("error");
+        setIsUploading(false);
+        return;
+      }
+      setIsUploading(false);
+    }
+
     createUser.mutate({
       firstName,
       middleName: middleName || undefined,
@@ -175,6 +200,7 @@ function AddUserModal({
       email,
       password,
       role,
+      image: uploadedImageUrl,
     });
   };
 
@@ -250,6 +276,57 @@ function AddUserModal({
               <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500">
                 Personal Information
               </h3>
+            </div>
+
+            {/* Profile Photo */}
+            <div className="mb-4 flex items-center gap-4">
+              <div className="relative h-16 w-16 shrink-0">
+                {imageUrl || imageFile ? (
+                  <Image
+                    src={imageUrl || (imageFile ? URL.createObjectURL(imageFile) : "")}
+                    alt="Profile preview"
+                    fill
+                    className="rounded-full object-cover border-2 border-gray-200"
+                  />
+                ) : (
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-dashed border-gray-300 bg-gray-50">
+                    <svg className="h-7 w-7 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+              <div>
+                <p className={labelClass}>Profile Photo</p>
+                <p className="mb-1.5 text-xs text-gray-400">JPG, PNG or GIF up to 8MB</p>
+                <input
+                  ref={imageInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] ?? null;
+                    setImageFile(file);
+                    setImageUrl("");
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => imageInputRef.current?.click()}
+                  className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
+                >
+                  {imageFile ? "Change Photo" : "Upload Photo"}
+                </button>
+                {imageFile && (
+                  <button
+                    type="button"
+                    onClick={() => { setImageFile(null); setImageUrl(""); }}
+                    className="ml-2 text-xs text-red-500 hover:text-red-700"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
             </div>
 
             <div className="grid grid-cols-3 gap-3">
@@ -572,11 +649,11 @@ function AddUserModal({
           </button>
           <button
             type="submit"
-            disabled={createUser.isPending || !passwordsMatch}
+            disabled={createUser.isPending || isUploading || !passwordsMatch}
             onClick={handleSubmit}
             className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {createUser.isPending ? "Creating..." : "Create User"}
+            {isUploading ? "Uploading..." : createUser.isPending ? "Creating..." : "Create User"}
           </button>
         </div>
       </div>
@@ -1036,9 +1113,20 @@ export function UserManagementContent() {
                     <tr key={u.id} className="border-b border-gray-100 transition hover:bg-gray-50/50">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
-                          <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white ${getAvatarColor(u.name)}`}>
-                            {getInitials(u.name, u.email)}
-                          </div>
+                          {u.image ? (
+                            <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full">
+                              <Image
+                                src={u.image}
+                                alt={u.name ?? "User avatar"}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                          ) : (
+                            <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white ${getAvatarColor(u.name)}`}>
+                              {getInitials(u.name, u.email)}
+                            </div>
+                          )}
                           <div className="min-w-0">
                             <p className="truncate font-medium text-gray-900">{u.name ?? "—"}</p>
                             <p className="truncate text-xs text-gray-500">{u.email}</p>

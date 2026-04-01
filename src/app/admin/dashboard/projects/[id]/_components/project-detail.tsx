@@ -247,7 +247,7 @@ export function ProjectDetail({ projectId }: Props) {
           {activities && activities.length > 0 ? (
             <div className="rounded-xl border border-gray-100 bg-gray-50/50">
               {/* Header row */}
-              <div className="grid grid-cols-[160px_1fr_160px] border-b border-gray-200 px-5 py-3">
+              <div className="grid grid-cols-[160px_1fr_180px] border-b border-gray-200 px-5 py-3">
                 <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">Date</span>
                 <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">Description</span>
                 <span className="text-right text-xs font-semibold uppercase tracking-wider text-gray-400">User</span>
@@ -257,22 +257,41 @@ export function ProjectDetail({ projectId }: Props) {
                 {activities.map((a, i) => {
                   const dotColors = ["bg-blue-500", "bg-green-500", "bg-purple-500", "bg-gray-300"];
                   const dot = dotColors[i % dotColors.length]!;
+                  const displayName = a.createdBy.name ?? a.createdBy.email ?? "U";
+                  const initial = displayName.charAt(0).toUpperCase();
                   return (
                     <div
                       key={a.id}
-                      className="grid grid-cols-[160px_1fr_160px] items-center border-b border-gray-100 px-5 py-4 last:border-0"
+                      className="grid grid-cols-[160px_1fr_180px] items-center border-b border-gray-100 px-5 py-4 last:border-0"
                     >
-                      <span className="text-sm text-gray-500">
-                        {new Date(a.createdAt).toISOString().split("T")[0]}
-                      </span>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-sm text-gray-500">
+                          {new Date(a.createdAt).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" })}
+                        </span>
+                        <span className="text-xs text-gray-400">
+                          {new Date(a.createdAt).toLocaleTimeString("en-PH", { hour: "numeric", minute: "2-digit", hour12: true })}
+                        </span>
+                      </div>
                       <div className="flex items-center gap-2.5">
                         <span className={`h-2 w-2 shrink-0 rounded-full ${dot}`} />
                         <span className="text-sm text-gray-700">{a.description}</span>
                       </div>
-                      <div className="flex justify-end">
-                        <span className="rounded-lg border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-700 shadow-sm">
-                          {a.createdBy.name ?? a.createdBy.email}
-                        </span>
+                      <div className="flex flex-col items-end gap-1">
+                        {a.createdBy.image ? (
+                          <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-full">
+                            <Image
+                              src={a.createdBy.image}
+                              alt={displayName}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-semibold text-blue-700">
+                            {initial}
+                          </div>
+                        )}
+                        <span className="truncate text-xs font-medium text-gray-700">{displayName}</span>
                       </div>
                     </div>
                   );

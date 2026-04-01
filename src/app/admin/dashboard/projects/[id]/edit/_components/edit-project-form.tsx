@@ -389,20 +389,40 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                 </div>
                 {/* Rows — max 3 visible, then scroll */}
                 <div className="max-h-52 divide-y divide-gray-100 overflow-y-auto">
-                  {activities.map((a) => (
-                    <div key={a.id} className="py-3">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-xs text-gray-500">
-                          {new Date(a.createdAt).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" })}{" "}
-                          {new Date(a.createdAt).toLocaleTimeString("en-PH", { hour: "numeric", minute: "2-digit", hour12: true })}
-                        </span>
-                        <span className="text-xs font-medium text-blue-600">
-                          {a.createdBy.name ?? a.createdBy.email}
-                        </span>
+                  {activities.map((a) => {
+                    const displayName = a.createdBy.name ?? a.createdBy.email ?? "U";
+                    const initial = displayName.charAt(0).toUpperCase();
+                    return (
+                      <div key={a.id} className="py-3">
+                        <div className="flex items-center gap-2">
+                          {a.createdBy.image ? (
+                            <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-full">
+                              <Image
+                                src={a.createdBy.image}
+                                alt={displayName}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                          ) : (
+                            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-semibold text-blue-700">
+                              {initial}
+                            </div>
+                          )}
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="truncate text-xs font-medium text-blue-600">{displayName}</span>
+                              <span className="shrink-0 text-xs text-gray-400">
+                                {new Date(a.createdAt).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" })}{" "}
+                                {new Date(a.createdAt).toLocaleTimeString("en-PH", { hour: "numeric", minute: "2-digit", hour12: true })}
+                              </span>
+                            </div>
+                            <p className="mt-0.5 text-sm text-gray-800">{a.description}</p>
+                          </div>
+                        </div>
                       </div>
-                      <p className="mt-1 text-sm text-gray-800">{a.description}</p>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             ) : (

@@ -47,6 +47,7 @@ export const authConfig = {
           name: user.name,
           role: user.role,
           designation: user.designation,
+          image: user.image ?? null,
         };
       },
     }),
@@ -58,6 +59,7 @@ export const authConfig = {
         token.id = user.id;
         token.role = user.role;
         token.designation = user.designation ?? null;
+        token.image = user.image ?? null;
 
         // Create DB session record (don't let failures break sign-in)
         try {
@@ -83,6 +85,7 @@ export const authConfig = {
         role: token.role as UserRole,
         designation: (token.designation as string) ?? null,
         sessionId: (token.sessionId as string) ?? "",
+        image: (token.image as string) ?? null,
       },
     }),
   },

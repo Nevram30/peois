@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
+import { api } from "~/trpc/react";
 
 interface User {
   id: string;
@@ -11,6 +13,7 @@ interface User {
   email?: string | null;
   role: string;
   designation?: string | null;
+  image?: string | null;
 }
 
 const navItems = [
@@ -33,6 +36,9 @@ export function AdminShell({
   const [notifOpen, setNotifOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
+
+  const { data: me } = api.user.me.useQuery();
+  const avatarImage = me?.image ?? user.image;
 
   const isActive = (href: string) => {
     if (href === "/admin/dashboard") return pathname === "/admin/dashboard";
@@ -94,21 +100,20 @@ export function AdminShell({
                   </p>
                   <p className="text-xs text-white/60">{user.designation ?? "Administrator"}</p>
                 </div>
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 transition hover:bg-white/20">
-                  <svg
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+                {avatarImage ? (
+                  <div className="relative h-9 w-9 overflow-hidden rounded-full ring-2 ring-white/20">
+                    <Image
+                      src={avatarImage}
+                      alt={user.name ?? "User avatar"}
+                      fill
+                      className="object-cover"
                     />
-                  </svg>
-                </div>
+                  </div>
+                ) : (
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-sm font-semibold text-white transition hover:bg-white/20">
+                    {(user.name ?? user.email ?? "U").charAt(0).toUpperCase()}
+                  </div>
+                )}
               </button>
 
               {dropdownOpen && (
