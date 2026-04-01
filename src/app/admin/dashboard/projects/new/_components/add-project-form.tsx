@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useMemo, useRef } from "react";
 import { api } from "~/trpc/react";
+import { useUploadThing } from "~/lib/uploadthing";
 
 const inputClass =
   "block w-full rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none";
@@ -74,11 +75,38 @@ export function AddProjectForm() {
   const [imageUrl, setImageUrl] = useState("");
   const [docFile, setDocFile] = useState<File | null>(null);
   const [docUrl, setDocUrl] = useState("");
-  const [isUploadingImage, setIsUploadingImage] = useState(false);
-  const [isUploadingDoc, setIsUploadingDoc] = useState(false);
+  const [imageUploadError, setImageUploadError] = useState<string | null>(null);
+  const [docUploadError, setDocUploadError] = useState<string | null>(null);
 
   const imageInputRef = useRef<HTMLInputElement>(null);
   const docInputRef = useRef<HTMLInputElement>(null);
+
+  const { startUpload: startImageUpload, isUploading: isUploadingImage } =
+    useUploadThing("imageUploader", {
+      onClientUploadComplete: (res) => {
+        const url = res[0]?.ufsUrl ?? res[0]?.url;
+        if (url) {
+          setImageUrl(url);
+          setImagePreview(url);
+        }
+        setImageUploadError(null);
+      },
+      onUploadError: (err) => {
+        setImageUploadError(err.message);
+      },
+    });
+
+  const { startUpload: startDocUpload, isUploading: isUploadingDoc } =
+    useUploadThing("documentUploader", {
+      onClientUploadComplete: (res) => {
+        const url = res[0]?.ufsUrl ?? res[0]?.url;
+        if (url) setDocUrl(url);
+        setDocUploadError(null);
+      },
+      onUploadError: (err) => {
+        setDocUploadError(err.message);
+      },
+    });
 
   // Tracking
   const [trackingNumber, setTrackingNumber] = useState("");
@@ -123,40 +151,20 @@ export function AddProjectForm() {
     }
   };
 
-  // Image upload
-  const handleImageChange = async (file: File) => {
+  // Image upload via UploadThing
+  const handleImageChange = (file: File) => {
     if (!file) return;
     setImagePreview(URL.createObjectURL(file));
-    setIsUploadingImage(true);
-    try {
-      const fd = new FormData();
-      fd.append("file", file);
-      const res = await fetch("/api/upload", { method: "POST", body: fd });
-      const data = (await res.json()) as { filePath?: string };
-      if (data.filePath) setImageUrl(data.filePath);
-    } catch {
-      // upload failed silently
-    } finally {
-      setIsUploadingImage(false);
-    }
+    setImageUploadError(null);
+    void startImageUpload([file]);
   };
 
-  // Document upload
-  const handleDocChange = async (file: File) => {
+  // Document upload via UploadThing
+  const handleDocChange = (file: File) => {
     if (!file) return;
     setDocFile(file);
-    setIsUploadingDoc(true);
-    try {
-      const fd = new FormData();
-      fd.append("file", file);
-      const res = await fetch("/api/upload", { method: "POST", body: fd });
-      const data = (await res.json()) as { filePath?: string };
-      if (data.filePath) setDocUrl(data.filePath);
-    } catch {
-      // upload failed silently
-    } finally {
-      setIsUploadingDoc(false);
-    }
+    setDocUploadError(null);
+    void startDocUpload([file]);
   };
 
   const createProject = api.project.create.useMutation({
@@ -855,6 +863,9 @@ export function AddProjectForm() {
                   {isUploadingImage && (
                     <p className="text-xs text-blue-500">Uploading...</p>
                   )}
+                  {imageUploadError && (
+                    <p className="text-xs text-red-500">{imageUploadError}</p>
+                  )}
                   <input
                     ref={imageInputRef}
                     type="file"
@@ -934,6 +945,9 @@ export function AddProjectForm() {
                 </p>
                 {isUploadingDoc && (
                   <p className="text-xs text-blue-500">Uploading...</p>
+                )}
+                {docUploadError && (
+                  <p className="text-xs text-red-500">{docUploadError}</p>
                 )}
                 <input
                   ref={docInputRef}
@@ -1020,7 +1034,7 @@ export function AddProjectForm() {
             <button
               type="button"
               onClick={() => handleSubmit(true)}
-              disabled={createProject.isPending || !title}
+              disabled={createProject.isPending || isUploadingImage || isUploadingDoc || !title}
               className="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Save as Draft
@@ -1030,6 +1044,8 @@ export function AddProjectForm() {
               onClick={() => handleSubmit(false)}
               disabled={
                 createProject.isPending ||
+                isUploadingImage ||
+                isUploadingDoc ||
                 !title ||
                 !modeOfImplementation ||
                 !district ||
@@ -1037,7 +1053,11 @@ export function AddProjectForm() {
               }
               className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {createProject.isPending ? "Submitting..." : "Submit Project"}
+              {createProject.isPending
+                ? "Submitting..."
+                : isUploadingImage || isUploadingDoc
+                  ? "Uploading..."
+                  : "Submit Project"}
             </button>
           </div>
         </div>

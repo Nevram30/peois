@@ -119,6 +119,9 @@ export const projectRouter = createTRPCRouter({
           sitio: input.sitio,
           description: input.description,
           status: input.status ?? "ON_GOING",
+          imageUrl: input.imageUrl,
+          documentUrl: input.documentUrl,
+          documentName: input.documentName,
           createdById: ctx.session.user.id,
         },
       });
