@@ -191,7 +191,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
           onClick={() => router.push(`/super-admin/projects-data-list?id=${userId}`)}
           className="mt-4 text-sm text-blue-600 hover:underline"
         >
-          Back to Projects Data List
+          Back to Projects Management
         </button>
       </div>
     );
@@ -210,7 +210,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
               </svg>
-              Projects Data List
+              Projects Management
             </button>
           </div>
           <h2 className="text-2xl font-bold text-gray-900">Override Management</h2>
