@@ -212,6 +212,17 @@ exports.Prisma.TaskNotificationScalarFieldEnum = {
   notifyUserId: 'notifyUserId',
   priority: 'priority',
   description: 'description',
+  acknowledged: 'acknowledged',
+  acknowledgedAt: 'acknowledgedAt',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.TaskReplyScalarFieldEnum = {
+  id: 'id',
+  taskNotificationId: 'taskNotificationId',
+  message: 'message',
+  taskStatus: 'taskStatus',
   createdById: 'createdById',
   createdAt: 'createdAt'
 };
@@ -340,6 +351,7 @@ exports.Prisma.ModelName = {
   ProjectActivity: 'ProjectActivity',
   Disbursement: 'Disbursement',
   TaskNotification: 'TaskNotification',
+  TaskReply: 'TaskReply',
   Document: 'Document',
   Post: 'Post'
 };

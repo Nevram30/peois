@@ -106,6 +106,7 @@ model User {
     disbursements              Disbursement[]
     taskNotificationsReceived  TaskNotification[] @relation("UserNotificationsReceived")
     taskNotificationsCreated   TaskNotification[] @relation("UserNotificationsCreated")
+    taskReplies                TaskReply[]
 }
 
 model UserSession {
@@ -199,19 +200,36 @@ model Disbursement {
 }
 
 model TaskNotification {
-    id           String               @id @default(cuid())
-    projectId    String
-    project      Project              @relation(fields: [projectId], references: [id], onDelete: Cascade)
-    notifyUserId String
-    notifyUser   User                 @relation("UserNotificationsReceived", fields: [notifyUserId], references: [id])
-    priority     NotificationPriority @default(MEDIUM)
-    description  String
-    createdById  String
-    createdBy    User                 @relation("UserNotificationsCreated", fields: [createdById], references: [id])
-    createdAt    DateTime             @default(now())
+    id             String               @id @default(cuid())
+    projectId      String
+    project        Project              @relation(fields: [projectId], references: [id], onDelete: Cascade)
+    notifyUserId   String
+    notifyUser     User                 @relation("UserNotificationsReceived", fields: [notifyUserId], references: [id])
+    priority       NotificationPriority @default(MEDIUM)
+    description    String
+    acknowledged   Boolean              @default(false)
+    acknowledgedAt DateTime?
+    createdById    String
+    createdBy      User                 @relation("UserNotificationsCreated", fields: [createdById], references: [id])
+    createdAt      DateTime             @default(now())
+    replies        TaskReply[]
 
     @@index([projectId])
     @@index([notifyUserId])
+    @@index([createdById])
+}
+
+model TaskReply {
+    id                 String           @id @default(cuid())
+    taskNotificationId String
+    taskNotification   TaskNotification @relation(fields: [taskNotificationId], references: [id], onDelete: Cascade)
+    message            String
+    taskStatus         String?
+    createdById        String
+    createdBy          User             @relation(fields: [createdById], references: [id])
+    createdAt          DateTime         @default(now())
+
+    @@index([taskNotificationId])
     @@index([createdById])
 }
 

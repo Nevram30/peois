@@ -29,6 +29,7 @@ const navItems = [
   { label: "Projects", href: "/user/dashboard/projects" },
   { label: "Documents", href: "/user/dashboard/documents" },
   { label: "Reports", href: "/user/dashboard/reports" },
+  { label: "My Tasks", href: "/user/dashboard/my-task" },
 ];
 
 export function UserShell({
@@ -53,6 +54,8 @@ export function UserShell({
 
   const { data: me } = api.user.me.useQuery();
   const avatarImage = me?.image ?? user.image;
+  const { data: myTasks } = api.taskNotification.getMyTasks.useQuery();
+  const taskCount = myTasks?.length ?? 0;
 
   const designationInfo = user.designation
     ? DESIGNATION_CONFIG[user.designation] ?? { label: user.designation, color: "bg-gray-100 text-gray-700" }
@@ -170,25 +173,73 @@ export function UserShell({
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
                 </svg>
+                {taskCount > 0 && (
+                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[9px] font-bold text-white">
+                    {taskCount}
+                  </span>
+                )}
               </button>
 
               {notifOpen && (
                 <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-xl border border-gray-100 bg-white shadow-xl">
                   <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
-                    <h3 className="text-sm font-semibold text-gray-900">Notifications</h3>
-                    <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-500">0</span>
+                    <h3 className="text-sm font-semibold text-gray-900">Task Notifications</h3>
+                    <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-500">{taskCount}</span>
                   </div>
-                  <div className="flex flex-col items-center justify-center gap-3 px-4 py-10 text-center">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-50">
-                      <svg className="h-7 w-7 text-amber-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437 1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008Z" />
-                      </svg>
+
+                  {taskCount === 0 ? (
+                    <div className="flex flex-col items-center justify-center gap-3 px-4 py-10 text-center">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
+                        <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+                        </svg>
+                      </div>
+                      <p className="text-sm text-gray-500">No task notifications</p>
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-700">Under Development</p>
-                      <p className="mt-0.5 text-xs text-gray-400">Notifications will be available in a future update.</p>
+                  ) : (
+                    <div className="max-h-80 overflow-y-auto">
+                      {myTasks?.slice(0, 5).map((task) => {
+                        const priorityColors: Record<string, string> = {
+                          URGENT: "bg-red-600",
+                          HIGH: "bg-orange-500",
+                          MEDIUM: "bg-yellow-500",
+                          LOW: "bg-green-500",
+                        };
+                        const bg = priorityColors[task.priority] ?? "bg-gray-400";
+                        const assigner = task.createdBy.name ?? task.createdBy.email ?? "Someone";
+                        return (
+                          <Link
+                            key={task.id}
+                            href={`/user/dashboard/my-task/${task.id}`}
+                            onClick={() => setNotifOpen(false)}
+                            className="flex items-start gap-3 border-b border-gray-50 px-4 py-3 transition last:border-0 hover:bg-gray-50"
+                          >
+                            <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white ${bg}`}>
+                              {task.priority.charAt(0)}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate text-xs font-semibold text-gray-800">
+                                Task assigned by {assigner}
+                              </p>
+                              <p className="mt-0.5 line-clamp-1 text-[11px] text-gray-400">
+                                {task.description}
+                              </p>
+                              <p className="mt-0.5 text-[10px] text-gray-300">
+                                {task.project.title}
+                              </p>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                      <Link
+                        href="/user/dashboard/my-task"
+                        onClick={() => setNotifOpen(false)}
+                        className="flex items-center justify-center py-3 text-xs font-semibold text-[#1e3a4f] transition hover:bg-gray-50"
+                      >
+                        View all tasks →
+                      </Link>
                     </div>
-                  </div>
+                  )}
                 </div>
               )}
             </div>
@@ -203,13 +254,18 @@ export function UserShell({
             <Link
               key={item.href}
               href={item.href}
-              className={`border-b-2 px-4 py-3 text-sm font-medium transition ${
+              className={`relative flex items-center gap-1.5 border-b-2 px-4 py-3 text-sm font-medium transition ${
                 isActive(item.href)
                   ? "border-[#1e3a4f] text-[#1e3a4f]"
                   : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
               }`}
             >
               {item.label}
+              {item.label === "My Tasks" && taskCount > 0 && (
+                <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+                  {taskCount}
+                </span>
+              )}
             </Link>
           ))}
         </div>
