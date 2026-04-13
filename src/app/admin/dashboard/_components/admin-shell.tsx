@@ -17,11 +17,51 @@ interface User {
 }
 
 const navItems = [
-  { label: "Dashboard", href: "/admin/dashboard" },
-  { label: "Projects", href: "/admin/dashboard/projects" },
-  { label: "Documents", href: "/admin/dashboard/documents" },
-  { label: "Reports", href: "/admin/dashboard/reports" },
-  { label: "My Task", href: "/admin/dashboard/my-task" },
+  {
+    label: "Dashboard",
+    href: "/admin/dashboard",
+    icon: (
+      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+      </svg>
+    ),
+  },
+  {
+    label: "Projects",
+    href: "/admin/dashboard/projects",
+    icon: (
+      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 0 1-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125m-9.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-7.5A1.125 1.125 0 0 1 12 18.375m9.75-12.75c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125m19.5 0v1.5c0 .621-.504 1.125-1.125 1.125M2.25 5.625v1.5c0 .621.504 1.125 1.125 1.125m0 0h17.25m-17.25 0h7.5c.621 0 1.125.504 1.125 1.125M3.375 8.25c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m17.25-3.75h-7.5c-.621 0-1.125.504-1.125 1.125m8.625-1.125c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125M12 10.875v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m2.25-2.25h-2.25m2.25 0h2.25" />
+      </svg>
+    ),
+  },
+  {
+    label: "Documents",
+    href: "/admin/dashboard/documents",
+    icon: (
+      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Reports",
+    href: "/admin/dashboard/reports",
+    icon: (
+      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
+      </svg>
+    ),
+  },
+  {
+    label: "My Task",
+    href: "/admin/dashboard/my-task",
+    icon: (
+      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
+      </svg>
+    ),
+  },
 ];
 
 export function AdminShell({
@@ -41,6 +81,8 @@ export function AdminShell({
 
   const { data: me } = api.user.me.useQuery();
   const avatarImage = me?.image ?? user.image;
+  const displayName = me?.name ?? user.name;
+  const displayEmail = me?.email ?? user.email;
   const { data: adminNotifs } = api.taskNotification.getAdminNotifications.useQuery();
   const notifCount = adminNotifs?.replies.length ?? 0;
 
@@ -100,7 +142,7 @@ export function AdminShell({
               >
                 <div className="text-right">
                   <p className="text-sm font-medium leading-tight">
-                    {user.name ?? user.email}
+                    {displayName ?? displayEmail}
                   </p>
                   <p className="text-xs text-white/60">{user.designation ?? "Administrator"}</p>
                 </div>
@@ -108,14 +150,14 @@ export function AdminShell({
                   <div className="relative h-9 w-9 overflow-hidden rounded-full ring-2 ring-white/20">
                     <Image
                       src={avatarImage}
-                      alt={user.name ?? "User avatar"}
+                      alt={displayName ?? "User avatar"}
                       fill
                       className="object-cover"
                     />
                   </div>
                 ) : (
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-sm font-semibold text-white transition hover:bg-white/20">
-                    {(user.name ?? user.email ?? "U").charAt(0).toUpperCase()}
+                    {(displayName ?? displayEmail ?? "U").charAt(0).toUpperCase()}
                   </div>
                 )}
               </button>
@@ -231,22 +273,21 @@ export function AdminShell({
       </header>
 
       {/* Navigation Tabs */}
-      <nav className="border-b border-gray-200 bg-white">
-        <div className="flex gap-0 px-6">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`border-b-2 px-4 py-3 text-sm font-medium transition ${
-                isActive(item.href)
-                  ? "border-[#1e3a4f] text-[#1e3a4f]"
-                  : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </div>
+      <nav className="flex items-center gap-1 bg-white px-6 border-b-2 border-[#1e3a4f] mt-3">
+        {navItems.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-t-md transition ${
+              isActive(item.href)
+                ? "bg-[#1e3a4f] text-white"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            {item.icon}
+            {item.label}
+          </Link>
+        ))}
       </nav>
 
       {/* Page Content */}
