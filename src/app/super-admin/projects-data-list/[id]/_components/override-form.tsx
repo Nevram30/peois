@@ -341,7 +341,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 pb-36">
         {/* Row 1 — Identity & Location */}
         <div className="grid grid-cols-2 gap-4">
           {/* PROJECT IDENTITY & STATUS */}
@@ -931,7 +931,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
         </SectionCard>
 
         {/* REASON & COMMIT */}
-        <div className="rounded-xl border border-gray-800 bg-gray-900 px-6 py-5">
+        <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-800 bg-gray-900 px-6 py-5 shadow-2xl after:absolute after:left-0 after:right-0 after:top-full after:h-screen after:bg-gray-900 after:content-['']">
           <div className="flex items-start gap-4">
             <div className="flex-1">
               <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-300">
