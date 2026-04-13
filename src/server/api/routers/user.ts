@@ -84,6 +84,14 @@ export const userRouter = createTRPCRouter({
     return { total, active, inactive, pending };
   }),
 
+  getForSelect: protectedProcedure.query(async ({ ctx }) => {
+    return ctx.db.user.findMany({
+      where: { status: "ACTIVE" },
+      select: { id: true, name: true, email: true, image: true },
+      orderBy: { name: "asc" },
+    });
+  }),
+
   getDivisions: superAdminProcedure.query(async ({ ctx }) => {
     const divisions = await ctx.db.user.findMany({
       where: { division: { not: null } },

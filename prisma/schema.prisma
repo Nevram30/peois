@@ -57,6 +57,13 @@ enum ProjectSubType {
     PROVINCIAL_GOVT_OFFICE
 }
 
+enum NotificationPriority {
+    LOW
+    MEDIUM
+    HIGH
+    URGENT
+}
+
 enum ProjectStatus {
     NOT_YET_STARTED
     ON_GOING
@@ -93,9 +100,12 @@ model User {
     updatedAt     DateTime      @updatedAt
     posts              Post[]
     projects           Project[]
-    sessions           UserSession[]
-    documents          Document[]
-    projectActivities  ProjectActivity[]
+    sessions                   UserSession[]
+    documents                  Document[]
+    projectActivities          ProjectActivity[]
+    disbursements              Disbursement[]
+    taskNotificationsReceived  TaskNotification[] @relation("UserNotificationsReceived")
+    taskNotificationsCreated   TaskNotification[] @relation("UserNotificationsCreated")
 }
 
 model UserSession {
@@ -120,9 +130,11 @@ model Project {
     modeOfImplementation  ModeOfImplementation
     locationImplementation District
     sourceOfFund          SourceOfFund
+    projectCost           Float                @default(0)
     contractCost          Float                @default(0)
     contractorName        String?
     projectEngineer       String?
+    budgetYear            String?
     dateStarted           DateTime?
     targetCompletionDate  DateTime?
     duration              Int                  @default(0)
@@ -137,6 +149,7 @@ model Project {
     district              District?
     cityMunicipality      String?
     barangay              String?
+    purok                 String?
     sitio                 String?
     description           String?
     status                ProjectStatus        @default(NOT_YET_STARTED)
@@ -149,6 +162,8 @@ model Project {
     createdAt             DateTime             @default(now())
     updatedAt             DateTime             @updatedAt
     activities            ProjectActivity[]
+    disbursements         Disbursement[]
+    taskNotifications     TaskNotification[]
 
     @@index([title])
     @@index([status])
@@ -165,6 +180,38 @@ model ProjectActivity {
     createdAt   DateTime @default(now())
 
     @@index([projectId])
+    @@index([createdById])
+}
+
+model Disbursement {
+    id              String   @id @default(cuid())
+    projectId       String
+    project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+    date            DateTime @default(now())
+    referenceNumber String?
+    amount          Float
+    createdBy       User     @relation(fields: [createdById], references: [id])
+    createdById     String
+    createdAt       DateTime @default(now())
+
+    @@index([projectId])
+    @@index([createdById])
+}
+
+model TaskNotification {
+    id           String               @id @default(cuid())
+    projectId    String
+    project      Project              @relation(fields: [projectId], references: [id], onDelete: Cascade)
+    notifyUserId String
+    notifyUser   User                 @relation("UserNotificationsReceived", fields: [notifyUserId], references: [id])
+    priority     NotificationPriority @default(MEDIUM)
+    description  String
+    createdById  String
+    createdBy    User                 @relation("UserNotificationsCreated", fields: [createdById], references: [id])
+    createdAt    DateTime             @default(now())
+
+    @@index([projectId])
+    @@index([notifyUserId])
     @@index([createdById])
 }
 

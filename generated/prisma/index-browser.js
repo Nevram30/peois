@@ -156,9 +156,11 @@ exports.Prisma.ProjectScalarFieldEnum = {
   modeOfImplementation: 'modeOfImplementation',
   locationImplementation: 'locationImplementation',
   sourceOfFund: 'sourceOfFund',
+  projectCost: 'projectCost',
   contractCost: 'contractCost',
   contractorName: 'contractorName',
   projectEngineer: 'projectEngineer',
+  budgetYear: 'budgetYear',
   dateStarted: 'dateStarted',
   targetCompletionDate: 'targetCompletionDate',
   duration: 'duration',
@@ -173,6 +175,7 @@ exports.Prisma.ProjectScalarFieldEnum = {
   district: 'district',
   cityMunicipality: 'cityMunicipality',
   barangay: 'barangay',
+  purok: 'purok',
   sitio: 'sitio',
   description: 'description',
   status: 'status',
@@ -188,6 +191,26 @@ exports.Prisma.ProjectScalarFieldEnum = {
 exports.Prisma.ProjectActivityScalarFieldEnum = {
   id: 'id',
   projectId: 'projectId',
+  description: 'description',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.DisbursementScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  date: 'date',
+  referenceNumber: 'referenceNumber',
+  amount: 'amount',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.TaskNotificationScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  notifyUserId: 'notifyUserId',
+  priority: 'priority',
   description: 'description',
   createdById: 'createdById',
   createdAt: 'createdAt'
@@ -291,6 +314,13 @@ exports.ProjectStatus = exports.$Enums.ProjectStatus = {
   SUSPENDED: 'SUSPENDED'
 };
 
+exports.NotificationPriority = exports.$Enums.NotificationPriority = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  URGENT: 'URGENT'
+};
+
 exports.DocumentType = exports.$Enums.DocumentType = {
   POW: 'POW',
   PURCHASE_REQUEST: 'PURCHASE_REQUEST'
@@ -308,6 +338,8 @@ exports.Prisma.ModelName = {
   UserSession: 'UserSession',
   Project: 'Project',
   ProjectActivity: 'ProjectActivity',
+  Disbursement: 'Disbursement',
+  TaskNotification: 'TaskNotification',
   Document: 'Document',
   Post: 'Post'
 };

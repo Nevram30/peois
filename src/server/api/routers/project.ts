@@ -251,9 +251,11 @@ export const projectRouter = createTRPCRouter({
           .optional()
           .nullable(),
         status: z.enum(["NOT_YET_STARTED", "ON_GOING", "COMPLETED", "SUSPENDED"]).optional(),
+        projectCost: z.number().min(0).default(0),
         contractCost: z.number().min(0).default(0),
         contractorName: z.string().optional(),
         projectEngineer: z.string().optional(),
+        budgetYear: z.string().optional(),
         dateStarted: z.date().optional().nullable(),
         targetCompletionDate: z.date().optional().nullable(),
         revisedCompletionDate: z.date().optional().nullable(),
@@ -263,6 +265,7 @@ export const projectRouter = createTRPCRouter({
         district: z.enum(["DISTRICT_I", "DISTRICT_II"]).optional().nullable(),
         cityMunicipality: z.string().optional(),
         barangay: z.string().optional(),
+        purok: z.string().optional(),
         sitio: z.string().optional(),
         description: z.string().optional(),
       }),
@@ -293,6 +296,57 @@ export const projectRouter = createTRPCRouter({
       ]);
 
       return project;
+    }),
+
+  createDisbursement: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+        amount: z.number().min(0),
+        referenceNumber: z.string().optional(),
+        date: z.date().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.disbursement.create({
+        data: {
+          projectId: input.projectId,
+          amount: input.amount,
+          referenceNumber: input.referenceNumber,
+          date: input.date ?? new Date(),
+          createdById: ctx.session.user.id,
+        },
+      });
+    }),
+
+  getDisbursements: protectedProcedure
+    .input(z.object({ projectId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return ctx.db.disbursement.findMany({
+        where: { projectId: input.projectId },
+        orderBy: { date: "asc" },
+      });
+    }),
+
+  sendTaskNotification: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+        notifyUserId: z.string(),
+        priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]),
+        description: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.taskNotification.create({
+        data: {
+          projectId: input.projectId,
+          notifyUserId: input.notifyUserId,
+          priority: input.priority,
+          description: input.description,
+          createdById: ctx.session.user.id,
+        },
+      });
     }),
 
   delete: protectedProcedure
