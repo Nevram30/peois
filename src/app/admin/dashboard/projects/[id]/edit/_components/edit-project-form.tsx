@@ -5,6 +5,27 @@ import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
 import { api } from "~/trpc/react";
 
+const SOURCE_FUND_LABEL: Record<string, string> = {
+  GENERAL_FUND: "General Fund",
+  SEF: "SEF",
+  TRUST_FUND: "Trust Fund",
+  TWENTY_PERCENT_DEV_FUND: "20% Dev Fund",
+  AID: "AID",
+  LOAN: "Loan",
+  OTHERS: "Others",
+};
+
+const SUB_TYPE_LABEL: Record<string, string> = {
+  WATER_SYSTEMS: "Water Systems",
+  GOVERNMENT_BUILDINGS: "Government Buildings",
+  ELECTRIFICATION: "Electrification",
+  RESPONSE_CAMP_MGMT: "Response Camp Mgmt",
+  SUPPLEMENTAL_BUDGET_2: "Supplemental Budget 2",
+  PARK_AND_DEVELOPMENT: "Park & Development",
+  DOH: "DOH",
+  PROVINCIAL_GOVT_OFFICE: "Provincial Govt Office",
+};
+
 const STATUS_BADGE: Record<string, string> = {
   NOT_YET_STARTED: "bg-gray-500 text-white",
   ON_GOING: "bg-orange-500 text-white",
@@ -44,6 +65,8 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
 
   const { data: project, isLoading } = api.project.getById.useQuery({ id: projectId });
   const { data: activities } = api.projectActivity.getByProjectId.useQuery({ projectId });
+  const { data: disbursements, refetch: refetchDisbursements } = api.project.getDisbursements.useQuery({ projectId });
+  const { data: usersForSelect } = api.user.getForSelect.useQuery();
 
   const [completion, setCompletion] = useState(0);
   const [status, setStatus] = useState("ON_GOING");
@@ -52,6 +75,16 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   const [isUploadingMedia, setIsUploadingMedia] = useState(false);
   const [comment, setComment] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
+
+  // Disbursement state
+  const [disbAmount, setDisbAmount] = useState("");
+  const [disbRef, setDisbRef] = useState("");
+
+  // Task notification state
+  const [notifyUserId, setNotifyUserId] = useState("");
+  const [notifyPriority, setNotifyPriority] = useState<"MEDIUM" | "URGENT">("MEDIUM");
+  const [taskDescription, setTaskDescription] = useState("");
+  const [showNotifSuccess, setShowNotifSuccess] = useState(false);
 
   useEffect(() => {
     if (!project) return;
@@ -72,6 +105,23 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
     onSuccess: () => {
       setComment("");
       void utils.projectActivity.getByProjectId.invalidate({ projectId });
+    },
+  });
+
+  const recordDisbursement = api.project.createDisbursement.useMutation({
+    onSuccess: () => {
+      setDisbAmount("");
+      setDisbRef("");
+      void refetchDisbursements();
+    },
+  });
+
+  const sendNotification = api.project.sendTaskNotification.useMutation({
+    onSuccess: () => {
+      setTaskDescription("");
+      setNotifyUserId("");
+      setNotifyPriority("MEDIUM");
+      setShowNotifSuccess(true);
     },
   });
 
@@ -103,6 +153,26 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   const handlePostComment = () => {
     if (!comment.trim()) return;
     addActivity.mutate({ projectId, description: comment.trim() });
+  };
+
+  const handleRecordDisbursement = () => {
+    const amount = parseFloat(disbAmount);
+    if (!disbAmount || isNaN(amount) || amount <= 0) return;
+    recordDisbursement.mutate({
+      projectId,
+      amount,
+      referenceNumber: disbRef.trim() || undefined,
+    });
+  };
+
+  const handleSendNotification = () => {
+    if (!notifyUserId || !taskDescription.trim()) return;
+    sendNotification.mutate({
+      projectId,
+      notifyUserId,
+      priority: notifyPriority,
+      description: taskDescription.trim(),
+    });
   };
 
   if (isLoading) {
@@ -346,6 +416,229 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
               </div>
             </section>
           </div>
+
+          {/* ── Funding & Disbursement Tracking ── */}
+          {(() => {
+            const totalDisb = disbursements?.reduce((sum, d) => sum + d.amount, 0) ?? 0;
+            const remaining = (project.contractCost ?? 0) - totalDisb;
+            const sourceLabel = SOURCE_FUND_LABEL[project.sourceOfFund] ?? project.sourceOfFund;
+            const subTypeLabel = project.subType ? (SUB_TYPE_LABEL[project.subType] ?? project.subType) : "—";
+            return (
+              <section className={card}>
+                <div className="mb-5 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <svg className="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
+                    </svg>
+                    <h2 className="text-base font-semibold uppercase tracking-wider text-gray-900">Funding &amp; Disbursement Tracking</h2>
+                  </div>
+                  <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+                  </svg>
+                </div>
+
+                <div className="grid grid-cols-2 gap-8">
+                  {/* Left: fund info + remaining balance */}
+                  <div className="space-y-4">
+                    <div>
+                      <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-gray-500">Source of Fund</p>
+                      <div className="rounded-lg border border-gray-200 bg-gray-50 px-3.5 py-2.5 text-sm font-medium text-gray-900">
+                        {sourceLabel}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-gray-500">Fund Category</p>
+                      <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 text-sm font-medium text-gray-900">
+                        <span>{subTypeLabel}</span>
+                        <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-gray-500">Budget Year</p>
+                      <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 text-sm font-medium text-gray-900">
+                        <span>{project.budgetYear ?? "—"}</span>
+                        <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-4">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-blue-700">Remaining Balance</p>
+                      <p className="mt-1 text-2xl font-extrabold text-blue-700">
+                        ₱ {remaining.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
+                      </p>
+                      <p className="mt-0.5 text-xs text-blue-500">Calculated: Project Cost − Total Disbursements</p>
+                    </div>
+                  </div>
+
+                  {/* Right: disbursements table + record input */}
+                  <div className="flex flex-col">
+                    <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">Recent Disbursements</p>
+                    <div className="flex-1 overflow-hidden rounded-lg border border-gray-200">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b border-gray-100 bg-gray-50">
+                            <th className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wider text-gray-400">Date</th>
+                            <th className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wider text-gray-400">Reference / Check #</th>
+                            <th className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wider text-gray-400">Amount (₱)</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                          {disbursements && disbursements.length > 0 ? (
+                            disbursements.map((d) => (
+                              <tr key={d.id}>
+                                <td className="px-3 py-2.5 text-gray-700">
+                                  {new Date(d.date).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" })}
+                                </td>
+                                <td className="px-3 py-2.5 font-mono text-gray-700">{d.referenceNumber ?? "—"}</td>
+                                <td className="px-3 py-2.5 text-right font-semibold text-gray-900">
+                                  {d.amount.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
+                                </td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan={3} className="px-3 py-6 text-center text-xs text-gray-400">No disbursements recorded yet.</td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                    {/* Record new disbursement */}
+                    <div className="mt-3 flex gap-2">
+                      <div className="relative flex-1">
+                        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">₱</span>
+                        <input
+                          type="number" min={0} placeholder="Amount"
+                          value={disbAmount}
+                          onChange={(e) => setDisbAmount(e.target.value)}
+                          className="block w-full rounded-lg border border-gray-200 py-2.5 pl-7 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                        />
+                      </div>
+                      <input
+                        type="text" placeholder="Ref #"
+                        value={disbRef}
+                        onChange={(e) => setDisbRef(e.target.value)}
+                        className="w-28 rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleRecordDisbursement}
+                        disabled={recordDisbursement.isPending || !disbAmount}
+                        className="rounded-lg bg-blue-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:opacity-50"
+                      >
+                        {recordDisbursement.isPending ? "..." : "RECORD"}
+                      </button>
+                    </div>
+                    {recordDisbursement.isError && (
+                      <p className="mt-2 text-xs text-red-600">{recordDisbursement.error.message}</p>
+                    )}
+                  </div>
+                </div>
+              </section>
+            );
+          })()}
+
+          {/* ── Task Notification ── */}
+          <section className={card}>
+            {showNotifSuccess && (
+              <div className="mb-4 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+                <svg className="h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                </svg>
+                Notification sent successfully.
+                <button type="button" onClick={() => setShowNotifSuccess(false)} className="ml-auto text-green-500 hover:text-green-700">✕</button>
+              </div>
+            )}
+            <div className="mb-5 flex items-center gap-2">
+              <svg className="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+              </svg>
+              <h2 className="text-base font-semibold uppercase tracking-wider text-gray-900">Task Notification</h2>
+            </div>
+            <div className="grid grid-cols-2 gap-8">
+              {/* Left: user + priority */}
+              <div className="space-y-4">
+                <div>
+                  <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-gray-500">Select User to Notify</p>
+                  <div className="relative">
+                    <select
+                      value={notifyUserId}
+                      onChange={(e) => setNotifyUserId(e.target.value)}
+                      className="block w-full appearance-none rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 pr-10 text-sm font-medium text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    >
+                      <option value="">Select a user...</option>
+                      {usersForSelect?.map((u) => (
+                        <option key={u.id} value={u.id}>{u.name ?? u.email}</option>
+                      ))}
+                    </select>
+                    <svg className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                  </div>
+                </div>
+                <div>
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">Priority Level</p>
+                  <div className="flex gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setNotifyPriority("MEDIUM")}
+                      className={`flex flex-1 items-center justify-center gap-2 rounded-lg border py-2.5 text-sm font-semibold transition ${
+                        notifyPriority === "MEDIUM"
+                          ? "border-gray-400 bg-gray-100 text-gray-700"
+                          : "border-gray-200 bg-white text-gray-400 hover:bg-gray-50"
+                      }`}
+                    >
+                      <span className={`h-2 w-2 rounded-full ${notifyPriority === "MEDIUM" ? "bg-gray-500" : "bg-gray-300"}`} />
+                      STANDARD
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setNotifyPriority("URGENT")}
+                      className={`flex flex-1 items-center justify-center gap-2 rounded-lg border py-2.5 text-sm font-semibold transition ${
+                        notifyPriority === "URGENT"
+                          ? "border-red-400 bg-red-50 text-red-600"
+                          : "border-gray-200 bg-white text-gray-400 hover:bg-gray-50"
+                      }`}
+                    >
+                      <span className={`h-2 w-2 rounded-full ${notifyPriority === "URGENT" ? "bg-red-500" : "bg-gray-300"}`} />
+                      URGENT
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: description + send button */}
+              <div className="flex flex-col">
+                <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-gray-500">Task Description / Instructions</p>
+                <textarea
+                  rows={5}
+                  value={taskDescription}
+                  onChange={(e) => setTaskDescription(e.target.value)}
+                  placeholder="Type instructions or task details here..."
+                  className="flex-1 resize-none rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                />
+                <div className="mt-3 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={handleSendNotification}
+                    disabled={sendNotification.isPending || !notifyUserId || !taskDescription.trim()}
+                    className="flex items-center gap-2 rounded-lg bg-blue-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:opacity-50"
+                  >
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                    </svg>
+                    {sendNotification.isPending ? "Sending..." : "SEND NOTIFICATION"}
+                  </button>
+                </div>
+                {sendNotification.isError && (
+                  <p className="mt-2 text-right text-xs text-red-600">{sendNotification.error.message}</p>
+                )}
+              </div>
+            </div>
+          </section>
 
         </div>
 
