@@ -79,6 +79,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   // Disbursement state
   const [disbAmount, setDisbAmount] = useState("");
   const [disbRef, setDisbRef] = useState("");
+  const [disbErrors, setDisbErrors] = useState<{ amount?: string; ref?: string }>({});
 
   // Task notification state
   const [notifyUserId, setNotifyUserId] = useState("");
@@ -112,6 +113,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
     onSuccess: () => {
       setDisbAmount("");
       setDisbRef("");
+      setDisbErrors({});
       void refetchDisbursements();
     },
   });
@@ -156,12 +158,23 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   };
 
   const handleRecordDisbursement = () => {
+    const errors: { amount?: string; ref?: string } = {};
     const amount = parseFloat(disbAmount);
-    if (!disbAmount || isNaN(amount) || amount <= 0) return;
+    if (!disbAmount || isNaN(amount) || amount <= 0) {
+      errors.amount = "Amount is required and must be greater than 0.";
+    }
+    if (!disbRef.trim()) {
+      errors.ref = "Reference number is required.";
+    }
+    if (Object.keys(errors).length > 0) {
+      setDisbErrors(errors);
+      return;
+    }
+    setDisbErrors({});
     recordDisbursement.mutate({
       projectId,
       amount,
-      referenceNumber: disbRef.trim() || undefined,
+      referenceNumber: disbRef.trim(),
     });
   };
 
@@ -511,27 +524,35 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                       <div className="relative flex-1">
                         <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">₱</span>
                         <input
-                          type="number" min={0} placeholder="Amount"
+                          type="number" min={0} placeholder="Amount *"
                           value={disbAmount}
-                          onChange={(e) => setDisbAmount(e.target.value)}
-                          className="block w-full rounded-lg border border-gray-200 py-2.5 pl-7 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                          onChange={(e) => { setDisbAmount(e.target.value); setDisbErrors((prev) => ({ ...prev, amount: undefined })); }}
+                          className={`block w-full rounded-lg border py-2.5 pl-7 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 ${disbErrors.amount ? "border-red-400 focus:border-red-500 focus:ring-red-500/20" : "border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"}`}
                         />
                       </div>
-                      <input
-                        type="text" placeholder="Ref #"
-                        value={disbRef}
-                        onChange={(e) => setDisbRef(e.target.value)}
-                        className="w-28 rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                      />
+                      <div className="flex flex-col">
+                        <input
+                          type="text" placeholder="Ref # *"
+                          value={disbRef}
+                          onChange={(e) => { setDisbRef(e.target.value); setDisbErrors((prev) => ({ ...prev, ref: undefined })); }}
+                          className={`w-28 rounded-lg border px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 ${disbErrors.ref ? "border-red-400 focus:border-red-500 focus:ring-red-500/20" : "border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"}`}
+                        />
+                      </div>
                       <button
                         type="button"
                         onClick={handleRecordDisbursement}
-                        disabled={recordDisbursement.isPending || !disbAmount}
+                        disabled={recordDisbursement.isPending}
                         className="rounded-lg bg-blue-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:opacity-50"
                       >
                         {recordDisbursement.isPending ? "..." : "RECORD"}
                       </button>
                     </div>
+                    {(disbErrors.amount ?? disbErrors.ref) && (
+                      <div className="mt-1.5 space-y-0.5">
+                        {disbErrors.amount && <p className="text-xs text-red-600">{disbErrors.amount}</p>}
+                        {disbErrors.ref && <p className="text-xs text-red-600">{disbErrors.ref}</p>}
+                      </div>
+                    )}
                     {recordDisbursement.isError && (
                       <p className="mt-2 text-xs text-red-600">{recordDisbursement.error.message}</p>
                     )}

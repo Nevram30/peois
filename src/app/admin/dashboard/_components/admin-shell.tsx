@@ -84,7 +84,31 @@ export function AdminShell({
   const displayName = me?.name ?? user.name;
   const displayEmail = me?.email ?? user.email;
   const { data: adminNotifs } = api.taskNotification.getAdminNotifications.useQuery();
-  const notifCount = adminNotifs?.replies.length ?? 0;
+  const [readReplyIds, setReadReplyIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("admin_read_replies");
+      if (stored) setReadReplyIds(new Set(JSON.parse(stored) as string[]));
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const markReplyAsRead = (replyId: string) => {
+    setReadReplyIds((prev) => {
+      const next = new Set(prev);
+      next.add(replyId);
+      try {
+        localStorage.setItem("admin_read_replies", JSON.stringify([...next]));
+      } catch {
+        // ignore
+      }
+      return next;
+    });
+  };
+
+  const notifCount = adminNotifs?.replies.filter((r) => !readReplyIds.has(r.id)).length ?? 0;
 
   const isActive = (href: string) => {
     if (href === "/admin/dashboard") return pathname === "/admin/dashboard";
@@ -222,7 +246,7 @@ export function AdminShell({
                     </div>
                   ) : (
                     <div className="max-h-80 overflow-y-auto">
-                      {adminNotifs?.replies.slice(0, 8).map((reply) => {
+                      {adminNotifs?.replies.filter((r) => !readReplyIds.has(r.id)).slice(0, 8).map((reply) => {
                         const user = reply.createdBy;
                         const userName = user.name ?? user.email ?? "User";
                         const initial = userName.charAt(0).toUpperCase();
@@ -233,7 +257,10 @@ export function AdminShell({
                           <Link
                             key={reply.id}
                             href={`/admin/dashboard/my-task/${reply.taskNotification.id}`}
-                            onClick={() => setNotifOpen(false)}
+                            onClick={() => {
+                              setNotifOpen(false);
+                              markReplyAsRead(reply.id);
+                            }}
                             className="flex items-start gap-3 border-b border-gray-50 px-4 py-3 transition hover:bg-gray-50 last:border-0"
                           >
                             <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">

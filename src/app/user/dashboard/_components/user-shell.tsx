@@ -96,8 +96,14 @@ export function UserShell({
   const avatarImage = me?.image ?? user.image;
   const displayName = me?.name ?? user.name;
   const displayEmail = me?.email ?? user.email;
+  const utils = api.useUtils();
   const { data: myTasks } = api.taskNotification.getMyTasks.useQuery();
-  const taskCount = myTasks?.length ?? 0;
+  const taskCount = myTasks?.filter((t) => !t.acknowledged).length ?? 0;
+  const acknowledgeMutation = api.taskNotification.acknowledge.useMutation({
+    onSuccess: () => {
+      void utils.taskNotification.getMyTasks.invalidate();
+    },
+  });
 
   const designationInfo = user.designation
     ? DESIGNATION_CONFIG[user.designation] ?? { label: user.designation, color: "bg-gray-100 text-gray-700" }
@@ -240,7 +246,7 @@ export function UserShell({
                     </div>
                   ) : (
                     <div className="max-h-80 overflow-y-auto">
-                      {myTasks?.slice(0, 5).map((task) => {
+                      {myTasks?.filter((t) => !t.acknowledged).slice(0, 5).map((task) => {
                         const priorityColors: Record<string, string> = {
                           URGENT: "bg-red-600",
                           HIGH: "bg-orange-500",
@@ -253,7 +259,12 @@ export function UserShell({
                           <Link
                             key={task.id}
                             href={`/user/dashboard/my-task/${task.id}`}
-                            onClick={() => setNotifOpen(false)}
+                            onClick={() => {
+                              setNotifOpen(false);
+                              if (!task.acknowledged) {
+                                acknowledgeMutation.mutate({ taskId: task.id });
+                              }
+                            }}
                             className="flex items-start gap-3 border-b border-gray-50 px-4 py-3 transition last:border-0 hover:bg-gray-50"
                           >
                             <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white ${bg}`}>
