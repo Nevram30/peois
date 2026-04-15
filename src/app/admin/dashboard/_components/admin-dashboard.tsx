@@ -5,6 +5,95 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api } from "~/trpc/react";
 
+const SOURCE_COLORS: Record<string, string> = {
+  GENERAL_FUND: "#3b82f6",
+  TWENTY_PERCENT_DEV_FUND: "#8b5cf6",
+  SEF: "#f97316",
+  AID: "#ec4899",
+  LOAN: "#14b8a6",
+  TRUST_FUND: "#84cc16",
+  OTHERS: "#94a3b8",
+};
+
+function formatPeso(value: number) {
+  return new Intl.NumberFormat("en-PH", {
+    style: "currency",
+    currency: "PHP",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
+function DonutChart({
+  segments,
+  total,
+}: {
+  segments: { label: string; value: number; color: string }[];
+  total: number;
+}) {
+  const cx = 100;
+  const cy = 100;
+  const r = 64;
+  const strokeWidth = 28;
+  const circumference = 2 * Math.PI * r;
+
+  let accumulatedOffset = 0;
+  const arcs = segments.map((seg) => {
+    const pct = total > 0 ? seg.value / total : 0;
+    const dash = pct * circumference;
+    const offset = circumference - accumulatedOffset;
+    accumulatedOffset += dash;
+    return { ...seg, dash, offset };
+  });
+
+  return (
+    <svg viewBox="0 0 200 200" className="h-44 w-44">
+      {total === 0 ? (
+        <circle
+          cx={cx}
+          cy={cy}
+          r={r}
+          fill="none"
+          stroke="#e5e7eb"
+          strokeWidth={strokeWidth}
+        />
+      ) : (
+        arcs.map((arc, i) => (
+          <circle
+            key={i}
+            cx={cx}
+            cy={cy}
+            r={r}
+            fill="none"
+            stroke={arc.color}
+            strokeWidth={strokeWidth}
+            strokeDasharray={`${arc.dash} ${circumference}`}
+            strokeDashoffset={arc.offset}
+            style={{ transform: "rotate(-90deg)", transformOrigin: "50% 50%" }}
+          />
+        ))
+      )}
+      <text
+        x={cx}
+        y={cy - 6}
+        textAnchor="middle"
+        className="fill-gray-900 text-sm font-bold"
+        style={{ fontSize: "11px", fontWeight: 700 }}
+      >
+        {formatPeso(total)}
+      </text>
+      <text
+        x={cx}
+        y={cy + 10}
+        textAnchor="middle"
+        style={{ fontSize: "9px", fill: "#6b7280" }}
+      >
+        Total
+      </text>
+    </svg>
+  );
+}
+
 const DISTRICT_LABELS: Record<string, string> = {
   DISTRICT_I: "1st District",
   DISTRICT_II: "2nd District",
@@ -58,6 +147,7 @@ const STATUS_CONFIG: Record<
 export function AdminDashboardContent() {
   const router = useRouter();
   const { data: stats } = api.project.getStats.useQuery();
+  const { data: financial } = api.project.getFinancialOverview.useQuery();
   const { data: projects, isLoading } = api.project.getAll.useQuery();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -80,93 +170,6 @@ export function AdminDashboardContent() {
     (page - 1) * pageSize,
     page * pageSize,
   );
-
-  const statCards = [
-    {
-      key: "completed",
-      label: "COMPLETED",
-      value: stats?.completed ?? 0,
-      badge: "+4%",
-      badgeClass: "text-green-600",
-      iconBg: "bg-green-50",
-      href: "/admin/dashboard/projects?status=COMPLETED",
-      icon: (
-        <svg className="h-7 w-7 text-green-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-        </svg>
-      ),
-    },
-    {
-      key: "suspended",
-      label: "SUSPENDED",
-      value: stats?.suspended ?? 0,
-      badge: "Alert",
-      badgeClass: "text-red-600",
-      iconBg: "bg-red-50",
-      href: "/admin/dashboard/projects?status=SUSPENDED",
-      icon: (
-        <svg className="h-7 w-7 text-red-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M14.25 9v6m-4.5 0V9M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-        </svg>
-      ),
-    },
-    {
-      key: "notYetStarted",
-      label: "FOR IMPLEMENTATION",
-      value: stats?.notYetStarted ?? 0,
-      badge: "Pending",
-      badgeClass: "text-orange-500",
-      iconBg: "bg-orange-50",
-      href: "/admin/dashboard/projects?status=NOT_YET_STARTED",
-      icon: (
-        <svg className="h-7 w-7 text-orange-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25Z" />
-        </svg>
-      ),
-    },
-    {
-      key: "ongoing",
-      label: "ON-GOING",
-      value: stats?.ongoing ?? 0,
-      badge: "Active",
-      badgeClass: "text-blue-600",
-      iconBg: "bg-blue-50",
-      href: "/admin/dashboard/projects?status=ON_GOING",
-      icon: (
-        <svg className="h-7 w-7 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-        </svg>
-      ),
-    },
-    {
-      key: "total",
-      label: "TOTAL PROJECTS",
-      value: stats?.total ?? 0,
-      badge: "All",
-      badgeClass: "text-purple-600",
-      iconBg: "bg-purple-50",
-      href: "/admin/dashboard/projects",
-      icon: (
-        <svg className="h-7 w-7 text-purple-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
-        </svg>
-      ),
-    },
-    {
-      key: "todayCount",
-      label: "NEW TODAY",
-      value: stats?.todayCount ?? 0,
-      badge: "Today",
-      badgeClass: "text-gray-500",
-      iconBg: "bg-gray-50",
-      href: "/admin/dashboard/projects?filter=today",
-      icon: (
-        <svg className="h-7 w-7 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
-        </svg>
-      ),
-    },
-  ];
 
   return (
     <div className="min-h-screen bg-gray-50 px-6 py-8">
@@ -206,31 +209,245 @@ export function AdminDashboardContent() {
         </div>
       </div>
 
-      {/* Stat Cards */}
-      <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-        {statCards.map((card) => (
-          <Link
-            key={card.key}
-            href={card.href}
-            className="flex flex-col items-start rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition hover:border-gray-300 hover:shadow-md cursor-pointer"
-          >
-            <div className="mb-3 flex w-full items-start justify-between">
-              <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${card.iconBg}`}>
-                {card.icon}
-              </div>
-              <span className={`text-xs font-semibold ${card.badgeClass}`}>
-                {card.badge}
-              </span>
-            </div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-              {card.label}
-            </p>
-            <p className="mt-1 text-3xl font-bold text-gray-900">
-              {String(card.value).padStart(2, "0")}
-            </p>
-          </Link>
-        ))}
+      {/* Colored Summary Cards */}
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        {/* Budget Year */}
+        <div className="flex flex-col rounded-2xl bg-blue-600 p-4 text-white shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">
+              Budget Year
+            </span>
+            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none">
+            {financial?.budgetYear ?? new Date().getFullYear()}
+          </p>
+        </div>
+
+        {/* Completed */}
+        <Link href="/admin/dashboard/projects?status=COMPLETED" className="flex flex-col rounded-2xl bg-teal-500 p-4 text-white shadow-sm transition hover:bg-teal-600">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Completed</span>
+            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none">{stats?.completed ?? 0}</p>
+          <p className="mt-1 text-xs opacity-70">Projects</p>
+        </Link>
+
+        {/* On-Going */}
+        <Link href="/admin/dashboard/projects?status=ON_GOING" className="flex flex-col rounded-2xl bg-orange-400 p-4 text-white shadow-sm transition hover:bg-orange-500">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">On-Going</span>
+            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none">{stats?.ongoing ?? 0}</p>
+          <p className="mt-1 text-xs opacity-70">Projects</p>
+        </Link>
+
+        {/* For Implementation */}
+        <Link href="/admin/dashboard/projects?status=NOT_YET_STARTED" className="flex flex-col rounded-2xl bg-amber-500 p-4 text-white shadow-sm transition hover:bg-amber-600">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">For Implementation</span>
+            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none">{stats?.notYetStarted ?? 0}</p>
+          <p className="mt-1 text-xs opacity-70">Projects</p>
+        </Link>
+
+        {/* Suspended */}
+        <Link href="/admin/dashboard/projects?status=SUSPENDED" className="flex flex-col rounded-2xl bg-red-500 p-4 text-white shadow-sm transition hover:bg-red-600">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Suspended</span>
+            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none">{stats?.suspended ?? 0}</p>
+          <p className="mt-1 text-xs opacity-70">Projects</p>
+        </Link>
+
+        {/* No Allotted */}
+        <div className="flex flex-col rounded-2xl bg-gray-700 p-4 text-white shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">No Allotted</span>
+            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none">{stats?.noAllotted ?? 0}</p>
+          <p className="mt-1 text-xs opacity-70">Projects</p>
+        </div>
       </div>
+
+
+      {/* Financial Overview */}
+      {(() => {
+        const totalAllocation = financial?.totalAllocation ?? 0;
+        const bySource = financial?.bySource ?? {};
+        const executionRate = financial?.executionRate ?? 0;
+
+        const orderedSources = [
+          "GENERAL_FUND",
+          "TWENTY_PERCENT_DEV_FUND",
+          "SEF",
+          "AID",
+          "LOAN",
+          "TRUST_FUND",
+          "OTHERS",
+        ].filter((s) => (bySource[s] ?? 0) > 0);
+
+        const segments = orderedSources.map((s) => ({
+          label: SOURCE_LABELS[s] ?? s,
+          value: bySource[s] ?? 0,
+          color: SOURCE_COLORS[s] ?? "#94a3b8",
+        }));
+
+        return (
+          <div className="mb-8 rounded-2xl border border-gray-100 bg-white shadow-sm">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                  Financial Overview
+                </p>
+                <p className="text-xs text-gray-400">
+                  Aggregated project funding across all divisions
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  const rows = [
+                    ["Source of Fund", "Amount (PHP)", "Percentage"],
+                    ...orderedSources.map((s) => {
+                      const amt = bySource[s] ?? 0;
+                      const pct = totalAllocation > 0 ? ((amt / totalAllocation) * 100).toFixed(1) : "0.0";
+                      return [SOURCE_LABELS[s] ?? s, amt.toFixed(2), `${pct}%`];
+                    }),
+                    ["Grand Total", totalAllocation.toFixed(2), "100%"],
+                  ];
+                  const csv = rows.map((r) => r.join(",")).join("\n");
+                  const blob = new Blob([csv], { type: "text/csv" });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `fiscal-report-${financial?.budgetYear ?? ""}.csv`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
+              >
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                </svg>
+                Export Fiscal Report
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-0 lg:grid-cols-2">
+              {/* Left: Donut Chart */}
+              <div className="flex flex-col items-center justify-center gap-4 border-b border-gray-100 px-6 py-6 lg:border-b-0 lg:border-r">
+                <p className="self-start text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  Total Annual Allocation
+                </p>
+                <DonutChart segments={segments} total={totalAllocation} />
+                {/* Legend */}
+                <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5">
+                  {segments.map((seg) => (
+                    <span key={seg.label} className="flex items-center gap-1.5 text-xs text-gray-600">
+                      <span
+                        className="inline-block h-2.5 w-2.5 rounded-full"
+                        style={{ backgroundColor: seg.color }}
+                      />
+                      {seg.label}
+                    </span>
+                  ))}
+                  {segments.length === 0 && (
+                    <span className="text-xs text-gray-400">No allocation data for {financial?.budgetYear ?? new Date().getFullYear()}</span>
+                  )}
+                </div>
+
+                {/* Execution Rate */}
+                <div className="w-full">
+                  <div className="mb-1 flex items-center justify-between text-xs">
+                    <span className="font-semibold uppercase tracking-wider text-gray-500">
+                      Execution Rate
+                    </span>
+                    <span className="font-bold text-gray-800">{executionRate}%</span>
+                  </div>
+                  <div className="h-2.5 w-full overflow-hidden rounded-full bg-gray-200">
+                    <div
+                      className="h-full rounded-full bg-blue-500 transition-all duration-500"
+                      style={{ width: `${executionRate}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: Source of Funds Breakdown */}
+              <div className="px-6 py-6">
+                <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  Source of Funds Breakdown
+                </p>
+                {orderedSources.length === 0 ? (
+                  <p className="py-8 text-center text-sm text-gray-400">
+                    No fund allocation data found for {financial?.budgetYear ?? new Date().getFullYear()}.
+                  </p>
+                ) : (
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+                    {orderedSources.map((sourceKey) => {
+                      const amt = bySource[sourceKey] ?? 0;
+                      const pct =
+                        totalAllocation > 0
+                          ? ((amt / totalAllocation) * 100).toFixed(1)
+                          : "0.0";
+                      const color = SOURCE_COLORS[sourceKey] ?? "#94a3b8";
+                      return (
+                        <div key={sourceKey} className="flex flex-col gap-1">
+                          <div className="flex items-center gap-1.5">
+                            <span
+                              className="inline-block h-2 w-2 shrink-0 rounded-full"
+                              style={{ backgroundColor: color }}
+                            />
+                            <span className="text-xs text-gray-600">
+                              {SOURCE_LABELS[sourceKey] ?? sourceKey}
+                            </span>
+                          </div>
+                          <p className="text-sm font-bold text-gray-900">
+                            {formatPeso(amt)}
+                          </p>
+                          <p className="text-xs text-gray-400">{pct}%</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Grand Total */}
+                {orderedSources.length > 0 && (
+                  <div className="mt-6 border-t border-gray-100 pt-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-gray-700">
+                        Grand Total Combined Allocation
+                      </span>
+                      <span className="text-sm font-extrabold text-blue-600">
+                        {formatPeso(totalAllocation)}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Recent Project Updates */}
       <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">

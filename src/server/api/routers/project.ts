@@ -361,7 +361,7 @@ export const projectRouter = createTRPCRouter({
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const [total, ongoing, completed, suspended, notYetStarted, todayCount] =
+    const [total, ongoing, completed, suspended, notYetStarted, todayCount, noAllotted] =
       await Promise.all([
         ctx.db.project.count(),
         ctx.db.project.count({ where: { status: "ON_GOING" } }),
@@ -369,7 +369,42 @@ export const projectRouter = createTRPCRouter({
         ctx.db.project.count({ where: { status: "SUSPENDED" } }),
         ctx.db.project.count({ where: { status: "NOT_YET_STARTED" } }),
         ctx.db.project.count({ where: { createdAt: { gte: today } } }),
+        ctx.db.project.count({ where: { contractCost: 0 } }),
       ]);
-    return { total, ongoing, completed, suspended, notYetStarted, todayCount };
+    return { total, ongoing, completed, suspended, notYetStarted, todayCount, noAllotted };
+  }),
+
+  getFinancialOverview: protectedProcedure.query(async ({ ctx }) => {
+    const currentYear = new Date().getFullYear().toString();
+
+    const [projects, disbursementsAgg] = await Promise.all([
+      ctx.db.project.findMany({
+        select: { sourceOfFund: true, contractCost: true },
+      }),
+      ctx.db.disbursement.aggregate({ _sum: { amount: true } }),
+    ]);
+
+    const bySource: Record<string, number> = {};
+    let totalAllocation = 0;
+
+    for (const p of projects) {
+      if (p.contractCost > 0) {
+        bySource[p.sourceOfFund] = (bySource[p.sourceOfFund] ?? 0) + p.contractCost;
+        totalAllocation += p.contractCost;
+      }
+    }
+
+    const totalDisbursed = disbursementsAgg._sum.amount ?? 0;
+    const executionRate =
+      totalAllocation > 0
+        ? Math.min(100, (totalDisbursed / totalAllocation) * 100)
+        : 0;
+
+    return {
+      budgetYear: currentYear,
+      totalAllocation,
+      bySource,
+      executionRate: Math.round(executionRate * 10) / 10,
+    };
   }),
 });
