@@ -171,7 +171,9 @@ export const projectRouter = createTRPCRouter({
         district: z.enum(["DISTRICT_I", "DISTRICT_II"]).optional().nullable(),
         cityMunicipality: z.string().optional(),
         barangay: z.string().optional(),
+        purok: z.string().optional(),
         sitio: z.string().optional(),
+        budgetYear: z.string().optional(),
         description: z.string().optional(),
         status: z
           .enum(["NOT_YET_STARTED", "ON_GOING", "COMPLETED", "SUSPENDED"])

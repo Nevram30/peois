@@ -2,6 +2,7 @@ import { documentRouter } from "~/server/api/routers/document";
 import { postRouter } from "~/server/api/routers/post";
 import { projectRouter } from "~/server/api/routers/project";
 import { projectActivityRouter } from "~/server/api/routers/projectActivity";
+import { projectFileRouter } from "~/server/api/routers/projectFile";
 import { taskNotificationRouter } from "~/server/api/routers/taskNotification";
 import { userRouter } from "~/server/api/routers/user";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
@@ -11,6 +12,7 @@ export const appRouter = createTRPCRouter({
   post: postRouter,
   project: projectRouter,
   projectActivity: projectActivityRouter,
+  projectFile: projectFileRouter,
   taskNotification: taskNotificationRouter,
   user: userRouter,
 });

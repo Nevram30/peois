@@ -76,6 +76,15 @@ enum DocumentType {
     PURCHASE_REQUEST
 }
 
+enum ProjectFileType {
+    IMAGE
+    BLUEPRINT
+    REPORT
+    CONTRACT
+    PERMIT
+    OTHER
+}
+
 enum DocumentStatus {
     DRAFT
     FOR_REVIEW
@@ -107,6 +116,7 @@ model User {
     taskNotificationsReceived  TaskNotification[] @relation("UserNotificationsReceived")
     taskNotificationsCreated   TaskNotification[] @relation("UserNotificationsCreated")
     taskReplies                TaskReply[]
+    projectFiles               ProjectFile[]
 }
 
 model UserSession {
@@ -165,6 +175,7 @@ model Project {
     activities            ProjectActivity[]
     disbursements         Disbursement[]
     taskNotifications     TaskNotification[]
+    files                 ProjectFile[]
 
     @@index([title])
     @@index([status])
@@ -262,6 +273,22 @@ model Document {
     @@index([type])
     @@index([status])
     @@index([district])
+    @@index([createdById])
+}
+
+model ProjectFile {
+    id          String          @id @default(cuid())
+    projectId   String
+    project     Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+    fileName    String
+    fileUrl     String
+    fileType    ProjectFileType @default(OTHER)
+    fileSize    Int?
+    createdBy   User            @relation(fields: [createdById], references: [id])
+    createdById String
+    createdAt   DateTime        @default(now())
+
+    @@index([projectId])
     @@index([createdById])
 }
 

@@ -248,6 +248,17 @@ exports.Prisma.DocumentScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ProjectFileScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  fileName: 'fileName',
+  fileUrl: 'fileUrl',
+  fileType: 'fileType',
+  fileSize: 'fileSize',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.PostScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -344,6 +355,15 @@ exports.DocumentStatus = exports.$Enums.DocumentStatus = {
   RELEASED: 'RELEASED'
 };
 
+exports.ProjectFileType = exports.$Enums.ProjectFileType = {
+  IMAGE: 'IMAGE',
+  BLUEPRINT: 'BLUEPRINT',
+  REPORT: 'REPORT',
+  CONTRACT: 'CONTRACT',
+  PERMIT: 'PERMIT',
+  OTHER: 'OTHER'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   UserSession: 'UserSession',
@@ -353,6 +373,7 @@ exports.Prisma.ModelName = {
   TaskNotification: 'TaskNotification',
   TaskReply: 'TaskReply',
   Document: 'Document',
+  ProjectFile: 'ProjectFile',
   Post: 'Post'
 };
 

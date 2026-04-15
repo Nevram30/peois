@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import { api } from "~/trpc/react";
 
+// ─── Label maps ─────────────────────────────────────────────────────────────
 const SOURCE_FUND_LABEL: Record<string, string> = {
   GENERAL_FUND: "General Fund",
   SEF: "SEF",
@@ -26,76 +27,217 @@ const SUB_TYPE_LABEL: Record<string, string> = {
   PROVINCIAL_GOVT_OFFICE: "Provincial Govt Office",
 };
 
-const STATUS_BADGE: Record<string, string> = {
-  NOT_YET_STARTED: "bg-gray-500 text-white",
-  ON_GOING: "bg-orange-500 text-white",
-  COMPLETED: "bg-green-500 text-white",
-  SUSPENDED: "bg-red-500 text-white",
+const DISTRICT_LABEL: Record<string, string> = {
+  DISTRICT_I: "District 1",
+  DISTRICT_II: "District 2",
 };
 
-const STATUS_LABEL: Record<string, string> = {
-  NOT_YET_STARTED: "Not Yet Started",
-  ON_GOING: "On-going",
-  COMPLETED: "Completed",
-  SUSPENDED: "Suspended",
+const DISTRICT_CITIES: Record<string, string[]> = {
+  DISTRICT_I: ["Angeles City", "Mabalacat City", "Porac", "San Fernando City"],
+  DISTRICT_II: [
+    "Apalit", "Bacolor", "Candaba", "Floridablanca", "Guagua",
+    "Lubao", "Macabebe", "Magalang", "Masantol", "Mexico",
+    "Minalin", "Sasmuan", "Santa Ana", "Santo Tomas",
+  ],
 };
 
-function timeAgo(d: Date | string) {
-  const diff = Date.now() - new Date(d).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 60) return `${mins} minute${mins !== 1 ? "s" : ""} ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs} hour${hrs !== 1 ? "s" : ""} ago`;
-  const days = Math.floor(hrs / 24);
-  return `${days} day${days !== 1 ? "s" : ""} ago`;
-}
+const STATUS_CONFIG: Record<string, { label: string; badge: string; dot: string }> = {
+  NOT_YET_STARTED: { label: "Not Yet Started", badge: "bg-gray-100 text-gray-600 border-gray-200", dot: "bg-gray-400" },
+  ON_GOING: { label: "On-going", badge: "bg-amber-50  text-amber-700 border-amber-200", dot: "bg-amber-500" },
+  COMPLETED: { label: "Completed", badge: "bg-green-50  text-green-700 border-green-200", dot: "bg-green-500" },
+  SUSPENDED: { label: "Suspended", badge: "bg-red-50    text-red-700   border-red-200", dot: "bg-red-500" },
+};
+
+const PRIORITY_CONFIG = {
+  HIGH: { label: "HIGH PRIORITY", bg: "bg-red-50", border: "border-red-200", text: "text-red-700", dot: "bg-red-500", activeBg: "bg-red-500", activeText: "text-white" },
+  MEDIUM: { label: "MEDIUM PRIORITY", bg: "bg-amber-50", border: "border-amber-200", text: "text-amber-700", dot: "bg-amber-400", activeBg: "bg-amber-500", activeText: "text-white" },
+  LOW: { label: "LOW PRIORITY", bg: "bg-green-50", border: "border-green-200", text: "text-green-700", dot: "bg-green-500", activeBg: "bg-green-600", activeText: "text-white" },
+  URGENT: { label: "URGENT", bg: "bg-purple-50", border: "border-purple-200", text: "text-purple-700", dot: "bg-purple-500", activeBg: "bg-purple-600", activeText: "text-white" },
+} as const;
 
 function fmt(d: Date | string | null | undefined) {
   if (!d) return "—";
-  return new Date(d).toLocaleDateString("en-PH", {
-    month: "short", day: "numeric", year: "numeric",
-  });
+  return new Date(d).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" });
 }
 
-const card = "rounded-xl border border-gray-200 bg-white p-6 shadow-sm";
+function toInputDate(d: Date | string | null | undefined) {
+  if (!d) return "";
+  return new Date(d).toISOString().slice(0, 10);
+}
 
+function calcDays(start: string, end: string) {
+  if (!start || !end) return 0;
+  const diff = new Date(end).getTime() - new Date(start).getTime();
+  return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+}
+
+// ─── Section card wrapper ────────────────────────────────────────────────────
+function SectionCard({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
+  return (
+    <div className={`rounded-xl border border-gray-200 bg-white shadow-sm ${className}`} style={style}>
+      {children}
+    </div>
+  );
+}
+
+// ─── Section header ──────────────────────────────────────────────────────────
+function SectionHeader({
+  icon, title, action,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  action?: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-center justify-between border-b border-gray-100 px-5 py-3.5">
+      <div className="flex items-center gap-2">
+        <span className="text-blue-500">{icon}</span>
+        <span className="text-xs font-bold uppercase tracking-widest text-gray-700">{title}</span>
+      </div>
+      {action && <div>{action}</div>}
+    </div>
+  );
+}
+
+// ─── Field label ─────────────────────────────────────────────────────────────
+function FieldLabel({ children }: { children: React.ReactNode }) {
+  return <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-gray-400">{children}</p>;
+}
+
+// ─── Input ───────────────────────────────────────────────────────────────────
+function Input(props: React.InputHTMLAttributes<HTMLInputElement> & { error?: boolean }) {
+  const { error, className = "", ...rest } = props;
+  return (
+    <input
+      {...rest}
+      className={`block w-full rounded-lg border px-3 py-2 text-sm text-gray-800 placeholder:text-gray-300 focus:outline-none focus:ring-2 ${error
+          ? "border-red-300 focus:border-red-400 focus:ring-red-400/20"
+          : "border-gray-200 focus:border-blue-400 focus:ring-blue-400/20"
+        } ${className}`}
+    />
+  );
+}
+
+// ─── Select ──────────────────────────────────────────────────────────────────
+function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
+  return (
+    <div className="relative">
+      <select
+        {...props}
+        className={`block w-full appearance-none rounded-lg border border-gray-200 bg-white px-3 py-2 pr-8 text-sm text-gray-800 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20 ${props.className ?? ""}`}
+      />
+      <svg className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+      </svg>
+    </div>
+  );
+}
+
+// ─── Icons ───────────────────────────────────────────────────────────────────
+const EditIcon = () => (
+  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Z" />
+  </svg>
+);
+
+// ─── Main Component ──────────────────────────────────────────────────────────
 export function EditProjectForm({ projectId }: { projectId: string }) {
   const utils = api.useUtils();
   const mediaInputRef = useRef<HTMLInputElement>(null);
+  const docInputRef = useRef<HTMLInputElement>(null);
+  const engineerRef = useRef<HTMLInputElement>(null);
 
   const { data: project, isLoading } = api.project.getById.useQuery({ id: projectId });
   const { data: activities } = api.projectActivity.getByProjectId.useQuery({ projectId });
   const { data: disbursements, refetch: refetchDisbursements } = api.project.getDisbursements.useQuery({ projectId });
+  const { data: projectFiles, refetch: refetchFiles } = api.projectFile.getByProjectId.useQuery({ projectId });
   const { data: usersForSelect } = api.user.getForSelect.useQuery();
 
+  // ─ Identity & Status ───────────────────────────────────────────────────
   const [completion, setCompletion] = useState(0);
   const [status, setStatus] = useState("ON_GOING");
+  const [contractorName, setContractorName] = useState("");
+  const [modeOfImplementation, setModeOfImplementation] = useState("BY_CONTRACT");
+
+  // ─ Location ────────────────────────────────────────────────────────────
+  const [locDistrict, setLocDistrict] = useState("");
+  const [cityMunicipality, setCityMunicipality] = useState("");
+  const [barangay, setBarangay] = useState("");
+  const [purok, setPurok] = useState("");
+  const [sitio, setSitio] = useState("");
+
+  // ─ Funding ─────────────────────────────────────────────────────────────
+  const [subType, setSubType] = useState("");
+  const [budgetYear, setBudgetYear] = useState("");
+
+  // ─ Dates ───────────────────────────────────────────────────────────────
+  const [dateStarted, setDateStarted] = useState("");
+  const [targetCompletion, setTargetCompletion] = useState("");
+  const [revisedCompletion, setRevisedCompletion] = useState("");
+
+  // ─ Workforce ───────────────────────────────────────────────────────────
+  const [numFemale, setNumFemale] = useState(0);
+  const [numMale, setNumMale] = useState(0);
+
+  // ─ Responsibility & Scope ──────────────────────────────────────────────
+  const [engineers, setEngineers] = useState<string[]>([]);
+  const [engineerInput, setEngineerInput] = useState("");
+  const [description, setDescription] = useState("");
+
+  // ─ Media / upload ──────────────────────────────────────────────────────
   const [mediaUrl, setMediaUrl] = useState("");
   const [mediaName, setMediaName] = useState("");
   const [isUploadingMedia, setIsUploadingMedia] = useState(false);
-  const [comment, setComment] = useState("");
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [pendingFileType, setPendingFileType] = useState<"IMAGE" | "BLUEPRINT" | "REPORT" | "CONTRACT" | "PERMIT" | "OTHER">("OTHER");
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
-  // Disbursement state
+  // ─ Activity ────────────────────────────────────────────────────────────
+  const [comment, setComment] = useState("");
+
+  // ─ Disbursement ────────────────────────────────────────────────────────
   const [disbAmount, setDisbAmount] = useState("");
   const [disbRef, setDisbRef] = useState("");
   const [disbErrors, setDisbErrors] = useState<{ amount?: string; ref?: string }>({});
 
-  // Task notification state
+  // ─ Task notification ───────────────────────────────────────────────────
   const [notifyUserId, setNotifyUserId] = useState("");
-  const [notifyPriority, setNotifyPriority] = useState<"MEDIUM" | "URGENT">("MEDIUM");
+  const [notifyPriority, setNotifyPriority] = useState<"LOW" | "MEDIUM" | "HIGH" | "URGENT">("MEDIUM");
   const [taskDescription, setTaskDescription] = useState("");
   const [showNotifSuccess, setShowNotifSuccess] = useState(false);
 
+  // ─ UI ──────────────────────────────────────────────────────────────────
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  // populate state from project
   useEffect(() => {
     if (!project) return;
     setCompletion(project.completionPercentage);
     setStatus(project.status);
+    setContractorName(project.contractorName ?? "");
+    setModeOfImplementation(project.modeOfImplementation);
+    setLocDistrict(project.district ?? project.locationImplementation ?? "");
+    setCityMunicipality(project.cityMunicipality ?? "");
+    setBarangay(project.barangay ?? "");
+    setPurok(project.purok ?? "");
+    setSitio(project.sitio ?? "");
+    setSubType(project.subType ?? "");
+    setBudgetYear(project.budgetYear ?? "");
+    setDateStarted(toInputDate(project.dateStarted));
+    setTargetCompletion(toInputDate(project.targetCompletionDate));
+    setRevisedCompletion(toInputDate(project.revisedCompletionDate));
+    setNumFemale(project.numFemale ?? 0);
+    setNumMale(project.numMale ?? 0);
+    setEngineers(project.projectEngineer ? project.projectEngineer.split(",").map((s) => s.trim()).filter(Boolean) : []);
+    setDescription(project.description ?? "");
     setMediaUrl(project.imageUrl ?? "");
     setMediaName(project.documentName ?? "");
   }, [project]);
 
-  const updateProject = api.project.updateProgress.useMutation({
+  const totalDays = useMemo(() => calcDays(dateStarted, targetCompletion), [dateStarted, targetCompletion]);
+  const totalWorkforce = numFemale + numMale;
+
+  // ─ Mutations ───────────────────────────────────────────────────────────
+  const updateProject = api.project.update.useMutation({
     onSuccess: () => {
       void utils.project.getById.invalidate({ id: projectId });
       setShowSuccess(true);
@@ -111,30 +253,49 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
 
   const recordDisbursement = api.project.createDisbursement.useMutation({
     onSuccess: () => {
-      setDisbAmount("");
-      setDisbRef("");
-      setDisbErrors({});
+      setDisbAmount(""); setDisbRef(""); setDisbErrors({});
       void refetchDisbursements();
     },
   });
 
   const sendNotification = api.project.sendTaskNotification.useMutation({
     onSuccess: () => {
-      setTaskDescription("");
-      setNotifyUserId("");
-      setNotifyPriority("MEDIUM");
+      setTaskDescription(""); setNotifyUserId(""); setNotifyPriority("MEDIUM");
       setShowNotifSuccess(true);
     },
   });
 
-  const handleMediaUpload = async (file: File) => {
+  const createProjectFile = api.projectFile.create.useMutation({
+    onSuccess: () => void refetchFiles(),
+  });
+
+  const deleteProjectFile = api.projectFile.delete.useMutation({
+    onSuccess: () => void refetchFiles(),
+  });
+
+  // ─ Handlers ────────────────────────────────────────────────────────────
+  const handleDocUpload = async (file: File) => {
     setIsUploadingMedia(true);
+    setUploadError(null);
     try {
       const fd = new FormData();
       fd.append("file", file);
       const res = await fetch("/api/upload", { method: "POST", body: fd });
-      const data = (await res.json()) as { filePath?: string };
-      if (data.filePath) { setMediaUrl(data.filePath); setMediaName(file.name); }
+      const data = (await res.json()) as { filePath?: string; fileName?: string; fileSize?: number; error?: string };
+      if (data.error) { setUploadError(data.error); return; }
+      if (data.filePath) {
+        setMediaUrl(data.filePath);
+        setMediaName(data.fileName ?? file.name);
+        createProjectFile.mutate({
+          projectId,
+          fileName: data.fileName ?? file.name,
+          fileUrl: data.filePath,
+          fileType: pendingFileType,
+          fileSize: data.fileSize,
+        });
+      }
+    } catch {
+      setUploadError("Upload failed. Please try again.");
     } finally {
       setIsUploadingMedia(false);
     }
@@ -144,6 +305,28 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
     if (!project) return;
     updateProject.mutate({
       id: projectId,
+      title: project.title,
+      modeOfImplementation: modeOfImplementation as "BY_ADMINISTRATION" | "BY_CONTRACT",
+      locationImplementation: (locDistrict as "DISTRICT_I" | "DISTRICT_II") || project.locationImplementation,
+      sourceOfFund: project.sourceOfFund,
+      contractCost: project.contractCost,
+      contractorName: contractorName || undefined,
+      projectEngineer: engineers.join(", ") || undefined,
+      budgetYear: budgetYear || undefined,
+      subType: (subType as Parameters<typeof updateProject.mutate>[0]["subType"]) ?? null,
+      dateStarted: dateStarted ? new Date(dateStarted) : null,
+      targetCompletionDate: targetCompletion ? new Date(targetCompletion) : null,
+      revisedCompletionDate: revisedCompletion ? new Date(revisedCompletion) : null,
+      numFemale,
+      numMale,
+      numManDays: project.numManDays ?? 0,
+      daysSuspended: project.daysSuspended ?? 0,
+      daysExtended: project.daysExtended ?? 0,
+      district: (locDistrict as "DISTRICT_I" | "DISTRICT_II") || null,
+      cityMunicipality: cityMunicipality || undefined,
+      barangay: barangay || undefined,
+      sitio: sitio || undefined,
+      description: description || undefined,
       status: status as "NOT_YET_STARTED" | "ON_GOING" | "COMPLETED" | "SUSPENDED",
       completionPercentage: completion,
       imageUrl: mediaUrl || undefined,
@@ -152,622 +335,858 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
     });
   };
 
-  const handlePostComment = () => {
-    if (!comment.trim()) return;
-    addActivity.mutate({ projectId, description: comment.trim() });
-  };
-
   const handleRecordDisbursement = () => {
     const errors: { amount?: string; ref?: string } = {};
     const amount = parseFloat(disbAmount);
-    if (!disbAmount || isNaN(amount) || amount <= 0) {
-      errors.amount = "Amount is required and must be greater than 0.";
-    }
-    if (!disbRef.trim()) {
-      errors.ref = "Reference number is required.";
-    }
-    if (Object.keys(errors).length > 0) {
-      setDisbErrors(errors);
-      return;
-    }
+    if (!disbAmount || isNaN(amount) || amount <= 0) errors.amount = "Amount must be greater than 0.";
+    if (!disbRef.trim()) errors.ref = "Reference number is required.";
+    if (Object.keys(errors).length > 0) { setDisbErrors(errors); return; }
     setDisbErrors({});
-    recordDisbursement.mutate({
-      projectId,
-      amount,
-      referenceNumber: disbRef.trim(),
-    });
+    recordDisbursement.mutate({ projectId, amount, referenceNumber: disbRef.trim() });
   };
 
   const handleSendNotification = () => {
     if (!notifyUserId || !taskDescription.trim()) return;
-    sendNotification.mutate({
-      projectId,
-      notifyUserId,
-      priority: notifyPriority,
-      description: taskDescription.trim(),
-    });
+    sendNotification.mutate({ projectId, notifyUserId, priority: notifyPriority, description: taskDescription.trim() });
   };
 
+  const addEngineer = () => {
+    const name = engineerInput.trim();
+    if (name && !engineers.includes(name)) setEngineers((prev) => [...prev, name]);
+    setEngineerInput("");
+  };
+
+  const removeEngineer = (name: string) => setEngineers((prev) => prev.filter((e) => e !== name));
+
+  // ─ Loading / not found ─────────────────────────────────────────────────
   if (isLoading) {
     return (
-      <div className="flex min-h-75 items-center justify-center text-gray-400">
-        Loading project...
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600" />
+          <p className="text-sm text-gray-400">Loading project...</p>
+        </div>
       </div>
     );
   }
 
   if (!project) {
     return (
-      <div className="flex min-h-75 flex-col items-center justify-center gap-3 text-gray-400">
+      <div className="flex min-h-screen flex-col items-center justify-center gap-3 text-gray-400">
         <p>Project not found.</p>
-        <Link href="/admin/dashboard/projects" className="text-sm font-medium text-blue-600 hover:underline">
-          Back to Projects
-        </Link>
+        <Link href="/admin/dashboard/projects" className="text-sm font-medium text-blue-600 hover:underline">Back to Projects</Link>
       </div>
     );
   }
 
-  const badgeClass = STATUS_BADGE[project.status] ?? "bg-gray-500 text-white";
-  const statusLabel = STATUS_LABEL[project.status] ?? project.status;
+  const statusCfg = STATUS_CONFIG[status] ?? STATUS_CONFIG.ON_GOING!;
+  const totalDisb = disbursements?.reduce((s, d) => s + d.amount, 0) ?? 0;
+  const remaining = (project.contractCost ?? 0) - totalDisb;
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-8">
+    <div className="min-h-screen bg-gray-50">
 
-      {/* Success Modal */}
+      {/* ── Success Modal ── */}
       {showSuccess && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="mx-4 w-full max-w-sm rounded-2xl bg-white p-8 shadow-2xl text-center">
-            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-              <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-              </svg>
+          <div className="mx-4 w-full max-w-sm overflow-hidden rounded-2xl bg-white shadow-2xl">
+            <div className="bg-linear-to-br from-emerald-500 to-teal-600 px-8 py-8 text-center">
+              <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-white/20">
+                <svg className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-white">Changes Saved!</h3>
+              <p className="mt-1 text-sm text-emerald-100">Project updated successfully.</p>
             </div>
-            <h3 className="mb-2 text-xl font-bold text-gray-900">Changes Saved Successfully!</h3>
-            <p className="mb-6 text-sm text-gray-500">The project details have been updated in the system.</p>
-            <button
-              type="button"
-              onClick={() => setShowSuccess(false)}
-              className="w-full rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
-            >
-              Close
-            </button>
+            <div className="px-8 py-5">
+              <button type="button" onClick={() => setShowSuccess(false)} className="w-full rounded-xl bg-gray-900 py-2.5 text-sm font-semibold text-white hover:bg-gray-700">
+                Continue
+              </button>
+            </div>
           </div>
         </div>
       )}
 
-      {/* Breadcrumb */}
-      <nav className="mb-5 flex items-center gap-1.5 text-sm text-gray-500">
-        <Link href="/admin/dashboard/projects" className="hover:text-gray-700">Projects</Link>
-        <span>/</span>
-        <span className="font-medium text-gray-900">Project Details</span>
-      </nav>
+      {/* ── Page Header / Breadcrumb ── */}
+      <div className="border-b border-gray-200 bg-white px-6 py-4">
+        <nav className="flex items-center gap-1.5 text-sm text-gray-400">
+          <Link href="/admin/dashboard/projects" className="hover:text-gray-600">Projects</Link>
+          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
+          <span className="font-semibold text-gray-700">Edit Project</span>
+        </nav>
+      </div>
 
-      {/* ── Two-column layout ── */}
-      <div className="flex gap-6 items-start">
+      {/* ── Two-column Layout ── */}
+      <div className="flex gap-5 px-6 py-5">
 
-        {/* ── Left column ── */}
-        <div className="min-w-0 flex-1 space-y-6">
+        {/* ════════════════════════════════
+            LEFT  —  Main edit sections
+        ════════════════════════════════ */}
+        <div className="min-w-0 flex-1 space-y-4">
 
-          {/* ── Hero Card ── */}
-          <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-            <div className="flex flex-col sm:flex-row">
-              {/* Image */}
-              <div className="relative h-64 w-full shrink-0 sm:h-auto sm:w-72">
-                {project.imageUrl ? (
-                  <Image src={project.imageUrl} alt={project.title} fill className="object-cover" />
-                ) : (
-                  <div className="flex h-full min-h-64 w-full items-center justify-center bg-gray-200">
-                    <svg className="h-20 w-20 text-gray-300" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Z" />
+          {/* ── Row 1: Identity + Location ── */}
+          <div className="grid grid-cols-5 gap-4">
+
+            {/* PROJECT IDENTITY & STATUS */}
+            <SectionCard className="col-span-3">
+              <SectionHeader
+                icon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>}
+                title="Project Identity & Status"
+                action={<button type="button" className="text-gray-400 hover:text-gray-600"><EditIcon /></button>}
+              />
+              <div className="flex">
+                {/* Thumbnail — full height of the card body */}
+                <div
+                  onClick={() => mediaInputRef.current?.click()}
+                  className="group relative w-64 shrink-0 cursor-pointer overflow-hidden rounded-bl-xl bg-gray-100"
+                >
+                  {project.imageUrl ? (
+                    <Image src={project.imageUrl} alt={project.title} fill className="object-cover" />
+                  ) : (
+                    <div className="flex h-full min-h-48 w-full items-center justify-center">
+                      <svg className="h-10 w-10 text-gray-300" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Z" />
+                      </svg>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition group-hover:bg-black/30">
+                    <svg className="h-6 w-6 text-white opacity-0 transition group-hover:opacity-100" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" /><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
                     </svg>
                   </div>
-                )}
-                <span className={`absolute top-4 left-4 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-widest shadow ${badgeClass}`}>
-                  {statusLabel}
-                </span>
+                  <input ref={mediaInputRef} type="file" accept="image/jpeg,image/png,application/pdf" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleDocUpload(f); }} />
+                </div>
+
+                {/* Fields */}
+                <div className="min-w-0 flex-1 space-y-3 p-4">
+                  <div>
+                    <FieldLabel>Project Title</FieldLabel>
+                    <p className="truncate text-sm font-semibold text-gray-900">{project.title}</p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <FieldLabel>Project Cost</FieldLabel>
+                      <p className="text-sm font-semibold text-gray-900">₱ {project.projectCost?.toLocaleString("en-PH", { minimumFractionDigits: 2 }) ?? "—"}</p>
+                    </div>
+                    <div>
+                      <FieldLabel>Contract Cost</FieldLabel>
+                      <p className="text-sm font-bold text-red-600">₱ {project.contractCost.toLocaleString("en-PH", { minimumFractionDigits: 2 })}</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <FieldLabel>Track Number</FieldLabel>
+                      <p className="font-mono text-sm text-gray-700">{project.projectCode}</p>
+                    </div>
+                    <div>
+                      <FieldLabel>Current Status</FieldLabel>
+                      <Select value={status} onChange={(e) => setStatus(e.target.value)}>
+                        <option value="NOT_YET_STARTED">Not Yet Started</option>
+                        <option value="ON_GOING">On-going</option>
+                        <option value="COMPLETED">Completed</option>
+                        <option value="SUSPENDED">Suspended</option>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <FieldLabel>Implementation Mode</FieldLabel>
+                      <Select value={modeOfImplementation} onChange={(e) => setModeOfImplementation(e.target.value)}>
+                        <option value="BY_ADMINISTRATION">By Administration</option>
+                        <option value="BY_CONTRACT">By Contract</option>
+                      </Select>
+                    </div>
+                    <div>
+                      <FieldLabel>Contraction Name</FieldLabel>
+                      <Input value={contractorName} onChange={(e) => setContractorName(e.target.value)} placeholder="Contractor name" />
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              {/* Info */}
-              <div className="flex flex-1 flex-col justify-between p-7">
+              {/* Progress */}
+              <div className="border-t border-gray-100 px-4 py-3">
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <FieldLabel>Project Progress</FieldLabel>
+                    <span className="flex items-center gap-1 text-[10px] font-semibold text-green-500">
+                      <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
+                      Real-time
+                    </span>
+                  </div>
+                  <div className="relative w-24 shrink-0">
+                    <input
+                      type="number" min={0} max={100} value={completion}
+                      onChange={(e) => setCompletion(Math.min(100, Math.max(0, Number(e.target.value))))}
+                      className="block w-full rounded-lg border-0 bg-transparent py-2 pl-3 pr-7 text-sm font-bold text-blue-600 focus:outline-none"
+                    />
+                    <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-sm font-bold text-blue-400">%</span>
+                  </div>
+                </div>
+                <div className="relative flex h-5 w-full items-center">
+                  {/* Track */}
+                  <div className="absolute inset-x-0 h-2.5 overflow-hidden rounded-full bg-gray-100">
+                    <div
+                      className="h-full rounded-full bg-blue-500 transition-all duration-150"
+                      style={{ width: `${completion}%` }}
+                    />
+                  </div>
+                  {/* Thumb circle */}
+                  <div
+                    className="pointer-events-none absolute z-10 h-5 w-5 -translate-x-1/2 rounded-full border-2 border-blue-500 bg-white shadow-md transition-all duration-150"
+                    style={{ left: `${completion}%` }}
+                  />
+                  {/* Draggable range — overlaid transparently */}
+                  <input
+                    type="range" min={0} max={100} value={completion}
+                    onChange={(e) => setCompletion(Number(e.target.value))}
+                    className="absolute inset-0 h-full w-full cursor-grab appearance-none bg-transparent opacity-0 active:cursor-grabbing"
+                  />
+                </div>
+              </div>
+            </SectionCard>
+
+            {/* PROJECT LOCATION */}
+            <SectionCard className="col-span-2">
+              <SectionHeader
+                icon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>}
+                title="Project Location"
+                action={<button type="button" className="text-gray-400 hover:text-gray-600"><EditIcon /></button>}
+              />
+              <div className="space-y-3 p-4">
                 <div>
-                  <div className="mb-1 flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-widest text-blue-600">Active Project</span>
-                    <span className="text-xs text-gray-400">Last updated: {timeAgo(project.updatedAt)}</span>
-                  </div>
-                  <h1 className="mt-1 text-2xl font-extrabold leading-snug text-gray-900">{project.title}</h1>
+                  <FieldLabel>District</FieldLabel>
+                  <Select value={locDistrict} onChange={(e) => { setLocDistrict(e.target.value); setCityMunicipality(""); }}>
+                    <option value="">Select district...</option>
+                    <option value="DISTRICT_I">District 1</option>
+                    <option value="DISTRICT_II">District 2</option>
+                  </Select>
                 </div>
-
-                {/* 4 info boxes */}
-                <div className="mt-6 grid grid-cols-2 gap-3">
-                  <div className="flex items-center gap-3 rounded-xl bg-gray-50 px-4 py-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50">
-                      <svg className="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M7.864 4.243A7.5 7.5 0 0 1 19.5 10.5c0 2.92-.556 5.709-1.568 8.268M5.742 6.364A7.465 7.465 0 0 0 4.5 10.5a7.464 7.464 0 0 1-1.15 3.993m1.989 3.559A11.209 11.209 0 0 0 8.25 10.5a3.75 3.75 0 1 1 7.5 0c0 .527-.021 1.049-.064 1.565M12 10.5a14.94 14.94 0 0 1-3.6 9.75m6.633-4.596a18.666 18.666 0 0 1-2.485 5.33" />
-                      </svg>
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Tracking Number</p>
-                      <p className="mt-0.5 font-mono text-sm font-bold text-gray-900">{project.projectCode}</p>
-                    </div>
+                <div>
+                  <FieldLabel>Municipality</FieldLabel>
+                  <Select value={cityMunicipality} onChange={(e) => setCityMunicipality(e.target.value)}>
+                    <option value="">Select municipality...</option>
+                    {(DISTRICT_CITIES[locDistrict] ?? []).map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </Select>
+                </div>
+                <div>
+                  <FieldLabel>Barangay</FieldLabel>
+                  <Input value={barangay} onChange={(e) => setBarangay(e.target.value)} placeholder="Barangay name" />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <FieldLabel>Purok</FieldLabel>
+                    <Input value={purok} onChange={(e) => setPurok(e.target.value)} placeholder="Purok" />
                   </div>
-
-                  <div className="flex items-center gap-3 rounded-xl bg-gray-50 px-4 py-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50">
-                      <svg className="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Project Cost</p>
-                      <p className="mt-0.5 text-sm font-bold text-gray-900">
-                        ₱ {project.contractCost.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3 rounded-xl bg-gray-50 px-4 py-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50">
-                      <svg className="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Implementer</p>
-                      <p className="mt-0.5 text-sm font-bold text-gray-900">
-                        {project.modeOfImplementation === "BY_ADMINISTRATION" ? "By Administration" : "By Contract"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3 rounded-xl bg-gray-50 px-4 py-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50">
-                      <svg className="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
-                      </svg>
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Target Completion</p>
-                      <p className="mt-0.5 text-sm font-bold text-gray-900">{fmt(project.targetCompletionDate)}</p>
-                    </div>
+                  <div>
+                    <FieldLabel>Sitio</FieldLabel>
+                    <Input value={sitio} onChange={(e) => setSitio(e.target.value)} placeholder="Sitio" />
                   </div>
                 </div>
+              </div>
+            </SectionCard>
+          </div>
+
+          {/* ── Funding & Disbursement ── */}
+          <SectionCard>
+            <SectionHeader
+              icon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" /></svg>}
+              title="Funding & Disbursement Tracking"
+              action={<button type="button" className="text-gray-400 hover:text-gray-600"><EditIcon /></button>}
+            />
+            <div className="grid grid-cols-5 gap-0 divide-x divide-gray-100">
+              {/* Left: fund fields */}
+              <div className="col-span-2 space-y-3 p-4">
+                <div>
+                  <FieldLabel>Source of Fund</FieldLabel>
+                  <div className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700">
+                    {SOURCE_FUND_LABEL[project.sourceOfFund] ?? project.sourceOfFund}
+                  </div>
+                </div>
+                <div>
+                  <FieldLabel>Fund Category</FieldLabel>
+                  <Select value={subType} onChange={(e) => setSubType(e.target.value)}>
+                    <option value="">Select category...</option>
+                    {Object.entries(SUB_TYPE_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                  </Select>
+                </div>
+                <div>
+                  <FieldLabel>Budget Year</FieldLabel>
+                  <Select value={budgetYear} onChange={(e) => setBudgetYear(e.target.value)}>
+                    <option value="">Select year...</option>
+                    {Array.from({ length: 10 }, (_, i) => String(new Date().getFullYear() - i)).map((y) => (
+                      <option key={y} value={y}>{y}</option>
+                    ))}
+                  </Select>
+                </div>
+                <div className="rounded-lg border border-blue-100 bg-blue-50 px-3 py-3">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-blue-500">Remaining Balance</p>
+                  <p className="mt-1 text-lg font-extrabold text-blue-700">
+                    ₱ {remaining.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
+                  </p>
+                  <p className="mt-0.5 text-[10px] text-blue-400">*Calculated based on Total Cost minus Disbursements</p>
+                </div>
+              </div>
+
+              {/* Right: disbursements table + record */}
+              <div className="col-span-3 flex flex-col p-4">
+                <FieldLabel>Recent Disbursements</FieldLabel>
+                <div className="flex-1 overflow-hidden rounded-lg border border-gray-200">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b border-gray-100 bg-gray-50">
+                        <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Date</th>
+                        <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Reference / Check #</th>
+                        <th className="px-3 py-2 text-right text-[10px] font-bold uppercase tracking-wider text-gray-400">Amount (₱)</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {disbursements && disbursements.length > 0 ? disbursements.map((d) => (
+                        <tr key={d.id} className="hover:bg-gray-50/50">
+                          <td className="px-3 py-2.5 text-gray-600">{fmt(d.date)}</td>
+                          <td className="px-3 py-2.5 font-mono text-gray-700">{d.referenceNumber ?? "—"}</td>
+                          <td className="px-3 py-2.5 text-right font-semibold text-gray-900">
+                            {d.amount.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
+                          </td>
+                        </tr>
+                      )) : (
+                        <tr><td colSpan={3} className="px-3 py-6 text-center text-gray-400">No disbursements recorded yet.</td></tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Record form */}
+                <div className="mt-3 flex gap-2">
+                  <div className="relative w-36 shrink-0">
+                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">₱</span>
+                    <Input
+                      type="number" min={0} placeholder="Amount *"
+                      value={disbAmount}
+                      onChange={(e) => { setDisbAmount(e.target.value); setDisbErrors((p) => ({ ...p, amount: undefined })); }}
+                      error={!!disbErrors.amount}
+                      className="pl-7"
+                    />
+                  </div>
+                  <Input
+                    type="text" placeholder="Ref # *"
+                    value={disbRef}
+                    onChange={(e) => { setDisbRef(e.target.value); setDisbErrors((p) => ({ ...p, ref: undefined })); }}
+                    error={!!disbErrors.ref}
+                    className="flex-1"
+                  />
+                  <button
+                    type="button" onClick={handleRecordDisbursement}
+                    disabled={recordDisbursement.isPending}
+                    className="rounded-lg bg-blue-900 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-blue-800 disabled:opacity-50"
+                  >
+                    {recordDisbursement.isPending ? "..." : "Record"}
+                  </button>
+                </div>
+                {(disbErrors.amount ?? disbErrors.ref) && (
+                  <div className="mt-1 space-y-0.5">
+                    {disbErrors.amount && <p className="text-xs text-red-500">{disbErrors.amount}</p>}
+                    {disbErrors.ref && <p className="text-xs text-red-500">{disbErrors.ref}</p>}
+                  </div>
+                )}
+
               </div>
             </div>
-          </div>
+          </SectionCard>
 
-          {/* ── Progress + Media ── */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-
-            {/* Update Project Progress */}
-            <section className={card}>
-              <div className="mb-5 flex items-center gap-2">
-                <svg className="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
-                </svg>
-                <h2 className="text-base font-semibold text-gray-900">Update Project Progress</h2>
-              </div>
-
-              <div className="space-y-5">
-                <div>
-                  <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">Current Completion Status</p>
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="range" min={0} max={100} value={completion}
-                      onChange={(e) => setCompletion(Number(e.target.value))}
-                      className="h-2 flex-1 cursor-pointer appearance-none rounded-full bg-gray-200 accent-blue-600"
-                    />
-                    <div className="flex w-20 items-center gap-1 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5">
-                      <span className="text-lg font-bold text-blue-600">{completion}</span>
-                      <span className="text-sm font-medium text-blue-400">%</span>
-                    </div>
-                  </div>
+          {/* ── Date Timeline ── */}
+          <SectionCard>
+            <div className="grid grid-cols-4 divide-x divide-gray-100">
+              {[
+                {
+                  label: "Date Started",
+                  content: (
+                    <Input type="date" value={dateStarted} onChange={(e) => setDateStarted(e.target.value)} />
+                  ),
+                },
+                {
+                  label: "Original Target",
+                  content: (
+                    <Input type="date" value={targetCompletion} onChange={(e) => setTargetCompletion(e.target.value)} />
+                  ),
+                },
+                {
+                  label: "Revised Target Completion",
+                  content: (
+                    <Input type="date" value={revisedCompletion} onChange={(e) => setRevisedCompletion(e.target.value)} />
+                  ),
+                },
+                {
+                  label: "Total Days",
+                  content: (
+                    <p className="text-lg font-extrabold text-gray-800">{totalDays} <span className="text-xs font-medium text-gray-400">Days</span></p>
+                  ),
+                },
+              ].map(({ label, content }) => (
+                <div key={label} className="px-5 py-4">
+                  <FieldLabel>{label}</FieldLabel>
+                  {content}
                 </div>
+              ))}
+            </div>
+          </SectionCard>
 
-                <div>
-                  <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">Project Status</p>
-                  <div className="relative">
-                    <select
-                      value={status}
-                      onChange={(e) => setStatus(e.target.value)}
-                      className="block w-full appearance-none rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 pr-10 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                    >
-                      <option value="NOT_YET_STARTED">Not Yet Started</option>
-                      <option value="ON_GOING">On-going</option>
-                      <option value="COMPLETED">Completed</option>
-                      <option value="SUSPENDED">Suspended</option>
-                    </select>
-                    <svg className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                    </svg>
-                  </div>
+          {/* ── Workforce Distribution ── */}
+          <SectionCard>
+            <SectionHeader
+              icon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>}
+              title="Workforce Distribution"
+              action={
+                <button type="button" className="rounded-md border border-gray-200 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:bg-gray-50">
+                  Use Updates
+                </button>
+              }
+            />
+            <div className="grid grid-cols-3 divide-x divide-gray-100 px-0">
+              {/* Female */}
+              <div className="px-6 py-5">
+                <FieldLabel>Female Personnel</FieldLabel>
+                <div className="mt-2 flex items-center gap-3">
+                  <button type="button" onClick={() => setNumFemale((n) => Math.max(0, n - 1))} className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:bg-gray-50">
+                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" /></svg>
+                  </button>
+                  <span className="min-w-[2ch] text-center text-2xl font-extrabold text-gray-900">{numFemale}</span>
+                  <button type="button" onClick={() => setNumFemale((n) => n + 1)} className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:bg-gray-50">
+                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                  </button>
                 </div>
               </div>
-            </section>
-
-            {/* Update Documentation & Media */}
-            <section className={card}>
-              <div className="mb-5 flex items-center gap-2">
-                <svg className="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m6.75 12-3-3m0 0-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                </svg>
-                <h2 className="text-base font-semibold text-gray-900">Update Documentation &amp; Media</h2>
+              {/* Male */}
+              <div className="px-6 py-5">
+                <FieldLabel>Male Personnel</FieldLabel>
+                <div className="mt-2 flex items-center gap-3">
+                  <button type="button" onClick={() => setNumMale((n) => Math.max(0, n - 1))} className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:bg-gray-50">
+                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" /></svg>
+                  </button>
+                  <span className="min-w-[2ch] text-center text-2xl font-extrabold text-gray-900">{numMale}</span>
+                  <button type="button" onClick={() => setNumMale((n) => n + 1)} className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:bg-gray-50">
+                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                  </button>
+                </div>
               </div>
-              <div
-                onClick={() => mediaInputRef.current?.click()}
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) void handleMediaUpload(f); }}
-                className="flex h-48 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-gray-200 px-6 transition hover:border-blue-300 hover:bg-blue-50"
-              >
-                {isUploadingMedia ? (
-                  <p className="text-sm text-blue-500">Uploading...</p>
-                ) : mediaName ? (
-                  <>
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
-                      <svg className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                      </svg>
-                    </div>
-                    <p className="text-sm font-medium text-gray-700">{mediaName}</p>
-                    <p className="text-xs text-gray-400">Click to replace</p>
-                  </>
-                ) : (
-                  <>
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
-                      <svg className="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z" />
-                      </svg>
-                    </div>
-                    <p className="text-sm font-medium text-gray-700">Click to upload or drag and drop</p>
-                    <p className="text-xs text-gray-400">New project photos, site reports, or blueprints (PDF, PNG, JPG)</p>
-                  </>
-                )}
-                <input
-                  ref={mediaInputRef} type="file" accept="image/jpeg,image/png,application/pdf"
-                  className="hidden"
-                  onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleMediaUpload(f); }}
-                />
-              </div>
-            </section>
-          </div>
-
-          {/* ── Funding & Disbursement Tracking ── */}
-          {(() => {
-            const totalDisb = disbursements?.reduce((sum, d) => sum + d.amount, 0) ?? 0;
-            const remaining = (project.contractCost ?? 0) - totalDisb;
-            const sourceLabel = SOURCE_FUND_LABEL[project.sourceOfFund] ?? project.sourceOfFund;
-            const subTypeLabel = project.subType ? (SUB_TYPE_LABEL[project.subType] ?? project.subType) : "—";
-            return (
-              <section className={card}>
-                <div className="mb-5 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <svg className="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
-                    </svg>
-                    <h2 className="text-base font-semibold uppercase tracking-wider text-gray-900">Funding &amp; Disbursement Tracking</h2>
-                  </div>
-                  <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+              {/* Total */}
+              <div className="flex items-center justify-between px-6 py-5">
+                <div>
+                  <FieldLabel>Total Workforce</FieldLabel>
+                  <p className="mt-2 text-2xl font-extrabold text-gray-900">{totalWorkforce}</p>
+                </div>
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50">
+                  <svg className="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
                   </svg>
                 </div>
+              </div>
+            </div>
+          </SectionCard>
 
-                <div className="grid grid-cols-2 gap-8">
-                  {/* Left: fund info + remaining balance */}
-                  <div className="space-y-4">
-                    <div>
-                      <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-gray-500">Source of Fund</p>
-                      <div className="rounded-lg border border-gray-200 bg-gray-50 px-3.5 py-2.5 text-sm font-medium text-gray-900">
-                        {sourceLabel}
-                      </div>
-                    </div>
-                    <div>
-                      <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-gray-500">Fund Category</p>
-                      <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 text-sm font-medium text-gray-900">
-                        <span>{subTypeLabel}</span>
-                        <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+          {/* ── Project Responsibility & Scope ── */}
+          <SectionCard>
+            <SectionHeader
+              icon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" /></svg>}
+              title="Project Responsibility & Scope"
+              action={<button type="button" className="text-gray-400 hover:text-gray-600"><EditIcon /></button>}
+            />
+            <div className="grid grid-cols-2 divide-x divide-gray-100">
+              {/* Engineers */}
+              <div className="p-4">
+                <FieldLabel>Engineers in Charge</FieldLabel>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {engineers.map((eng) => (
+                    <span key={eng} className="flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                      {eng}
+                      <button type="button" onClick={() => removeEngineer(eng)} className="text-blue-400 hover:text-blue-600">
+                        <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                         </svg>
-                      </div>
-                    </div>
-                    <div>
-                      <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-gray-500">Budget Year</p>
-                      <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 text-sm font-medium text-gray-900">
-                        <span>{project.budgetYear ?? "—"}</span>
-                        <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                        </svg>
-                      </div>
-                    </div>
-                    <div className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-4">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-blue-700">Remaining Balance</p>
-                      <p className="mt-1 text-2xl font-extrabold text-blue-700">
-                        ₱ {remaining.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
-                      </p>
-                      <p className="mt-0.5 text-xs text-blue-500">Calculated: Project Cost − Total Disbursements</p>
-                    </div>
-                  </div>
-
-                  {/* Right: disbursements table + record input */}
-                  <div className="flex flex-col">
-                    <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">Recent Disbursements</p>
-                    <div className="flex-1 overflow-hidden rounded-lg border border-gray-200">
-                      <table className="w-full text-sm">
-                        <thead>
-                          <tr className="border-b border-gray-100 bg-gray-50">
-                            <th className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wider text-gray-400">Date</th>
-                            <th className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wider text-gray-400">Reference / Check #</th>
-                            <th className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wider text-gray-400">Amount (₱)</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100">
-                          {disbursements && disbursements.length > 0 ? (
-                            disbursements.map((d) => (
-                              <tr key={d.id}>
-                                <td className="px-3 py-2.5 text-gray-700">
-                                  {new Date(d.date).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" })}
-                                </td>
-                                <td className="px-3 py-2.5 font-mono text-gray-700">{d.referenceNumber ?? "—"}</td>
-                                <td className="px-3 py-2.5 text-right font-semibold text-gray-900">
-                                  {d.amount.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
-                                </td>
-                              </tr>
-                            ))
-                          ) : (
-                            <tr>
-                              <td colSpan={3} className="px-3 py-6 text-center text-xs text-gray-400">No disbursements recorded yet.</td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                    {/* Record new disbursement */}
-                    <div className="mt-3 flex gap-2">
-                      <div className="relative flex-1">
-                        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">₱</span>
-                        <input
-                          type="number" min={0} placeholder="Amount *"
-                          value={disbAmount}
-                          onChange={(e) => { setDisbAmount(e.target.value); setDisbErrors((prev) => ({ ...prev, amount: undefined })); }}
-                          className={`block w-full rounded-lg border py-2.5 pl-7 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 ${disbErrors.amount ? "border-red-400 focus:border-red-500 focus:ring-red-500/20" : "border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"}`}
-                        />
-                      </div>
-                      <div className="flex flex-col">
-                        <input
-                          type="text" placeholder="Ref # *"
-                          value={disbRef}
-                          onChange={(e) => { setDisbRef(e.target.value); setDisbErrors((prev) => ({ ...prev, ref: undefined })); }}
-                          className={`w-28 rounded-lg border px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 ${disbErrors.ref ? "border-red-400 focus:border-red-500 focus:ring-red-500/20" : "border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"}`}
-                        />
-                      </div>
-                      <button
-                        type="button"
-                        onClick={handleRecordDisbursement}
-                        disabled={recordDisbursement.isPending}
-                        className="rounded-lg bg-blue-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:opacity-50"
-                      >
-                        {recordDisbursement.isPending ? "..." : "RECORD"}
                       </button>
-                    </div>
-                    {(disbErrors.amount ?? disbErrors.ref) && (
-                      <div className="mt-1.5 space-y-0.5">
-                        {disbErrors.amount && <p className="text-xs text-red-600">{disbErrors.amount}</p>}
-                        {disbErrors.ref && <p className="text-xs text-red-600">{disbErrors.ref}</p>}
-                      </div>
-                    )}
-                    {recordDisbursement.isError && (
-                      <p className="mt-2 text-xs text-red-600">{recordDisbursement.error.message}</p>
-                    )}
+                    </span>
+                  ))}
+                  <div className="flex gap-1.5">
+                    <input
+                      ref={engineerRef}
+                      type="text"
+                      value={engineerInput}
+                      onChange={(e) => setEngineerInput(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addEngineer(); } }}
+                      placeholder="Add engineer..."
+                      className="w-32 rounded-full border border-dashed border-gray-300 px-3 py-1 text-xs text-gray-600 placeholder:text-gray-300 focus:border-blue-400 focus:outline-none"
+                    />
+                    <button
+                      type="button" onClick={addEngineer}
+                      className="rounded-full border border-dashed border-gray-300 px-3 py-1 text-xs font-semibold text-gray-500 hover:border-blue-400 hover:text-blue-600"
+                    >
+                      + Add Engineer
+                    </button>
                   </div>
                 </div>
-              </section>
-            );
-          })()}
+              </div>
+              {/* Scope */}
+              <div className="p-4">
+                <FieldLabel>Detailed Scope of Work</FieldLabel>
+                <textarea
+                  rows={5}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Describe the scope of work, deliverables, and methodology..."
+                  className="mt-1 block w-full resize-none rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 placeholder:text-gray-300 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20"
+                />
+              </div>
+            </div>
+          </SectionCard>
+
+          {/* ── Project Documentation ── */}
+          <SectionCard>
+            <SectionHeader
+              icon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>}
+              title="Project Documentation"
+              action={
+                <div className="flex items-center gap-2">
+                  {/* File type selector */}
+                  <select
+                    value={pendingFileType}
+                    onChange={(e) => setPendingFileType(e.target.value as typeof pendingFileType)}
+                    className="rounded-md border border-gray-200 bg-white px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-gray-500 focus:outline-none"
+                  >
+                    <option value="OTHER">Other</option>
+                    <option value="IMAGE">Image</option>
+                    <option value="BLUEPRINT">Blueprint</option>
+                    <option value="REPORT">Report</option>
+                    <option value="CONTRACT">Contract</option>
+                    <option value="PERMIT">Permit</option>
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => docInputRef.current?.click()}
+                    disabled={isUploadingMedia}
+                    className="flex items-center gap-1.5 rounded-md border border-gray-200 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                  >
+                    {isUploadingMedia ? (
+                      <div className="h-3 w-3 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />
+                    ) : (
+                      <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                      </svg>
+                    )}
+                    {isUploadingMedia ? "Uploading..." : "Upload File"}
+                  </button>
+                  <input
+                    ref={docInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    className="hidden"
+                    onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleDocUpload(f); e.target.value = ""; }}
+                  />
+                </div>
+              }
+            />
+            <div className="p-4">
+              {uploadError && (
+                <div className="mb-3 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600">
+                  <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" /></svg>
+                  {uploadError}
+                  <button type="button" onClick={() => setUploadError(null)} className="ml-auto">✕</button>
+                </div>
+              )}
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b border-gray-100 bg-gray-50">
+                    <th className="px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">File Name</th>
+                    <th className="px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Type</th>
+                    <th className="px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Upload Date</th>
+                    <th className="px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Uploaded By</th>
+                    <th className="px-3 py-2.5 text-center text-[10px] font-bold uppercase tracking-wider text-gray-400">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {projectFiles && projectFiles.length > 0 ? projectFiles.map((f) => {
+                    const isImage = f.fileType === "IMAGE" || /\.(jpg|jpeg|png|webp)$/i.exec(f.fileName);
+                    const typeColors: Record<string, string> = {
+                      IMAGE: "bg-purple-50 text-purple-600",
+                      BLUEPRINT: "bg-blue-50   text-blue-600",
+                      REPORT: "bg-amber-50  text-amber-600",
+                      CONTRACT: "bg-green-50  text-green-600",
+                      PERMIT: "bg-teal-50   text-teal-600",
+                      OTHER: "bg-gray-100  text-gray-600",
+                    };
+                    return (
+                      <tr key={f.id} className="hover:bg-gray-50/50">
+                        <td className="px-3 py-3">
+                          <div className="flex items-center gap-2">
+                            <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded ${isImage ? "bg-purple-50" : "bg-red-50"}`}>
+                              {isImage ? (
+                                <svg className="h-4 w-4 text-purple-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M2.25 19.5h19.5M2.25 4.5h19.5" /></svg>
+                              ) : (
+                                <svg className="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+                              )}
+                            </div>
+                            <span className="max-w-45 truncate font-medium text-gray-700">{f.fileName}</span>
+                          </div>
+                        </td>
+                        <td className="px-3 py-3">
+                          <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${typeColors[f.fileType] ?? "bg-gray-100 text-gray-600"}`}>
+                            {f.fileType}
+                          </span>
+                        </td>
+                        <td className="px-3 py-3 text-gray-500">{fmt(f.createdAt)}</td>
+                        <td className="px-3 py-3 text-gray-500">{f.createdBy.name ?? f.createdBy.email}</td>
+                        <td className="px-3 py-3">
+                          <div className="flex items-center justify-center gap-2">
+                            <a href={f.fileUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-500" title="View">
+                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178Z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
+                            </a>
+                            <a href={f.fileUrl} download={f.fileName} className="text-gray-400 hover:text-blue-500" title="Download">
+                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+                            </a>
+                            <button
+                              type="button"
+                              onClick={() => { if (confirm(`Delete "${f.fileName}"?`)) deleteProjectFile.mutate({ id: f.id }); }}
+                              className="text-gray-400 hover:text-red-500" title="Delete"
+                            >
+                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  }) : (
+                    <tr>
+                      <td colSpan={5} className="px-3 py-8 text-center text-gray-400">
+                        No files uploaded yet. Select a file type above and click <strong>Upload File</strong>.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </SectionCard>
 
           {/* ── Task Notification ── */}
-          <section className={card}>
-            {showNotifSuccess && (
-              <div className="mb-4 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
-                <svg className="h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                </svg>
-                Notification sent successfully.
-                <button type="button" onClick={() => setShowNotifSuccess(false)} className="ml-auto text-green-500 hover:text-green-700">✕</button>
-              </div>
-            )}
-            <div className="mb-5 flex items-center gap-2">
-              <svg className="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
-              </svg>
-              <h2 className="text-base font-semibold uppercase tracking-wider text-gray-900">Task Notification</h2>
-            </div>
-            <div className="grid grid-cols-2 gap-8">
-              {/* Left: user + priority */}
-              <div className="space-y-4">
-                <div>
-                  <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-gray-500">Select User to Notify</p>
-                  <div className="relative">
-                    <select
-                      value={notifyUserId}
-                      onChange={(e) => setNotifyUserId(e.target.value)}
-                      className="block w-full appearance-none rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 pr-10 text-sm font-medium text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                    >
+          <SectionCard>
+            <SectionHeader
+              icon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" /></svg>}
+              title="Task Notification"
+            />
+            <div className="p-4">
+              {showNotifSuccess && (
+                <div className="mb-4 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-xs text-green-700">
+                  <svg className="h-4 w-4 text-green-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+                  Notification sent successfully.
+                  <button type="button" onClick={() => setShowNotifSuccess(false)} className="ml-auto text-green-400 hover:text-green-600">✕</button>
+                </div>
+              )}
+              <div className="grid grid-cols-2 gap-6">
+                {/* Left */}
+                <div className="space-y-4">
+                  <div>
+                    <FieldLabel>Select User to Notify</FieldLabel>
+                    <Select value={notifyUserId} onChange={(e) => setNotifyUserId(e.target.value)}>
                       <option value="">Select a user...</option>
                       {usersForSelect?.map((u) => (
                         <option key={u.id} value={u.id}>{u.name ?? u.email}</option>
                       ))}
-                    </select>
-                    <svg className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                    </svg>
+                    </Select>
                   </div>
-                </div>
-                <div>
-                  <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">Priority Level</p>
-                  <div className="flex gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setNotifyPriority("MEDIUM")}
-                      className={`flex flex-1 items-center justify-center gap-2 rounded-lg border py-2.5 text-sm font-semibold transition ${
-                        notifyPriority === "MEDIUM"
-                          ? "border-gray-400 bg-gray-100 text-gray-700"
-                          : "border-gray-200 bg-white text-gray-400 hover:bg-gray-50"
-                      }`}
-                    >
-                      <span className={`h-2 w-2 rounded-full ${notifyPriority === "MEDIUM" ? "bg-gray-500" : "bg-gray-300"}`} />
-                      STANDARD
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setNotifyPriority("URGENT")}
-                      className={`flex flex-1 items-center justify-center gap-2 rounded-lg border py-2.5 text-sm font-semibold transition ${
-                        notifyPriority === "URGENT"
-                          ? "border-red-400 bg-red-50 text-red-600"
-                          : "border-gray-200 bg-white text-gray-400 hover:bg-gray-50"
-                      }`}
-                    >
-                      <span className={`h-2 w-2 rounded-full ${notifyPriority === "URGENT" ? "bg-red-500" : "bg-gray-300"}`} />
-                      URGENT
-                    </button>
-                  </div>
-                </div>
-              </div>
 
-              {/* Right: description + send button */}
-              <div className="flex flex-col">
-                <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-gray-500">Task Description / Instructions</p>
-                <textarea
-                  rows={5}
-                  value={taskDescription}
-                  onChange={(e) => setTaskDescription(e.target.value)}
-                  placeholder="Type instructions or task details here..."
-                  className="flex-1 resize-none rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                />
-                <div className="mt-3 flex justify-end">
-                  <button
-                    type="button"
-                    onClick={handleSendNotification}
-                    disabled={sendNotification.isPending || !notifyUserId || !taskDescription.trim()}
-                    className="flex items-center gap-2 rounded-lg bg-blue-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:opacity-50"
-                  >
-                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
-                    </svg>
-                    {sendNotification.isPending ? "Sending..." : "SEND NOTIFICATION"}
-                  </button>
+                  <div>
+                    <FieldLabel>Priority Level</FieldLabel>
+                    <div className="mt-2 space-y-2">
+                      {(["HIGH", "MEDIUM", "LOW"] as const).map((p) => {
+                        const cfg = PRIORITY_CONFIG[p];
+                        const isActive = notifyPriority === p;
+                        return (
+                          <button
+                            key={p} type="button"
+                            onClick={() => setNotifyPriority(p)}
+                            className={`flex w-full items-start gap-3 rounded-lg border px-3 py-2.5 text-left transition ${isActive ? `${cfg.activeBg} border-transparent text-white` : `${cfg.bg} ${cfg.border}`
+                              }`}
+                          >
+                            <span className={`mt-0.5 h-3 w-3 shrink-0 rounded-full ${isActive ? "bg-white/80" : cfg.dot}`} />
+                            <div>
+                              <p className={`text-xs font-bold uppercase tracking-widest ${isActive ? "text-white" : cfg.text}`}>{cfg.label}</p>
+                              <p className={`mt-0.5 text-[10px] ${isActive ? "text-white/80" : "text-gray-400"}`}>
+                                {p === "HIGH" ? "Acknowledge & respond within 4 hours" : p === "MEDIUM" ? "Acknowledge & respond within 24 hours" : "Acknowledge & respond within 48 hours"}
+                              </p>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
-                {sendNotification.isError && (
-                  <p className="mt-2 text-right text-xs text-red-600">{sendNotification.error.message}</p>
-                )}
+
+                {/* Right */}
+                <div className="flex flex-col">
+                  <FieldLabel>Task Description / Instructions</FieldLabel>
+                  <textarea
+                    rows={8}
+                    value={taskDescription}
+                    onChange={(e) => setTaskDescription(e.target.value)}
+                    placeholder="Type instructions or task details here..."
+                    className="mt-1 flex-1 resize-none rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-800 placeholder:text-gray-300 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20"
+                  />
+                  <div className="mt-3 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={handleSendNotification}
+                      disabled={sendNotification.isPending || !notifyUserId || !taskDescription.trim()}
+                      className="flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-40"
+                    >
+                      {sendNotification.isPending ? (
+                        <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                      ) : (
+                        <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+                        </svg>
+                      )}
+                      {sendNotification.isPending ? "Sending..." : "Send Notification"}
+                    </button>
+                  </div>
+                  {sendNotification.isError && (
+                    <p className="mt-2 text-right text-xs text-red-600">{sendNotification.error.message}</p>
+                  )}
+                </div>
               </div>
             </div>
-          </section>
+          </SectionCard>
 
         </div>
 
-        {/* ── Right column: Project History & Activity Log ── */}
-        <div className="box w-125 shrink-0 sticky top-6 self-start">
-          <section className={`${card} flex flex-col`} style={{ maxHeight: "calc(100vh - 6rem)" }}>
-            <div className="mb-5 flex items-center gap-2">
-              <svg className="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-              </svg>
-              <h2 className="text-base font-semibold text-gray-900">Project History &amp; Activity Log</h2>
+        {/* ════════════════════════════════
+            RIGHT  —  Activity Log (sticky)
+        ════════════════════════════════ */}
+        <div className="w-80 shrink-0">
+          <div className="sticky top-5 space-y-3">
+            {/* Status badge */}
+            <div className={`flex items-center gap-2 rounded-xl border px-4 py-3 ${statusCfg.badge}`}>
+              <span className={`h-2 w-2 rounded-full ${statusCfg.dot}`} />
+              <span className="text-xs font-bold">{statusCfg.label}</span>
+              <span className="ml-auto font-mono text-[10px] text-gray-400">{project.projectCode}</span>
             </div>
-
-            {/* Comment input */}
-            <div className="mb-4 shrink-0">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">Add New Activity / Comment</p>
-              <textarea
-                rows={3} value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="Enter details about the latest site visit or project milestone..."
-                className="block w-full rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            <SectionCard style={{ maxHeight: "calc(100vh - 6rem)" } as React.CSSProperties}>
+              <SectionHeader
+                icon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>}
+                title="Project History & Activity Log"
+                action={activities?.length ? (
+                  <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-600">{activities.length}</span>
+                ) : undefined}
               />
-              <div className="mt-3 flex justify-end">
-                <button
-                  type="button" onClick={handlePostComment}
-                  disabled={addActivity.isPending || !comment.trim()}
-                  className="rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {addActivity.isPending ? "Posting..." : "Post Comment"}
-                </button>
-              </div>
-            </div>
 
-            {/* Activity table — scrollable */}
-            {activities && activities.length > 0 ? (
-              <div className="border-t border-gray-100">
-                {/* Header */}
-                <div className="flex items-center justify-between py-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
-                  <span>Date &amp; Description</span>
-                  <span>User</span>
+              <div className="flex flex-col" style={{ maxHeight: "calc(100vh - 10rem)" }}>
+                {/* New comment */}
+                <div className="shrink-0 border-b border-gray-100 p-4">
+                  <FieldLabel>Add Activity / Comment</FieldLabel>
+                  <textarea
+                    rows={3} value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder="Log a site visit, milestone, or note..."
+                    className="mt-1 block w-full resize-none rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 placeholder:text-gray-300 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20"
+                  />
+                  <button
+                    type="button" onClick={() => { if (comment.trim()) addActivity.mutate({ projectId, description: comment.trim() }); }}
+                    disabled={addActivity.isPending || !comment.trim()}
+                    className="mt-2 w-full rounded-lg bg-gray-900 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-gray-700 disabled:opacity-40"
+                  >
+                    {addActivity.isPending ? "Posting..." : "Post Comment"}
+                  </button>
                 </div>
-                {/* Rows — max 3 visible, then scroll */}
-                <div className="max-h-52 divide-y divide-gray-100 overflow-y-auto">
-                  {activities.map((a) => {
-                    const displayName = a.createdBy.name ?? a.createdBy.email ?? "U";
-                    const initial = displayName.charAt(0).toUpperCase();
-                    return (
-                      <div key={a.id} className="py-3">
-                        <div className="flex items-center gap-2">
-                          {a.createdBy.image ? (
-                            <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-full">
-                              <Image
-                                src={a.createdBy.image}
-                                alt={displayName}
-                                fill
-                                className="object-cover"
-                              />
+
+                {/* Activity list */}
+                <div className="flex-1 overflow-y-auto p-4">
+                  {activities && activities.length > 0 ? (
+                    <div className="space-y-3">
+                      {activities.map((a, idx) => {
+                        const displayName = a.createdBy.name ?? a.createdBy.email ?? "Unknown";
+                        const initial = displayName.charAt(0).toUpperCase();
+                        return (
+                          <div key={a.id} className={`rounded-lg p-3 ${idx === 0 ? "bg-blue-50 ring-1 ring-blue-100" : "bg-gray-50"}`}>
+                            <div className="flex items-start gap-2.5">
+                              {a.createdBy.image ? (
+                                <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-full">
+                                  <Image src={a.createdBy.image} alt={displayName} fill className="object-cover" />
+                                </div>
+                              ) : (
+                                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-600 text-[10px] font-bold text-white">{initial}</div>
+                              )}
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center justify-between gap-1">
+                                  <span className="text-xs font-semibold text-blue-700">{displayName}</span>
+                                  {idx === 0 && <span className="rounded-full bg-blue-600 px-1.5 py-0.5 text-[9px] font-bold text-white">Latest</span>}
+                                </div>
+                                <p className="mt-1 text-xs leading-relaxed text-gray-700">{a.description}</p>
+                                <p className="mt-1.5 text-[10px] text-gray-400">
+                                  {new Date(a.createdAt).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" })}{" "}
+                                  · {new Date(a.createdAt).toLocaleTimeString("en-PH", { hour: "numeric", minute: "2-digit", hour12: true })}
+                                </p>
+                              </div>
                             </div>
-                          ) : (
-                            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-semibold text-blue-700">
-                              {initial}
-                            </div>
-                          )}
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center justify-between gap-2">
-                              <span className="truncate text-xs font-medium text-blue-600">{displayName}</span>
-                              <span className="shrink-0 text-xs text-gray-400">
-                                {new Date(a.createdAt).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" })}{" "}
-                                {new Date(a.createdAt).toLocaleTimeString("en-PH", { hour: "numeric", minute: "2-digit", hour12: true })}
-                              </span>
-                            </div>
-                            <p className="mt-0.5 text-sm text-gray-800">{a.description}</p>
                           </div>
-                        </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-10 text-center">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100">
+                        <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
                       </div>
-                    );
-                  })}
+                      <p className="mt-2 text-xs font-medium text-gray-500">No activity yet</p>
+                      <p className="mt-1 text-[10px] text-gray-400">Add the first comment above</p>
+                    </div>
+                  )}
                 </div>
               </div>
-            ) : (
-              <p className="py-6 text-center text-sm text-gray-400">No activity logged yet.</p>
-            )}
-          </section>
-
-          {/* ── Footer buttons ── */}
-          {updateProject.isError && (
-            <div className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-              {updateProject.error.message}
-            </div>
-          )}
-          <div className="mt-4 flex items-center justify-end gap-3 border-t border-gray-200 pt-4 pb-2">
-            <Link
-              href={`/admin/dashboard/projects/${projectId}`}
-              className="rounded-xl border border-gray-300 bg-white px-6 py-2.5 text-sm font-semibold uppercase tracking-wider text-gray-700 shadow-sm transition hover:bg-gray-50"
-            >
-              Cancel
-            </Link>
-            <button
-              type="button" onClick={handleSaveChanges}
-              disabled={updateProject.isPending}
-              className="rounded-xl bg-blue-600 px-6 py-2.5 text-sm font-semibold uppercase tracking-wider text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-50"
-            >
-              {updateProject.isPending ? "Saving..." : "Save Changes"}
-            </button>
+            </SectionCard>
           </div>
         </div>
 
       </div>
+
+      {/* ── Fixed bottom action bar ── */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white px-8 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
+        <div className="flex items-center justify-end gap-3">
+          {updateProject.isError && (
+            <p className="mr-auto text-xs text-red-600">{updateProject.error.message}</p>
+          )}
+          <Link
+            href={`/admin/dashboard/projects/${projectId}`}
+            className="rounded-lg border border-gray-200 bg-white px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-gray-600 transition hover:bg-gray-50"
+          >
+            Cancel Changes
+          </Link>
+          <button
+            type="button"
+            onClick={handleSaveChanges}
+            disabled={updateProject.isPending}
+            className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-50"
+          >
+            {updateProject.isPending ? (
+              <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+            ) : (
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+            )}
+            Commit &amp; Save Changes
+          </button>
+        </div>
+      </div>
+
+      {/* spacer so content isn't hidden behind fixed bar */}
+      <div className="h-16" />
     </div>
   );
 }
