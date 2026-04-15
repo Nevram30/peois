@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState, useEffect, useMemo } from "react";
 import { api } from "~/trpc/react";
+import { useUploadThing } from "~/lib/uploadthing";
 
 // ─── Label maps ─────────────────────────────────────────────────────────────
 const SOURCE_FUND_LABEL: Record<string, string> = {
@@ -151,6 +152,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   const { data: activities } = api.projectActivity.getByProjectId.useQuery({ projectId });
   const { data: disbursements, refetch: refetchDisbursements } = api.project.getDisbursements.useQuery({ projectId });
   const { data: projectFiles, refetch: refetchFiles } = api.projectFile.getByProjectId.useQuery({ projectId });
+  const { startUpload } = useUploadThing("projectFileUploader");
   const { data: usersForSelect } = api.user.getForSelect.useQuery();
 
   // ─ Identity & Status ───────────────────────────────────────────────────
@@ -278,22 +280,18 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
     setIsUploadingMedia(true);
     setUploadError(null);
     try {
-      const fd = new FormData();
-      fd.append("file", file);
-      const res = await fetch("/api/upload", { method: "POST", body: fd });
-      const data = (await res.json()) as { filePath?: string; fileName?: string; fileSize?: number; error?: string };
-      if (data.error) { setUploadError(data.error); return; }
-      if (data.filePath) {
-        setMediaUrl(data.filePath);
-        setMediaName(data.fileName ?? file.name);
-        createProjectFile.mutate({
-          projectId,
-          fileName: data.fileName ?? file.name,
-          fileUrl: data.filePath,
-          fileType: pendingFileType,
-          fileSize: data.fileSize,
-        });
-      }
+      const result = await startUpload([file]);
+      if (!result?.[0]) { setUploadError("Upload failed. Please try again."); return; }
+      const uploaded = result[0];
+      setMediaUrl(uploaded.ufsUrl);
+      setMediaName(file.name);
+      createProjectFile.mutate({
+        projectId,
+        fileName: file.name,
+        fileUrl: uploaded.ufsUrl,
+        fileType: pendingFileType,
+        fileSize: file.size,
+      });
     } catch {
       setUploadError("Upload failed. Please try again.");
     } finally {
