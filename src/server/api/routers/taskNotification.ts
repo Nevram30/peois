@@ -68,6 +68,7 @@ export const taskNotificationRouter = createTRPCRouter({
           replies: {
             include: {
               createdBy: { select: { id: true, name: true, email: true, image: true } },
+              documents: true,
             },
             orderBy: { createdAt: "asc" },
           },
@@ -94,6 +95,12 @@ export const taskNotificationRouter = createTRPCRouter({
       taskId: z.string(),
       message: z.string().min(1),
       taskStatus: z.enum(["in-progress", "action-taken"]).optional(),
+      documents: z.array(z.object({
+        fileName: z.string(),
+        fileUrl: z.string(),
+        fileSize: z.number().optional(),
+        fileType: z.string().optional(),
+      })).optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       return ctx.db.taskReply.create({
@@ -102,7 +109,11 @@ export const taskNotificationRouter = createTRPCRouter({
           message: input.message,
           taskStatus: input.taskStatus,
           createdById: ctx.session.user.id,
+          documents: input.documents?.length
+            ? { create: input.documents }
+            : undefined,
         },
+        include: { documents: true },
       });
     }),
 });

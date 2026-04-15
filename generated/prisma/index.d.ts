@@ -49,6 +49,11 @@ export type TaskNotification = $Result.DefaultSelection<Prisma.$TaskNotification
  */
 export type TaskReply = $Result.DefaultSelection<Prisma.$TaskReplyPayload>
 /**
+ * Model TaskReplyDocument
+ * 
+ */
+export type TaskReplyDocument = $Result.DefaultSelection<Prisma.$TaskReplyDocumentPayload>
+/**
  * Model Document
  * 
  */
@@ -423,6 +428,16 @@ export class PrismaClient<
     * ```
     */
   get taskReply(): Prisma.TaskReplyDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.taskReplyDocument`: Exposes CRUD operations for the **TaskReplyDocument** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TaskReplyDocuments
+    * const taskReplyDocuments = await prisma.taskReplyDocument.findMany()
+    * ```
+    */
+  get taskReplyDocument(): Prisma.TaskReplyDocumentDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.document`: Exposes CRUD operations for the **Document** model.
@@ -901,6 +916,7 @@ export namespace Prisma {
     Disbursement: 'Disbursement',
     TaskNotification: 'TaskNotification',
     TaskReply: 'TaskReply',
+    TaskReplyDocument: 'TaskReplyDocument',
     Document: 'Document',
     ProjectFile: 'ProjectFile',
     Post: 'Post'
@@ -922,7 +938,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "userSession" | "project" | "projectActivity" | "disbursement" | "taskNotification" | "taskReply" | "document" | "projectFile" | "post"
+      modelProps: "user" | "userSession" | "project" | "projectActivity" | "disbursement" | "taskNotification" | "taskReply" | "taskReplyDocument" | "document" | "projectFile" | "post"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1444,6 +1460,80 @@ export namespace Prisma {
           }
         }
       }
+      TaskReplyDocument: {
+        payload: Prisma.$TaskReplyDocumentPayload<ExtArgs>
+        fields: Prisma.TaskReplyDocumentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TaskReplyDocumentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskReplyDocumentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TaskReplyDocumentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskReplyDocumentPayload>
+          }
+          findFirst: {
+            args: Prisma.TaskReplyDocumentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskReplyDocumentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TaskReplyDocumentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskReplyDocumentPayload>
+          }
+          findMany: {
+            args: Prisma.TaskReplyDocumentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskReplyDocumentPayload>[]
+          }
+          create: {
+            args: Prisma.TaskReplyDocumentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskReplyDocumentPayload>
+          }
+          createMany: {
+            args: Prisma.TaskReplyDocumentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TaskReplyDocumentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskReplyDocumentPayload>[]
+          }
+          delete: {
+            args: Prisma.TaskReplyDocumentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskReplyDocumentPayload>
+          }
+          update: {
+            args: Prisma.TaskReplyDocumentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskReplyDocumentPayload>
+          }
+          deleteMany: {
+            args: Prisma.TaskReplyDocumentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TaskReplyDocumentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TaskReplyDocumentUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskReplyDocumentPayload>[]
+          }
+          upsert: {
+            args: Prisma.TaskReplyDocumentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskReplyDocumentPayload>
+          }
+          aggregate: {
+            args: Prisma.TaskReplyDocumentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTaskReplyDocument>
+          }
+          groupBy: {
+            args: Prisma.TaskReplyDocumentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TaskReplyDocumentGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TaskReplyDocumentCountArgs<ExtArgs>
+            result: $Utils.Optional<TaskReplyDocumentCountAggregateOutputType> | number
+          }
+        }
+      }
       Document: {
         payload: Prisma.$DocumentPayload<ExtArgs>
         fields: Prisma.DocumentFieldRefs
@@ -1769,6 +1859,7 @@ export namespace Prisma {
     disbursement?: DisbursementOmit
     taskNotification?: TaskNotificationOmit
     taskReply?: TaskReplyOmit
+    taskReplyDocument?: TaskReplyDocumentOmit
     document?: DocumentOmit
     projectFile?: ProjectFileOmit
     post?: PostOmit
@@ -2045,6 +2136,37 @@ export namespace Prisma {
    */
   export type TaskNotificationCountOutputTypeCountRepliesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TaskReplyWhereInput
+  }
+
+
+  /**
+   * Count Type TaskReplyCountOutputType
+   */
+
+  export type TaskReplyCountOutputType = {
+    documents: number
+  }
+
+  export type TaskReplyCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    documents?: boolean | TaskReplyCountOutputTypeCountDocumentsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * TaskReplyCountOutputType without action
+   */
+  export type TaskReplyCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskReplyCountOutputType
+     */
+    select?: TaskReplyCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * TaskReplyCountOutputType without action
+   */
+  export type TaskReplyCountOutputTypeCountDocumentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TaskReplyDocumentWhereInput
   }
 
 
@@ -9755,6 +9877,8 @@ export namespace Prisma {
     createdAt?: boolean
     taskNotification?: boolean | TaskNotificationDefaultArgs<ExtArgs>
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    documents?: boolean | TaskReply$documentsArgs<ExtArgs>
+    _count?: boolean | TaskReplyCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["taskReply"]>
 
   export type TaskReplySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -9792,6 +9916,8 @@ export namespace Prisma {
   export type TaskReplyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     taskNotification?: boolean | TaskNotificationDefaultArgs<ExtArgs>
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    documents?: boolean | TaskReply$documentsArgs<ExtArgs>
+    _count?: boolean | TaskReplyCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TaskReplyIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     taskNotification?: boolean | TaskNotificationDefaultArgs<ExtArgs>
@@ -9807,6 +9933,7 @@ export namespace Prisma {
     objects: {
       taskNotification: Prisma.$TaskNotificationPayload<ExtArgs>
       createdBy: Prisma.$UserPayload<ExtArgs>
+      documents: Prisma.$TaskReplyDocumentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -10211,6 +10338,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     taskNotification<T extends TaskNotificationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TaskNotificationDefaultArgs<ExtArgs>>): Prisma__TaskNotificationClient<$Result.GetResult<Prisma.$TaskNotificationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    documents<T extends TaskReply$documentsArgs<ExtArgs> = {}>(args?: Subset<T, TaskReply$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskReplyDocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10642,6 +10770,30 @@ export namespace Prisma {
   }
 
   /**
+   * TaskReply.documents
+   */
+  export type TaskReply$documentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskReplyDocument
+     */
+    select?: TaskReplyDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskReplyDocument
+     */
+    omit?: TaskReplyDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskReplyDocumentInclude<ExtArgs> | null
+    where?: TaskReplyDocumentWhereInput
+    orderBy?: TaskReplyDocumentOrderByWithRelationInput | TaskReplyDocumentOrderByWithRelationInput[]
+    cursor?: TaskReplyDocumentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TaskReplyDocumentScalarFieldEnum | TaskReplyDocumentScalarFieldEnum[]
+  }
+
+  /**
    * TaskReply without action
    */
   export type TaskReplyDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10657,6 +10809,1124 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: TaskReplyInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TaskReplyDocument
+   */
+
+  export type AggregateTaskReplyDocument = {
+    _count: TaskReplyDocumentCountAggregateOutputType | null
+    _avg: TaskReplyDocumentAvgAggregateOutputType | null
+    _sum: TaskReplyDocumentSumAggregateOutputType | null
+    _min: TaskReplyDocumentMinAggregateOutputType | null
+    _max: TaskReplyDocumentMaxAggregateOutputType | null
+  }
+
+  export type TaskReplyDocumentAvgAggregateOutputType = {
+    fileSize: number | null
+  }
+
+  export type TaskReplyDocumentSumAggregateOutputType = {
+    fileSize: number | null
+  }
+
+  export type TaskReplyDocumentMinAggregateOutputType = {
+    id: string | null
+    replyId: string | null
+    fileName: string | null
+    fileUrl: string | null
+    fileSize: number | null
+    fileType: string | null
+    createdAt: Date | null
+  }
+
+  export type TaskReplyDocumentMaxAggregateOutputType = {
+    id: string | null
+    replyId: string | null
+    fileName: string | null
+    fileUrl: string | null
+    fileSize: number | null
+    fileType: string | null
+    createdAt: Date | null
+  }
+
+  export type TaskReplyDocumentCountAggregateOutputType = {
+    id: number
+    replyId: number
+    fileName: number
+    fileUrl: number
+    fileSize: number
+    fileType: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type TaskReplyDocumentAvgAggregateInputType = {
+    fileSize?: true
+  }
+
+  export type TaskReplyDocumentSumAggregateInputType = {
+    fileSize?: true
+  }
+
+  export type TaskReplyDocumentMinAggregateInputType = {
+    id?: true
+    replyId?: true
+    fileName?: true
+    fileUrl?: true
+    fileSize?: true
+    fileType?: true
+    createdAt?: true
+  }
+
+  export type TaskReplyDocumentMaxAggregateInputType = {
+    id?: true
+    replyId?: true
+    fileName?: true
+    fileUrl?: true
+    fileSize?: true
+    fileType?: true
+    createdAt?: true
+  }
+
+  export type TaskReplyDocumentCountAggregateInputType = {
+    id?: true
+    replyId?: true
+    fileName?: true
+    fileUrl?: true
+    fileSize?: true
+    fileType?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type TaskReplyDocumentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TaskReplyDocument to aggregate.
+     */
+    where?: TaskReplyDocumentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TaskReplyDocuments to fetch.
+     */
+    orderBy?: TaskReplyDocumentOrderByWithRelationInput | TaskReplyDocumentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TaskReplyDocumentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TaskReplyDocuments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TaskReplyDocuments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TaskReplyDocuments
+    **/
+    _count?: true | TaskReplyDocumentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: TaskReplyDocumentAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TaskReplyDocumentSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TaskReplyDocumentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TaskReplyDocumentMaxAggregateInputType
+  }
+
+  export type GetTaskReplyDocumentAggregateType<T extends TaskReplyDocumentAggregateArgs> = {
+        [P in keyof T & keyof AggregateTaskReplyDocument]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTaskReplyDocument[P]>
+      : GetScalarType<T[P], AggregateTaskReplyDocument[P]>
+  }
+
+
+
+
+  export type TaskReplyDocumentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TaskReplyDocumentWhereInput
+    orderBy?: TaskReplyDocumentOrderByWithAggregationInput | TaskReplyDocumentOrderByWithAggregationInput[]
+    by: TaskReplyDocumentScalarFieldEnum[] | TaskReplyDocumentScalarFieldEnum
+    having?: TaskReplyDocumentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TaskReplyDocumentCountAggregateInputType | true
+    _avg?: TaskReplyDocumentAvgAggregateInputType
+    _sum?: TaskReplyDocumentSumAggregateInputType
+    _min?: TaskReplyDocumentMinAggregateInputType
+    _max?: TaskReplyDocumentMaxAggregateInputType
+  }
+
+  export type TaskReplyDocumentGroupByOutputType = {
+    id: string
+    replyId: string
+    fileName: string
+    fileUrl: string
+    fileSize: number | null
+    fileType: string | null
+    createdAt: Date
+    _count: TaskReplyDocumentCountAggregateOutputType | null
+    _avg: TaskReplyDocumentAvgAggregateOutputType | null
+    _sum: TaskReplyDocumentSumAggregateOutputType | null
+    _min: TaskReplyDocumentMinAggregateOutputType | null
+    _max: TaskReplyDocumentMaxAggregateOutputType | null
+  }
+
+  type GetTaskReplyDocumentGroupByPayload<T extends TaskReplyDocumentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TaskReplyDocumentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TaskReplyDocumentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TaskReplyDocumentGroupByOutputType[P]>
+            : GetScalarType<T[P], TaskReplyDocumentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TaskReplyDocumentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    replyId?: boolean
+    fileName?: boolean
+    fileUrl?: boolean
+    fileSize?: boolean
+    fileType?: boolean
+    createdAt?: boolean
+    reply?: boolean | TaskReplyDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["taskReplyDocument"]>
+
+  export type TaskReplyDocumentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    replyId?: boolean
+    fileName?: boolean
+    fileUrl?: boolean
+    fileSize?: boolean
+    fileType?: boolean
+    createdAt?: boolean
+    reply?: boolean | TaskReplyDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["taskReplyDocument"]>
+
+  export type TaskReplyDocumentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    replyId?: boolean
+    fileName?: boolean
+    fileUrl?: boolean
+    fileSize?: boolean
+    fileType?: boolean
+    createdAt?: boolean
+    reply?: boolean | TaskReplyDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["taskReplyDocument"]>
+
+  export type TaskReplyDocumentSelectScalar = {
+    id?: boolean
+    replyId?: boolean
+    fileName?: boolean
+    fileUrl?: boolean
+    fileSize?: boolean
+    fileType?: boolean
+    createdAt?: boolean
+  }
+
+  export type TaskReplyDocumentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "replyId" | "fileName" | "fileUrl" | "fileSize" | "fileType" | "createdAt", ExtArgs["result"]["taskReplyDocument"]>
+  export type TaskReplyDocumentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    reply?: boolean | TaskReplyDefaultArgs<ExtArgs>
+  }
+  export type TaskReplyDocumentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    reply?: boolean | TaskReplyDefaultArgs<ExtArgs>
+  }
+  export type TaskReplyDocumentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    reply?: boolean | TaskReplyDefaultArgs<ExtArgs>
+  }
+
+  export type $TaskReplyDocumentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TaskReplyDocument"
+    objects: {
+      reply: Prisma.$TaskReplyPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      replyId: string
+      fileName: string
+      fileUrl: string
+      fileSize: number | null
+      fileType: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["taskReplyDocument"]>
+    composites: {}
+  }
+
+  type TaskReplyDocumentGetPayload<S extends boolean | null | undefined | TaskReplyDocumentDefaultArgs> = $Result.GetResult<Prisma.$TaskReplyDocumentPayload, S>
+
+  type TaskReplyDocumentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TaskReplyDocumentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TaskReplyDocumentCountAggregateInputType | true
+    }
+
+  export interface TaskReplyDocumentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TaskReplyDocument'], meta: { name: 'TaskReplyDocument' } }
+    /**
+     * Find zero or one TaskReplyDocument that matches the filter.
+     * @param {TaskReplyDocumentFindUniqueArgs} args - Arguments to find a TaskReplyDocument
+     * @example
+     * // Get one TaskReplyDocument
+     * const taskReplyDocument = await prisma.taskReplyDocument.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TaskReplyDocumentFindUniqueArgs>(args: SelectSubset<T, TaskReplyDocumentFindUniqueArgs<ExtArgs>>): Prisma__TaskReplyDocumentClient<$Result.GetResult<Prisma.$TaskReplyDocumentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TaskReplyDocument that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TaskReplyDocumentFindUniqueOrThrowArgs} args - Arguments to find a TaskReplyDocument
+     * @example
+     * // Get one TaskReplyDocument
+     * const taskReplyDocument = await prisma.taskReplyDocument.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TaskReplyDocumentFindUniqueOrThrowArgs>(args: SelectSubset<T, TaskReplyDocumentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TaskReplyDocumentClient<$Result.GetResult<Prisma.$TaskReplyDocumentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TaskReplyDocument that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskReplyDocumentFindFirstArgs} args - Arguments to find a TaskReplyDocument
+     * @example
+     * // Get one TaskReplyDocument
+     * const taskReplyDocument = await prisma.taskReplyDocument.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TaskReplyDocumentFindFirstArgs>(args?: SelectSubset<T, TaskReplyDocumentFindFirstArgs<ExtArgs>>): Prisma__TaskReplyDocumentClient<$Result.GetResult<Prisma.$TaskReplyDocumentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TaskReplyDocument that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskReplyDocumentFindFirstOrThrowArgs} args - Arguments to find a TaskReplyDocument
+     * @example
+     * // Get one TaskReplyDocument
+     * const taskReplyDocument = await prisma.taskReplyDocument.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TaskReplyDocumentFindFirstOrThrowArgs>(args?: SelectSubset<T, TaskReplyDocumentFindFirstOrThrowArgs<ExtArgs>>): Prisma__TaskReplyDocumentClient<$Result.GetResult<Prisma.$TaskReplyDocumentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TaskReplyDocuments that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskReplyDocumentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TaskReplyDocuments
+     * const taskReplyDocuments = await prisma.taskReplyDocument.findMany()
+     * 
+     * // Get first 10 TaskReplyDocuments
+     * const taskReplyDocuments = await prisma.taskReplyDocument.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const taskReplyDocumentWithIdOnly = await prisma.taskReplyDocument.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TaskReplyDocumentFindManyArgs>(args?: SelectSubset<T, TaskReplyDocumentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskReplyDocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TaskReplyDocument.
+     * @param {TaskReplyDocumentCreateArgs} args - Arguments to create a TaskReplyDocument.
+     * @example
+     * // Create one TaskReplyDocument
+     * const TaskReplyDocument = await prisma.taskReplyDocument.create({
+     *   data: {
+     *     // ... data to create a TaskReplyDocument
+     *   }
+     * })
+     * 
+     */
+    create<T extends TaskReplyDocumentCreateArgs>(args: SelectSubset<T, TaskReplyDocumentCreateArgs<ExtArgs>>): Prisma__TaskReplyDocumentClient<$Result.GetResult<Prisma.$TaskReplyDocumentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TaskReplyDocuments.
+     * @param {TaskReplyDocumentCreateManyArgs} args - Arguments to create many TaskReplyDocuments.
+     * @example
+     * // Create many TaskReplyDocuments
+     * const taskReplyDocument = await prisma.taskReplyDocument.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TaskReplyDocumentCreateManyArgs>(args?: SelectSubset<T, TaskReplyDocumentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TaskReplyDocuments and returns the data saved in the database.
+     * @param {TaskReplyDocumentCreateManyAndReturnArgs} args - Arguments to create many TaskReplyDocuments.
+     * @example
+     * // Create many TaskReplyDocuments
+     * const taskReplyDocument = await prisma.taskReplyDocument.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TaskReplyDocuments and only return the `id`
+     * const taskReplyDocumentWithIdOnly = await prisma.taskReplyDocument.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TaskReplyDocumentCreateManyAndReturnArgs>(args?: SelectSubset<T, TaskReplyDocumentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskReplyDocumentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a TaskReplyDocument.
+     * @param {TaskReplyDocumentDeleteArgs} args - Arguments to delete one TaskReplyDocument.
+     * @example
+     * // Delete one TaskReplyDocument
+     * const TaskReplyDocument = await prisma.taskReplyDocument.delete({
+     *   where: {
+     *     // ... filter to delete one TaskReplyDocument
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TaskReplyDocumentDeleteArgs>(args: SelectSubset<T, TaskReplyDocumentDeleteArgs<ExtArgs>>): Prisma__TaskReplyDocumentClient<$Result.GetResult<Prisma.$TaskReplyDocumentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TaskReplyDocument.
+     * @param {TaskReplyDocumentUpdateArgs} args - Arguments to update one TaskReplyDocument.
+     * @example
+     * // Update one TaskReplyDocument
+     * const taskReplyDocument = await prisma.taskReplyDocument.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TaskReplyDocumentUpdateArgs>(args: SelectSubset<T, TaskReplyDocumentUpdateArgs<ExtArgs>>): Prisma__TaskReplyDocumentClient<$Result.GetResult<Prisma.$TaskReplyDocumentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TaskReplyDocuments.
+     * @param {TaskReplyDocumentDeleteManyArgs} args - Arguments to filter TaskReplyDocuments to delete.
+     * @example
+     * // Delete a few TaskReplyDocuments
+     * const { count } = await prisma.taskReplyDocument.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TaskReplyDocumentDeleteManyArgs>(args?: SelectSubset<T, TaskReplyDocumentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TaskReplyDocuments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskReplyDocumentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TaskReplyDocuments
+     * const taskReplyDocument = await prisma.taskReplyDocument.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TaskReplyDocumentUpdateManyArgs>(args: SelectSubset<T, TaskReplyDocumentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TaskReplyDocuments and returns the data updated in the database.
+     * @param {TaskReplyDocumentUpdateManyAndReturnArgs} args - Arguments to update many TaskReplyDocuments.
+     * @example
+     * // Update many TaskReplyDocuments
+     * const taskReplyDocument = await prisma.taskReplyDocument.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more TaskReplyDocuments and only return the `id`
+     * const taskReplyDocumentWithIdOnly = await prisma.taskReplyDocument.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TaskReplyDocumentUpdateManyAndReturnArgs>(args: SelectSubset<T, TaskReplyDocumentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskReplyDocumentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one TaskReplyDocument.
+     * @param {TaskReplyDocumentUpsertArgs} args - Arguments to update or create a TaskReplyDocument.
+     * @example
+     * // Update or create a TaskReplyDocument
+     * const taskReplyDocument = await prisma.taskReplyDocument.upsert({
+     *   create: {
+     *     // ... data to create a TaskReplyDocument
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TaskReplyDocument we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TaskReplyDocumentUpsertArgs>(args: SelectSubset<T, TaskReplyDocumentUpsertArgs<ExtArgs>>): Prisma__TaskReplyDocumentClient<$Result.GetResult<Prisma.$TaskReplyDocumentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of TaskReplyDocuments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskReplyDocumentCountArgs} args - Arguments to filter TaskReplyDocuments to count.
+     * @example
+     * // Count the number of TaskReplyDocuments
+     * const count = await prisma.taskReplyDocument.count({
+     *   where: {
+     *     // ... the filter for the TaskReplyDocuments we want to count
+     *   }
+     * })
+    **/
+    count<T extends TaskReplyDocumentCountArgs>(
+      args?: Subset<T, TaskReplyDocumentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TaskReplyDocumentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TaskReplyDocument.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskReplyDocumentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TaskReplyDocumentAggregateArgs>(args: Subset<T, TaskReplyDocumentAggregateArgs>): Prisma.PrismaPromise<GetTaskReplyDocumentAggregateType<T>>
+
+    /**
+     * Group by TaskReplyDocument.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskReplyDocumentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TaskReplyDocumentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TaskReplyDocumentGroupByArgs['orderBy'] }
+        : { orderBy?: TaskReplyDocumentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TaskReplyDocumentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTaskReplyDocumentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TaskReplyDocument model
+   */
+  readonly fields: TaskReplyDocumentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TaskReplyDocument.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TaskReplyDocumentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    reply<T extends TaskReplyDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TaskReplyDefaultArgs<ExtArgs>>): Prisma__TaskReplyClient<$Result.GetResult<Prisma.$TaskReplyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TaskReplyDocument model
+   */
+  interface TaskReplyDocumentFieldRefs {
+    readonly id: FieldRef<"TaskReplyDocument", 'String'>
+    readonly replyId: FieldRef<"TaskReplyDocument", 'String'>
+    readonly fileName: FieldRef<"TaskReplyDocument", 'String'>
+    readonly fileUrl: FieldRef<"TaskReplyDocument", 'String'>
+    readonly fileSize: FieldRef<"TaskReplyDocument", 'Int'>
+    readonly fileType: FieldRef<"TaskReplyDocument", 'String'>
+    readonly createdAt: FieldRef<"TaskReplyDocument", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TaskReplyDocument findUnique
+   */
+  export type TaskReplyDocumentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskReplyDocument
+     */
+    select?: TaskReplyDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskReplyDocument
+     */
+    omit?: TaskReplyDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskReplyDocumentInclude<ExtArgs> | null
+    /**
+     * Filter, which TaskReplyDocument to fetch.
+     */
+    where: TaskReplyDocumentWhereUniqueInput
+  }
+
+  /**
+   * TaskReplyDocument findUniqueOrThrow
+   */
+  export type TaskReplyDocumentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskReplyDocument
+     */
+    select?: TaskReplyDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskReplyDocument
+     */
+    omit?: TaskReplyDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskReplyDocumentInclude<ExtArgs> | null
+    /**
+     * Filter, which TaskReplyDocument to fetch.
+     */
+    where: TaskReplyDocumentWhereUniqueInput
+  }
+
+  /**
+   * TaskReplyDocument findFirst
+   */
+  export type TaskReplyDocumentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskReplyDocument
+     */
+    select?: TaskReplyDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskReplyDocument
+     */
+    omit?: TaskReplyDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskReplyDocumentInclude<ExtArgs> | null
+    /**
+     * Filter, which TaskReplyDocument to fetch.
+     */
+    where?: TaskReplyDocumentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TaskReplyDocuments to fetch.
+     */
+    orderBy?: TaskReplyDocumentOrderByWithRelationInput | TaskReplyDocumentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TaskReplyDocuments.
+     */
+    cursor?: TaskReplyDocumentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TaskReplyDocuments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TaskReplyDocuments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TaskReplyDocuments.
+     */
+    distinct?: TaskReplyDocumentScalarFieldEnum | TaskReplyDocumentScalarFieldEnum[]
+  }
+
+  /**
+   * TaskReplyDocument findFirstOrThrow
+   */
+  export type TaskReplyDocumentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskReplyDocument
+     */
+    select?: TaskReplyDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskReplyDocument
+     */
+    omit?: TaskReplyDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskReplyDocumentInclude<ExtArgs> | null
+    /**
+     * Filter, which TaskReplyDocument to fetch.
+     */
+    where?: TaskReplyDocumentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TaskReplyDocuments to fetch.
+     */
+    orderBy?: TaskReplyDocumentOrderByWithRelationInput | TaskReplyDocumentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TaskReplyDocuments.
+     */
+    cursor?: TaskReplyDocumentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TaskReplyDocuments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TaskReplyDocuments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TaskReplyDocuments.
+     */
+    distinct?: TaskReplyDocumentScalarFieldEnum | TaskReplyDocumentScalarFieldEnum[]
+  }
+
+  /**
+   * TaskReplyDocument findMany
+   */
+  export type TaskReplyDocumentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskReplyDocument
+     */
+    select?: TaskReplyDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskReplyDocument
+     */
+    omit?: TaskReplyDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskReplyDocumentInclude<ExtArgs> | null
+    /**
+     * Filter, which TaskReplyDocuments to fetch.
+     */
+    where?: TaskReplyDocumentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TaskReplyDocuments to fetch.
+     */
+    orderBy?: TaskReplyDocumentOrderByWithRelationInput | TaskReplyDocumentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TaskReplyDocuments.
+     */
+    cursor?: TaskReplyDocumentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TaskReplyDocuments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TaskReplyDocuments.
+     */
+    skip?: number
+    distinct?: TaskReplyDocumentScalarFieldEnum | TaskReplyDocumentScalarFieldEnum[]
+  }
+
+  /**
+   * TaskReplyDocument create
+   */
+  export type TaskReplyDocumentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskReplyDocument
+     */
+    select?: TaskReplyDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskReplyDocument
+     */
+    omit?: TaskReplyDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskReplyDocumentInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TaskReplyDocument.
+     */
+    data: XOR<TaskReplyDocumentCreateInput, TaskReplyDocumentUncheckedCreateInput>
+  }
+
+  /**
+   * TaskReplyDocument createMany
+   */
+  export type TaskReplyDocumentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TaskReplyDocuments.
+     */
+    data: TaskReplyDocumentCreateManyInput | TaskReplyDocumentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TaskReplyDocument createManyAndReturn
+   */
+  export type TaskReplyDocumentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskReplyDocument
+     */
+    select?: TaskReplyDocumentSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskReplyDocument
+     */
+    omit?: TaskReplyDocumentOmit<ExtArgs> | null
+    /**
+     * The data used to create many TaskReplyDocuments.
+     */
+    data: TaskReplyDocumentCreateManyInput | TaskReplyDocumentCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskReplyDocumentIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TaskReplyDocument update
+   */
+  export type TaskReplyDocumentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskReplyDocument
+     */
+    select?: TaskReplyDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskReplyDocument
+     */
+    omit?: TaskReplyDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskReplyDocumentInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TaskReplyDocument.
+     */
+    data: XOR<TaskReplyDocumentUpdateInput, TaskReplyDocumentUncheckedUpdateInput>
+    /**
+     * Choose, which TaskReplyDocument to update.
+     */
+    where: TaskReplyDocumentWhereUniqueInput
+  }
+
+  /**
+   * TaskReplyDocument updateMany
+   */
+  export type TaskReplyDocumentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TaskReplyDocuments.
+     */
+    data: XOR<TaskReplyDocumentUpdateManyMutationInput, TaskReplyDocumentUncheckedUpdateManyInput>
+    /**
+     * Filter which TaskReplyDocuments to update
+     */
+    where?: TaskReplyDocumentWhereInput
+    /**
+     * Limit how many TaskReplyDocuments to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TaskReplyDocument updateManyAndReturn
+   */
+  export type TaskReplyDocumentUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskReplyDocument
+     */
+    select?: TaskReplyDocumentSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskReplyDocument
+     */
+    omit?: TaskReplyDocumentOmit<ExtArgs> | null
+    /**
+     * The data used to update TaskReplyDocuments.
+     */
+    data: XOR<TaskReplyDocumentUpdateManyMutationInput, TaskReplyDocumentUncheckedUpdateManyInput>
+    /**
+     * Filter which TaskReplyDocuments to update
+     */
+    where?: TaskReplyDocumentWhereInput
+    /**
+     * Limit how many TaskReplyDocuments to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskReplyDocumentIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TaskReplyDocument upsert
+   */
+  export type TaskReplyDocumentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskReplyDocument
+     */
+    select?: TaskReplyDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskReplyDocument
+     */
+    omit?: TaskReplyDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskReplyDocumentInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TaskReplyDocument to update in case it exists.
+     */
+    where: TaskReplyDocumentWhereUniqueInput
+    /**
+     * In case the TaskReplyDocument found by the `where` argument doesn't exist, create a new TaskReplyDocument with this data.
+     */
+    create: XOR<TaskReplyDocumentCreateInput, TaskReplyDocumentUncheckedCreateInput>
+    /**
+     * In case the TaskReplyDocument was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TaskReplyDocumentUpdateInput, TaskReplyDocumentUncheckedUpdateInput>
+  }
+
+  /**
+   * TaskReplyDocument delete
+   */
+  export type TaskReplyDocumentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskReplyDocument
+     */
+    select?: TaskReplyDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskReplyDocument
+     */
+    omit?: TaskReplyDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskReplyDocumentInclude<ExtArgs> | null
+    /**
+     * Filter which TaskReplyDocument to delete.
+     */
+    where: TaskReplyDocumentWhereUniqueInput
+  }
+
+  /**
+   * TaskReplyDocument deleteMany
+   */
+  export type TaskReplyDocumentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TaskReplyDocuments to delete
+     */
+    where?: TaskReplyDocumentWhereInput
+    /**
+     * Limit how many TaskReplyDocuments to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TaskReplyDocument without action
+   */
+  export type TaskReplyDocumentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskReplyDocument
+     */
+    select?: TaskReplyDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskReplyDocument
+     */
+    omit?: TaskReplyDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskReplyDocumentInclude<ExtArgs> | null
   }
 
 
@@ -14297,6 +15567,19 @@ export namespace Prisma {
   export type TaskReplyScalarFieldEnum = (typeof TaskReplyScalarFieldEnum)[keyof typeof TaskReplyScalarFieldEnum]
 
 
+  export const TaskReplyDocumentScalarFieldEnum: {
+    id: 'id',
+    replyId: 'replyId',
+    fileName: 'fileName',
+    fileUrl: 'fileUrl',
+    fileSize: 'fileSize',
+    fileType: 'fileType',
+    createdAt: 'createdAt'
+  };
+
+  export type TaskReplyDocumentScalarFieldEnum = (typeof TaskReplyDocumentScalarFieldEnum)[keyof typeof TaskReplyDocumentScalarFieldEnum]
+
+
   export const DocumentScalarFieldEnum: {
     id: 'id',
     documentCode: 'documentCode',
@@ -15254,6 +16537,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"TaskReply"> | Date | string
     taskNotification?: XOR<TaskNotificationScalarRelationFilter, TaskNotificationWhereInput>
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+    documents?: TaskReplyDocumentListRelationFilter
   }
 
   export type TaskReplyOrderByWithRelationInput = {
@@ -15265,6 +16549,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     taskNotification?: TaskNotificationOrderByWithRelationInput
     createdBy?: UserOrderByWithRelationInput
+    documents?: TaskReplyDocumentOrderByRelationAggregateInput
   }
 
   export type TaskReplyWhereUniqueInput = Prisma.AtLeast<{
@@ -15279,6 +16564,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"TaskReply"> | Date | string
     taskNotification?: XOR<TaskNotificationScalarRelationFilter, TaskNotificationWhereInput>
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+    documents?: TaskReplyDocumentListRelationFilter
   }, "id">
 
   export type TaskReplyOrderByWithAggregationInput = {
@@ -15303,6 +16589,73 @@ export namespace Prisma {
     taskStatus?: StringNullableWithAggregatesFilter<"TaskReply"> | string | null
     createdById?: StringWithAggregatesFilter<"TaskReply"> | string
     createdAt?: DateTimeWithAggregatesFilter<"TaskReply"> | Date | string
+  }
+
+  export type TaskReplyDocumentWhereInput = {
+    AND?: TaskReplyDocumentWhereInput | TaskReplyDocumentWhereInput[]
+    OR?: TaskReplyDocumentWhereInput[]
+    NOT?: TaskReplyDocumentWhereInput | TaskReplyDocumentWhereInput[]
+    id?: StringFilter<"TaskReplyDocument"> | string
+    replyId?: StringFilter<"TaskReplyDocument"> | string
+    fileName?: StringFilter<"TaskReplyDocument"> | string
+    fileUrl?: StringFilter<"TaskReplyDocument"> | string
+    fileSize?: IntNullableFilter<"TaskReplyDocument"> | number | null
+    fileType?: StringNullableFilter<"TaskReplyDocument"> | string | null
+    createdAt?: DateTimeFilter<"TaskReplyDocument"> | Date | string
+    reply?: XOR<TaskReplyScalarRelationFilter, TaskReplyWhereInput>
+  }
+
+  export type TaskReplyDocumentOrderByWithRelationInput = {
+    id?: SortOrder
+    replyId?: SortOrder
+    fileName?: SortOrder
+    fileUrl?: SortOrder
+    fileSize?: SortOrderInput | SortOrder
+    fileType?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    reply?: TaskReplyOrderByWithRelationInput
+  }
+
+  export type TaskReplyDocumentWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: TaskReplyDocumentWhereInput | TaskReplyDocumentWhereInput[]
+    OR?: TaskReplyDocumentWhereInput[]
+    NOT?: TaskReplyDocumentWhereInput | TaskReplyDocumentWhereInput[]
+    replyId?: StringFilter<"TaskReplyDocument"> | string
+    fileName?: StringFilter<"TaskReplyDocument"> | string
+    fileUrl?: StringFilter<"TaskReplyDocument"> | string
+    fileSize?: IntNullableFilter<"TaskReplyDocument"> | number | null
+    fileType?: StringNullableFilter<"TaskReplyDocument"> | string | null
+    createdAt?: DateTimeFilter<"TaskReplyDocument"> | Date | string
+    reply?: XOR<TaskReplyScalarRelationFilter, TaskReplyWhereInput>
+  }, "id">
+
+  export type TaskReplyDocumentOrderByWithAggregationInput = {
+    id?: SortOrder
+    replyId?: SortOrder
+    fileName?: SortOrder
+    fileUrl?: SortOrder
+    fileSize?: SortOrderInput | SortOrder
+    fileType?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: TaskReplyDocumentCountOrderByAggregateInput
+    _avg?: TaskReplyDocumentAvgOrderByAggregateInput
+    _max?: TaskReplyDocumentMaxOrderByAggregateInput
+    _min?: TaskReplyDocumentMinOrderByAggregateInput
+    _sum?: TaskReplyDocumentSumOrderByAggregateInput
+  }
+
+  export type TaskReplyDocumentScalarWhereWithAggregatesInput = {
+    AND?: TaskReplyDocumentScalarWhereWithAggregatesInput | TaskReplyDocumentScalarWhereWithAggregatesInput[]
+    OR?: TaskReplyDocumentScalarWhereWithAggregatesInput[]
+    NOT?: TaskReplyDocumentScalarWhereWithAggregatesInput | TaskReplyDocumentScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TaskReplyDocument"> | string
+    replyId?: StringWithAggregatesFilter<"TaskReplyDocument"> | string
+    fileName?: StringWithAggregatesFilter<"TaskReplyDocument"> | string
+    fileUrl?: StringWithAggregatesFilter<"TaskReplyDocument"> | string
+    fileSize?: IntNullableWithAggregatesFilter<"TaskReplyDocument"> | number | null
+    fileType?: StringNullableWithAggregatesFilter<"TaskReplyDocument"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"TaskReplyDocument"> | Date | string
   }
 
   export type DocumentWhereInput = {
@@ -16296,6 +17649,7 @@ export namespace Prisma {
     createdAt?: Date | string
     taskNotification: TaskNotificationCreateNestedOneWithoutRepliesInput
     createdBy: UserCreateNestedOneWithoutTaskRepliesInput
+    documents?: TaskReplyDocumentCreateNestedManyWithoutReplyInput
   }
 
   export type TaskReplyUncheckedCreateInput = {
@@ -16305,6 +17659,7 @@ export namespace Prisma {
     taskStatus?: string | null
     createdById: string
     createdAt?: Date | string
+    documents?: TaskReplyDocumentUncheckedCreateNestedManyWithoutReplyInput
   }
 
   export type TaskReplyUpdateInput = {
@@ -16314,6 +17669,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     taskNotification?: TaskNotificationUpdateOneRequiredWithoutRepliesNestedInput
     createdBy?: UserUpdateOneRequiredWithoutTaskRepliesNestedInput
+    documents?: TaskReplyDocumentUpdateManyWithoutReplyNestedInput
   }
 
   export type TaskReplyUncheckedUpdateInput = {
@@ -16323,6 +17679,7 @@ export namespace Prisma {
     taskStatus?: NullableStringFieldUpdateOperationsInput | string | null
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    documents?: TaskReplyDocumentUncheckedUpdateManyWithoutReplyNestedInput
   }
 
   export type TaskReplyCreateManyInput = {
@@ -16347,6 +17704,75 @@ export namespace Prisma {
     message?: StringFieldUpdateOperationsInput | string
     taskStatus?: NullableStringFieldUpdateOperationsInput | string | null
     createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TaskReplyDocumentCreateInput = {
+    id?: string
+    fileName: string
+    fileUrl: string
+    fileSize?: number | null
+    fileType?: string | null
+    createdAt?: Date | string
+    reply: TaskReplyCreateNestedOneWithoutDocumentsInput
+  }
+
+  export type TaskReplyDocumentUncheckedCreateInput = {
+    id?: string
+    replyId: string
+    fileName: string
+    fileUrl: string
+    fileSize?: number | null
+    fileType?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TaskReplyDocumentUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    fileType?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reply?: TaskReplyUpdateOneRequiredWithoutDocumentsNestedInput
+  }
+
+  export type TaskReplyDocumentUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    replyId?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    fileType?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TaskReplyDocumentCreateManyInput = {
+    id?: string
+    replyId: string
+    fileName: string
+    fileUrl: string
+    fileSize?: number | null
+    fileType?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TaskReplyDocumentUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    fileType?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TaskReplyDocumentUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    replyId?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    fileType?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -17411,6 +18837,16 @@ export namespace Prisma {
     isNot?: TaskNotificationWhereInput
   }
 
+  export type TaskReplyDocumentListRelationFilter = {
+    every?: TaskReplyDocumentWhereInput
+    some?: TaskReplyDocumentWhereInput
+    none?: TaskReplyDocumentWhereInput
+  }
+
+  export type TaskReplyDocumentOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type TaskReplyCountOrderByAggregateInput = {
     id?: SortOrder
     taskNotificationId?: SortOrder
@@ -17438,6 +18874,76 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type TaskReplyScalarRelationFilter = {
+    is?: TaskReplyWhereInput
+    isNot?: TaskReplyWhereInput
+  }
+
+  export type TaskReplyDocumentCountOrderByAggregateInput = {
+    id?: SortOrder
+    replyId?: SortOrder
+    fileName?: SortOrder
+    fileUrl?: SortOrder
+    fileSize?: SortOrder
+    fileType?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type TaskReplyDocumentAvgOrderByAggregateInput = {
+    fileSize?: SortOrder
+  }
+
+  export type TaskReplyDocumentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    replyId?: SortOrder
+    fileName?: SortOrder
+    fileUrl?: SortOrder
+    fileSize?: SortOrder
+    fileType?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type TaskReplyDocumentMinOrderByAggregateInput = {
+    id?: SortOrder
+    replyId?: SortOrder
+    fileName?: SortOrder
+    fileUrl?: SortOrder
+    fileSize?: SortOrder
+    fileType?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type TaskReplyDocumentSumOrderByAggregateInput = {
+    fileSize?: SortOrder
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
   export type EnumDocumentTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.DocumentType | EnumDocumentTypeFieldRefInput<$PrismaModel>
     in?: $Enums.DocumentType[] | ListEnumDocumentTypeFieldRefInput<$PrismaModel>
@@ -17450,17 +18956,6 @@ export namespace Prisma {
     in?: $Enums.DocumentStatus[] | ListEnumDocumentStatusFieldRefInput<$PrismaModel>
     notIn?: $Enums.DocumentStatus[] | ListEnumDocumentStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumDocumentStatusFilter<$PrismaModel> | $Enums.DocumentStatus
-  }
-
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type FloatNullableFilter<$PrismaModel = never> = {
@@ -17565,22 +19060,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumDocumentStatusFilter<$PrismaModel>
     _max?: NestedEnumDocumentStatusFilter<$PrismaModel>
-  }
-
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -18533,6 +20012,20 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type TaskReplyDocumentCreateNestedManyWithoutReplyInput = {
+    create?: XOR<TaskReplyDocumentCreateWithoutReplyInput, TaskReplyDocumentUncheckedCreateWithoutReplyInput> | TaskReplyDocumentCreateWithoutReplyInput[] | TaskReplyDocumentUncheckedCreateWithoutReplyInput[]
+    connectOrCreate?: TaskReplyDocumentCreateOrConnectWithoutReplyInput | TaskReplyDocumentCreateOrConnectWithoutReplyInput[]
+    createMany?: TaskReplyDocumentCreateManyReplyInputEnvelope
+    connect?: TaskReplyDocumentWhereUniqueInput | TaskReplyDocumentWhereUniqueInput[]
+  }
+
+  export type TaskReplyDocumentUncheckedCreateNestedManyWithoutReplyInput = {
+    create?: XOR<TaskReplyDocumentCreateWithoutReplyInput, TaskReplyDocumentUncheckedCreateWithoutReplyInput> | TaskReplyDocumentCreateWithoutReplyInput[] | TaskReplyDocumentUncheckedCreateWithoutReplyInput[]
+    connectOrCreate?: TaskReplyDocumentCreateOrConnectWithoutReplyInput | TaskReplyDocumentCreateOrConnectWithoutReplyInput[]
+    createMany?: TaskReplyDocumentCreateManyReplyInputEnvelope
+    connect?: TaskReplyDocumentWhereUniqueInput | TaskReplyDocumentWhereUniqueInput[]
+  }
+
   export type TaskNotificationUpdateOneRequiredWithoutRepliesNestedInput = {
     create?: XOR<TaskNotificationCreateWithoutRepliesInput, TaskNotificationUncheckedCreateWithoutRepliesInput>
     connectOrCreate?: TaskNotificationCreateOrConnectWithoutRepliesInput
@@ -18549,6 +20042,56 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTaskRepliesInput, UserUpdateWithoutTaskRepliesInput>, UserUncheckedUpdateWithoutTaskRepliesInput>
   }
 
+  export type TaskReplyDocumentUpdateManyWithoutReplyNestedInput = {
+    create?: XOR<TaskReplyDocumentCreateWithoutReplyInput, TaskReplyDocumentUncheckedCreateWithoutReplyInput> | TaskReplyDocumentCreateWithoutReplyInput[] | TaskReplyDocumentUncheckedCreateWithoutReplyInput[]
+    connectOrCreate?: TaskReplyDocumentCreateOrConnectWithoutReplyInput | TaskReplyDocumentCreateOrConnectWithoutReplyInput[]
+    upsert?: TaskReplyDocumentUpsertWithWhereUniqueWithoutReplyInput | TaskReplyDocumentUpsertWithWhereUniqueWithoutReplyInput[]
+    createMany?: TaskReplyDocumentCreateManyReplyInputEnvelope
+    set?: TaskReplyDocumentWhereUniqueInput | TaskReplyDocumentWhereUniqueInput[]
+    disconnect?: TaskReplyDocumentWhereUniqueInput | TaskReplyDocumentWhereUniqueInput[]
+    delete?: TaskReplyDocumentWhereUniqueInput | TaskReplyDocumentWhereUniqueInput[]
+    connect?: TaskReplyDocumentWhereUniqueInput | TaskReplyDocumentWhereUniqueInput[]
+    update?: TaskReplyDocumentUpdateWithWhereUniqueWithoutReplyInput | TaskReplyDocumentUpdateWithWhereUniqueWithoutReplyInput[]
+    updateMany?: TaskReplyDocumentUpdateManyWithWhereWithoutReplyInput | TaskReplyDocumentUpdateManyWithWhereWithoutReplyInput[]
+    deleteMany?: TaskReplyDocumentScalarWhereInput | TaskReplyDocumentScalarWhereInput[]
+  }
+
+  export type TaskReplyDocumentUncheckedUpdateManyWithoutReplyNestedInput = {
+    create?: XOR<TaskReplyDocumentCreateWithoutReplyInput, TaskReplyDocumentUncheckedCreateWithoutReplyInput> | TaskReplyDocumentCreateWithoutReplyInput[] | TaskReplyDocumentUncheckedCreateWithoutReplyInput[]
+    connectOrCreate?: TaskReplyDocumentCreateOrConnectWithoutReplyInput | TaskReplyDocumentCreateOrConnectWithoutReplyInput[]
+    upsert?: TaskReplyDocumentUpsertWithWhereUniqueWithoutReplyInput | TaskReplyDocumentUpsertWithWhereUniqueWithoutReplyInput[]
+    createMany?: TaskReplyDocumentCreateManyReplyInputEnvelope
+    set?: TaskReplyDocumentWhereUniqueInput | TaskReplyDocumentWhereUniqueInput[]
+    disconnect?: TaskReplyDocumentWhereUniqueInput | TaskReplyDocumentWhereUniqueInput[]
+    delete?: TaskReplyDocumentWhereUniqueInput | TaskReplyDocumentWhereUniqueInput[]
+    connect?: TaskReplyDocumentWhereUniqueInput | TaskReplyDocumentWhereUniqueInput[]
+    update?: TaskReplyDocumentUpdateWithWhereUniqueWithoutReplyInput | TaskReplyDocumentUpdateWithWhereUniqueWithoutReplyInput[]
+    updateMany?: TaskReplyDocumentUpdateManyWithWhereWithoutReplyInput | TaskReplyDocumentUpdateManyWithWhereWithoutReplyInput[]
+    deleteMany?: TaskReplyDocumentScalarWhereInput | TaskReplyDocumentScalarWhereInput[]
+  }
+
+  export type TaskReplyCreateNestedOneWithoutDocumentsInput = {
+    create?: XOR<TaskReplyCreateWithoutDocumentsInput, TaskReplyUncheckedCreateWithoutDocumentsInput>
+    connectOrCreate?: TaskReplyCreateOrConnectWithoutDocumentsInput
+    connect?: TaskReplyWhereUniqueInput
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type TaskReplyUpdateOneRequiredWithoutDocumentsNestedInput = {
+    create?: XOR<TaskReplyCreateWithoutDocumentsInput, TaskReplyUncheckedCreateWithoutDocumentsInput>
+    connectOrCreate?: TaskReplyCreateOrConnectWithoutDocumentsInput
+    upsert?: TaskReplyUpsertWithoutDocumentsInput
+    connect?: TaskReplyWhereUniqueInput
+    update?: XOR<XOR<TaskReplyUpdateToOneWithWhereWithoutDocumentsInput, TaskReplyUpdateWithoutDocumentsInput>, TaskReplyUncheckedUpdateWithoutDocumentsInput>
+  }
+
   export type UserCreateNestedOneWithoutDocumentsInput = {
     create?: XOR<UserCreateWithoutDocumentsInput, UserUncheckedCreateWithoutDocumentsInput>
     connectOrCreate?: UserCreateOrConnectWithoutDocumentsInput
@@ -18561,14 +20104,6 @@ export namespace Prisma {
 
   export type EnumDocumentStatusFieldUpdateOperationsInput = {
     set?: $Enums.DocumentStatus
-  }
-
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type NullableFloatFieldUpdateOperationsInput = {
@@ -18993,6 +20528,33 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type NestedEnumDocumentTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.DocumentType | EnumDocumentTypeFieldRefInput<$PrismaModel>
     in?: $Enums.DocumentType[] | ListEnumDocumentTypeFieldRefInput<$PrismaModel>
@@ -19005,17 +20567,6 @@ export namespace Prisma {
     in?: $Enums.DocumentStatus[] | ListEnumDocumentStatusFieldRefInput<$PrismaModel>
     notIn?: $Enums.DocumentStatus[] | ListEnumDocumentStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumDocumentStatusFilter<$PrismaModel> | $Enums.DocumentStatus
-  }
-
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedEnumDocumentTypeWithAggregatesFilter<$PrismaModel = never> = {
@@ -19036,22 +20587,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumDocumentStatusFilter<$PrismaModel>
     _max?: NestedEnumDocumentStatusFilter<$PrismaModel>
-  }
-
-  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -19410,6 +20945,7 @@ export namespace Prisma {
     taskStatus?: string | null
     createdAt?: Date | string
     taskNotification: TaskNotificationCreateNestedOneWithoutRepliesInput
+    documents?: TaskReplyDocumentCreateNestedManyWithoutReplyInput
   }
 
   export type TaskReplyUncheckedCreateWithoutCreatedByInput = {
@@ -19418,6 +20954,7 @@ export namespace Prisma {
     message: string
     taskStatus?: string | null
     createdAt?: Date | string
+    documents?: TaskReplyDocumentUncheckedCreateNestedManyWithoutReplyInput
   }
 
   export type TaskReplyCreateOrConnectWithoutCreatedByInput = {
@@ -21023,6 +22560,7 @@ export namespace Prisma {
     taskStatus?: string | null
     createdAt?: Date | string
     createdBy: UserCreateNestedOneWithoutTaskRepliesInput
+    documents?: TaskReplyDocumentCreateNestedManyWithoutReplyInput
   }
 
   export type TaskReplyUncheckedCreateWithoutTaskNotificationInput = {
@@ -21031,6 +22569,7 @@ export namespace Prisma {
     taskStatus?: string | null
     createdById: string
     createdAt?: Date | string
+    documents?: TaskReplyDocumentUncheckedCreateNestedManyWithoutReplyInput
   }
 
   export type TaskReplyCreateOrConnectWithoutTaskNotificationInput = {
@@ -21368,6 +22907,34 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutTaskRepliesInput, UserUncheckedCreateWithoutTaskRepliesInput>
   }
 
+  export type TaskReplyDocumentCreateWithoutReplyInput = {
+    id?: string
+    fileName: string
+    fileUrl: string
+    fileSize?: number | null
+    fileType?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TaskReplyDocumentUncheckedCreateWithoutReplyInput = {
+    id?: string
+    fileName: string
+    fileUrl: string
+    fileSize?: number | null
+    fileType?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TaskReplyDocumentCreateOrConnectWithoutReplyInput = {
+    where: TaskReplyDocumentWhereUniqueInput
+    create: XOR<TaskReplyDocumentCreateWithoutReplyInput, TaskReplyDocumentUncheckedCreateWithoutReplyInput>
+  }
+
+  export type TaskReplyDocumentCreateManyReplyInputEnvelope = {
+    data: TaskReplyDocumentCreateManyReplyInput | TaskReplyDocumentCreateManyReplyInput[]
+    skipDuplicates?: boolean
+  }
+
   export type TaskNotificationUpsertWithoutRepliesInput = {
     update: XOR<TaskNotificationUpdateWithoutRepliesInput, TaskNotificationUncheckedUpdateWithoutRepliesInput>
     create: XOR<TaskNotificationCreateWithoutRepliesInput, TaskNotificationUncheckedCreateWithoutRepliesInput>
@@ -21464,6 +23031,87 @@ export namespace Prisma {
     taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type TaskReplyDocumentUpsertWithWhereUniqueWithoutReplyInput = {
+    where: TaskReplyDocumentWhereUniqueInput
+    update: XOR<TaskReplyDocumentUpdateWithoutReplyInput, TaskReplyDocumentUncheckedUpdateWithoutReplyInput>
+    create: XOR<TaskReplyDocumentCreateWithoutReplyInput, TaskReplyDocumentUncheckedCreateWithoutReplyInput>
+  }
+
+  export type TaskReplyDocumentUpdateWithWhereUniqueWithoutReplyInput = {
+    where: TaskReplyDocumentWhereUniqueInput
+    data: XOR<TaskReplyDocumentUpdateWithoutReplyInput, TaskReplyDocumentUncheckedUpdateWithoutReplyInput>
+  }
+
+  export type TaskReplyDocumentUpdateManyWithWhereWithoutReplyInput = {
+    where: TaskReplyDocumentScalarWhereInput
+    data: XOR<TaskReplyDocumentUpdateManyMutationInput, TaskReplyDocumentUncheckedUpdateManyWithoutReplyInput>
+  }
+
+  export type TaskReplyDocumentScalarWhereInput = {
+    AND?: TaskReplyDocumentScalarWhereInput | TaskReplyDocumentScalarWhereInput[]
+    OR?: TaskReplyDocumentScalarWhereInput[]
+    NOT?: TaskReplyDocumentScalarWhereInput | TaskReplyDocumentScalarWhereInput[]
+    id?: StringFilter<"TaskReplyDocument"> | string
+    replyId?: StringFilter<"TaskReplyDocument"> | string
+    fileName?: StringFilter<"TaskReplyDocument"> | string
+    fileUrl?: StringFilter<"TaskReplyDocument"> | string
+    fileSize?: IntNullableFilter<"TaskReplyDocument"> | number | null
+    fileType?: StringNullableFilter<"TaskReplyDocument"> | string | null
+    createdAt?: DateTimeFilter<"TaskReplyDocument"> | Date | string
+  }
+
+  export type TaskReplyCreateWithoutDocumentsInput = {
+    id?: string
+    message: string
+    taskStatus?: string | null
+    createdAt?: Date | string
+    taskNotification: TaskNotificationCreateNestedOneWithoutRepliesInput
+    createdBy: UserCreateNestedOneWithoutTaskRepliesInput
+  }
+
+  export type TaskReplyUncheckedCreateWithoutDocumentsInput = {
+    id?: string
+    taskNotificationId: string
+    message: string
+    taskStatus?: string | null
+    createdById: string
+    createdAt?: Date | string
+  }
+
+  export type TaskReplyCreateOrConnectWithoutDocumentsInput = {
+    where: TaskReplyWhereUniqueInput
+    create: XOR<TaskReplyCreateWithoutDocumentsInput, TaskReplyUncheckedCreateWithoutDocumentsInput>
+  }
+
+  export type TaskReplyUpsertWithoutDocumentsInput = {
+    update: XOR<TaskReplyUpdateWithoutDocumentsInput, TaskReplyUncheckedUpdateWithoutDocumentsInput>
+    create: XOR<TaskReplyCreateWithoutDocumentsInput, TaskReplyUncheckedCreateWithoutDocumentsInput>
+    where?: TaskReplyWhereInput
+  }
+
+  export type TaskReplyUpdateToOneWithWhereWithoutDocumentsInput = {
+    where?: TaskReplyWhereInput
+    data: XOR<TaskReplyUpdateWithoutDocumentsInput, TaskReplyUncheckedUpdateWithoutDocumentsInput>
+  }
+
+  export type TaskReplyUpdateWithoutDocumentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    taskStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    taskNotification?: TaskNotificationUpdateOneRequiredWithoutRepliesNestedInput
+    createdBy?: UserUpdateOneRequiredWithoutTaskRepliesNestedInput
+  }
+
+  export type TaskReplyUncheckedUpdateWithoutDocumentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    taskNotificationId?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    taskStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserCreateWithoutDocumentsInput = {
@@ -22501,6 +24149,7 @@ export namespace Prisma {
     taskStatus?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     taskNotification?: TaskNotificationUpdateOneRequiredWithoutRepliesNestedInput
+    documents?: TaskReplyDocumentUpdateManyWithoutReplyNestedInput
   }
 
   export type TaskReplyUncheckedUpdateWithoutCreatedByInput = {
@@ -22509,6 +24158,7 @@ export namespace Prisma {
     message?: StringFieldUpdateOperationsInput | string
     taskStatus?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    documents?: TaskReplyDocumentUncheckedUpdateManyWithoutReplyNestedInput
   }
 
   export type TaskReplyUncheckedUpdateManyWithoutCreatedByInput = {
@@ -22713,6 +24363,7 @@ export namespace Prisma {
     taskStatus?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneRequiredWithoutTaskRepliesNestedInput
+    documents?: TaskReplyDocumentUpdateManyWithoutReplyNestedInput
   }
 
   export type TaskReplyUncheckedUpdateWithoutTaskNotificationInput = {
@@ -22721,6 +24372,7 @@ export namespace Prisma {
     taskStatus?: NullableStringFieldUpdateOperationsInput | string | null
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    documents?: TaskReplyDocumentUncheckedUpdateManyWithoutReplyNestedInput
   }
 
   export type TaskReplyUncheckedUpdateManyWithoutTaskNotificationInput = {
@@ -22728,6 +24380,42 @@ export namespace Prisma {
     message?: StringFieldUpdateOperationsInput | string
     taskStatus?: NullableStringFieldUpdateOperationsInput | string | null
     createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TaskReplyDocumentCreateManyReplyInput = {
+    id?: string
+    fileName: string
+    fileUrl: string
+    fileSize?: number | null
+    fileType?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TaskReplyDocumentUpdateWithoutReplyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    fileType?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TaskReplyDocumentUncheckedUpdateWithoutReplyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    fileType?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TaskReplyDocumentUncheckedUpdateManyWithoutReplyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    fileType?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

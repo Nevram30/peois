@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
+import { useUploadThing } from "~/lib/uploadthing";
 
 type TaskStatus = "in-progress" | "action-taken";
 
@@ -26,12 +27,6 @@ function formatDate(date: Date | string): string {
   });
 }
 
-interface DroppedFile {
-  name: string;
-  size: number;
-  type: string;
-}
-
 export default function ReplyPage() {
   const params = useParams();
   const router = useRouter();
@@ -41,29 +36,29 @@ export default function ReplyPage() {
 
   const [message, setMessage] = useState("");
   const [taskStatus, setTaskStatus] = useState<TaskStatus>("action-taken");
-  const [files, setFiles] = useState<DroppedFile[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const { startUpload } = useUploadThing("taskReplyUploader");
+
+  const replyMutation = api.taskNotification.reply.useMutation({
+    onSuccess: () => router.push(`/admin/dashboard/my-task/${id}`),
+    onError: () => setSubmitting(false),
+  });
+
   function handleDrop(e: React.DragEvent) {
     e.preventDefault();
     setIsDragOver(false);
-    const dropped = Array.from(e.dataTransfer.files).map((f) => ({
-      name: f.name,
-      size: f.size,
-      type: f.type,
-    }));
+    const dropped = Array.from(e.dataTransfer.files);
     setFiles((prev) => [...prev, ...dropped]);
   }
 
   function handleFileInput(e: React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.files) return;
-    const picked = Array.from(e.target.files).map((f) => ({
-      name: f.name,
-      size: f.size,
-      type: f.type,
-    }));
+    const picked = Array.from(e.target.files);
+    e.target.value = "";
     setFiles((prev) => [...prev, ...picked]);
   }
 
@@ -80,10 +75,27 @@ export default function ReplyPage() {
   async function handleSubmit() {
     if (!message.trim()) return;
     setSubmitting(true);
-    // Simulate submit
-    await new Promise((r) => setTimeout(r, 1000));
-    setSubmitting(false);
-    router.push(`/admin/dashboard/my-task/${id}`);
+
+    let documents: { fileName: string; fileUrl: string; fileSize: number; fileType: string }[] = [];
+
+    if (files.length > 0) {
+      const uploaded = await startUpload(files);
+      if (uploaded) {
+        documents = uploaded.map((f, i) => ({
+          fileName: files[i]?.name ?? f.name,
+          fileUrl: f.ufsUrl,
+          fileSize: files[i]?.size ?? 0,
+          fileType: files[i]?.type ?? "",
+        }));
+      }
+    }
+
+    replyMutation.mutate({
+      taskId: id,
+      message,
+      taskStatus,
+      documents: documents.length > 0 ? documents : undefined,
+    });
   }
 
   // Loading skeleton
@@ -418,11 +430,11 @@ export default function ReplyPage() {
                 </p>
                 <div className="relative flex flex-col gap-0 pl-4">
                   {/* vertical line */}
-                  <div className="absolute left-[7px] top-2 h-[calc(100%-16px)] w-px bg-gray-200" />
+                  <div className="absolute left-1.75 top-2 h-[calc(100%-16px)] w-px bg-gray-200" />
 
                   {/* Task Created */}
                   <div className="relative flex items-start gap-3 pb-4">
-                    <div className="absolute -left-[1px] mt-1 h-3 w-3 rounded-full border-2 border-[#1e3a4f] bg-white" />
+                    <div className="absolute -left-px mt-1 h-3 w-3 rounded-full border-2 border-[#1e3a4f] bg-white" />
                     <div className="pl-4">
                       <p className="text-xs font-semibold text-gray-800">Task Created</p>
                       <p className="text-[11px] text-gray-400">{formatDate(task.createdAt)}</p>
@@ -431,7 +443,7 @@ export default function ReplyPage() {
 
                   {/* Viewed by You */}
                   <div className="relative flex items-start gap-3">
-                    <div className="absolute -left-[1px] mt-1 h-3 w-3 rounded-full border-2 border-gray-300 bg-white" />
+                    <div className="absolute -left-px mt-1 h-3 w-3 rounded-full border-2 border-gray-300 bg-white" />
                     <div className="pl-4">
                       <p className="text-xs font-semibold text-gray-800">Viewed by You</p>
                       <p className="text-[11px] text-gray-400">{formatDate(new Date())}</p>
@@ -458,7 +470,7 @@ export default function ReplyPage() {
             Cancel Reply
           </Link>
           <button
-            onClick={handleSubmit}
+            onClick={() => void handleSubmit()}
             disabled={!message.trim() || submitting}
             className="flex items-center gap-2 rounded-lg bg-[#1e3a4f] px-6 py-2.5 text-sm font-bold text-white transition hover:bg-[#16303f] disabled:cursor-not-allowed disabled:opacity-50"
           >

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { api } from "~/trpc/react";
+import { useUploadThing } from "~/lib/uploadthing";
 
 type Priority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
 
@@ -41,23 +42,69 @@ export default function AdminMessagesPage() {
   });
 
   const [message, setMessage] = useState("");
+  const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
+  const [uploading, setUploading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { startUpload } = useUploadThing("taskReplyUploader");
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [task?.replies]);
 
-  function handleSend() {
-    if (!message.trim() || replyMutation.isPending) return;
-    replyMutation.mutate({ taskId: id, message: message.trim() });
+  async function handleSend() {
+    if ((!message.trim() && attachedFiles.length === 0) || replyMutation.isPending || uploading) return;
+
+    let documents: { fileName: string; fileUrl: string; fileSize: number; fileType: string }[] = [];
+
+    if (attachedFiles.length > 0) {
+      setUploading(true);
+      try {
+        const uploaded = await startUpload(attachedFiles);
+        if (uploaded) {
+          documents = uploaded.map((f, i) => ({
+            fileName: attachedFiles[i]?.name ?? f.name,
+            fileUrl: f.ufsUrl,
+            fileSize: attachedFiles[i]?.size ?? 0,
+            fileType: attachedFiles[i]?.type ?? "",
+          }));
+        }
+      } finally {
+        setUploading(false);
+      }
+    }
+
+    replyMutation.mutate({
+      taskId: id,
+      message: message.trim() || "📎 Sent attachment(s)",
+      documents: documents.length > 0 ? documents : undefined,
+    });
+    setAttachedFiles([]);
   }
 
   function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSend();
+      void handleSend();
     }
+  }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (!e.target.files) return;
+    setAttachedFiles((prev) => [...prev, ...Array.from(e.target.files!)]);
+    e.target.value = "";
+  }
+
+  function removeAttachment(index: number) {
+    setAttachedFiles((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function formatBytes(bytes: number): string {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   }
 
   if (isLoading) {
@@ -87,9 +134,10 @@ export default function AdminMessagesPage() {
   const adminName = task.createdBy.name ?? task.createdBy.email ?? "Admin";
 
   // Build chronological thread: task creation + replies + acknowledgment
+  type ReplyDocument = { id: string; fileName: string; fileUrl: string; fileSize: number | null; fileType: string | null };
   type ThreadItem =
     | { kind: "task"; date: Date }
-    | { kind: "reply"; id: string; message: string; taskStatus: string | null; senderName: string; senderId: string; date: Date }
+    | { kind: "reply"; id: string; message: string; taskStatus: string | null; senderName: string; senderId: string; date: Date; documents: ReplyDocument[] }
     | { kind: "ack"; date: Date };
 
   const thread: ThreadItem[] = [
@@ -105,6 +153,7 @@ export default function AdminMessagesPage() {
       senderName: r.createdBy.name ?? r.createdBy.email ?? "Unknown",
       senderId: r.createdById,
       date: new Date(r.createdAt),
+      documents: r.documents ?? [],
     });
   }
 
@@ -234,6 +283,27 @@ export default function AdminMessagesPage() {
                         <div className="rounded-2xl rounded-tr-sm bg-[#1e3a4f] px-4 py-3 text-sm leading-relaxed text-white shadow-sm">
                           {item.message}
                         </div>
+                        {item.documents.length > 0 && (
+                          <div className="mt-2 flex flex-col gap-1.5">
+                            {item.documents.map((doc) => (
+                              <a
+                                key={doc.id}
+                                href={doc.fileUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-2 rounded-xl border border-[#1e3a4f]/20 bg-[#1e3a4f]/10 px-3 py-2 transition hover:bg-[#1e3a4f]/20"
+                              >
+                                <svg className="h-4 w-4 shrink-0 text-[#1e3a4f]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                                </svg>
+                                <span className="min-w-0 flex-1 truncate text-xs font-medium text-[#1e3a4f]">{doc.fileName}</span>
+                                <svg className="h-3.5 w-3.5 shrink-0 text-[#1e3a4f]/60" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                </svg>
+                              </a>
+                            ))}
+                          </div>
+                        )}
                       </div>
                       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1e3a4f] text-xs font-bold text-white">
                         {item.senderName.charAt(0).toUpperCase()}
@@ -263,6 +333,27 @@ export default function AdminMessagesPage() {
                       <div className="rounded-2xl rounded-tl-sm bg-white px-4 py-3 text-sm leading-relaxed text-gray-800 shadow-sm ring-1 ring-gray-200">
                         {item.message}
                       </div>
+                      {item.documents.length > 0 && (
+                        <div className="mt-2 flex flex-col gap-1.5">
+                          {item.documents.map((doc) => (
+                            <a
+                              key={doc.id}
+                              href={doc.fileUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 transition hover:bg-gray-100"
+                            >
+                              <svg className="h-4 w-4 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                              </svg>
+                              <span className="min-w-0 flex-1 truncate text-xs font-medium text-gray-700">{doc.fileName}</span>
+                              <svg className="h-3.5 w-3.5 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                              </svg>
+                            </a>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -278,43 +369,76 @@ export default function AdminMessagesPage() {
 
       {/* ── Input Bar ── */}
       <div className="shrink-0 border-t border-gray-200 bg-white px-6 py-4">
-        <div className="mx-auto flex max-w-3xl items-end gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1e3a4f] text-sm font-bold text-white">
-            {adminName.charAt(0).toUpperCase()}
-          </div>
-          <div className="flex-1 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-2.5 focus-within:border-[#1e3a4f] focus-within:bg-white focus-within:ring-1 focus-within:ring-[#1e3a4f] transition">
-            <textarea
-              ref={textareaRef}
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Type a message… (Enter to send, Shift+Enter for newline)"
-              rows={1}
-              className="w-full resize-none bg-transparent text-sm text-gray-700 outline-none placeholder:text-gray-400"
-              style={{ maxHeight: "120px" }}
-              onInput={(e) => {
-                const t = e.currentTarget;
-                t.style.height = "auto";
-                t.style.height = `${Math.min(t.scrollHeight, 120)}px`;
-              }}
-            />
-          </div>
-          <button
-            onClick={handleSend}
-            disabled={!message.trim() || replyMutation.isPending}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1e3a4f] text-white transition hover:bg-[#16303f] disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            {replyMutation.isPending ? (
-              <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-              </svg>
-            ) : (
+        <div className="mx-auto max-w-3xl">
+          {/* Attached files preview */}
+          {attachedFiles.length > 0 && (
+            <div className="mb-2 flex flex-wrap gap-2">
+              {attachedFiles.map((file, i) => (
+                <div key={i} className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5">
+                  <svg className="h-3.5 w-3.5 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                  </svg>
+                  <span className="max-w-35 truncate text-xs font-medium text-gray-700">{file.name}</span>
+                  <span className="text-[10px] text-gray-400">{formatBytes(file.size)}</span>
+                  <button onClick={() => removeAttachment(i)} className="ml-0.5 text-gray-400 hover:text-red-500">
+                    <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="flex items-end gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1e3a4f] text-sm font-bold text-white">
+              {adminName.charAt(0).toUpperCase()}
+            </div>
+            <div className="flex-1 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-2.5 focus-within:border-[#1e3a4f] focus-within:bg-white focus-within:ring-1 focus-within:ring-[#1e3a4f] transition">
+              <textarea
+                ref={textareaRef}
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Type a message… (Enter to send, Shift+Enter for newline)"
+                rows={1}
+                className="w-full resize-none bg-transparent text-sm text-gray-700 outline-none placeholder:text-gray-400"
+                style={{ maxHeight: "120px" }}
+                onInput={(e) => {
+                  const t = e.currentTarget;
+                  t.style.height = "auto";
+                  t.style.height = `${Math.min(t.scrollHeight, 120)}px`;
+                }}
+              />
+            </div>
+            {/* Attach file */}
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-400 transition hover:border-[#1e3a4f] hover:text-[#1e3a4f]"
+              title="Attach file"
+            >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
               </svg>
-            )}
-          </button>
+            </button>
+            <input ref={fileInputRef} type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" className="hidden" onChange={handleFileChange} />
+            {/* Send */}
+            <button
+              onClick={() => void handleSend()}
+              disabled={(!message.trim() && attachedFiles.length === 0) || replyMutation.isPending || uploading}
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1e3a4f] text-white transition hover:bg-[#16303f] disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {replyMutation.isPending || uploading ? (
+                <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+              ) : (
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
       </div>
 

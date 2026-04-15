@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
+import { useUploadThing } from "~/lib/uploadthing";
 
 type TaskStatus = "in-progress" | "action-taken";
 type Priority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
@@ -25,12 +26,6 @@ function formatDate(date: Date | string): string {
   });
 }
 
-interface DroppedFile {
-  name: string;
-  size: number;
-  type: string;
-}
-
 export default function UserReplyPage() {
   const params = useParams();
   const router = useRouter();
@@ -40,21 +35,24 @@ export default function UserReplyPage() {
 
   const [message, setMessage] = useState("");
   const [taskStatus, setTaskStatus] = useState<TaskStatus>("action-taken");
-  const [files, setFiles] = useState<DroppedFile[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const { startUpload } = useUploadThing("taskReplyUploader");
+
   function handleDrop(e: React.DragEvent) {
     e.preventDefault();
     setIsDragOver(false);
-    const dropped = Array.from(e.dataTransfer.files).map((f) => ({ name: f.name, size: f.size, type: f.type }));
+    const dropped = Array.from(e.dataTransfer.files);
     setFiles((prev) => [...prev, ...dropped]);
   }
 
   function handleFileInput(e: React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.files) return;
-    const picked = Array.from(e.target.files).map((f) => ({ name: f.name, size: f.size, type: f.type }));
+    const picked = Array.from(e.target.files);
+    e.target.value = "";
     setFiles((prev) => [...prev, ...picked]);
   }
 
@@ -73,13 +71,29 @@ export default function UserReplyPage() {
     onError: () => setSubmitting(false),
   });
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (!message.trim()) return;
     setSubmitting(true);
+
+    let documents: { fileName: string; fileUrl: string; fileSize: number; fileType: string }[] = [];
+
+    if (files.length > 0) {
+      const uploaded = await startUpload(files);
+      if (uploaded) {
+        documents = uploaded.map((f, i) => ({
+          fileName: files[i]?.name ?? f.name,
+          fileUrl: f.ufsUrl,
+          fileSize: files[i]?.size ?? 0,
+          fileType: files[i]?.type ?? "",
+        }));
+      }
+    }
+
     replyMutation.mutate({
       taskId: id,
       message,
-      taskStatus: taskStatus,
+      taskStatus,
+      documents: documents.length > 0 ? documents : undefined,
     });
   }
 
@@ -384,7 +398,7 @@ export default function UserReplyPage() {
             Cancel Reply
           </Link>
           <button
-            onClick={handleSubmit}
+            onClick={() => void handleSubmit()}
             disabled={!message.trim() || submitting}
             className="flex items-center gap-2 rounded-lg bg-[#1e3a4f] px-6 py-2.5 text-sm font-bold text-white transition hover:bg-[#16303f] disabled:cursor-not-allowed disabled:opacity-50"
           >

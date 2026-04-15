@@ -33,6 +33,24 @@ export const ourFileRouter = {
       return { uploadedBy: metadata.userId, url: file.ufsUrl };
     }),
 
+  taskReplyUploader: f({
+    image: { maxFileSize: "8MB", maxFileCount: 5 },
+    pdf: { maxFileSize: "16MB", maxFileCount: 5 },
+    "application/msword": { maxFileSize: "16MB", maxFileCount: 5 },
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": {
+      maxFileSize: "16MB",
+      maxFileCount: 5,
+    },
+  })
+    .middleware(async () => {
+      const session = await auth();
+      if (!session?.user) throw new Error("Unauthorized");
+      return { userId: session.user.id };
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      return { uploadedBy: metadata.userId, url: file.ufsUrl };
+    }),
+
   projectFileUploader: f({
     image: { maxFileSize: "8MB", maxFileCount: 1 },
     pdf: { maxFileSize: "16MB", maxFileCount: 1 },

@@ -227,6 +227,16 @@ exports.Prisma.TaskReplyScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.TaskReplyDocumentScalarFieldEnum = {
+  id: 'id',
+  replyId: 'replyId',
+  fileName: 'fileName',
+  fileUrl: 'fileUrl',
+  fileSize: 'fileSize',
+  fileType: 'fileType',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.DocumentScalarFieldEnum = {
   id: 'id',
   documentCode: 'documentCode',
@@ -372,6 +382,7 @@ exports.Prisma.ModelName = {
   Disbursement: 'Disbursement',
   TaskNotification: 'TaskNotification',
   TaskReply: 'TaskReply',
+  TaskReplyDocument: 'TaskReplyDocument',
   Document: 'Document',
   ProjectFile: 'ProjectFile',
   Post: 'Post'

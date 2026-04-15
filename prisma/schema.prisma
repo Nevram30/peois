@@ -231,17 +231,31 @@ model TaskNotification {
 }
 
 model TaskReply {
-    id                 String           @id @default(cuid())
+    id                 String              @id @default(cuid())
     taskNotificationId String
-    taskNotification   TaskNotification @relation(fields: [taskNotificationId], references: [id], onDelete: Cascade)
+    taskNotification   TaskNotification    @relation(fields: [taskNotificationId], references: [id], onDelete: Cascade)
     message            String
     taskStatus         String?
     createdById        String
-    createdBy          User             @relation(fields: [createdById], references: [id])
-    createdAt          DateTime         @default(now())
+    createdBy          User                @relation(fields: [createdById], references: [id])
+    createdAt          DateTime            @default(now())
+    documents          TaskReplyDocument[]
 
     @@index([taskNotificationId])
     @@index([createdById])
+}
+
+model TaskReplyDocument {
+    id        String    @id @default(cuid())
+    replyId   String
+    reply     TaskReply @relation(fields: [replyId], references: [id], onDelete: Cascade)
+    fileName  String
+    fileUrl   String
+    fileSize  Int?
+    fileType  String?
+    createdAt DateTime  @default(now())
+
+    @@index([replyId])
 }
 
 model Document {
