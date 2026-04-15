@@ -24,7 +24,7 @@ export const taskNotificationRouter = createTRPCRouter({
       include: {
         project: { select: { id: true, title: true, projectCode: true } },
         notifyUser: { select: { id: true, name: true, email: true, image: true } },
-        replies: { select: { id: true } },
+        replies: { select: { id: true, taskStatus: true } },
       },
       orderBy: { createdAt: "desc" },
     });

@@ -169,6 +169,9 @@ export default function MyTaskPage() {
             const { label: priorityLabel, bg: priorityBg } = priorityConfig[task.priority as Priority];
             const recipientName = task.notifyUser.name ?? task.notifyUser.email;
             const recipientInitial = (recipientName ?? "?").charAt(0).toUpperCase();
+            const isAcknowledged = task.acknowledged;
+            const hasInProgress = task.replies.some((r) => r.taskStatus === "in-progress");
+            const hasActionTaken = task.replies.some((r) => r.taskStatus === "action-taken");
 
             return (
               <Link
@@ -196,9 +199,26 @@ export default function MyTaskPage() {
                       </svg>
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-bold leading-snug text-gray-900">
-                        Task Assignment
-                      </p>
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <p className="text-sm font-bold leading-snug text-gray-900">
+                          Task Assignment
+                        </p>
+                        {isAcknowledged && (
+                          <span className="rounded-full border border-green-300 bg-green-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-green-600">
+                            Acknowledge
+                          </span>
+                        )}
+                        {hasInProgress && (
+                          <span className="rounded-full border border-green-300 bg-green-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-green-600">
+                            In Progress
+                          </span>
+                        )}
+                        {hasActionTaken && (
+                          <span className="rounded-full border border-green-300 bg-green-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-green-600">
+                            Action Taken
+                          </span>
+                        )}
+                      </div>
                       <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-gray-400">
                         <span className="flex items-center gap-1">
                           <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">

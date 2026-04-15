@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { signOut } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 
@@ -73,17 +74,21 @@ export function NavHeader({ user, userId }: { user: { name?: string | null; emai
     <>
       <div className="fixed top-0 left-0 right-0 z-40 bg-white shadow-sm">
         {/* Top bar */}
-        <header className="bg-[#1e3a4f] text-white">
-          <div className="flex items-center justify-between border-b border-gray-200 px-6 py-3">
+        <header className="bg-white text-gray-900 border-b border-gray-200">
+          <div className="flex items-center justify-between px-6 py-3">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#1e3a4f]">
-                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
-                </svg>
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg overflow-hidden bg-gray-100">
+                <Image
+                  src="/image/logo.png"
+                  alt="PEO Logo"
+                  width={40}
+                  height={40}
+                  className="object-contain"
+                />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-white-900">PEO MIS</h1>
-                <p className="text-xs text-white-500">Super Admin Console</p>
+                <h1 className="text-lg font-bold text-gray-900">PEO MIS</h1>
+                <p className="text-xs text-gray-500">Super Admin Console</p>
               </div>
             </div>
 
@@ -91,10 +96,10 @@ export function NavHeader({ user, userId }: { user: { name?: string | null; emai
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setDropdownOpen((v) => !v)}
-                  className="flex items-center gap-3 rounded-lg px-2 py-1 transition hover:bg-white/10"
+                  className="flex items-center gap-3 rounded-lg px-2 py-1 transition hover:bg-gray-100"
                   title={user.name ?? user.email ?? "Account"}
                 >
-                  <span className="text-sm font-medium text-white-700">{user.name ?? user.email}</span>
+                  <span className="text-sm font-medium text-gray-700">{user.name ?? user.email}</span>
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-sm font-medium text-white ring-2 ring-blue-200 transition hover:ring-blue-300">
                     {getInitials(user.name, user.email)}
                   </div>

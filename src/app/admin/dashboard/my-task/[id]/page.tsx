@@ -8,9 +8,9 @@ type Priority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
 
 const priorityConfig: Record<Priority, { label: string; bg: string }> = {
   URGENT: { label: "URGENT", bg: "bg-red-600" },
-  HIGH:   { label: "HIGH",   bg: "bg-orange-500" },
+  HIGH: { label: "HIGH", bg: "bg-orange-500" },
   MEDIUM: { label: "MEDIUM", bg: "bg-yellow-500" },
-  LOW:    { label: "LOW",    bg: "bg-green-500" },
+  LOW: { label: "LOW", bg: "bg-green-500" },
 };
 
 function formatDate(date: Date | string): string {
@@ -73,6 +73,9 @@ export default function TaskDetailPage() {
   const { label: priorityLabel, bg: priorityBg } = priorityConfig[task.priority as Priority];
   const assignerName = task.createdBy.name ?? task.createdBy.email;
   const assignerInitial = (assignerName ?? "?").charAt(0).toUpperCase();
+  const isAcknowledged = task.acknowledged;
+  const hasInProgress = task.replies.some((r) => r.taskStatus === "in-progress");
+  const hasActionTaken = task.replies.some((r) => r.taskStatus === "action-taken");
 
   return (
     <div className="min-h-screen bg-gray-50 px-6 py-8">
@@ -94,9 +97,6 @@ export default function TaskDetailPage() {
         {/* Page Heading */}
         <div className="mb-5 flex items-center gap-3">
           <h1 className="text-2xl font-bold text-gray-900">Task Assignment</h1>
-          <span className={`rounded px-2 py-0.5 text-[11px] font-bold tracking-widest text-white ${priorityBg}`}>
-            {priorityLabel}
-          </span>
         </div>
 
         {/* Main Card */}
@@ -116,7 +116,27 @@ export default function TaskDetailPage() {
 
               {/* Title + Meta */}
               <div className="min-w-0 flex-1">
-                <h2 className="text-base font-bold text-gray-900">Task Assignment</h2>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className="text-base font-bold text-gray-900">Task Assignment</h2>
+                  <span className={`rounded px-2 py-0.5 text-[11px] font-bold tracking-widest text-white ${priorityBg}`}>
+                    {priorityLabel}
+                  </span>
+                  {isAcknowledged && (
+                    <span className="rounded-full border border-green-300 bg-green-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-green-600">
+                      Acknowledge
+                    </span>
+                  )}
+                  {hasInProgress && (
+                    <span className="rounded-full border border-green-300 bg-green-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-green-600">
+                      In Progress
+                    </span>
+                  )}
+                  {hasActionTaken && (
+                    <span className="rounded-full border border-green-300 bg-green-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-green-600">
+                      Action Taken
+                    </span>
+                  )}
+                </div>
                 <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-400">
                   <span className="flex items-center gap-1">
                     <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -176,7 +196,7 @@ export default function TaskDetailPage() {
             {/* Messages */}
             <Link
               href={`/admin/dashboard/my-task/${id}/messages`}
-              className="flex items-center gap-2 rounded-lg bg-[#1e3a4f] px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-[#16303f]"
+              className="flex items-center gap-2 rounded-lg border border-[#1e3a4f] px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-[#1e3a4f] transition hover:bg-[#1e3a4f] hover:text-white"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
@@ -197,32 +217,78 @@ export default function TaskDetailPage() {
           </div>
         </div>
 
-        {/* Recent Activity — shows who created the task */}
+        {/* Activity / Replies */}
         <div className="mt-8">
-          <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">
-            Recent Activity
-          </p>
+          <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">Activity</p>
 
-          <div className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-            {/* Assigner avatar */}
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1e3a4f] text-sm font-bold text-white">
-              {assignerInitial}
-            </div>
-
-            {/* Content */}
-            <div className="min-w-0 flex-1">
-              <div className="flex items-baseline justify-between gap-2">
-                <p className="text-sm font-semibold text-gray-800">{assignerName}</p>
-                <span className="shrink-0 text-xs text-gray-400">{timeAgo(task.createdAt)}</span>
+          <div className="flex flex-col gap-3">
+            {/* Task created */}
+            <div className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1e3a4f] text-sm font-bold text-white">
+                {assignerInitial}
               </div>
-              <p className="mt-0.5 text-sm text-gray-500">
-                Assigned this task to you with{" "}
-                <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-white ${priorityBg}`}>
-                  {priorityLabel}
-                </span>{" "}
-                priority.
-              </p>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-baseline justify-between gap-2">
+                  <p className="text-sm font-semibold text-gray-800">{assignerName}</p>
+                  <span className="shrink-0 text-xs text-gray-400">{timeAgo(task.createdAt)}</span>
+                </div>
+                <p className="mt-0.5 text-sm text-gray-500">
+                  Assigned this task with{" "}
+                  <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold text-white ${priorityBg}`}>
+                    {priorityLabel}
+                  </span>{" "}
+                  priority.
+                </p>
+              </div>
             </div>
+
+            {/* Acknowledged event */}
+            {isAcknowledged && task.acknowledgedAt && (
+              <div className="flex items-start gap-3 rounded-xl border border-emerald-100 bg-emerald-50 p-4 shadow-sm">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white">
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                  </svg>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <p className="text-sm font-semibold text-emerald-800">You acknowledged this task</p>
+                    <span className="shrink-0 text-xs text-emerald-500">{timeAgo(task.acknowledgedAt)}</span>
+                  </div>
+                  <p className="mt-0.5 text-xs text-emerald-600">Receipt confirmed</p>
+                </div>
+              </div>
+            )}
+
+            {/* Replies */}
+            {task.replies.map((reply) => {
+              const replyAuthor = reply.createdBy.name ?? reply.createdBy.email ?? "You";
+              const replyInitial = replyAuthor.charAt(0).toUpperCase();
+              const statusLabel =
+                reply.taskStatus === "in-progress" ? "In Progress" :
+                  reply.taskStatus === "action-taken" ? "Action Taken" : null;
+              return (
+                <div key={reply.id} className="flex items-start gap-3 rounded-xl border border-blue-100 bg-blue-50 p-4 shadow-sm">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-500 text-sm font-bold text-white">
+                    {replyInitial}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-semibold text-blue-900">{replyAuthor}</p>
+                        {statusLabel && (
+                          <span className="rounded-full bg-blue-200 px-2 py-0.5 text-[10px] font-bold text-blue-800">
+                            {statusLabel}
+                          </span>
+                        )}
+                      </div>
+                      <span className="shrink-0 text-xs text-blue-400">{timeAgo(reply.createdAt)}</span>
+                    </div>
+                    <p className="mt-1 text-sm leading-relaxed text-blue-800">{reply.message}</p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
