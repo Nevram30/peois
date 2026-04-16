@@ -7,6 +7,8 @@ import {
 } from "~/server/api/trpc";
 
 export const documentRouter = createTRPCRouter({
+
+  // Get all documents...
   getAll: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.document.findMany({
       include: { createdBy: { select: { name: true, email: true } } },
@@ -14,6 +16,7 @@ export const documentRouter = createTRPCRouter({
     });
   }),
 
+  // Get document by id...
   getById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -23,6 +26,7 @@ export const documentRouter = createTRPCRouter({
       });
     }),
 
+  // Create new document....
   create: protectedProcedure
     .input(
       z.object({
@@ -72,7 +76,8 @@ export const documentRouter = createTRPCRouter({
         },
       });
     }),
-
+  
+  // Update document...
   update: protectedProcedure
     .input(
       z.object({
@@ -103,6 +108,7 @@ export const documentRouter = createTRPCRouter({
       return ctx.db.document.update({ where: { id }, data });
     }),
 
+  // Status Update for Specific Document...
   updateStatus: protectedProcedure
     .input(
       z.object({
@@ -144,7 +150,8 @@ export const documentRouter = createTRPCRouter({
         data: updateData,
       });
     }),
-
+  
+  // Delete Document by id...
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
@@ -163,6 +170,7 @@ export const documentRouter = createTRPCRouter({
       return ctx.db.document.delete({ where: { id: input.id } });
     }),
 
+  // Get Stats for Document id 
   getStats: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session.user.id;
     const today = new Date();
@@ -179,4 +187,5 @@ export const documentRouter = createTRPCRouter({
     ]);
     return { total, draft, forReview, released, todayCount };
   }),
+  
 });

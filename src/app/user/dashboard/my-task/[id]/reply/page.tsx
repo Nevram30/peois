@@ -9,6 +9,15 @@ import { useUploadThing } from "~/lib/uploadthing";
 type TaskStatus = "in-progress" | "action-taken";
 type Priority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
 
+type TimelineEventType = "created" | "acknowledged" | "in-progress" | "action-taken" | "reply";
+type TimelineEvent = {
+  id: string;
+  label: string;
+  sublabel?: string;
+  date: Date;
+  eventType: TimelineEventType;
+};
+
 const priorityConfig: Record<Priority, { label: string; bg: string }> = {
   URGENT: { label: "URGENT", bg: "bg-red-600" },
   HIGH:   { label: "HIGH",   bg: "bg-orange-500" },
@@ -120,9 +129,40 @@ export default function UserReplyPage() {
     );
   }
 
-  const { label: priorityLabel, bg: priorityBg } = priorityConfig[task.priority as Priority];
+  const { bg: priorityBg } = priorityConfig[task.priority as Priority];
   const assignerName = task.createdBy.name ?? task.createdBy.email;
   const shortId = task.id.slice(0, 12).toUpperCase();
+
+  // Build timeline events from real task data
+  const timelineEvents: TimelineEvent[] = [
+    {
+      id: "created",
+      label: "Task Created",
+      sublabel: `by ${assignerName}`,
+      date: new Date(task.createdAt),
+      eventType: "created",
+    },
+  ];
+  if (task.acknowledged && task.acknowledgedAt) {
+    timelineEvents.push({
+      id: "ack",
+      label: "Acknowledged by You",
+      date: new Date(task.acknowledgedAt),
+      eventType: "acknowledged",
+    });
+  }
+  for (const reply of task.replies) {
+    const eventType: TimelineEventType =
+      reply.taskStatus === "in-progress" ? "in-progress"
+      : reply.taskStatus === "action-taken" ? "action-taken"
+      : "reply";
+    timelineEvents.push({
+      id: reply.id,
+      label: `Reply by ${reply.createdBy.name ?? reply.createdBy.email}`,
+      date: new Date(reply.createdAt),
+      eventType,
+    });
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -361,23 +401,46 @@ export default function UserReplyPage() {
             {/* Task Timeline */}
             <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
               <div className="p-4">
-                <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-500">Task Timeline</p>
-                <div className="relative flex flex-col gap-0 pl-4">
-                  <div className="absolute left-1.75 top-2 h-[calc(100%-16px)] w-px bg-gray-200" />
-                  <div className="relative flex items-start gap-3 pb-4">
-                    <div className="absolute -left-px mt-1 h-3 w-3 rounded-full border-2 border-[#1e3a4f] bg-white" />
-                    <div className="pl-4">
-                      <p className="text-xs font-semibold text-gray-800">Task Created</p>
-                      <p className="text-[11px] text-gray-400">{formatDate(task.createdAt)}</p>
+                <div className="mb-3 flex items-center justify-between">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Task Timeline</p>
+                  {timelineEvents.length > 3 && (
+                    <span className="text-[10px] font-semibold text-gray-400">{timelineEvents.length} events</span>
+                  )}
+                </div>
+                <div className="relative flex flex-col overflow-y-auto pl-4 pr-1" style={{ maxHeight: "216px" }}>
+                  <div className="absolute left-1.5 top-2 h-[calc(100%-16px)] w-px bg-gray-200" />
+                  {timelineEvents.map((event, i) => (
+                    <div key={event.id} className={`relative flex items-start gap-3 ${i < timelineEvents.length - 1 ? "pb-4" : ""}`}>
+                      <div className={`absolute -left-px mt-1 h-3 w-3 rounded-full border-2 ${
+                        event.eventType === "created"      ? "border-[#1e3a4f] bg-white"
+                        : event.eventType === "acknowledged" ? "border-green-500 bg-green-500"
+                        : event.eventType === "in-progress"  ? "border-amber-500 bg-amber-500"
+                        : event.eventType === "action-taken" ? "border-emerald-600 bg-emerald-600"
+                        : "border-gray-400 bg-gray-400"
+                      }`} />
+                      <div className="pl-4">
+                        <p className="text-xs font-semibold text-gray-800">{event.label}</p>
+                        {event.sublabel && (
+                          <p className="text-[10px] text-gray-400">{event.sublabel}</p>
+                        )}
+                        {(event.eventType === "in-progress" || event.eventType === "action-taken") && (
+                          <span className={`mt-0.5 inline-block rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide ${
+                            event.eventType === "in-progress"
+                              ? "bg-amber-100 text-amber-700"
+                              : "bg-emerald-100 text-emerald-700"
+                          }`}>
+                            {event.eventType === "in-progress" ? "In Progress" : "Action Taken"}
+                          </span>
+                        )}
+                        {event.eventType === "acknowledged" && (
+                          <span className="mt-0.5 inline-block rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide bg-green-100 text-green-700">
+                            Acknowledged
+                          </span>
+                        )}
+                        <p className="text-[11px] text-gray-400">{formatDate(event.date)}</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="relative flex items-start gap-3">
-                    <div className="absolute -left-px mt-1 h-3 w-3 rounded-full border-2 border-gray-300 bg-white" />
-                    <div className="pl-4">
-                      <p className="text-xs font-semibold text-gray-800">Viewed by You</p>
-                      <p className="text-[11px] text-gray-400">{formatDate(new Date())}</p>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
