@@ -43,20 +43,43 @@ function getAvatarColor(name?: string | null): string {
 // ─── Constants ─────────────────────────────────────────────────────────────────
 
 const DESIGNATIONS = [
-  "Admin Assistant",
-  "Division Clerk",
+  "Provincial Engineer",
+  "Assistant Provincial Engineer",
   "Division Head",
-  "Section Head",
-  "Provincial Engr.",
+  "Supervising Administrative Officer",
+  "Engineer I",
+  "Engineer II",
+  "Engineer III",
+  "Engineer IV",
+  "Engineer V",
+  "Engineer VI",
+  "Administrative Officer I",
+  "Administrative Officer II",
+  "Administrative Officer III",
+  "Administrative Officer IV",
+  "Administrative Officer V",
+  "Administrative Officer VI",
+  "Administrative Assistant I",
+  "Administrative Assistant II",
+  "Administrative Assistant III",
+  "Administrative Assistant IV",
+  "Administrative Assistant V",
+  "Administrative Assistant VI",
+  "Administrative Aide I",
+  "Administrative Aide II",
+  "Administrative Aide III",
+  "Administrative Aide IV",
+  "Administrative Aide V",
+  "Administrative Aide VI",
 ];
 
 const DIVISIONS = [
-  "Office of the PE",
-  "ADMIN Division",
+  "SMAD",
   "PDPM",
-  "Maintenance",
-  "South Division",
-  "North Division",
+  "EPM",
+  "QACD",
+  "1ST ENGR DIST",
+  "2ND ENGR DIST",
 ];
 
 // ─── Password Strength ────────────────────────────────────────────────────────
@@ -435,7 +458,7 @@ function AddUserModal({
               </div>
               <div>
                 <label className={labelClass}>
-                  Division / Unit <span className="text-red-500">*</span>
+                  Division <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <select
