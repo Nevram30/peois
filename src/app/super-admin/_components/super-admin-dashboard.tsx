@@ -927,14 +927,18 @@ function ActionsDropdown({
   userId,
   userRole,
   userStatus,
+  userName,
   onEdit,
 }: {
   userId: string;
   userRole: string;
   userStatus: string;
+  userName?: string;
   onEdit: () => void;
 }) {
   const [open, setOpen] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const utils = api.useUtils();
 
@@ -949,6 +953,11 @@ function ActionsDropdown({
     onSuccess: () => {
       void utils.user.getAll.invalidate();
       void utils.user.getStats.invalidate();
+      setShowDeleteConfirm(false);
+      setDeleteError(null);
+    },
+    onError: (err) => {
+      setDeleteError(err.message ?? "Failed to delete user.");
     },
   });
 
@@ -1007,7 +1016,7 @@ function ActionsDropdown({
           )}
           <div className="my-1 border-t border-gray-100" />
           <button
-            onClick={() => { if (confirm("Are you sure you want to delete this user?")) { deleteUser.mutate({ id: userId }); } setOpen(false); }}
+            onClick={() => { setShowDeleteConfirm(true); setDeleteError(null); setOpen(false); }}
             className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -1017,6 +1026,123 @@ function ActionsDropdown({
           </button>
         </div>
       )}
+      <DeleteUserConfirmModal
+        open={showDeleteConfirm}
+        userName={userName}
+        error={deleteError}
+        isDeleting={deleteUser.isPending}
+        onCancel={() => {
+          if (deleteUser.isPending) return;
+          setShowDeleteConfirm(false);
+          setDeleteError(null);
+        }}
+        onConfirm={() => deleteUser.mutate({ id: userId })}
+      />
+    </div>
+  );
+}
+
+// ─── Delete User Confirmation Modal ────────────────────────────────────────────
+
+function DeleteUserConfirmModal({
+  open,
+  userName,
+  error,
+  isDeleting,
+  onCancel,
+  onConfirm,
+}: {
+  open: boolean;
+  userName?: string;
+  error: string | null;
+  isDeleting: boolean;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        onClick={onCancel}
+      />
+      <div className="relative mx-4 w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl">
+        <div className="flex items-start gap-4 px-6 pt-6 pb-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-100">
+            <svg
+              className="h-6 w-6 text-red-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
+              />
+            </svg>
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-bold text-gray-900">Delete User</h3>
+            <p className="mt-1 text-sm text-gray-600">
+              Are you sure you want to delete
+              {userName ? (
+                <>
+                  {" "}
+                  <span className="font-semibold text-gray-900">{userName}</span>
+                </>
+              ) : (
+                " this user"
+              )}
+              ? This action cannot be undone and all associated data will be permanently removed.
+            </p>
+          </div>
+        </div>
+
+        {error && (
+          <div className="mx-6 mb-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            {error}
+          </div>
+        )}
+
+        <div className="flex items-center justify-end gap-2 border-t border-gray-100 bg-gray-50 px-6 py-4">
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={isDeleting}
+            className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            disabled={isDeleting}
+            className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isDeleting && (
+              <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                />
+              </svg>
+            )}
+            {isDeleting ? "Deleting..." : "Delete User"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -1241,6 +1367,7 @@ export function UserManagementContent() {
                           userId={u.id}
                           userRole={u.role}
                           userStatus={u.status ?? "PENDING"}
+                          userName={u.name ?? u.email}
                           onEdit={() => { setEditingUser(u); setShowEditModal(true); }}
                         />
                       </td>
