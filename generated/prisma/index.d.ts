@@ -2193,6 +2193,7 @@ export namespace Prisma {
     employeeId: string | null
     designation: string | null
     division: string | null
+    contactNumber: string | null
     sex: $Enums.Sex | null
     status: $Enums.UserStatus | null
     emailVerified: Date | null
@@ -2210,6 +2211,7 @@ export namespace Prisma {
     employeeId: string | null
     designation: string | null
     division: string | null
+    contactNumber: string | null
     sex: $Enums.Sex | null
     status: $Enums.UserStatus | null
     emailVerified: Date | null
@@ -2227,6 +2229,7 @@ export namespace Prisma {
     employeeId: number
     designation: number
     division: number
+    contactNumber: number
     sex: number
     status: number
     emailVerified: number
@@ -2246,6 +2249,7 @@ export namespace Prisma {
     employeeId?: true
     designation?: true
     division?: true
+    contactNumber?: true
     sex?: true
     status?: true
     emailVerified?: true
@@ -2263,6 +2267,7 @@ export namespace Prisma {
     employeeId?: true
     designation?: true
     division?: true
+    contactNumber?: true
     sex?: true
     status?: true
     emailVerified?: true
@@ -2280,6 +2285,7 @@ export namespace Prisma {
     employeeId?: true
     designation?: true
     division?: true
+    contactNumber?: true
     sex?: true
     status?: true
     emailVerified?: true
@@ -2370,6 +2376,7 @@ export namespace Prisma {
     employeeId: string | null
     designation: string | null
     division: string | null
+    contactNumber: string | null
     sex: $Enums.Sex | null
     status: $Enums.UserStatus
     emailVerified: Date | null
@@ -2404,6 +2411,7 @@ export namespace Prisma {
     employeeId?: boolean
     designation?: boolean
     division?: boolean
+    contactNumber?: boolean
     sex?: boolean
     status?: boolean
     emailVerified?: boolean
@@ -2432,6 +2440,7 @@ export namespace Prisma {
     employeeId?: boolean
     designation?: boolean
     division?: boolean
+    contactNumber?: boolean
     sex?: boolean
     status?: boolean
     emailVerified?: boolean
@@ -2449,6 +2458,7 @@ export namespace Prisma {
     employeeId?: boolean
     designation?: boolean
     division?: boolean
+    contactNumber?: boolean
     sex?: boolean
     status?: boolean
     emailVerified?: boolean
@@ -2466,6 +2476,7 @@ export namespace Prisma {
     employeeId?: boolean
     designation?: boolean
     division?: boolean
+    contactNumber?: boolean
     sex?: boolean
     status?: boolean
     emailVerified?: boolean
@@ -2474,7 +2485,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "password" | "role" | "employeeId" | "designation" | "division" | "sex" | "status" | "emailVerified" | "image" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "password" | "role" | "employeeId" | "designation" | "division" | "contactNumber" | "sex" | "status" | "emailVerified" | "image" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     posts?: boolean | User$postsArgs<ExtArgs>
     projects?: boolean | User$projectsArgs<ExtArgs>
@@ -2514,6 +2525,7 @@ export namespace Prisma {
       employeeId: string | null
       designation: string | null
       division: string | null
+      contactNumber: string | null
       sex: $Enums.Sex | null
       status: $Enums.UserStatus
       emailVerified: Date | null
@@ -2961,6 +2973,7 @@ export namespace Prisma {
     readonly employeeId: FieldRef<"User", 'String'>
     readonly designation: FieldRef<"User", 'String'>
     readonly division: FieldRef<"User", 'String'>
+    readonly contactNumber: FieldRef<"User", 'String'>
     readonly sex: FieldRef<"User", 'Sex'>
     readonly status: FieldRef<"User", 'UserStatus'>
     readonly emailVerified: FieldRef<"User", 'DateTime'>
@@ -15449,6 +15462,7 @@ export namespace Prisma {
     employeeId: 'employeeId',
     designation: 'designation',
     division: 'division',
+    contactNumber: 'contactNumber',
     sex: 'sex',
     status: 'status',
     emailVerified: 'emailVerified',
@@ -15904,6 +15918,7 @@ export namespace Prisma {
     employeeId?: StringNullableFilter<"User"> | string | null
     designation?: StringNullableFilter<"User"> | string | null
     division?: StringNullableFilter<"User"> | string | null
+    contactNumber?: StringNullableFilter<"User"> | string | null
     sex?: EnumSexNullableFilter<"User"> | $Enums.Sex | null
     status?: EnumUserStatusFilter<"User"> | $Enums.UserStatus
     emailVerified?: DateTimeNullableFilter<"User"> | Date | string | null
@@ -15931,6 +15946,7 @@ export namespace Prisma {
     employeeId?: SortOrderInput | SortOrder
     designation?: SortOrderInput | SortOrder
     division?: SortOrderInput | SortOrder
+    contactNumber?: SortOrderInput | SortOrder
     sex?: SortOrderInput | SortOrder
     status?: SortOrder
     emailVerified?: SortOrderInput | SortOrder
@@ -15961,6 +15977,7 @@ export namespace Prisma {
     role?: EnumUserRoleFilter<"User"> | $Enums.UserRole
     designation?: StringNullableFilter<"User"> | string | null
     division?: StringNullableFilter<"User"> | string | null
+    contactNumber?: StringNullableFilter<"User"> | string | null
     sex?: EnumSexNullableFilter<"User"> | $Enums.Sex | null
     status?: EnumUserStatusFilter<"User"> | $Enums.UserStatus
     emailVerified?: DateTimeNullableFilter<"User"> | Date | string | null
@@ -15988,6 +16005,7 @@ export namespace Prisma {
     employeeId?: SortOrderInput | SortOrder
     designation?: SortOrderInput | SortOrder
     division?: SortOrderInput | SortOrder
+    contactNumber?: SortOrderInput | SortOrder
     sex?: SortOrderInput | SortOrder
     status?: SortOrder
     emailVerified?: SortOrderInput | SortOrder
@@ -16011,6 +16029,7 @@ export namespace Prisma {
     employeeId?: StringNullableWithAggregatesFilter<"User"> | string | null
     designation?: StringNullableWithAggregatesFilter<"User"> | string | null
     division?: StringNullableWithAggregatesFilter<"User"> | string | null
+    contactNumber?: StringNullableWithAggregatesFilter<"User"> | string | null
     sex?: EnumSexNullableWithAggregatesFilter<"User"> | $Enums.Sex | null
     status?: EnumUserStatusWithAggregatesFilter<"User"> | $Enums.UserStatus
     emailVerified?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
@@ -16921,6 +16940,7 @@ export namespace Prisma {
     employeeId?: string | null
     designation?: string | null
     division?: string | null
+    contactNumber?: string | null
     sex?: $Enums.Sex | null
     status?: $Enums.UserStatus
     emailVerified?: Date | string | null
@@ -16948,6 +16968,7 @@ export namespace Prisma {
     employeeId?: string | null
     designation?: string | null
     division?: string | null
+    contactNumber?: string | null
     sex?: $Enums.Sex | null
     status?: $Enums.UserStatus
     emailVerified?: Date | string | null
@@ -16975,6 +16996,7 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17002,6 +17024,7 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17029,6 +17052,7 @@ export namespace Prisma {
     employeeId?: string | null
     designation?: string | null
     division?: string | null
+    contactNumber?: string | null
     sex?: $Enums.Sex | null
     status?: $Enums.UserStatus
     emailVerified?: Date | string | null
@@ -17046,6 +17070,7 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17063,6 +17088,7 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -18226,6 +18252,7 @@ export namespace Prisma {
     employeeId?: SortOrder
     designation?: SortOrder
     division?: SortOrder
+    contactNumber?: SortOrder
     sex?: SortOrder
     status?: SortOrder
     emailVerified?: SortOrder
@@ -18243,6 +18270,7 @@ export namespace Prisma {
     employeeId?: SortOrder
     designation?: SortOrder
     division?: SortOrder
+    contactNumber?: SortOrder
     sex?: SortOrder
     status?: SortOrder
     emailVerified?: SortOrder
@@ -18260,6 +18288,7 @@ export namespace Prisma {
     employeeId?: SortOrder
     designation?: SortOrder
     division?: SortOrder
+    contactNumber?: SortOrder
     sex?: SortOrder
     status?: SortOrder
     emailVerified?: SortOrder
@@ -21322,6 +21351,7 @@ export namespace Prisma {
     employeeId?: string | null
     designation?: string | null
     division?: string | null
+    contactNumber?: string | null
     sex?: $Enums.Sex | null
     status?: $Enums.UserStatus
     emailVerified?: Date | string | null
@@ -21348,6 +21378,7 @@ export namespace Prisma {
     employeeId?: string | null
     designation?: string | null
     division?: string | null
+    contactNumber?: string | null
     sex?: $Enums.Sex | null
     status?: $Enums.UserStatus
     emailVerified?: Date | string | null
@@ -21390,6 +21421,7 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -21416,6 +21448,7 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -21442,6 +21475,7 @@ export namespace Prisma {
     employeeId?: string | null
     designation?: string | null
     division?: string | null
+    contactNumber?: string | null
     sex?: $Enums.Sex | null
     status?: $Enums.UserStatus
     emailVerified?: Date | string | null
@@ -21468,6 +21502,7 @@ export namespace Prisma {
     employeeId?: string | null
     designation?: string | null
     division?: string | null
+    contactNumber?: string | null
     sex?: $Enums.Sex | null
     status?: $Enums.UserStatus
     emailVerified?: Date | string | null
@@ -21626,6 +21661,7 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -21652,6 +21688,7 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -21833,6 +21870,7 @@ export namespace Prisma {
     employeeId?: string | null
     designation?: string | null
     division?: string | null
+    contactNumber?: string | null
     sex?: $Enums.Sex | null
     status?: $Enums.UserStatus
     emailVerified?: Date | string | null
@@ -21859,6 +21897,7 @@ export namespace Prisma {
     employeeId?: string | null
     designation?: string | null
     division?: string | null
+    contactNumber?: string | null
     sex?: $Enums.Sex | null
     status?: $Enums.UserStatus
     emailVerified?: Date | string | null
@@ -21998,6 +22037,7 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -22024,6 +22064,7 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -22141,6 +22182,7 @@ export namespace Prisma {
     employeeId?: string | null
     designation?: string | null
     division?: string | null
+    contactNumber?: string | null
     sex?: $Enums.Sex | null
     status?: $Enums.UserStatus
     emailVerified?: Date | string | null
@@ -22167,6 +22209,7 @@ export namespace Prisma {
     employeeId?: string | null
     designation?: string | null
     division?: string | null
+    contactNumber?: string | null
     sex?: $Enums.Sex | null
     status?: $Enums.UserStatus
     emailVerified?: Date | string | null
@@ -22306,6 +22349,7 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -22332,6 +22376,7 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -22449,6 +22494,7 @@ export namespace Prisma {
     employeeId?: string | null
     designation?: string | null
     division?: string | null
+    contactNumber?: string | null
     sex?: $Enums.Sex | null
     status?: $Enums.UserStatus
     emailVerified?: Date | string | null
@@ -22475,6 +22521,7 @@ export namespace Prisma {
     employeeId?: string | null
     designation?: string | null
     division?: string | null
+    contactNumber?: string | null
     sex?: $Enums.Sex | null
     status?: $Enums.UserStatus
     emailVerified?: Date | string | null
@@ -22506,6 +22553,7 @@ export namespace Prisma {
     employeeId?: string | null
     designation?: string | null
     division?: string | null
+    contactNumber?: string | null
     sex?: $Enums.Sex | null
     status?: $Enums.UserStatus
     emailVerified?: Date | string | null
@@ -22532,6 +22580,7 @@ export namespace Prisma {
     employeeId?: string | null
     designation?: string | null
     division?: string | null
+    contactNumber?: string | null
     sex?: $Enums.Sex | null
     status?: $Enums.UserStatus
     emailVerified?: Date | string | null
@@ -22699,6 +22748,7 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -22725,6 +22775,7 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -22762,6 +22813,7 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -22788,6 +22840,7 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -22859,6 +22912,7 @@ export namespace Prisma {
     employeeId?: string | null
     designation?: string | null
     division?: string | null
+    contactNumber?: string | null
     sex?: $Enums.Sex | null
     status?: $Enums.UserStatus
     emailVerified?: Date | string | null
@@ -22885,6 +22939,7 @@ export namespace Prisma {
     employeeId?: string | null
     designation?: string | null
     division?: string | null
+    contactNumber?: string | null
     sex?: $Enums.Sex | null
     status?: $Enums.UserStatus
     emailVerified?: Date | string | null
@@ -22990,6 +23045,7 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -23016,6 +23072,7 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -23123,6 +23180,7 @@ export namespace Prisma {
     employeeId?: string | null
     designation?: string | null
     division?: string | null
+    contactNumber?: string | null
     sex?: $Enums.Sex | null
     status?: $Enums.UserStatus
     emailVerified?: Date | string | null
@@ -23149,6 +23207,7 @@ export namespace Prisma {
     employeeId?: string | null
     designation?: string | null
     division?: string | null
+    contactNumber?: string | null
     sex?: $Enums.Sex | null
     status?: $Enums.UserStatus
     emailVerified?: Date | string | null
@@ -23191,6 +23250,7 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -23217,6 +23277,7 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -23334,6 +23395,7 @@ export namespace Prisma {
     employeeId?: string | null
     designation?: string | null
     division?: string | null
+    contactNumber?: string | null
     sex?: $Enums.Sex | null
     status?: $Enums.UserStatus
     emailVerified?: Date | string | null
@@ -23360,6 +23422,7 @@ export namespace Prisma {
     employeeId?: string | null
     designation?: string | null
     division?: string | null
+    contactNumber?: string | null
     sex?: $Enums.Sex | null
     status?: $Enums.UserStatus
     emailVerified?: Date | string | null
@@ -23499,6 +23562,7 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -23525,6 +23589,7 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -23551,6 +23616,7 @@ export namespace Prisma {
     employeeId?: string | null
     designation?: string | null
     division?: string | null
+    contactNumber?: string | null
     sex?: $Enums.Sex | null
     status?: $Enums.UserStatus
     emailVerified?: Date | string | null
@@ -23577,6 +23643,7 @@ export namespace Prisma {
     employeeId?: string | null
     designation?: string | null
     division?: string | null
+    contactNumber?: string | null
     sex?: $Enums.Sex | null
     status?: $Enums.UserStatus
     emailVerified?: Date | string | null
@@ -23619,6 +23686,7 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -23645,6 +23713,7 @@ export namespace Prisma {
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
     sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

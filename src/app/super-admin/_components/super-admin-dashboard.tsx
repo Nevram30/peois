@@ -120,6 +120,7 @@ function AddUserModal({
   const [sex, setSex] = useState<"MALE" | "FEMALE" | "">("");
   const [designation, setDesignation] = useState("");
   const [division, setDivision] = useState("");
+  const [contactNumber, setContactNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -169,6 +170,7 @@ function AddUserModal({
     setSex("");
     setDesignation("");
     setDivision("");
+    setContactNumber("");
     setEmail("");
     setPassword("");
     setConfirmPassword("");
@@ -183,19 +185,44 @@ function AddUserModal({
     e.preventDefault();
     setMessage("");
 
-    if (password !== confirmPassword) {
-      setMessage("Passwords do not match.");
+    const trimmedFirstName = firstName.trim();
+    const trimmedMiddleName = middleName.trim();
+    const trimmedLastName = lastName.trim();
+    const trimmedExtension = extension.trim();
+    const trimmedEmail = email.trim();
+    const trimmedContactNumber = contactNumber.trim();
+
+    const fail = (msg: string) => {
+      setMessage(msg);
       setMessageType("error");
-      return;
+    };
+
+    if (!trimmedFirstName) return fail("First name is required.");
+    if (!trimmedLastName) return fail("Last name is required.");
+    if (!sex) return fail("Please select sex.");
+    if (sex !== "MALE" && sex !== "FEMALE") return fail("Invalid sex selection.");
+
+    if (!designation) return fail("Please select a designation.");
+    if (!DESIGNATIONS.includes(designation)) return fail("Invalid designation selected.");
+    if (!division) return fail("Please select a division.");
+    if (!DIVISIONS.includes(division)) return fail("Invalid division selected.");
+    if (role !== "ADMIN" && role !== "USER") return fail("Invalid role selected.");
+
+    if (!trimmedEmail) return fail("Email is required.");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) return fail("Please enter a valid email address.");
+
+    if (!trimmedContactNumber) return fail("Active contact number is required.");
+    const contactDigits = trimmedContactNumber.replace(/\D/g, "");
+    if (!/^[0-9+\-\s()]+$/.test(trimmedContactNumber)) {
+      return fail("Contact number may only contain digits, spaces, +, -, or parentheses.");
+    }
+    if (contactDigits.length < 7 || contactDigits.length > 15) {
+      return fail("Contact number must contain 7 to 15 digits.");
     }
 
-    if (!sex) {
-      setMessage("Please select sex.");
-      setMessageType("error");
-      return;
-    }
-
-    if (sex !== "MALE" && sex !== "FEMALE") return;
+    if (password.length < 6) return fail("Password must be at least 6 characters.");
+    if (password !== confirmPassword) return fail("Passwords do not match.");
 
     let uploadedImageUrl: string | undefined;
     if (imageFile) {
@@ -204,23 +231,22 @@ function AddUserModal({
         const result = await startUpload([imageFile]);
         uploadedImageUrl = result?.[0]?.url;
       } catch {
-        setMessage("Image upload failed. Please try again.");
-        setMessageType("error");
         setIsUploading(false);
-        return;
+        return fail("Image upload failed. Please try again.");
       }
       setIsUploading(false);
     }
 
     createUser.mutate({
-      firstName,
-      middleName: middleName || undefined,
-      lastName,
-      extension: extension || undefined,
+      firstName: trimmedFirstName,
+      middleName: trimmedMiddleName || undefined,
+      lastName: trimmedLastName,
+      extension: trimmedExtension || undefined,
       sex,
       designation,
       division,
-      email,
+      contactNumber: trimmedContactNumber,
+      email: trimmedEmail,
       password,
       role,
       image: uploadedImageUrl,
@@ -277,7 +303,7 @@ function AddUserModal({
         </div>
 
         {/* Body */}
-        <form onSubmit={handleSubmit} className="max-h-[70vh] overflow-y-auto px-7 pt-2 pb-0">
+        <form id="create-user-form" onSubmit={handleSubmit} noValidate className="max-h-[70vh] overflow-y-auto px-7 pt-2 pb-0">
           {message && (
             <div
               className={`mb-4 rounded-lg border p-3 text-sm ${
@@ -555,6 +581,32 @@ function AddUserModal({
               </p>
             </div>
 
+            <div className="mb-3">
+              <label className={labelClass}>
+                Active Contact Number <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+                  </svg>
+                </div>
+                <input
+                  type="tel"
+                  required
+                  inputMode="tel"
+                  pattern="[0-9+\-\s()]{7,20}"
+                  value={contactNumber}
+                  onChange={(e) => setContactNumber(e.target.value)}
+                  className={`${inputClass} pl-10`}
+                  placeholder="e.g. 09171234567"
+                />
+              </div>
+              <p className="mt-1 text-xs text-gray-400">
+                Active mobile or landline number.
+              </p>
+            </div>
+
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className={labelClass}>
@@ -672,8 +724,8 @@ function AddUserModal({
           </button>
           <button
             type="submit"
+            form="create-user-form"
             disabled={createUser.isPending || isUploading || !passwordsMatch}
-            onClick={handleSubmit}
             className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isUploading ? "Uploading..." : createUser.isPending ? "Creating..." : "Create User"}

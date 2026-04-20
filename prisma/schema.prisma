@@ -101,6 +101,7 @@ model User {
     employeeId    String?       @unique
     designation   String?
     division      String?
+    contactNumber String?
     sex           Sex?
     status        UserStatus    @default(PENDING)
     emailVerified DateTime?
