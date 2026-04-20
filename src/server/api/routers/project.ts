@@ -375,6 +375,32 @@ export const projectRouter = createTRPCRouter({
     return { total, ongoing, completed, suspended, notYetStarted, todayCount, noAllotted };
   }),
 
+  getOverviewStats: protectedProcedure
+    .input(z.object({ budgetYear: z.string().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      const where = input?.budgetYear ? { budgetYear: input.budgetYear } : {};
+
+      const [completed, ongoing, forImplementation, suspended, realigned] =
+        await Promise.all([
+          ctx.db.project.count({ where: { ...where, status: "COMPLETED" } }),
+          ctx.db.project.count({ where: { ...where, status: "ON_GOING" } }),
+          ctx.db.project.count({ where: { ...where, status: "NOT_YET_STARTED" } }),
+          ctx.db.project.count({ where: { ...where, status: "SUSPENDED" } }),
+          ctx.db.project.count({ where: { ...where, revisedCompletionDate: { not: null } } }),
+        ]);
+      return { completed, ongoing, forImplementation, suspended, realigned };
+    }),
+
+  getBudgetYears: protectedProcedure.query(async ({ ctx }) => {
+    const rows = await ctx.db.project.findMany({
+      where: { budgetYear: { not: null } },
+      select: { budgetYear: true },
+      distinct: ["budgetYear"],
+      orderBy: { budgetYear: "desc" },
+    });
+    return rows.map((r) => r.budgetYear).filter((y): y is string => Boolean(y));
+  }),
+
   getFinancialOverview: protectedProcedure.query(async ({ ctx }) => {
     const currentYear = new Date().getFullYear().toString();
 
