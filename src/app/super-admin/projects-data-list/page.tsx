@@ -21,6 +21,17 @@ const FUND_SOURCE_LABELS: Record<string, string> = {
   OTHERS: "Others",
 };
 
+const PROJECT_SUBTYPE_LABELS: Record<string, string> = {
+  WATER_SYSTEMS: "Water Systems",
+  GOVERNMENT_BUILDINGS: "Government Buildings",
+  ELECTRIFICATION: "Electrification",
+  RESPONSE_CAMP_MGMT: "Response Camp Mgmt",
+  SUPPLEMENTAL_BUDGET_2: "Supplemental Budget 2",
+  PARK_AND_DEVELOPMENT: "Park & Development",
+  DOH: "DOH",
+  PROVINCIAL_GOVT_OFFICE: "Provincial Govt Office",
+};
+
 const FUND_SOURCE_COLORS: Record<string, string> = {
   GENERAL_FUND: "#3B82F6",
   SEF: "#F59E0B",
@@ -47,16 +58,42 @@ export default function ProjectsDataListPage() {
   const [search, setSearch] = useState("");
   const [districtFilter, setDistrictFilter] = useState("");
   const [modeFilter, setModeFilter] = useState("");
+  const [sourceFilter, setSourceFilter] = useState("");
+  const [subTypeFilter, setSubTypeFilter] = useState("");
+  const [cityFilter, setCityFilter] = useState("");
+  const [barangayFilter, setBarangayFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [yearFilter, setYearFilter] = useState("");
+  const [cardYearFilter, setCardYearFilter] = useState("");
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 10;
 
   const { data: projects, isLoading } = api.project.getAll.useQuery();
   const { data: stats } = api.project.getStats.useQuery();
 
-  const noAllotted = (projects ?? []).filter((p) => p.contractCost === 0).length;
   const budgetYear = new Date().getFullYear();
+
+  const cardYearProjects = (projects ?? []).filter((p) =>
+    cardYearFilter
+      ? new Date(p.createdAt).getFullYear().toString() === cardYearFilter
+      : true,
+  );
+
+  const cardStats = cardYearFilter
+    ? {
+        completed: cardYearProjects.filter((p) => p.status === "COMPLETED").length,
+        ongoing: cardYearProjects.filter((p) => p.status === "ON_GOING").length,
+        notYetStarted: cardYearProjects.filter((p) => p.status === "NOT_YET_STARTED").length,
+        suspended: cardYearProjects.filter((p) => p.status === "SUSPENDED").length,
+      }
+    : {
+        completed: stats?.completed ?? 0,
+        ongoing: stats?.ongoing ?? 0,
+        notYetStarted: stats?.notYetStarted ?? 0,
+        suspended: stats?.suspended ?? 0,
+      };
+
+  const noAllotted = cardYearProjects.filter((p) => p.contractCost === 0).length;
 
   // --- Financial Overview computations ---
   const totalAllocation = (projects ?? []).reduce((sum, p) => sum + p.contractCost, 0);
@@ -93,11 +130,30 @@ export default function ProjectsDataListPage() {
 
   const availableYears = Array.from(
     new Set(
-      (projects ?? []).map((p) =>
-        new Date(p.createdAt).getFullYear().toString(),
+      (projects ?? []).map(
+        (p) =>
+          p.budgetYear ??
+          new Date(p.createdAt).getFullYear().toString(),
       ),
     ),
   ).sort((a, b) => Number(b) - Number(a));
+
+  const availableCities = Array.from(
+    new Set(
+      (projects ?? [])
+        .map((p) => p.cityMunicipality)
+        .filter((v): v is string => !!v),
+    ),
+  ).sort((a, b) => a.localeCompare(b));
+
+  const availableBarangays = Array.from(
+    new Set(
+      (projects ?? [])
+        .filter((p) => !cityFilter || p.cityMunicipality === cityFilter)
+        .map((p) => p.barangay)
+        .filter((v): v is string => !!v),
+    ),
+  ).sort((a, b) => a.localeCompare(b));
 
   const filtered = (projects ?? []).filter((p) => {
     const q = search.toLowerCase();
@@ -105,14 +161,29 @@ export default function ProjectsDataListPage() {
       !q ||
       p.projectCode.toLowerCase().includes(q) ||
       p.title.toLowerCase().includes(q) ||
-      (p.cityMunicipality ?? "").toLowerCase().includes(q);
+      (p.cityMunicipality ?? "").toLowerCase().includes(q) ||
+      (p.barangay ?? "").toLowerCase().includes(q);
     const matchDistrict = !districtFilter || p.locationImplementation === districtFilter;
     const matchMode = !modeFilter || p.modeOfImplementation === modeFilter;
+    const matchSource = !sourceFilter || p.sourceOfFund === sourceFilter;
+    const matchSubType = !subTypeFilter || p.subType === subTypeFilter;
+    const matchCity = !cityFilter || p.cityMunicipality === cityFilter;
+    const matchBarangay = !barangayFilter || p.barangay === barangayFilter;
     const matchStatus = !statusFilter || p.status === statusFilter;
-    const matchYear =
-      !yearFilter ||
-      new Date(p.createdAt).getFullYear().toString() === yearFilter;
-    return matchSearch && matchDistrict && matchMode && matchStatus && matchYear;
+    const projectYear =
+      p.budgetYear ?? new Date(p.createdAt).getFullYear().toString();
+    const matchYear = !yearFilter || projectYear === yearFilter;
+    return (
+      matchSearch &&
+      matchDistrict &&
+      matchMode &&
+      matchSource &&
+      matchSubType &&
+      matchCity &&
+      matchBarangay &&
+      matchStatus &&
+      matchYear
+    );
   });
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
@@ -121,12 +192,26 @@ export default function ProjectsDataListPage() {
 
   const resetPage = () => setPage(1);
 
-  const hasActiveFilters = !!(search || districtFilter || modeFilter || statusFilter || yearFilter);
+  const hasActiveFilters = !!(
+    search ||
+    districtFilter ||
+    modeFilter ||
+    sourceFilter ||
+    subTypeFilter ||
+    cityFilter ||
+    barangayFilter ||
+    statusFilter ||
+    yearFilter
+  );
 
   const clearFilters = () => {
     setSearch("");
     setDistrictFilter("");
     setModeFilter("");
+    setSourceFilter("");
+    setSubTypeFilter("");
+    setCityFilter("");
+    setBarangayFilter("");
     setStatusFilter("");
     setYearFilter("");
     resetPage();
@@ -156,6 +241,60 @@ export default function ProjectsDataListPage() {
 
   return (
     <>
+      {/* Project Cards Year Filter */}
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-5 py-3 shadow-sm">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+            </svg>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-gray-900">Project Cards Overview</p>
+            <p className="text-xs text-gray-500">
+              {cardYearFilter
+                ? `Showing statistics for ${cardYearFilter}`
+                : "Showing statistics across all years"}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label htmlFor="card-year-filter" className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+            Filter by Year
+          </label>
+          <div className="relative">
+            <select
+              id="card-year-filter"
+              value={cardYearFilter}
+              onChange={(e) => setCardYearFilter(e.target.value)}
+              className="appearance-none rounded-lg border border-gray-200 bg-gray-50 py-2 pl-3 pr-9 text-sm font-medium text-gray-700 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">All Years</option>
+              {availableYears.map((y) => (
+                <option key={y} value={y}>
+                  {y}
+                </option>
+              ))}
+            </select>
+            <svg className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+          </div>
+          {cardYearFilter && (
+            <button
+              onClick={() => setCardYearFilter("")}
+              className="flex items-center gap-1 rounded-lg border border-red-200 bg-red-50 px-2.5 py-2 text-xs font-medium text-red-600 transition hover:bg-red-100"
+            >
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+              Clear
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* Stat Cards */}
       <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         {/* Budget Year */}
@@ -166,7 +305,7 @@ export default function ProjectsDataListPage() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
             </svg>
           </div>
-          <span className="text-2xl font-bold">{budgetYear}</span>
+          <span className="text-2xl font-bold">{cardYearFilter || budgetYear}</span>
         </div>
 
         {/* Completed */}
@@ -177,7 +316,7 @@ export default function ProjectsDataListPage() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
           </div>
-          <span className="text-2xl font-bold">{stats?.completed ?? 0}</span>
+          <span className="text-2xl font-bold">{cardStats.completed}</span>
           <span className="text-xs opacity-70">Projects</span>
         </div>
 
@@ -189,7 +328,7 @@ export default function ProjectsDataListPage() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
             </svg>
           </div>
-          <span className="text-2xl font-bold">{stats?.ongoing ?? 0}</span>
+          <span className="text-2xl font-bold">{cardStats.ongoing}</span>
           <span className="text-xs opacity-70">Projects</span>
         </div>
 
@@ -201,7 +340,7 @@ export default function ProjectsDataListPage() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
           </div>
-          <span className="text-2xl font-bold">{stats?.notYetStarted ?? 0}</span>
+          <span className="text-2xl font-bold">{cardStats.notYetStarted}</span>
           <span className="text-xs opacity-70">Projects</span>
         </div>
 
@@ -213,7 +352,7 @@ export default function ProjectsDataListPage() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M14.25 9v6m-4.5 0V9M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
           </div>
-          <span className="text-2xl font-bold">{stats?.suspended ?? 0}</span>
+          <span className="text-2xl font-bold">{cardStats.suspended}</span>
           <span className="text-xs opacity-70">Projects</span>
         </div>
 
@@ -358,7 +497,7 @@ export default function ProjectsDataListPage() {
 
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
         {/* Table Header — title + inline filters */}
-        <div className="flex flex-wrap items-center gap-3 border-b border-gray-100 px-5 py-4">
+        <div className="flex flex-wrap items-center gap-2 border-b border-gray-100 px-5 py-4">
           {/* Title */}
           <div className="mr-2 shrink-0">
             <h2 className="text-base font-bold text-gray-900">Project Data List</h2>
@@ -366,13 +505,13 @@ export default function ProjectsDataListPage() {
           </div>
 
           {/* Search */}
-          <div className="relative min-w-0 flex-1">
+          <div className="relative min-w-55 flex-1">
             <svg className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
             </svg>
             <input
               type="text"
-              placeholder="Search Projects by Project Title, Tracking Number....."
+              placeholder="Search by Project Title, Tracking Number, City, or Barangay....."
               value={search}
               onChange={(e) => { setSearch(e.target.value); resetPage(); }}
               className="w-full rounded-lg border border-gray-200 bg-gray-50 py-2 pl-10 pr-4 text-sm text-gray-700 placeholder:text-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -395,16 +534,89 @@ export default function ProjectsDataListPage() {
             </svg>
           </div>
 
-          {/* Mode */}
+          {/* Mode of Implementation */}
           <div className="relative shrink-0">
             <select
               value={modeFilter}
               onChange={(e) => { setModeFilter(e.target.value); resetPage(); }}
               className="appearance-none rounded-lg border border-gray-200 bg-gray-50 py-2 pl-3 pr-8 text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">Mode</option>
+              <option value="">Mode of Implementation</option>
               <option value="BY_CONTRACT">By Contract</option>
               <option value="BY_ADMINISTRATION">By Administration</option>
+            </select>
+            <svg className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+          </div>
+
+          {/* Source of Fund */}
+          <div className="relative shrink-0">
+            <select
+              value={sourceFilter}
+              onChange={(e) => { setSourceFilter(e.target.value); resetPage(); }}
+              className="appearance-none rounded-lg border border-gray-200 bg-gray-50 py-2 pl-3 pr-8 text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Source of Fund</option>
+              {Object.entries(FUND_SOURCE_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
+            <svg className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+          </div>
+
+          {/* Sub-Category */}
+          <div className="relative shrink-0">
+            <select
+              value={subTypeFilter}
+              onChange={(e) => { setSubTypeFilter(e.target.value); resetPage(); }}
+              className="appearance-none rounded-lg border border-gray-200 bg-gray-50 py-2 pl-3 pr-8 text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Sub-Category</option>
+              {Object.entries(PROJECT_SUBTYPE_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
+            <svg className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+          </div>
+
+          {/* City/Municipality */}
+          <div className="relative shrink-0">
+            <select
+              value={cityFilter}
+              onChange={(e) => {
+                setCityFilter(e.target.value);
+                setBarangayFilter("");
+                resetPage();
+              }}
+              className="appearance-none rounded-lg border border-gray-200 bg-gray-50 py-2 pl-3 pr-8 text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">City/Municipality</option>
+              {availableCities.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+            <svg className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+          </div>
+
+          {/* Barangay */}
+          <div className="relative shrink-0">
+            <select
+              value={barangayFilter}
+              onChange={(e) => { setBarangayFilter(e.target.value); resetPage(); }}
+              disabled={availableBarangays.length === 0}
+              className="appearance-none rounded-lg border border-gray-200 bg-gray-50 py-2 pl-3 pr-8 text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <option value="">Barangay</option>
+              {availableBarangays.map((b) => (
+                <option key={b} value={b}>{b}</option>
+              ))}
             </select>
             <svg className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
@@ -436,7 +648,7 @@ export default function ProjectsDataListPage() {
               onChange={(e) => { setYearFilter(e.target.value); resetPage(); }}
               className="appearance-none rounded-lg border border-gray-200 bg-gray-50 py-2 pl-3 pr-8 text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">{budgetYear}</option>
+              <option value="">Year</option>
               {availableYears.map((y) => (
                 <option key={y} value={y}>{y}</option>
               ))}
@@ -449,7 +661,7 @@ export default function ProjectsDataListPage() {
           {/* Print */}
           <button
             onClick={handlePrint}
-            className="shrink-0 flex items-center gap-1.5 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-100"
+            className="flex shrink-0 items-center gap-1.5 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-100"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.056 48.056 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z" />
@@ -461,7 +673,7 @@ export default function ProjectsDataListPage() {
           {hasActiveFilters && (
             <button
               onClick={clearFilters}
-              className="shrink-0 flex items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-100"
+              className="flex shrink-0 items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-100"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -474,13 +686,10 @@ export default function ProjectsDataListPage() {
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50">
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Tracking Number
+                Project Title
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Project Name
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Contract Cost
+                Project Cost
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
                 District
@@ -489,10 +698,22 @@ export default function ProjectsDataListPage() {
                 Mode of Implementation
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Source of Fund
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Sub-Category
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                City/Municipality
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Barangay
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
                 Status
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Progress
+                Year
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
                 Action
@@ -502,7 +723,7 @@ export default function ProjectsDataListPage() {
           <tbody className="divide-y divide-gray-50">
             {isLoading ? (
               <tr>
-                <td colSpan={8} className="py-16 text-center text-sm text-gray-400">
+                <td colSpan={11} className="py-16 text-center text-sm text-gray-400">
                   <div className="flex flex-col items-center gap-2">
                     <svg
                       className="h-8 w-8 animate-spin text-blue-400"
@@ -529,7 +750,7 @@ export default function ProjectsDataListPage() {
               </tr>
             ) : filtered.length === 0 ? (
               <tr>
-                <td colSpan={8} className="py-16 text-center text-sm text-gray-400">
+                <td colSpan={11} className="py-16 text-center text-sm text-gray-400">
                   No projects found.
                 </td>
               </tr>
@@ -537,22 +758,36 @@ export default function ProjectsDataListPage() {
               paginated.map((project) => {
                 const style =
                   STATUS_STYLES[project.status] ?? STATUS_STYLES.NOT_YET_STARTED!;
+                const projectYear =
+                  project.budgetYear ??
+                  new Date(project.createdAt).getFullYear().toString();
                 return (
                   <tr key={project.id} className="transition hover:bg-gray-50">
-                    <td className="px-4 py-3 font-mono text-xs text-gray-500">
-                      {project.projectCode}
-                    </td>
                     <td className="max-w-xs px-4 py-3 font-medium text-gray-900">
                       <span className="line-clamp-2">{project.title}</span>
                     </td>
                     <td className="px-4 py-3 text-gray-700">
-                      ₱{project.contractCost.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
+                      ₱{project.projectCost.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
                     </td>
                     <td className="px-4 py-3 text-gray-600">
                       {project.locationImplementation === "DISTRICT_I" ? "District 1" : "District 2"}
                     </td>
                     <td className="px-4 py-3 text-gray-600">
                       {project.modeOfImplementation === "BY_CONTRACT" ? "By Contract" : "By Administration"}
+                    </td>
+                    <td className="px-4 py-3 text-gray-600">
+                      {FUND_SOURCE_LABELS[project.sourceOfFund] ?? project.sourceOfFund}
+                    </td>
+                    <td className="px-4 py-3 text-gray-600">
+                      {project.subType
+                        ? (PROJECT_SUBTYPE_LABELS[project.subType] ?? project.subType)
+                        : "—"}
+                    </td>
+                    <td className="px-4 py-3 text-gray-600">
+                      {project.cityMunicipality ?? "—"}
+                    </td>
+                    <td className="px-4 py-3 text-gray-600">
+                      {project.barangay ?? "—"}
                     </td>
                     <td className="px-4 py-3">
                       <span
@@ -562,19 +797,7 @@ export default function ProjectsDataListPage() {
                         {style.label}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <div className="h-1.5 w-24 overflow-hidden rounded-full bg-gray-200">
-                          <div
-                            className="h-full rounded-full bg-blue-500 transition-all"
-                            style={{ width: `${project.completionPercentage}%` }}
-                          />
-                        </div>
-                        <span className="text-xs font-medium text-gray-600">
-                          {project.completionPercentage}%
-                        </span>
-                      </div>
-                    </td>
+                    <td className="px-4 py-3 text-gray-600">{projectYear}</td>
                     <td className="px-4 py-3">
                       <button
                         onClick={() =>
