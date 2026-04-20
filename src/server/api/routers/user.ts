@@ -343,4 +343,88 @@ export const userRouter = createTRPCRouter({
       },
     });
   }),
+
+  updateProfile: protectedProcedure
+    .input(
+      z.object({
+        name: z.string().min(1, "Name is required"),
+        email: z.string().email("Invalid email address"),
+        image: z.string().url().nullable().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id;
+
+      if (input.email) {
+        const existing = await ctx.db.user.findUnique({
+          where: { email: input.email },
+          select: { id: true },
+        });
+        if (existing && existing.id !== userId) {
+          throw new Error("Email already in use by another account");
+        }
+      }
+
+      return ctx.db.user.update({
+        where: { id: userId },
+        data: {
+          name: input.name,
+          email: input.email,
+          ...(input.image !== undefined ? { image: input.image } : {}),
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+          role: true,
+          designation: true,
+          division: true,
+        },
+      });
+    }),
+
+  changePassword: protectedProcedure
+    .input(
+      z
+        .object({
+          currentPassword: z.string().min(1, "Current password is required"),
+          newPassword: z
+            .string()
+            .min(8, "New password must be at least 8 characters"),
+          confirmPassword: z.string().min(1, "Confirm password is required"),
+        })
+        .refine((data) => data.newPassword === data.confirmPassword, {
+          message: "Passwords do not match",
+          path: ["confirmPassword"],
+        }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (ctx.session.user.role !== "SUPER_ADMIN") {
+        throw new Error("Only super admins can change their password here");
+      }
+
+      const user = await ctx.db.user.findUnique({
+        where: { id: ctx.session.user.id },
+        select: { password: true },
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      const matches = await bcrypt.compare(input.currentPassword, user.password);
+      if (!matches) {
+        throw new Error("Current password is incorrect");
+      }
+
+      const hashed = await bcrypt.hash(input.newPassword, 12);
+
+      await ctx.db.user.update({
+        where: { id: ctx.session.user.id },
+        data: { password: hashed },
+      });
+
+      return { success: true };
+    }),
 });

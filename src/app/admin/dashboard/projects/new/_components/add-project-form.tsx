@@ -150,7 +150,6 @@ export function AddProjectForm() {
       addEngineer();
     }
   };
-
   // Image upload via UploadThing
   const handleImageChange = (file: File) => {
     if (!file) return;
@@ -290,12 +289,10 @@ export function AddProjectForm() {
                   Project Title <span className="text-red-500">*</span>
                 </label>
                 <input
-                  type="text"
-                  required
+
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="e.g. Construction of Multi-Purpose Building"
-                  className={inputClass}
+
                 />
               </div>
               <div>
@@ -1039,6 +1036,8 @@ export function AddProjectForm() {
             >
               Save as Draft
             </button>
+
+            {/* Submit Function */}
             <button
               type="button"
               onClick={() => handleSubmit(false)}

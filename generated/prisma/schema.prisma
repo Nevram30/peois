@@ -165,17 +165,19 @@ model Project {
   description            String?
   status                 ProjectStatus        @default(NOT_YET_STARTED)
   completionPercentage   Int                  @default(0)
-  imageUrl               String?
-  documentUrl            String?
-  documentName           String?
-  createdBy              User                 @relation(fields: [createdById], references: [id])
-  createdById            String
-  createdAt              DateTime             @default(now())
-  updatedAt              DateTime             @updatedAt
-  activities             ProjectActivity[]
-  disbursements          Disbursement[]
-  taskNotifications      TaskNotification[]
-  files                  ProjectFile[]
+
+  imageUrl     String?
+  documentUrl  String?
+  documentName String?
+  createdBy    User     @relation(fields: [createdById], references: [id])
+  createdById  String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  activities        ProjectActivity[]
+  disbursements     Disbursement[]
+  taskNotifications TaskNotification[]
+  files             ProjectFile[]
 
   @@index([title])
   @@index([status])
