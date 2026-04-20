@@ -150,7 +150,7 @@ function AddUserModal({
       void utils.user.getAll.invalidate();
       void utils.user.getStats.invalidate();
       void utils.user.getDivisions.invalidate();
-      void utils.user.getNextEmployeeId.invalidate();
+      // void utils.user.getNextEmployeeId.invalidate();
       setTimeout(() => {
         setMessage("");
         onClose();
@@ -191,6 +191,7 @@ function AddUserModal({
     const trimmedExtension = extension.trim();
     const trimmedEmail = email.trim();
     const trimmedContactNumber = contactNumber.trim();
+    const trimmedEmployeeId = employeeId.trim();
 
     const fail = (msg: string) => {
       setMessage(msg);
@@ -207,6 +208,8 @@ function AddUserModal({
     if (!division) return fail("Please select a division.");
     if (!DIVISIONS.includes(division)) return fail("Invalid division selected.");
     if (role !== "ADMIN" && role !== "USER") return fail("Invalid role selected.");
+
+    if (!trimmedEmployeeId) return fail("Employee ID is required.");
 
     if (!trimmedEmail) return fail("Email is required.");
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -242,6 +245,7 @@ function AddUserModal({
       middleName: trimmedMiddleName || undefined,
       lastName: trimmedLastName,
       extension: trimmedExtension || undefined,
+      employeeId: trimmedEmployeeId,
       sex,
       designation,
       division,
@@ -536,7 +540,7 @@ function AddUserModal({
 
             <div className="mb-3">
               <label className={labelClass}>
-                Employee ID
+                Employee ID <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">

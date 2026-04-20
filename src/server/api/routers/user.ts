@@ -102,31 +102,31 @@ export const userRouter = createTRPCRouter({
     return divisions.map((d) => d.division).filter(Boolean) as string[];
   }),
 
-  getNextEmployeeId: superAdminProcedure.query(async ({ ctx }) => {
-    // Find the highest numeric prefix from existing employee IDs
-    const users = await ctx.db.user.findMany({
-      where: { employeeId: { not: null } },
-      select: { employeeId: true },
-    });
-
-    let maxNumber = 0;
-    for (const u of users) {
-      if (u.employeeId) {
-        const match = /^(\d+)-/.exec(u.employeeId);
-        if (match) {
-          const num = parseInt(match[1]!, 10);
-          if (num > maxNumber) maxNumber = num;
-        }
-      }
-    }
-
-    const nextNumber = String(maxNumber + 1).padStart(4, "0");
-    const now = new Date();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
-    const year = now.getFullYear();
-    return `${nextNumber}-${month}${day}${year}`;
-  }),
+  // getNextEmployeeId: superAdminProcedure.query(async ({ ctx }) => {
+  //   // Find the highest numeric prefix from existing employee IDs
+  //   const users = await ctx.db.user.findMany({
+  //     where: { employeeId: { not: null } },
+  //     select: { employeeId: true },
+  //   });
+  //
+  //   let maxNumber = 0;
+  //   for (const u of users) {
+  //     if (u.employeeId) {
+  //       const match = /^(\d+)-/.exec(u.employeeId);
+  //       if (match) {
+  //         const num = parseInt(match[1]!, 10);
+  //         if (num > maxNumber) maxNumber = num;
+  //       }
+  //     }
+  //   }
+  //
+  //   const nextNumber = String(maxNumber + 1).padStart(4, "0");
+  //   const now = new Date();
+  //   const month = String(now.getMonth() + 1).padStart(2, "0");
+  //   const day = String(now.getDate()).padStart(2, "0");
+  //   const year = now.getFullYear();
+  //   return `${nextNumber}-${month}${day}${year}`;
+  // }),
 
   create: superAdminProcedure
     .input(
@@ -135,6 +135,7 @@ export const userRouter = createTRPCRouter({
         middleName: z.string().optional(),
         lastName: z.string().min(1, "Last name is required"),
         extension: z.string().optional(),
+        employeeId: z.string().min(1, "Employee ID is required"),
         email: z.string().email("Invalid email address"),
         password: z.string().min(6, "Password must be at least 6 characters"),
         role: z.enum(["ADMIN", "USER"]),
@@ -153,29 +154,7 @@ export const userRouter = createTRPCRouter({
       if (input.extension) nameParts.push(input.extension);
       const fullName = nameParts.join(" ");
 
-      // Auto-generate employee ID: NNNN-MMDDYYYY
-      const users = await ctx.db.user.findMany({
-        where: { employeeId: { not: null } },
-        select: { employeeId: true },
-      });
-
-      let maxNumber = 0;
-      for (const u of users) {
-        if (u.employeeId) {
-          const match = /^(\d+)-/.exec(u.employeeId);
-          if (match) {
-            const num = parseInt(match[1]!, 10);
-            if (num > maxNumber) maxNumber = num;
-          }
-        }
-      }
-
-      const nextNumber = String(maxNumber + 1).padStart(4, "0");
-      const now = new Date();
-      const month = String(now.getMonth() + 1).padStart(2, "0");
-      const day = String(now.getDate()).padStart(2, "0");
-      const year = now.getFullYear();
-      const employeeId = `${nextNumber}-${month}${day}${year}`;
+      const employeeId = input.employeeId.trim();
 
       const existingUser = await ctx.db.user.findUnique({
         where: { email: input.email },
