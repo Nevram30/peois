@@ -5,28 +5,16 @@ import Link from "next/link";
 import { useRef, useState, useEffect, useMemo } from "react";
 import { api } from "~/trpc/react";
 import { useUploadThing } from "~/lib/uploadthing";
-
-// ─── Label maps ─────────────────────────────────────────────────────────────
-const SOURCE_FUND_LABEL: Record<string, string> = {
-  GENERAL_FUND: "General Fund",
-  SEF: "SEF",
-  TRUST_FUND: "Trust Fund",
-  TWENTY_PERCENT_DEV_FUND: "20% Dev Fund",
-  AID: "AID",
-  LOAN: "Loan",
-  OTHERS: "Others",
-};
-
-const SUB_TYPE_LABEL: Record<string, string> = {
-  WATER_SYSTEMS: "Water Systems",
-  GOVERNMENT_BUILDINGS: "Government Buildings",
-  ELECTRIFICATION: "Electrification",
-  RESPONSE_CAMP_MGMT: "Response Camp Mgmt",
-  SUPPLEMENTAL_BUDGET_2: "Supplemental Budget 2",
-  PARK_AND_DEVELOPMENT: "Park & Development",
-  DOH: "DOH",
-  PROVINCIAL_GOVT_OFFICE: "Provincial Govt Office",
-};
+import {
+  SOURCE_OF_FUND_LABEL,
+  SOURCE_OF_FUND_ORDER,
+  PROJECT_SUB_TYPE_LABEL,
+  SOURCE_TO_SUB_TYPES,
+  PROJECT_STATUS_LABEL,
+  PROJECT_STATUS_ORDER,
+  type SourceOfFundValue,
+  type ProjectStatusValue,
+} from "~/lib/fund-constants";
 
 const DISTRICT_LABEL: Record<string, string> = {
   DISTRICT_I: "District 1",
@@ -47,6 +35,9 @@ const STATUS_CONFIG: Record<string, { label: string; badge: string; dot: string 
   ON_GOING: { label: "On-going", badge: "bg-amber-50  text-amber-700 border-amber-200", dot: "bg-amber-500" },
   COMPLETED: { label: "Completed", badge: "bg-green-50  text-green-700 border-green-200", dot: "bg-green-500" },
   SUSPENDED: { label: "Suspended", badge: "bg-red-50    text-red-700   border-red-200", dot: "bg-red-500" },
+  FOR_IMPLEMENTATION: { label: "For Implementation", badge: "bg-blue-50 text-blue-700 border-blue-200", dot: "bg-blue-500" },
+  RE_ALIGNMENT: { label: "Re-alignment", badge: "bg-purple-50 text-purple-700 border-purple-200", dot: "bg-purple-500" },
+  OTHERS: { label: "Others", badge: "bg-slate-50 text-slate-700 border-slate-200", dot: "bg-slate-500" },
 };
 
 const PRIORITY_CONFIG = {
@@ -169,6 +160,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   const [sitio, setSitio] = useState("");
 
   // ─ Funding ─────────────────────────────────────────────────────────────
+  const [sourceOfFund, setSourceOfFund] = useState<SourceOfFundValue | "">("");
   const [subType, setSubType] = useState("");
   const [budgetYear, setBudgetYear] = useState("");
 
@@ -222,6 +214,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
     setBarangay(project.barangay ?? "");
     setPurok(project.purok ?? "");
     setSitio(project.sitio ?? "");
+    setSourceOfFund(project.sourceOfFund);
     setSubType(project.subType ?? "");
     setBudgetYear(project.budgetYear ?? "");
     setDateStarted(toInputDate(project.dateStarted));
@@ -306,7 +299,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
       title: project.title,
       modeOfImplementation: modeOfImplementation as "BY_ADMINISTRATION" | "BY_CONTRACT",
       locationImplementation: (locDistrict as "DISTRICT_I" | "DISTRICT_II") || project.locationImplementation,
-      sourceOfFund: project.sourceOfFund,
+      sourceOfFund: (sourceOfFund || project.sourceOfFund) as Parameters<typeof updateProject.mutate>[0]["sourceOfFund"],
       contractCost: project.contractCost,
       contractorName: contractorName || undefined,
       projectEngineer: engineers.join(", ") || undefined,
@@ -325,7 +318,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
       barangay: barangay || undefined,
       sitio: sitio || undefined,
       description: description || undefined,
-      status: status as "NOT_YET_STARTED" | "ON_GOING" | "COMPLETED" | "SUSPENDED",
+      status: status as ProjectStatusValue,
       completionPercentage: completion,
       imageUrl: mediaUrl || undefined,
       documentUrl: mediaUrl || undefined,
@@ -484,10 +477,11 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                     <div>
                       <FieldLabel>Current Status</FieldLabel>
                       <Select value={status} onChange={(e) => setStatus(e.target.value)}>
-                        <option value="NOT_YET_STARTED">Not Yet Started</option>
-                        <option value="ON_GOING">On-going</option>
-                        <option value="COMPLETED">Completed</option>
-                        <option value="SUSPENDED">Suspended</option>
+                        {PROJECT_STATUS_ORDER.map((k) => (
+                          <option key={k} value={k}>
+                            {PROJECT_STATUS_LABEL[k]}
+                          </option>
+                        ))}
                       </Select>
                     </div>
                   </div>
@@ -605,15 +599,43 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
               <div className="col-span-2 space-y-3 p-4">
                 <div>
                   <FieldLabel>Source of Fund</FieldLabel>
-                  <div className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700">
-                    {SOURCE_FUND_LABEL[project.sourceOfFund] ?? project.sourceOfFund}
-                  </div>
+                  <Select
+                    value={sourceOfFund}
+                    onChange={(e) => {
+                      const next = e.target.value as SourceOfFundValue | "";
+                      setSourceOfFund(next);
+                      const allowed = next ? SOURCE_TO_SUB_TYPES[next] : [];
+                      if (!allowed.includes(subType as never)) setSubType("");
+                    }}
+                  >
+                    <option value="">Select source...</option>
+                    {SOURCE_OF_FUND_ORDER.map((k) => (
+                      <option key={k} value={k}>
+                        {SOURCE_OF_FUND_LABEL[k]}
+                      </option>
+                    ))}
+                  </Select>
                 </div>
                 <div>
-                  <FieldLabel>Fund Category</FieldLabel>
-                  <Select value={subType} onChange={(e) => setSubType(e.target.value)}>
-                    <option value="">Select category...</option>
-                    {Object.entries(SUB_TYPE_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                  <FieldLabel>Sub-Category</FieldLabel>
+                  <Select
+                    value={subType}
+                    onChange={(e) => setSubType(e.target.value)}
+                    disabled={!sourceOfFund || (SOURCE_TO_SUB_TYPES[sourceOfFund]?.length ?? 0) === 0}
+                  >
+                    <option value="">
+                      {!sourceOfFund
+                        ? "Select source first..."
+                        : (SOURCE_TO_SUB_TYPES[sourceOfFund]?.length ?? 0) === 0
+                          ? "No sub-categories available"
+                          : "Select sub-category..."}
+                    </option>
+                    {sourceOfFund &&
+                      SOURCE_TO_SUB_TYPES[sourceOfFund].map((k) => (
+                        <option key={k} value={k}>
+                          {PROJECT_SUB_TYPE_LABEL[k]}
+                        </option>
+                      ))}
                   </Select>
                 </div>
                 <div>

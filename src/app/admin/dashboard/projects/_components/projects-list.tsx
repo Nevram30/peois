@@ -4,6 +4,14 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { api } from "~/trpc/react";
+import {
+  SOURCE_OF_FUND_LABEL,
+  SOURCE_OF_FUND_ORDER,
+  PROJECT_SUB_TYPE_LABEL,
+  PROJECT_SUB_TYPE_VALUES,
+  PROJECT_STATUS_LABEL,
+  PROJECT_STATUS_ORDER,
+} from "~/lib/fund-constants";
 
 const STATUS_LABELS: Record<string, { label: string; className: string }> = {
   NOT_YET_STARTED: {
@@ -199,13 +207,9 @@ export function ProjectsList() {
               className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             >
               <option value="">All Sources</option>
-              <option value="GENERAL_FUND">General Fund</option>
-              <option value="SEF">SEF</option>
-              <option value="TRUST_FUND">Trust Fund</option>
-              <option value="TWENTY_PERCENT_DEV_FUND">20% Development Fund</option>
-              <option value="AID">AID</option>
-              <option value="LOAN">Loan</option>
-              <option value="OTHERS">Others</option>
+              {SOURCE_OF_FUND_ORDER.map((k) => (
+                <option key={k} value={k}>{SOURCE_OF_FUND_LABEL[k]}</option>
+              ))}
             </select>
           </div>
 
@@ -218,14 +222,9 @@ export function ProjectsList() {
               className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             >
               <option value="">All Sub-Categories</option>
-              <option value="WATER_SYSTEMS">Water Systems</option>
-              <option value="GOVERNMENT_BUILDINGS">Government Buildings</option>
-              <option value="ELECTRIFICATION">Electrification</option>
-              <option value="RESPONSE_CAMP_MGMT">Response Camp Mgmt</option>
-              <option value="SUPPLEMENTAL_BUDGET_2">Supplemental Budget 2</option>
-              <option value="PARK_AND_DEVELOPMENT">Park and Development</option>
-              <option value="DOH">DOH</option>
-              <option value="PROVINCIAL_GOVT_OFFICE">Provincial Govt Office</option>
+              {PROJECT_SUB_TYPE_VALUES.map((k) => (
+                <option key={k} value={k}>{PROJECT_SUB_TYPE_LABEL[k]}</option>
+              ))}
             </select>
           </div>
 
@@ -252,10 +251,9 @@ export function ProjectsList() {
               className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             >
               <option value="">All Statuses</option>
-              <option value="NOT_YET_STARTED">Not Yet Started</option>
-              <option value="ON_GOING">On-going</option>
-              <option value="COMPLETED">Completed</option>
-              <option value="SUSPENDED">Suspended</option>
+              {PROJECT_STATUS_ORDER.map((k) => (
+                <option key={k} value={k}>{PROJECT_STATUS_LABEL[k]}</option>
+              ))}
             </select>
           </div>
 

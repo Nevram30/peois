@@ -1,5 +1,10 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import {
+  SOURCE_OF_FUND_VALUES,
+  PROJECT_SUB_TYPE_VALUES,
+  PROJECT_STATUS_VALUES,
+} from "~/lib/fund-constants";
 
 export const projectRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
@@ -30,30 +35,10 @@ export const projectRouter = createTRPCRouter({
     .input(
       z.object({
         title: z.string().min(1, "Project title is required"),
-        subType: z
-          .enum([
-            "WATER_SYSTEMS",
-            "GOVERNMENT_BUILDINGS",
-            "ELECTRIFICATION",
-            "RESPONSE_CAMP_MGMT",
-            "SUPPLEMENTAL_BUDGET_2",
-            "PARK_AND_DEVELOPMENT",
-            "DOH",
-            "PROVINCIAL_GOVT_OFFICE",
-          ])
-          .optional()
-          .nullable(),
+        subType: z.enum(PROJECT_SUB_TYPE_VALUES).optional().nullable(),
         modeOfImplementation: z.enum(["BY_ADMINISTRATION", "BY_CONTRACT"]),
         locationImplementation: z.enum(["DISTRICT_I", "DISTRICT_II"]),
-        sourceOfFund: z.enum([
-          "GENERAL_FUND",
-          "SEF",
-          "TRUST_FUND",
-          "TWENTY_PERCENT_DEV_FUND",
-          "AID",
-          "LOAN",
-          "OTHERS",
-        ]),
+        sourceOfFund: z.enum(SOURCE_OF_FUND_VALUES),
         contractCost: z.number().min(0).default(0),
         contractorName: z.string().optional(),
         projectEngineer: z.string().optional(),
@@ -71,9 +56,7 @@ export const projectRouter = createTRPCRouter({
         barangay: z.string().optional(),
         sitio: z.string().optional(),
         description: z.string().optional(),
-        status: z
-          .enum(["NOT_YET_STARTED", "ON_GOING", "COMPLETED", "SUSPENDED"])
-          .optional(),
+        status: z.enum(PROJECT_STATUS_VALUES).optional(),
         imageUrl: z.string().optional(),
         documentUrl: z.string().optional(),
         documentName: z.string().optional(),
@@ -133,30 +116,10 @@ export const projectRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         title: z.string().min(1, "Project title is required"),
-        subType: z
-          .enum([
-            "WATER_SYSTEMS",
-            "GOVERNMENT_BUILDINGS",
-            "ELECTRIFICATION",
-            "RESPONSE_CAMP_MGMT",
-            "SUPPLEMENTAL_BUDGET_2",
-            "PARK_AND_DEVELOPMENT",
-            "DOH",
-            "PROVINCIAL_GOVT_OFFICE",
-          ])
-          .optional()
-          .nullable(),
+        subType: z.enum(PROJECT_SUB_TYPE_VALUES).optional().nullable(),
         modeOfImplementation: z.enum(["BY_ADMINISTRATION", "BY_CONTRACT"]),
         locationImplementation: z.enum(["DISTRICT_I", "DISTRICT_II"]),
-        sourceOfFund: z.enum([
-          "GENERAL_FUND",
-          "SEF",
-          "TRUST_FUND",
-          "TWENTY_PERCENT_DEV_FUND",
-          "AID",
-          "LOAN",
-          "OTHERS",
-        ]),
+        sourceOfFund: z.enum(SOURCE_OF_FUND_VALUES),
         contractCost: z.number().min(0).default(0),
         contractorName: z.string().optional(),
         projectEngineer: z.string().optional(),
@@ -176,9 +139,7 @@ export const projectRouter = createTRPCRouter({
         sitio: z.string().optional(),
         budgetYear: z.string().optional(),
         description: z.string().optional(),
-        status: z
-          .enum(["NOT_YET_STARTED", "ON_GOING", "COMPLETED", "SUSPENDED"])
-          .optional(),
+        status: z.enum(PROJECT_STATUS_VALUES).optional(),
         completionPercentage: z.number().int().min(0).max(100).optional(),
         imageUrl: z.string().optional(),
         documentUrl: z.string().optional(),
@@ -211,7 +172,7 @@ export const projectRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-        status: z.enum(["NOT_YET_STARTED", "ON_GOING", "COMPLETED", "SUSPENDED"]),
+        status: z.enum(PROJECT_STATUS_VALUES),
         completionPercentage: z.number().int().min(0).max(100),
         imageUrl: z.string().optional(),
         documentUrl: z.string().optional(),
@@ -231,29 +192,9 @@ export const projectRouter = createTRPCRouter({
         title: z.string().min(1),
         modeOfImplementation: z.enum(["BY_ADMINISTRATION", "BY_CONTRACT"]),
         locationImplementation: z.enum(["DISTRICT_I", "DISTRICT_II"]),
-        sourceOfFund: z.enum([
-          "GENERAL_FUND",
-          "SEF",
-          "TRUST_FUND",
-          "TWENTY_PERCENT_DEV_FUND",
-          "AID",
-          "LOAN",
-          "OTHERS",
-        ]),
-        subType: z
-          .enum([
-            "WATER_SYSTEMS",
-            "GOVERNMENT_BUILDINGS",
-            "ELECTRIFICATION",
-            "RESPONSE_CAMP_MGMT",
-            "SUPPLEMENTAL_BUDGET_2",
-            "PARK_AND_DEVELOPMENT",
-            "DOH",
-            "PROVINCIAL_GOVT_OFFICE",
-          ])
-          .optional()
-          .nullable(),
-        status: z.enum(["NOT_YET_STARTED", "ON_GOING", "COMPLETED", "SUSPENDED"]).optional(),
+        sourceOfFund: z.enum(SOURCE_OF_FUND_VALUES),
+        subType: z.enum(PROJECT_SUB_TYPE_VALUES).optional().nullable(),
+        status: z.enum(PROJECT_STATUS_VALUES).optional(),
         projectCost: z.number().min(0).default(0),
         contractCost: z.number().min(0).default(0),
         contractorName: z.string().optional(),

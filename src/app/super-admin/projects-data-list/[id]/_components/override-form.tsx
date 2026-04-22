@@ -3,6 +3,17 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "~/trpc/react";
+import {
+  SOURCE_OF_FUND_LABEL,
+  SOURCE_OF_FUND_ORDER,
+  PROJECT_SUB_TYPE_LABEL,
+  SOURCE_TO_SUB_TYPES,
+  PROJECT_STATUS_LABEL,
+  PROJECT_STATUS_ORDER,
+  type SourceOfFundValue,
+  type ProjectSubTypeValue,
+  type ProjectStatusValue,
+} from "~/lib/fund-constants";
 
 const STATUS_STYLES: Record<string, string> = {
   ON_GOING: "bg-green-100 text-green-700",
@@ -143,15 +154,8 @@ export function OverrideForm({ projectId }: { projectId: string }) {
     projectCost: 0,
     modeOfImplementation: "BY_CONTRACT" as "BY_ADMINISTRATION" | "BY_CONTRACT",
     locationImplementation: "DISTRICT_I" as "DISTRICT_I" | "DISTRICT_II",
-    status: "ON_GOING" as "NOT_YET_STARTED" | "ON_GOING" | "COMPLETED" | "SUSPENDED",
-    sourceOfFund: "GENERAL_FUND" as
-      | "GENERAL_FUND"
-      | "SEF"
-      | "TRUST_FUND"
-      | "TWENTY_PERCENT_DEV_FUND"
-      | "AID"
-      | "LOAN"
-      | "OTHERS",
+    status: "ON_GOING" as ProjectStatusValue,
+    sourceOfFund: "GENERAL_FUND" as SourceOfFundValue,
     subType: "" as string,
     budgetYear: "",
     contractCost: 0,
@@ -235,17 +239,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
       locationImplementation: form.locationImplementation,
       status: form.status,
       sourceOfFund: form.sourceOfFund,
-      subType: form.subType
-        ? (form.subType as
-            | "WATER_SYSTEMS"
-            | "GOVERNMENT_BUILDINGS"
-            | "ELECTRIFICATION"
-            | "RESPONSE_CAMP_MGMT"
-            | "SUPPLEMENTAL_BUDGET_2"
-            | "PARK_AND_DEVELOPMENT"
-            | "DOH"
-            | "PROVINCIAL_GOVT_OFFICE")
-        : null,
+      subType: form.subType ? (form.subType as ProjectSubTypeValue) : null,
       budgetYear: form.budgetYear || undefined,
       contractCost: form.contractCost,
       contractorName: form.modeOfImplementation === "BY_CONTRACT" ? form.contractorName || undefined : undefined,
@@ -440,10 +434,11 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                       onChange={(e) => set("status", e.target.value as typeof form.status)}
                       className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${STATUS_STYLES[form.status] ?? "border-gray-200 text-gray-800"} border-gray-200`}
                     >
-                      <option value="NOT_YET_STARTED">Not Yet Started</option>
-                      <option value="ON_GOING">Active</option>
-                      <option value="COMPLETED">Completed</option>
-                      <option value="SUSPENDED">Suspended</option>
+                      {PROJECT_STATUS_ORDER.map((k) => (
+                        <option key={k} value={k}>
+                          {PROJECT_STATUS_LABEL[k]}
+                        </option>
+                      ))}
                     </select>
                   </div>
                   <div>
@@ -532,24 +527,45 @@ export function OverrideForm({ projectId }: { projectId: string }) {
             <div className="space-y-3">
               <div>
                 <FieldLabel required>Source of Fund</FieldLabel>
-                <TextInput value={form.sourceOfFund.replace(/_/g, " ")} disabled />
+                <select
+                  value={form.sourceOfFund}
+                  onChange={(e) => {
+                    const next = e.target.value as SourceOfFundValue;
+                    set("sourceOfFund", next);
+                    const allowed = SOURCE_TO_SUB_TYPES[next];
+                    if (!allowed.includes(form.subType as ProjectSubTypeValue)) {
+                      set("subType", "");
+                    }
+                  }}
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {SOURCE_OF_FUND_ORDER.map((k) => (
+                    <option key={k} value={k}>
+                      {SOURCE_OF_FUND_LABEL[k]}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div>
-                <FieldLabel>Fund Category</FieldLabel>
+                <FieldLabel>Sub-Category</FieldLabel>
                 <select
                   value={form.subType}
                   onChange={(e) => set("subType", e.target.value)}
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={
+                    (SOURCE_TO_SUB_TYPES[form.sourceOfFund]?.length ?? 0) === 0
+                  }
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400"
                 >
-                  <option value="">-- None --</option>
-                  <option value="WATER_SYSTEMS">Water Systems</option>
-                  <option value="GOVERNMENT_BUILDINGS">Government Buildings</option>
-                  <option value="ELECTRIFICATION">Electrification</option>
-                  <option value="RESPONSE_CAMP_MGMT">Response / Camp Management</option>
-                  <option value="SUPPLEMENTAL_BUDGET_2">Supplemental Budget 2</option>
-                  <option value="PARK_AND_DEVELOPMENT">Park and Development</option>
-                  <option value="DOH">DOH</option>
-                  <option value="PROVINCIAL_GOVT_OFFICE">Provincial Govt Office</option>
+                  <option value="">
+                    {(SOURCE_TO_SUB_TYPES[form.sourceOfFund]?.length ?? 0) === 0
+                      ? "No sub-categories available"
+                      : "-- None --"}
+                  </option>
+                  {SOURCE_TO_SUB_TYPES[form.sourceOfFund].map((k) => (
+                    <option key={k} value={k}>
+                      {PROJECT_SUB_TYPE_LABEL[k]}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>

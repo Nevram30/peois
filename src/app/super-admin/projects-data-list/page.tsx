@@ -95,10 +95,10 @@ export default function ProjectsDataListPage() {
 
   const noAllotted = cardYearProjects.filter((p) => p.contractCost === 0).length;
 
-  // --- Financial Overview computations ---
-  const totalAllocation = (projects ?? []).reduce((sum, p) => sum + p.contractCost, 0);
+  // --- Financial Overview computations (scoped to selected card year) ---
+  const totalAllocation = cardYearProjects.reduce((sum, p) => sum + p.contractCost, 0);
 
-  const bySource = (projects ?? []).reduce<Record<string, number>>((acc, p) => {
+  const bySource = cardYearProjects.reduce<Record<string, number>>((acc, p) => {
     acc[p.sourceOfFund] = (acc[p.sourceOfFund] ?? 0) + p.contractCost;
     return acc;
   }, {});
@@ -113,8 +113,8 @@ export default function ProjectsDataListPage() {
     .sort((a, b) => b.amount - a.amount);
 
   const executionRate =
-    projects && projects.length > 0
-      ? projects.reduce((sum, p) => sum + p.completionPercentage, 0) / projects.length
+    cardYearProjects.length > 0
+      ? cardYearProjects.reduce((sum, p) => sum + p.completionPercentage, 0) / cardYearProjects.length
       : 0;
 
   // Build donut segments
@@ -377,7 +377,11 @@ export default function ProjectsDataListPage() {
             <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">
               Financial Overview
             </p>
-            <p className="mt-0.5 text-xs text-gray-400">Aggregated project funding across all divisions</p>
+            <p className="mt-0.5 text-xs text-gray-400">
+              {cardYearFilter
+                ? `Aggregated project funding for ${cardYearFilter}`
+                : "Aggregated project funding across all years"}
+            </p>
           </div>
           <button
             onClick={handleExport}

@@ -5,6 +5,17 @@ import { useRouter } from "next/navigation";
 import { useState, useMemo, useRef } from "react";
 import { api } from "~/trpc/react";
 import { useUploadThing } from "~/lib/uploadthing";
+import {
+  SOURCE_OF_FUND_LABEL,
+  SOURCE_OF_FUND_ORDER,
+  PROJECT_SUB_TYPE_LABEL,
+  SOURCE_TO_SUB_TYPES,
+  PROJECT_STATUS_LABEL,
+  PROJECT_STATUS_ORDER,
+  type SourceOfFundValue,
+  type ProjectSubTypeValue,
+  type ProjectStatusValue,
+} from "~/lib/fund-constants";
 
 const inputClass =
   "block w-full rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none";
@@ -175,29 +186,12 @@ export function AddProjectForm() {
   const handleSubmit = (isDraft: boolean) => {
     createProject.mutate({
       title,
-      subType: subType
-        ? (subType as
-            | "WATER_SYSTEMS"
-            | "GOVERNMENT_BUILDINGS"
-            | "ELECTRIFICATION"
-            | "RESPONSE_CAMP_MGMT"
-            | "SUPPLEMENTAL_BUDGET_2"
-            | "PARK_AND_DEVELOPMENT"
-            | "DOH"
-            | "PROVINCIAL_GOVT_OFFICE")
-        : null,
+      subType: subType ? (subType as ProjectSubTypeValue) : null,
       modeOfImplementation: modeOfImplementation as
         | "BY_ADMINISTRATION"
         | "BY_CONTRACT",
       locationImplementation: district as "DISTRICT_I" | "DISTRICT_II",
-      sourceOfFund: sourceOfFund as
-        | "GENERAL_FUND"
-        | "SEF"
-        | "TRUST_FUND"
-        | "TWENTY_PERCENT_DEV_FUND"
-        | "AID"
-        | "LOAN"
-        | "OTHERS",
+      sourceOfFund: sourceOfFund as SourceOfFundValue,
       contractCost: parseFloat(contractCost.replace(/,/g, "")) || 0,
       contractorName: modeOfImplementation === "BY_CONTRACT" ? contractorName || undefined : undefined,
       projectEngineer: engineers.join(", ") || undefined,
@@ -218,13 +212,7 @@ export function AddProjectForm() {
       cityMunicipality: cityMunicipality || undefined,
       barangay: barangay || undefined,
       description: description || undefined,
-      status: isDraft
-        ? "NOT_YET_STARTED"
-        : (status as
-            | "NOT_YET_STARTED"
-            | "ON_GOING"
-            | "COMPLETED"
-            | "SUSPENDED"),
+      status: isDraft ? "NOT_YET_STARTED" : (status as ProjectStatusValue),
       imageUrl: imageUrl || undefined,
       documentUrl: docUrl || undefined,
       documentName: docFile?.name ?? undefined,
@@ -289,10 +277,11 @@ export function AddProjectForm() {
                   Project Title <span className="text-red-500">*</span>
                 </label>
                 <input
-
+                  type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-
+                  placeholder="Enter project title"
+                  className={inputClass}
                 />
               </div>
               <div>
@@ -301,8 +290,7 @@ export function AddProjectForm() {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">
                     #
                   </span>
-                  <input
-                    type="text"
+                  <input type="text"
                     value={trackingNumber}
                     onChange={(e) => setTrackingNumber(e.target.value)}
                     placeholder="PEO-2025-XXXXX"
@@ -375,10 +363,11 @@ export function AddProjectForm() {
                   onChange={(e) => setStatus(e.target.value)}
                   className={inputClass}
                 >
-                  <option value="NOT_YET_STARTED">Not Yet Started</option>
-                  <option value="ON_GOING">On-going</option>
-                  <option value="COMPLETED">Completed</option>
-                  <option value="SUSPENDED">Suspended</option>
+                  {PROJECT_STATUS_ORDER.map((k) => (
+                    <option key={k} value={k}>
+                      {PROJECT_STATUS_LABEL[k]}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -418,19 +407,22 @@ export function AddProjectForm() {
                 <select
                   required
                   value={sourceOfFund}
-                  onChange={(e) => setSourceOfFund(e.target.value)}
+                  onChange={(e) => {
+                    const next = e.target.value as SourceOfFundValue | "";
+                    setSourceOfFund(next);
+                    const allowed = next ? SOURCE_TO_SUB_TYPES[next] : [];
+                    if (!allowed.includes(subType as ProjectSubTypeValue)) {
+                      setSubType("");
+                    }
+                  }}
                   className={inputClass}
                 >
                   <option value="">Select Source</option>
-                  <option value="GENERAL_FUND">General Fund</option>
-                  <option value="SEF">SEF</option>
-                  <option value="TRUST_FUND">Trust Fund</option>
-                  <option value="TWENTY_PERCENT_DEV_FUND">
-                    20% Development Fund
-                  </option>
-                  <option value="AID">Aid</option>
-                  <option value="LOAN">Loan</option>
-                  <option value="OTHERS">Others</option>
+                  {SOURCE_OF_FUND_ORDER.map((k) => (
+                    <option key={k} value={k}>
+                      {SOURCE_OF_FUND_LABEL[k]}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -439,27 +431,29 @@ export function AddProjectForm() {
                 <select
                   value={subType}
                   onChange={(e) => setSubType(e.target.value)}
-                  className={inputClass}
+                  disabled={
+                    !sourceOfFund ||
+                    (SOURCE_TO_SUB_TYPES[sourceOfFund as SourceOfFundValue]
+                      ?.length ?? 0) === 0
+                  }
+                  className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
                 >
-                  <option value="">Select Sub-Category (Optional)</option>
-                  <option value="WATER_SYSTEMS">Water Systems</option>
-                  <option value="GOVERNMENT_BUILDINGS">
-                    Government Buildings
+                  <option value="">
+                    {!sourceOfFund
+                      ? "Select Source first"
+                      : (SOURCE_TO_SUB_TYPES[sourceOfFund as SourceOfFundValue]
+                            ?.length ?? 0) === 0
+                        ? "No sub-categories available"
+                        : "Select Sub-Category (Optional)"}
                   </option>
-                  <option value="ELECTRIFICATION">Electrification</option>
-                  <option value="RESPONSE_CAMP_MGMT">
-                    Response (Camp Mgmt)
-                  </option>
-                  <option value="SUPPLEMENTAL_BUDGET_2">
-                    Supplemental Budget #2
-                  </option>
-                  <option value="PARK_AND_DEVELOPMENT">
-                    Park and Development
-                  </option>
-                  <option value="DOH">DOH</option>
-                  <option value="PROVINCIAL_GOVT_OFFICE">
-                    Provincial Govt Office
-                  </option>
+                  {sourceOfFund &&
+                    SOURCE_TO_SUB_TYPES[sourceOfFund as SourceOfFundValue].map(
+                      (k) => (
+                        <option key={k} value={k}>
+                          {PROJECT_SUB_TYPE_LABEL[k]}
+                        </option>
+                      ),
+                    )}
                 </select>
                 <p className="mt-1 flex items-center gap-1 text-xs text-gray-400">
                   <svg
