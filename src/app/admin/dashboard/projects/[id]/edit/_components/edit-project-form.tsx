@@ -1087,7 +1087,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
         {/* ════════════════════════════════
             RIGHT  —  Activity Log (sticky)
         ════════════════════════════════ */}
-        <div className="w-80 shrink-0">
+        <div className="w-lg shrink-0">
           <div className="sticky top-5 space-y-3">
             {/* Status badge */}
             <div className={`flex items-center gap-2 rounded-xl border px-4 py-3 ${statusCfg.badge}`}>
