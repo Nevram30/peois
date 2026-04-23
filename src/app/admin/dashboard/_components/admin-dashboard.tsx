@@ -4,6 +4,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api } from "~/trpc/react";
+import {
+  PROJECT_SUB_TYPE_LABEL,
+  SOURCE_OF_FUND_ORDER,
+  type ProjectSubTypeValue,
+} from "~/lib/fund-constants";
 
 const SOURCE_COLORS: Record<string, string> = {
   GENERAL_FUND: "#3b82f6",
@@ -13,6 +18,40 @@ const SOURCE_COLORS: Record<string, string> = {
   LOAN: "#14b8a6",
   TRUST_FUND: "#84cc16",
   OTHERS: "#94a3b8",
+  FIVE_PERCENT_CONFIDENTIAL_FUND: "#6366f1",
+  PPOC: "#0ea5e9",
+  LDRRM: "#dc2626",
+  MOOE: "#65a30d",
+  NCDC: "#9333ea",
+  PRDP: "#0891b2",
+  MIADP: "#db2777",
+};
+
+const SUB_TYPE_COLORS: Record<ProjectSubTypeValue, string> = {
+  VARIOUS_WATER_SYSTEM_DEV: "#3b82f6",
+  RURAL_ELECTRIFICATION: "#f59e0b",
+  PARK_AND_DEVELOPMENT: "#10b981",
+  SLOPE_PROTECTION_LAND_DEV: "#8b5cf6",
+  INFRA_DEV_GOVT_BUILDINGS: "#ec4899",
+  LOCAL_ROADS_DRAINAGE: "#06b6d4",
+  PROVINCIAL_ROADS_BRIDGES: "#ef4444",
+  SUPPLEMENTAL_BUDGET_1: "#14b8a6",
+  SUPPLEMENTAL_BUDGET_2: "#f97316",
+  SUPPLEMENTAL_BUDGET_3: "#84cc16",
+  SUPPLEMENTAL_BUDGET_4: "#a855f7",
+  SUPPLEMENTAL_BUDGET_5: "#0ea5e9",
+  PROVINCIAL_GOVT_OFFICE: "#db2777",
+  PDRRMO_RESPONSE_CAMP_MGMT: "#65a30d",
+  PDRRMO_REHAB_RECOVERY: "#ca8a04",
+  PDRRMO_PREVENTION_MITIGATION: "#7c3aed",
+  PDRRMO_DISASTER_PREPAREDNESS: "#0891b2",
+  PAMANA: "#dc2626",
+  DOH: "#059669",
+  NCDC: "#9333ea",
+  WATER_SYSTEMS: "#2563eb",
+  GOVERNMENT_BUILDINGS: "#d97706",
+  ELECTRIFICATION: "#e11d48",
+  RESPONSE_CAMP_MGMT: "#4f46e5",
 };
 
 function formatPeso(value: number) {
@@ -37,18 +76,18 @@ function DonutChart({
   const strokeWidth = 28;
   const circumference = 2 * Math.PI * r;
 
-  let accumulatedOffset = 0;
+  let cumulativeLen = 0;
   const arcs = segments.map((seg) => {
-    const pct = total > 0 ? seg.value / total : 0;
-    const dash = pct * circumference;
-    const offset = circumference - accumulatedOffset;
-    accumulatedOffset += dash;
-    return { ...seg, dash, offset };
+    const fraction = total > 0 ? seg.value / total : 0;
+    const dashLength = fraction * circumference;
+    const arc = { ...seg, dashLength, dashOffset: -cumulativeLen };
+    cumulativeLen += dashLength;
+    return arc;
   });
 
   return (
     <svg viewBox="0 0 200 200" className="h-44 w-44">
-      {total === 0 ? (
+      <g transform={`rotate(-90 ${cx} ${cy})`}>
         <circle
           cx={cx}
           cy={cy}
@@ -57,22 +96,21 @@ function DonutChart({
           stroke="#e5e7eb"
           strokeWidth={strokeWidth}
         />
-      ) : (
-        arcs.map((arc, i) => (
-          <circle
-            key={i}
-            cx={cx}
-            cy={cy}
-            r={r}
-            fill="none"
-            stroke={arc.color}
-            strokeWidth={strokeWidth}
-            strokeDasharray={`${arc.dash} ${circumference}`}
-            strokeDashoffset={arc.offset}
-            style={{ transform: "rotate(-90deg)", transformOrigin: "50% 50%" }}
-          />
-        ))
-      )}
+        {total > 0 &&
+          arcs.map((arc, i) => (
+            <circle
+              key={i}
+              cx={cx}
+              cy={cy}
+              r={r}
+              fill="none"
+              stroke={arc.color}
+              strokeWidth={strokeWidth}
+              strokeDasharray={`${arc.dashLength} ${circumference}`}
+              strokeDashoffset={arc.dashOffset}
+            />
+          ))}
+      </g>
       <text
         x={cx}
         y={cy - 6}
@@ -292,23 +330,53 @@ export function AdminDashboardContent() {
       {(() => {
         const totalAllocation = financial?.totalAllocation ?? 0;
         const bySource = financial?.bySource ?? {};
+        const bySubType = financial?.bySubType ?? {};
         const executionRate = financial?.executionRate ?? 0;
 
-        const orderedSources = [
-          "GENERAL_FUND",
-          "TWENTY_PERCENT_DEV_FUND",
-          "SEF",
-          "AID",
-          "LOAN",
-          "TRUST_FUND",
-          "OTHERS",
-        ].filter((s) => (bySource[s] ?? 0) > 0);
+        type SubEntry = {
+          key: string;
+          label: string;
+          value: number;
+          color: string;
+          sourceOfFund: string;
+        };
 
-        const segments = orderedSources.map((s) => ({
-          label: SOURCE_LABELS[s] ?? s,
-          value: bySource[s] ?? 0,
-          color: SOURCE_COLORS[s] ?? "#94a3b8",
-        }));
+        const subEntries: SubEntry[] = Object.entries(bySubType)
+          .filter(([, v]) => v.amount > 0)
+          .map(([key, v]) => {
+            const isNone = key.startsWith("__NONE__:");
+            const label = isNone
+              ? "Uncategorized"
+              : (PROJECT_SUB_TYPE_LABEL[key as ProjectSubTypeValue] ?? key);
+            const color = isNone
+              ? (SOURCE_COLORS[v.sourceOfFund] ?? "#94a3b8")
+              : (SUB_TYPE_COLORS[key as ProjectSubTypeValue] ?? "#94a3b8");
+            return {
+              key,
+              label,
+              value: v.amount,
+              color,
+              sourceOfFund: v.sourceOfFund,
+            };
+          });
+
+        const segments = subEntries
+          .slice()
+          .sort((a, b) => b.value - a.value)
+          .map((e) => ({ label: e.label, value: e.value, color: e.color }));
+
+        // Group sub-entries under each source of fund for the breakdown panel
+        const orderedSources = SOURCE_OF_FUND_ORDER.filter(
+          (s) => (bySource[s] ?? 0) > 0,
+        );
+
+        const groupedBreakdown = orderedSources.map((sourceKey) => {
+          const sourceAmount = bySource[sourceKey] ?? 0;
+          const subs = subEntries
+            .filter((e) => e.sourceOfFund === sourceKey)
+            .sort((a, b) => b.value - a.value);
+          return { sourceKey, sourceAmount, subs };
+        });
 
         return (
           <div className="mb-8 rounded-2xl border border-gray-100 bg-white shadow-sm">
@@ -319,20 +387,26 @@ export function AdminDashboardContent() {
                   Financial Overview
                 </p>
                 <p className="text-xs text-gray-400">
-                  Aggregated project funding across all divisions
+                  Source of funds broken down by sub-category
                 </p>
               </div>
               <button
                 onClick={() => {
-                  const rows = [
-                    ["Source of Fund", "Amount (PHP)", "Percentage"],
-                    ...orderedSources.map((s) => {
-                      const amt = bySource[s] ?? 0;
-                      const pct = totalAllocation > 0 ? ((amt / totalAllocation) * 100).toFixed(1) : "0.0";
-                      return [SOURCE_LABELS[s] ?? s, amt.toFixed(2), `${pct}%`];
-                    }),
-                    ["Grand Total", totalAllocation.toFixed(2), "100%"],
+                  const rows: string[][] = [
+                    ["Source of Fund", "Sub-Category", "Amount (PHP)", "Percentage"],
                   ];
+                  for (const g of groupedBreakdown) {
+                    for (const s of g.subs) {
+                      const pct = totalAllocation > 0 ? ((s.value / totalAllocation) * 100).toFixed(1) : "0.0";
+                      rows.push([
+                        SOURCE_LABELS[g.sourceKey] ?? g.sourceKey,
+                        s.label,
+                        s.value.toFixed(2),
+                        `${pct}%`,
+                      ]);
+                    }
+                  }
+                  rows.push(["Grand Total", "", totalAllocation.toFixed(2), "100%"]);
                   const csv = rows.map((r) => r.join(",")).join("\n");
                   const blob = new Blob([csv], { type: "text/csv" });
                   const url = URL.createObjectURL(blob);
@@ -360,7 +434,7 @@ export function AdminDashboardContent() {
                 <DonutChart segments={segments} total={totalAllocation} />
                 {/* Legend */}
                 <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5">
-                  {segments.map((seg) => (
+                  {segments.slice(0, 8).map((seg) => (
                     <span key={seg.label} className="flex items-center gap-1.5 text-xs text-gray-600">
                       <span
                         className="inline-block h-2.5 w-2.5 rounded-full"
@@ -369,61 +443,112 @@ export function AdminDashboardContent() {
                       {seg.label}
                     </span>
                   ))}
+                  {segments.length > 8 && (
+                    <span className="text-xs text-gray-400">
+                      +{segments.length - 8} more
+                    </span>
+                  )}
                   {segments.length === 0 && (
                     <span className="text-xs text-gray-400">No allocation data for {financial?.budgetYear ?? new Date().getFullYear()}</span>
                   )}
                 </div>
 
                 {/* Execution Rate */}
-                <div className="w-full">
+                <div className="w-full rounded-lg bg-gray-50 px-3 py-2.5">
                   <div className="mb-1 flex items-center justify-between text-xs">
-                    <span className="font-semibold uppercase tracking-wider text-gray-500">
-                      Execution Rate
+                    <div className="flex flex-col">
+                      <span className="font-semibold uppercase tracking-wider text-gray-500">
+                        Execution Rate
+                      </span>
+                      <span className="text-[10px] font-normal normal-case text-gray-400">
+                        Average progress across all projects
+                      </span>
+                    </div>
+                    <span className="text-sm font-bold text-blue-600">
+                      {Math.min(100, Math.max(0, executionRate)).toFixed(1)}%
                     </span>
-                    <span className="font-bold text-gray-800">{executionRate}%</span>
                   </div>
                   <div className="h-2.5 w-full overflow-hidden rounded-full bg-gray-200">
                     <div
                       className="h-full rounded-full bg-blue-500 transition-all duration-500"
-                      style={{ width: `${executionRate}%` }}
+                      style={{
+                        width: `${Math.min(100, Math.max(0, executionRate))}%`,
+                      }}
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Right: Source of Funds Breakdown */}
+              {/* Right: Source of Funds Breakdown (grouped by sub-category) */}
               <div className="px-6 py-6">
                 <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-500">
                   Source of Funds Breakdown
                 </p>
-                {orderedSources.length === 0 ? (
+                {groupedBreakdown.length === 0 ? (
                   <p className="py-8 text-center text-sm text-gray-400">
                     No fund allocation data found for {financial?.budgetYear ?? new Date().getFullYear()}.
                   </p>
                 ) : (
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-                    {orderedSources.map((sourceKey) => {
-                      const amt = bySource[sourceKey] ?? 0;
-                      const pct =
-                        totalAllocation > 0
-                          ? ((amt / totalAllocation) * 100).toFixed(1)
-                          : "0.0";
-                      const color = SOURCE_COLORS[sourceKey] ?? "#94a3b8";
+                  <div className="flex max-h-80 flex-col gap-3 overflow-y-auto pr-1">
+                    {groupedBreakdown.map(({ sourceKey, sourceAmount, subs }) => {
+                      const sourcePct = totalAllocation > 0
+                        ? ((sourceAmount / totalAllocation) * 100).toFixed(1)
+                        : "0.0";
                       return (
-                        <div key={sourceKey} className="flex flex-col gap-1">
-                          <div className="flex items-center gap-1.5">
-                            <span
-                              className="inline-block h-2 w-2 shrink-0 rounded-full"
-                              style={{ backgroundColor: color }}
-                            />
-                            <span className="text-xs text-gray-600">
-                              {SOURCE_LABELS[sourceKey] ?? sourceKey}
-                            </span>
+                        <div
+                          key={sourceKey}
+                          className="rounded-lg border border-gray-100 bg-gray-50/50 p-3"
+                        >
+                          <div className="mb-2 flex items-center justify-between">
+                            <div className="flex items-center gap-1.5">
+                              <span
+                                className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
+                                style={{ backgroundColor: SOURCE_COLORS[sourceKey] ?? "#94a3b8" }}
+                              />
+                              <span className="text-xs font-semibold text-gray-700">
+                                {SOURCE_LABELS[sourceKey] ?? sourceKey}
+                              </span>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-xs font-bold text-gray-900">
+                                {formatPeso(sourceAmount)}
+                              </p>
+                              <p className="text-[10px] text-gray-400">{sourcePct}%</p>
+                            </div>
                           </div>
-                          <p className="text-sm font-bold text-gray-900">
-                            {formatPeso(amt)}
-                          </p>
-                          <p className="text-xs text-gray-400">{pct}%</p>
+                          {subs.length > 0 && (
+                            <div className="flex flex-col gap-1 pl-4">
+                              {subs.map((s) => {
+                                const pct = totalAllocation > 0
+                                  ? ((s.value / totalAllocation) * 100).toFixed(1)
+                                  : "0.0";
+                                return (
+                                  <div
+                                    key={s.key}
+                                    className="flex items-center justify-between gap-2"
+                                  >
+                                    <div className="flex min-w-0 items-center gap-1.5">
+                                      <span
+                                        className="inline-block h-2 w-2 shrink-0 rounded-full"
+                                        style={{ backgroundColor: s.color }}
+                                      />
+                                      <span className="truncate text-[11px] text-gray-600">
+                                        {s.label}
+                                      </span>
+                                    </div>
+                                    <div className="shrink-0 text-right">
+                                      <span className="text-[11px] font-semibold text-gray-800">
+                                        {formatPeso(s.value)}
+                                      </span>
+                                      <span className="ml-1.5 text-[10px] text-gray-400">
+                                        {pct}%
+                                      </span>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
                         </div>
                       );
                     })}
@@ -431,7 +556,7 @@ export function AdminDashboardContent() {
                 )}
 
                 {/* Grand Total */}
-                {orderedSources.length > 0 && (
+                {groupedBreakdown.length > 0 && (
                   <div className="mt-6 border-t border-gray-100 pt-4">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-semibold text-gray-700">

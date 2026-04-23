@@ -158,7 +158,7 @@ export function UserShell({
                   </p>
                   <div className="flex items-center justify-end gap-2">
                     {designationInfo && (
-                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${designationInfo.color}`}>
+                      <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-medium ${designationInfo.color}`}>
                         {designationInfo.label}
                       </span>
                     )}

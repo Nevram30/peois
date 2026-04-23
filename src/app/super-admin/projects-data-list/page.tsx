@@ -3,6 +3,11 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "~/trpc/react";
+import {
+  PROJECT_SUB_TYPE_LABEL,
+  SOURCE_OF_FUND_ORDER,
+  type ProjectSubTypeValue,
+} from "~/lib/fund-constants";
 
 const STATUS_STYLES: Record<string, { bg: string; dot: string; text: string; label: string }> = {
   ON_GOING: { bg: "bg-blue-50", dot: "bg-blue-500", text: "text-blue-700", label: "Active" },
@@ -40,6 +45,40 @@ const FUND_SOURCE_COLORS: Record<string, string> = {
   AID: "#EC4899",
   LOAN: "#06B6D4",
   OTHERS: "#6B7280",
+  FIVE_PERCENT_CONFIDENTIAL_FUND: "#6366F1",
+  PPOC: "#0EA5E9",
+  LDRRM: "#DC2626",
+  MOOE: "#65A30D",
+  NCDC: "#9333EA",
+  PRDP: "#0891B2",
+  MIADP: "#DB2777",
+};
+
+const SUB_TYPE_COLORS: Record<ProjectSubTypeValue, string> = {
+  VARIOUS_WATER_SYSTEM_DEV: "#3B82F6",
+  RURAL_ELECTRIFICATION: "#F59E0B",
+  PARK_AND_DEVELOPMENT: "#10B981",
+  SLOPE_PROTECTION_LAND_DEV: "#8B5CF6",
+  INFRA_DEV_GOVT_BUILDINGS: "#EC4899",
+  LOCAL_ROADS_DRAINAGE: "#06B6D4",
+  PROVINCIAL_ROADS_BRIDGES: "#EF4444",
+  SUPPLEMENTAL_BUDGET_1: "#14B8A6",
+  SUPPLEMENTAL_BUDGET_2: "#F97316",
+  SUPPLEMENTAL_BUDGET_3: "#84CC16",
+  SUPPLEMENTAL_BUDGET_4: "#A855F7",
+  SUPPLEMENTAL_BUDGET_5: "#0EA5E9",
+  PROVINCIAL_GOVT_OFFICE: "#DB2777",
+  PDRRMO_RESPONSE_CAMP_MGMT: "#65A30D",
+  PDRRMO_REHAB_RECOVERY: "#CA8A04",
+  PDRRMO_PREVENTION_MITIGATION: "#7C3AED",
+  PDRRMO_DISASTER_PREPAREDNESS: "#0891B2",
+  PAMANA: "#DC2626",
+  DOH: "#059669",
+  NCDC: "#9333EA",
+  WATER_SYSTEMS: "#2563EB",
+  GOVERNMENT_BUILDINGS: "#D97706",
+  ELECTRIFICATION: "#E11D48",
+  RESPONSE_CAMP_MGMT: "#4F46E5",
 };
 
 const DONUT_RADIUS = 54;
@@ -99,27 +138,80 @@ export default function ProjectsDataListPage() {
   const totalAllocation = cardYearProjects.reduce((sum, p) => sum + p.contractCost, 0);
 
   const bySource = cardYearProjects.reduce<Record<string, number>>((acc, p) => {
-    acc[p.sourceOfFund] = (acc[p.sourceOfFund] ?? 0) + p.contractCost;
+    if (p.contractCost > 0) {
+      acc[p.sourceOfFund] = (acc[p.sourceOfFund] ?? 0) + p.contractCost;
+    }
     return acc;
   }, {});
 
-  const sourceBreakdown = Object.entries(bySource)
-    .map(([source, amount]) => ({
-      source,
-      amount,
-      label: FUND_SOURCE_LABELS[source] ?? source,
-      color: FUND_SOURCE_COLORS[source] ?? "#6B7280",
-    }))
-    .sort((a, b) => b.amount - a.amount);
+  type SubEntry = {
+    key: string;
+    label: string;
+    amount: number;
+    color: string;
+    sourceOfFund: string;
+  };
 
+  const bySubTypeMap = cardYearProjects.reduce<
+    Record<string, { amount: number; sourceOfFund: string }>
+  >((acc, p) => {
+    if (p.contractCost <= 0) return acc;
+    const key = p.subType ?? `__NONE__:${p.sourceOfFund}`;
+    const existing = acc[key];
+    if (existing) {
+      existing.amount += p.contractCost;
+    } else {
+      acc[key] = { amount: p.contractCost, sourceOfFund: p.sourceOfFund };
+    }
+    return acc;
+  }, {});
+
+  const subEntries: SubEntry[] = Object.entries(bySubTypeMap).map(
+    ([key, v]) => {
+      const isNone = key.startsWith("__NONE__:");
+      const label = isNone
+        ? "Uncategorized"
+        : (PROJECT_SUB_TYPE_LABEL[key as ProjectSubTypeValue] ?? key);
+      const color = isNone
+        ? (FUND_SOURCE_COLORS[v.sourceOfFund] ?? "#6B7280")
+        : (SUB_TYPE_COLORS[key as ProjectSubTypeValue] ?? "#6B7280");
+      return {
+        key,
+        label,
+        amount: v.amount,
+        color,
+        sourceOfFund: v.sourceOfFund,
+      };
+    },
+  );
+
+  const sortedSubs = subEntries.slice().sort((a, b) => b.amount - a.amount);
+
+  const orderedSources = SOURCE_OF_FUND_ORDER.filter(
+    (s) => (bySource[s] ?? 0) > 0,
+  );
+
+  const groupedBreakdown = orderedSources.map((sourceKey) => {
+    const sourceAmount = bySource[sourceKey] ?? 0;
+    const subs = subEntries
+      .filter((e) => e.sourceOfFund === sourceKey)
+      .sort((a, b) => b.amount - a.amount);
+    return { sourceKey, sourceAmount, subs };
+  });
+
+  // Execution rate — average progress across all projects
   const executionRate =
     cardYearProjects.length > 0
-      ? cardYearProjects.reduce((sum, p) => sum + p.completionPercentage, 0) / cardYearProjects.length
+      ? cardYearProjects.reduce(
+          (sum, p) =>
+            sum + Math.max(0, Math.min(100, p.completionPercentage ?? 0)),
+          0,
+        ) / cardYearProjects.length
       : 0;
 
-  // Build donut segments
+  // Build donut segments from sub-categories
   let cumulativeLen = 0;
-  const donutSegments = sourceBreakdown.map((item) => {
+  const donutSegments = sortedSubs.map((item) => {
     const fraction = totalAllocation > 0 ? item.amount / totalAllocation : 0;
     const dashLength = fraction * DONUT_CIRCUMFERENCE;
     const seg = { ...item, dashLength, dashOffset: -cumulativeLen };
@@ -410,7 +502,7 @@ export default function ProjectsDataListPage() {
                   {/* Segments */}
                   {donutSegments.map((seg) => (
                     <circle
-                      key={seg.source}
+                      key={seg.key}
                       cx="70"
                       cy="70"
                       r={DONUT_RADIUS}
@@ -434,54 +526,116 @@ export default function ProjectsDataListPage() {
 
             {/* Legend */}
             <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5">
-              {donutSegments.map((seg) => (
-                <div key={seg.source} className="flex items-center gap-1.5">
+              {donutSegments.slice(0, 6).map((seg) => (
+                <div key={seg.key} className="flex items-center gap-1.5">
                   <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: seg.color }} />
                   <span className="text-xs text-gray-600">{seg.label}</span>
                 </div>
               ))}
+              {donutSegments.length > 6 && (
+                <span className="text-xs text-gray-400">
+                  +{donutSegments.length - 6} more
+                </span>
+              )}
             </div>
 
             {/* Execution Rate */}
             <div className="w-full rounded-lg bg-gray-50 px-4 py-3">
               <div className="mb-1.5 flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">Execution Rate</span>
-                <span className="text-sm font-bold text-blue-600">{executionRate.toFixed(1)}%</span>
+                <div className="flex flex-col">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    Execution Rate
+                  </span>
+                  <span className="text-[10px] text-gray-400">
+                    Average progress across all projects
+                    {cardYearFilter ? ` (${cardYearFilter})` : ""}
+                  </span>
+                </div>
+                <span className="text-sm font-bold text-blue-600">
+                  {Math.min(100, Math.max(0, executionRate)).toFixed(1)}%
+                </span>
               </div>
               <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
                 <div
                   className="h-full rounded-full bg-blue-500 transition-all"
-                  style={{ width: `${executionRate}%` }}
+                  style={{
+                    width: `${Math.min(100, Math.max(0, executionRate))}%`,
+                  }}
                 />
               </div>
             </div>
           </div>
 
-          {/* Right — Source of Funds Breakdown */}
+          {/* Right — Source of Funds Breakdown (grouped by sub-category) */}
           <div className="col-span-2 px-6 py-6">
             <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-gray-500">
               Source of Funds Breakdown
             </p>
             {isLoading ? (
               <div className="flex h-32 items-center justify-center text-sm text-gray-400">Loading...</div>
-            ) : sourceBreakdown.length === 0 ? (
+            ) : groupedBreakdown.length === 0 ? (
               <div className="flex h-32 items-center justify-center text-sm text-gray-400">No data available</div>
             ) : (
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {sourceBreakdown.map((item) => {
-                  const pct = totalAllocation > 0 ? (item.amount / totalAllocation) * 100 : 0;
+              <div className="grid max-h-96 grid-cols-1 gap-3 overflow-y-auto pr-1 md:grid-cols-2">
+                {groupedBreakdown.map(({ sourceKey, sourceAmount, subs }) => {
+                  const sourcePct = totalAllocation > 0
+                    ? (sourceAmount / totalAllocation) * 100
+                    : 0;
                   return (
-                    <div key={item.source} className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 px-4 py-2.5">
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
-                        <span className="truncate text-sm font-medium text-gray-700">{item.label}</span>
+                    <div
+                      key={sourceKey}
+                      className="rounded-lg border border-gray-100 bg-gray-50/60 p-3"
+                    >
+                      <div className="mb-2 flex items-center justify-between">
+                        <div className="flex min-w-0 items-center gap-2">
+                          <span
+                            className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
+                            style={{ backgroundColor: FUND_SOURCE_COLORS[sourceKey] ?? "#6B7280" }}
+                          />
+                          <span className="truncate text-sm font-semibold text-gray-700">
+                            {FUND_SOURCE_LABELS[sourceKey] ?? sourceKey}
+                          </span>
+                        </div>
+                        <div className="ml-3 shrink-0 text-right">
+                          <p className="text-sm font-bold text-gray-900">
+                            ₱{sourceAmount.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
+                          </p>
+                          <p className="text-[10px] text-gray-400">{sourcePct.toFixed(1)}%</p>
+                        </div>
                       </div>
-                      <div className="ml-4 flex shrink-0 flex-col items-end">
-                        <span className="text-sm font-bold text-gray-900">
-                          ₱{item.amount.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
-                        </span>
-                        <span className="text-xs text-gray-400">{pct.toFixed(1)}%</span>
-                      </div>
+                      {subs.length > 0 && (
+                        <div className="flex flex-col gap-1 border-t border-gray-100 pl-3.5 pt-2">
+                          {subs.map((s) => {
+                            const pct = totalAllocation > 0
+                              ? (s.amount / totalAllocation) * 100
+                              : 0;
+                            return (
+                              <div
+                                key={s.key}
+                                className="flex items-center justify-between gap-2"
+                              >
+                                <div className="flex min-w-0 items-center gap-1.5">
+                                  <span
+                                    className="inline-block h-2 w-2 shrink-0 rounded-full"
+                                    style={{ backgroundColor: s.color }}
+                                  />
+                                  <span className="truncate text-[11px] text-gray-600">
+                                    {s.label}
+                                  </span>
+                                </div>
+                                <div className="shrink-0 text-right">
+                                  <span className="text-[11px] font-semibold text-gray-800">
+                                    ₱{s.amount.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
+                                  </span>
+                                  <span className="ml-1.5 text-[10px] text-gray-400">
+                                    {pct.toFixed(1)}%
+                                  </span>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
                   );
                 })}

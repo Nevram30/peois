@@ -351,33 +351,50 @@ export const projectRouter = createTRPCRouter({
   getFinancialOverview: protectedProcedure.query(async ({ ctx }) => {
     const currentYear = new Date().getFullYear().toString();
 
-    const [projects, disbursementsAgg] = await Promise.all([
-      ctx.db.project.findMany({
-        select: { sourceOfFund: true, contractCost: true },
-      }),
-      ctx.db.disbursement.aggregate({ _sum: { amount: true } }),
-    ]);
+    const projects = await ctx.db.project.findMany({
+      select: {
+        sourceOfFund: true,
+        subType: true,
+        contractCost: true,
+        completionPercentage: true,
+      },
+    });
 
     const bySource: Record<string, number> = {};
+    const bySubType: Record<string, { amount: number; sourceOfFund: string }> = {};
     let totalAllocation = 0;
+    let progressSum = 0;
 
     for (const p of projects) {
+      progressSum += Math.max(0, Math.min(100, p.completionPercentage ?? 0));
+
       if (p.contractCost > 0) {
         bySource[p.sourceOfFund] = (bySource[p.sourceOfFund] ?? 0) + p.contractCost;
         totalAllocation += p.contractCost;
+
+        const subKey = p.subType ?? `__NONE__:${p.sourceOfFund}`;
+        const existing = bySubType[subKey];
+        if (existing) {
+          existing.amount += p.contractCost;
+        } else {
+          bySubType[subKey] = {
+            amount: p.contractCost,
+            sourceOfFund: p.sourceOfFund,
+          };
+        }
       }
     }
 
-    const totalDisbursed = disbursementsAgg._sum.amount ?? 0;
     const executionRate =
-      totalAllocation > 0
-        ? Math.min(100, (totalDisbursed / totalAllocation) * 100)
+      projects.length > 0
+        ? Math.min(100, Math.max(0, progressSum / projects.length))
         : 0;
 
     return {
       budgetYear: currentYear,
       totalAllocation,
       bySource,
+      bySubType,
       executionRate: Math.round(executionRate * 10) / 10,
     };
   }),
