@@ -16,7 +16,7 @@ import {
 const STATUS_LABELS: Record<string, { label: string; className: string }> = {
   NOT_YET_STARTED: {
     label: "Not Yet Started",
-    className: "bg-blue-100 text-blue-700",
+    className: "bg-sky-100 text-sky-700",
   },
   ON_GOING: { label: "On-going", className: "bg-orange-100 text-orange-700" },
   COMPLETED: {
@@ -24,13 +24,28 @@ const STATUS_LABELS: Record<string, { label: string; className: string }> = {
     className: "bg-green-100 text-green-700",
   },
   SUSPENDED: { label: "Suspended", className: "bg-red-100 text-red-700" },
+  FOR_IMPLEMENTATION: {
+    label: "For Implementation",
+    className: "bg-amber-100 text-amber-700",
+  },
+  RE_ALIGNMENT: {
+    label: "Re-alignment",
+    className: "bg-purple-100 text-purple-700",
+  },
+  OTHERS: {
+    label: "Others",
+    className: "bg-slate-100 text-slate-700",
+  },
 };
 
 const STATUS_TITLES: Record<string, string> = {
   COMPLETED: "Completed Projects",
   SUSPENDED: "Suspended Projects",
-  NOT_YET_STARTED: "Projects For Implementation",
+  FOR_IMPLEMENTATION: "Projects For Implementation",
   ON_GOING: "On-Going Projects",
+  RE_ALIGNMENT: "Projects For Re-alignment",
+  OTHERS: "Other Projects",
+  NOT_YET_STARTED: "Projects Not Yet Started",
   today: "New Projects Today",
 };
 

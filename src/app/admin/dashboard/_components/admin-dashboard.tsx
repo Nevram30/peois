@@ -157,16 +157,16 @@ const STATUS_CONFIG: Record<
   { label: string; dot: string; text: string; badge: string }
 > = {
   ON_GOING: {
-    label: "Ongoing",
+    label: "On-going",
     dot: "bg-orange-500",
     text: "text-orange-700",
     badge: "bg-orange-50 text-orange-700",
   },
   NOT_YET_STARTED: {
-    label: "For Bidding",
-    dot: "bg-blue-400",
-    text: "text-blue-600",
-    badge: "bg-blue-50 text-blue-600",
+    label: "Not Yet Started",
+    dot: "bg-sky-500",
+    text: "text-sky-600",
+    badge: "bg-sky-50 text-sky-600",
   },
   COMPLETED: {
     label: "Completed",
@@ -180,18 +180,40 @@ const STATUS_CONFIG: Record<
     text: "text-red-600",
     badge: "bg-red-50 text-red-600",
   },
+  FOR_IMPLEMENTATION: {
+    label: "For Implementation",
+    dot: "bg-amber-500",
+    text: "text-amber-700",
+    badge: "bg-amber-50 text-amber-700",
+  },
+  RE_ALIGNMENT: {
+    label: "Re-alignment",
+    dot: "bg-purple-500",
+    text: "text-purple-700",
+    badge: "bg-purple-50 text-purple-700",
+  },
+  OTHERS: {
+    label: "Others",
+    dot: "bg-slate-500",
+    text: "text-slate-700",
+    badge: "bg-slate-50 text-slate-700",
+  },
 };
 
 export function AdminDashboardContent() {
   const router = useRouter();
-  const { data: stats } = api.project.getStats.useQuery();
-  const { data: financial } = api.project.getFinancialOverview.useQuery();
-  const { data: projects, isLoading } = api.project.getAll.useQuery();
   const [search, setSearch] = useState("");
+  const [fiscalYear, setFiscalYear] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
+  const statsInput = fiscalYear ? { budgetYear: fiscalYear } : undefined;
+  const { data: stats } = api.project.getStats.useQuery(statsInput);
+  const { data: financial } = api.project.getFinancialOverview.useQuery(statsInput);
+  const { data: projects, isLoading } = api.project.getAll.useQuery();
+  const { data: budgetYears } = api.project.getBudgetYears.useQuery();
 
   const filteredProjects = projects?.filter((p) => {
+    if (fiscalYear && p.budgetYear !== fiscalYear) return false;
     if (!search) return true;
     const q = search.toLowerCase();
     return (
@@ -219,36 +241,77 @@ export function AdminDashboardContent() {
           </h1>
         </div>
 
-        {/* Search */}
-        <div className="relative mt-2 w-80">
-          <svg
-            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+        {/* Search + Fiscal Year Filter */}
+        <div className="mt-2 flex items-center gap-2">
+          <div className="relative w-80">
+            <svg
+              className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+              />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search projects, documents, or data..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-700 shadow-sm placeholder:text-gray-400 focus:border-[#1e3a4f] focus:outline-none focus:ring-2 focus:ring-[#1e3a4f]/20"
             />
-          </svg>
-          <input
-            type="text"
-            placeholder="Search projects, documents, or data..."
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-            className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-700 shadow-sm placeholder:text-gray-400 focus:border-[#1e3a4f] focus:outline-none focus:ring-2 focus:ring-[#1e3a4f]/20"
-          />
+          </div>
+          <div className="relative">
+            <svg
+              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"
+              />
+            </svg>
+            <select
+              value={fiscalYear}
+              onChange={(e) => {
+                setFiscalYear(e.target.value);
+                setPage(1);
+              }}
+              className="appearance-none rounded-xl border border-gray-200 bg-white py-2.5 pl-9 pr-9 text-sm text-gray-700 shadow-sm focus:border-[#1e3a4f] focus:outline-none focus:ring-2 focus:ring-[#1e3a4f]/20"
+            >
+              <option value="">All Fiscal Years</option>
+              {budgetYears?.map((y) => (
+                <option key={y} value={y}>
+                  FY {y}
+                </option>
+              ))}
+            </select>
+            <svg
+              className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+          </div>
         </div>
       </div>
 
       {/* Colored Summary Cards */}
-      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5">
         {/* Budget Year */}
         <div className="flex flex-col rounded-2xl bg-blue-600 p-4 text-white shadow-sm">
           <div className="mb-2 flex items-center justify-between">
@@ -264,6 +327,22 @@ export function AdminDashboardContent() {
           </p>
         </div>
 
+        {/* Grand Total Contract */}
+        <div className="flex flex-col rounded-2xl bg-emerald-600 p-4 text-white shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">
+              Grand Total Contract
+            </span>
+            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V12Zm-12 0h.008v.008H6V12Z" />
+            </svg>
+          </div>
+          <p className="text-2xl font-extrabold leading-tight break-all">
+            {formatPeso(financial?.totalAllocation ?? 0)}
+          </p>
+          <p className="mt-1 text-xs opacity-70">All projects</p>
+        </div>
+
         {/* Completed */}
         <Link href="/admin/dashboard/projects?status=COMPLETED" className="flex flex-col rounded-2xl bg-teal-500 p-4 text-white shadow-sm transition hover:bg-teal-600">
           <div className="mb-2 flex items-center justify-between">
@@ -276,30 +355,6 @@ export function AdminDashboardContent() {
           <p className="mt-1 text-xs opacity-70">Projects</p>
         </Link>
 
-        {/* On-Going */}
-        <Link href="/admin/dashboard/projects?status=ON_GOING" className="flex flex-col rounded-2xl bg-orange-400 p-4 text-white shadow-sm transition hover:bg-orange-500">
-          <div className="mb-2 flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">On-Going</span>
-            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
-            </svg>
-          </div>
-          <p className="text-3xl font-extrabold leading-none">{stats?.ongoing ?? 0}</p>
-          <p className="mt-1 text-xs opacity-70">Projects</p>
-        </Link>
-
-        {/* For Implementation */}
-        <Link href="/admin/dashboard/projects?status=NOT_YET_STARTED" className="flex flex-col rounded-2xl bg-amber-500 p-4 text-white shadow-sm transition hover:bg-amber-600">
-          <div className="mb-2 flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">For Implementation</span>
-            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-            </svg>
-          </div>
-          <p className="text-3xl font-extrabold leading-none">{stats?.notYetStarted ?? 0}</p>
-          <p className="mt-1 text-xs opacity-70">Projects</p>
-        </Link>
-
         {/* Suspended */}
         <Link href="/admin/dashboard/projects?status=SUSPENDED" className="flex flex-col rounded-2xl bg-red-500 p-4 text-white shadow-sm transition hover:bg-red-600">
           <div className="mb-2 flex items-center justify-between">
@@ -309,6 +364,66 @@ export function AdminDashboardContent() {
             </svg>
           </div>
           <p className="text-3xl font-extrabold leading-none">{stats?.suspended ?? 0}</p>
+          <p className="mt-1 text-xs opacity-70">Projects</p>
+        </Link>
+
+        {/* For Implementation */}
+        <Link href="/admin/dashboard/projects?status=FOR_IMPLEMENTATION" className="flex flex-col rounded-2xl bg-amber-500 p-4 text-white shadow-sm transition hover:bg-amber-600">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">For Implementation</span>
+            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none">{stats?.forImplementation ?? 0}</p>
+          <p className="mt-1 text-xs opacity-70">Projects</p>
+        </Link>
+
+        {/* On-Going */}
+        <Link href="/admin/dashboard/projects?status=ON_GOING" className="flex flex-col rounded-2xl bg-orange-400 p-4 text-white shadow-sm transition hover:bg-orange-500">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">On-going</span>
+            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none">{stats?.ongoing ?? 0}</p>
+          <p className="mt-1 text-xs opacity-70">Projects</p>
+        </Link>
+
+        {/* Re-alignment */}
+        <Link href="/admin/dashboard/projects?status=RE_ALIGNMENT" className="flex flex-col rounded-2xl bg-purple-500 p-4 text-white shadow-sm transition hover:bg-purple-600">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Re-alignment</span>
+            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none">{stats?.reAlignment ?? 0}</p>
+          <p className="mt-1 text-xs opacity-70">Projects</p>
+        </Link>
+
+        {/* Others */}
+        <Link href="/admin/dashboard/projects?status=OTHERS" className="flex flex-col rounded-2xl bg-slate-500 p-4 text-white shadow-sm transition hover:bg-slate-600">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Others</span>
+            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none">{stats?.others ?? 0}</p>
+          <p className="mt-1 text-xs opacity-70">Projects</p>
+        </Link>
+
+        {/* Not Yet Started */}
+        <Link href="/admin/dashboard/projects?status=NOT_YET_STARTED" className="flex flex-col rounded-2xl bg-sky-500 p-4 text-white shadow-sm transition hover:bg-sky-600">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Not Yet Started</span>
+            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none">{stats?.notYetStarted ?? 0}</p>
           <p className="mt-1 text-xs opacity-70">Projects</p>
         </Link>
 
