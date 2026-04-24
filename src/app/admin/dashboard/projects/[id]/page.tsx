@@ -1,4 +1,4 @@
-import { ProjectDetail } from "./_components/project-detail";
+import { EditProjectForm } from "./edit/_components/edit-project-form";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -6,5 +6,5 @@ interface Props {
 
 export default async function ProjectViewPage({ params }: Props) {
   const { id } = await params;
-  return <ProjectDetail projectId={id} />;
+  return <EditProjectForm projectId={id} />;
 }
