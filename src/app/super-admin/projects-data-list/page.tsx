@@ -6,14 +6,20 @@ import { api } from "~/trpc/react";
 import {
   PROJECT_SUB_TYPE_LABEL,
   SOURCE_OF_FUND_ORDER,
+  PROJECT_STATUS_LABEL,
+  PROJECT_STATUS_ORDER,
   type ProjectSubTypeValue,
+  type ProjectStatusValue,
 } from "~/lib/fund-constants";
 
-const STATUS_STYLES: Record<string, { bg: string; dot: string; text: string; label: string }> = {
-  ON_GOING: { bg: "bg-blue-50", dot: "bg-blue-500", text: "text-blue-700", label: "Active" },
-  COMPLETED: { bg: "bg-green-50", dot: "bg-green-500", text: "text-green-700", label: "Completed" },
-  SUSPENDED: { bg: "bg-red-50", dot: "bg-red-500", text: "text-red-700", label: "Suspended" },
-  NOT_YET_STARTED: { bg: "bg-gray-100", dot: "bg-gray-400", text: "text-gray-600", label: "Not Started" },
+const STATUS_STYLES: Record<ProjectStatusValue, { bg: string; dot: string; text: string }> = {
+  COMPLETED: { bg: "bg-green-100", dot: "bg-green-500", text: "text-green-700" },
+  SUSPENDED: { bg: "bg-red-100", dot: "bg-red-500", text: "text-red-700" },
+  FOR_IMPLEMENTATION: { bg: "bg-amber-100", dot: "bg-amber-500", text: "text-amber-700" },
+  ON_GOING: { bg: "bg-orange-100", dot: "bg-orange-500", text: "text-orange-700" },
+  RE_ALIGNMENT: { bg: "bg-purple-100", dot: "bg-purple-500", text: "text-purple-700" },
+  OTHERS: { bg: "bg-slate-100", dot: "bg-slate-500", text: "text-slate-700" },
+  NOT_YET_STARTED: { bg: "bg-sky-100", dot: "bg-sky-500", text: "text-sky-700" },
 };
 
 const FUND_SOURCE_LABELS: Record<string, string> = {
@@ -216,9 +222,7 @@ export default function ProjectsDataListPage() {
     const matchCity = !cityFilter || p.cityMunicipality === cityFilter;
     const matchBarangay = !barangayFilter || p.barangay === barangayFilter;
     const matchStatus = !statusFilter || p.status === statusFilter;
-    const projectYear =
-      p.budgetYear ?? new Date(p.createdAt).getFullYear().toString();
-    const matchYear = !yearFilter || projectYear === yearFilter;
+    const matchYear = !yearFilter || p.budgetYear === yearFilter;
     return (
       matchSearch &&
       matchDistrict &&
@@ -833,25 +837,24 @@ export default function ProjectsDataListPage() {
               onChange={(e) => { setStatusFilter(e.target.value); resetPage(); }}
               className="appearance-none rounded-lg border border-gray-200 bg-gray-50 py-2 pl-3 pr-8 text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">Status</option>
-              <option value="NOT_YET_STARTED">Not Started</option>
-              <option value="ON_GOING">Active</option>
-              <option value="COMPLETED">Completed</option>
-              <option value="SUSPENDED">Suspended</option>
+              <option value="">All Statuses</option>
+              {PROJECT_STATUS_ORDER.map((s) => (
+                <option key={s} value={s}>{PROJECT_STATUS_LABEL[s]}</option>
+              ))}
             </select>
             <svg className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
             </svg>
           </div>
 
-          {/* Year */}
+          {/* Budget Year */}
           <div className="relative shrink-0">
             <select
               value={yearFilter}
               onChange={(e) => { setYearFilter(e.target.value); resetPage(); }}
               className="appearance-none rounded-lg border border-gray-200 bg-gray-50 py-2 pl-3 pr-8 text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">Year</option>
+              <option value="">All Budget Years</option>
               {availableYears.map((y) => (
                 <option key={y} value={y}>{y}</option>
               ))}
@@ -901,10 +904,7 @@ export default function ProjectsDataListPage() {
                 Mode of Implementation
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Source of Fund
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Sub-Category
+                Source / Sub-Category
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
                 City/Municipality
@@ -916,7 +916,7 @@ export default function ProjectsDataListPage() {
                 Status
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Year
+                Budget Year
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
                 Action
@@ -926,7 +926,7 @@ export default function ProjectsDataListPage() {
           <tbody className="divide-y divide-gray-50">
             {isLoading ? (
               <tr>
-                <td colSpan={11} className="py-16 text-center text-sm text-gray-400">
+                <td colSpan={10} className="py-16 text-center text-sm text-gray-400">
                   <div className="flex flex-col items-center gap-2">
                     <svg
                       className="h-8 w-8 animate-spin text-blue-400"
@@ -953,17 +953,18 @@ export default function ProjectsDataListPage() {
               </tr>
             ) : filtered.length === 0 ? (
               <tr>
-                <td colSpan={11} className="py-16 text-center text-sm text-gray-400">
+                <td colSpan={10} className="py-16 text-center text-sm text-gray-400">
                   No projects found.
                 </td>
               </tr>
             ) : (
               paginated.map((project) => {
                 const style =
-                  STATUS_STYLES[project.status] ?? STATUS_STYLES.NOT_YET_STARTED!;
-                const projectYear =
-                  project.budgetYear ??
-                  new Date(project.createdAt).getFullYear().toString();
+                  STATUS_STYLES[project.status as ProjectStatusValue] ??
+                  STATUS_STYLES.NOT_YET_STARTED;
+                const statusLabel =
+                  PROJECT_STATUS_LABEL[project.status as ProjectStatusValue] ??
+                  project.status;
                 return (
                   <tr key={project.id} className="transition hover:bg-gray-50">
                     <td className="max-w-xs px-4 py-3 font-medium text-gray-900">
@@ -979,12 +980,12 @@ export default function ProjectsDataListPage() {
                       {project.modeOfImplementation === "BY_CONTRACT" ? "By Contract" : "By Administration"}
                     </td>
                     <td className="px-4 py-3 text-gray-600">
-                      {FUND_SOURCE_LABELS[project.sourceOfFund] ?? project.sourceOfFund}
-                    </td>
-                    <td className="px-4 py-3 text-gray-600">
-                      {project.subType
-                        ? (PROJECT_SUBTYPE_LABELS[project.subType] ?? project.subType)
-                        : "—"}
+                      <p>{FUND_SOURCE_LABELS[project.sourceOfFund] ?? project.sourceOfFund}</p>
+                      {project.subType && (
+                        <p className="text-xs text-gray-400">
+                          {PROJECT_SUBTYPE_LABELS[project.subType] ?? project.subType}
+                        </p>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-gray-600">
                       {project.cityMunicipality ?? "—"}
@@ -997,10 +998,10 @@ export default function ProjectsDataListPage() {
                         className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${style.bg} ${style.text}`}
                       >
                         <span className={`h-1.5 w-1.5 rounded-full ${style.dot}`} />
-                        {style.label}
+                        {statusLabel}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-gray-600">{projectYear}</td>
+                    <td className="px-4 py-3 text-gray-600">{project.budgetYear ?? "—"}</td>
                     <td className="px-4 py-3">
                       <button
                         onClick={() =>

@@ -351,10 +351,11 @@ export function ProjectsList() {
                   <th className="px-4 py-3 font-medium">Implementation Type</th>
                   <th className="px-4 py-3 font-medium">District</th>
                   <th className="px-4 py-3 font-medium">Source / Sub</th>
-                  <th className="px-4 py-3 font-medium">Year</th>
+                  <th className="px-4 py-3 font-medium">Budget Year</th>
                   <th className="px-4 py-3 font-medium">Status</th>
                   <th className="px-4 py-3 font-medium">Progress</th>
                   <th className="px-4 py-3 font-medium">Involved Users</th>
+                  <th className="px-4 py-3 font-medium">Date Created</th>
                   <th className="px-4 py-3 font-medium">Actions</th>
                 </tr>
               </thead>
@@ -377,24 +378,22 @@ export function ProjectsList() {
                         </p>
                       </td>
                       <td className="px-4 py-3 text-gray-600">
-                        <p>{p.modeOfImplementation.replace(/_/g, " ")}</p>
+                        <p>{p.modeOfImplementation === "BY_CONTRACT" ? "By Contract" : "By Administration"}</p>
                         {p.modeOfImplementation === "BY_CONTRACT" && p.contractorName && (
                           <p className="text-xs text-gray-400 mt-0.5">{p.contractorName}</p>
                         )}
                       </td>
                       <td className="px-4 py-3 text-gray-600">
-                        {p.locationImplementation.replace(/_/g, " ")}
+                        {p.locationImplementation === "DISTRICT_I" ? "District 1" : "District 2"}
                       </td>
                       <td className="px-4 py-3 text-gray-600">
-                        <p>{p.sourceOfFund?.replace(/_/g, " ") ?? "—"}</p>
+                        <p>{p.sourceOfFund ? SOURCE_OF_FUND_LABEL[p.sourceOfFund] : "—"}</p>
                         {p.subType && (
-                          <p className="text-xs text-gray-400">{p.subType.replace(/_/g, " ")}</p>
+                          <p className="text-xs text-gray-400">{PROJECT_SUB_TYPE_LABEL[p.subType]}</p>
                         )}
                       </td>
                       <td className="px-4 py-3 text-gray-600">
-                        {p.dateStarted
-                          ? new Date(p.dateStarted).getFullYear()
-                          : new Date(p.createdAt).getFullYear()}
+                        {p.budgetYear ?? "—"}
                       </td>
                       <td className="px-4 py-3">
                         <span
@@ -469,6 +468,14 @@ export function ProjectsList() {
                           );
                         })()}
                       </td>
+                      <td className="px-4 py-3 text-gray-600">
+                        {new Date(p.createdAt).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "2-digit",
+                          year: "numeric",
+                        })}
+                      </td>
+
                       <td className="px-4 py-3">
                         <button
                           onClick={() =>
@@ -489,7 +496,7 @@ export function ProjectsList() {
                               d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
                             />
                           </svg>
-                          Edit Project
+                          Edit
                         </button>
                       </td>
                     </tr>
@@ -536,8 +543,8 @@ export function ProjectsList() {
                         key={item}
                         onClick={() => setPage(item)}
                         className={`flex h-8 w-8 items-center justify-center rounded border text-sm font-medium transition ${page === item
-                            ? "border-blue-500 text-blue-600"
-                            : "border-gray-300 text-gray-600 hover:bg-gray-50"
+                          ? "border-blue-500 text-blue-600"
+                          : "border-gray-300 text-gray-600 hover:bg-gray-50"
                           }`}
                       >
                         {item}
