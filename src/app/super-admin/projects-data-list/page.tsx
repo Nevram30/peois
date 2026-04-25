@@ -581,7 +581,7 @@ export default function ProjectsDataListPage() {
               </div>
 
               {/* Right: Source of Funds Breakdown (grouped by sub-category) */}
-              <div className="flex h-full flex-col px-6 py-6">
+              <div className="px-6 py-6">
                 <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-500">
                   Source of Funds Breakdown
                 </p>
@@ -590,7 +590,7 @@ export default function ProjectsDataListPage() {
                     No fund allocation data found for {financial?.budgetYear ?? new Date().getFullYear()}.
                   </p>
                 ) : (
-                  <div className="flex max-h-80 flex-col gap-3 overflow-y-auto pr-1 lg:max-h-none lg:min-h-0 lg:flex-1">
+                  <div className="flex max-h-80 flex-col gap-3 overflow-y-auto pr-1">
                     {groupedBreakdown.map(({ sourceKey, sourceAmount, subs }) => {
                       const sourcePct = totalAllocation > 0
                         ? ((sourceAmount / totalAllocation) * 100).toFixed(1)
