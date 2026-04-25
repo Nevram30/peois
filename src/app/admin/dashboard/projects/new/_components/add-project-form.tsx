@@ -13,6 +13,12 @@ import {
   type SourceOfFundValue,
   type ProjectSubTypeValue,
 } from "~/lib/fund-constants";
+import {
+  getMunicipalitiesByDistrict,
+  getBarangaysByMunicipality,
+  getPuroksByBarangay,
+  getSitiosByBarangay,
+} from "~/lib/davao-del-norte-locations";
 
 // ─── Shared styles ────────────────────────────────────────────────────────
 const inputClass =
@@ -20,15 +26,6 @@ const inputClass =
 const labelClass =
   "mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-gray-500";
 const cardClass = "rounded-xl border border-gray-200 bg-white shadow-sm";
-
-const DISTRICT_CITIES: Record<string, string[]> = {
-  DISTRICT_I: ["Angeles City", "Mabalacat City", "Porac", "San Fernando City"],
-  DISTRICT_II: [
-    "Apalit", "Bacolor", "Candaba", "Floridablanca", "Guagua",
-    "Lubao", "Macabebe", "Magalang", "Masantol", "Mexico",
-    "Minalin", "Sasmuan", "Santa Ana", "Santo Tomas",
-  ],
-};
 
 type ProjectFileType = "IMAGE" | "BLUEPRINT" | "REPORT" | "CONTRACT" | "PERMIT" | "OTHER";
 
@@ -211,7 +208,22 @@ export function AddProjectForm() {
     [numFemale, numMale],
   );
 
-  const availableCities = district ? DISTRICT_CITIES[district] ?? [] : [];
+  const availableMunicipalities = useMemo(
+    () => getMunicipalitiesByDistrict(district as "DISTRICT_I" | "DISTRICT_II" | ""),
+    [district],
+  );
+  const availableBarangays = useMemo(
+    () => getBarangaysByMunicipality(cityMunicipality),
+    [cityMunicipality],
+  );
+  const availablePuroks = useMemo(
+    () => getPuroksByBarangay(cityMunicipality, barangay),
+    [cityMunicipality, barangay],
+  );
+  const availableSitios = useMemo(
+    () => getSitiosByBarangay(cityMunicipality, barangay),
+    [cityMunicipality, barangay],
+  );
   const availableSubTypes = sourceOfFund ? SOURCE_TO_SUB_TYPES[sourceOfFund] : [];
 
   // ── Handlers ─────────────────────────────────────────────────────────
@@ -527,6 +539,8 @@ export function AddProjectForm() {
                     setDistrict(e.target.value);
                     setCityMunicipality("");
                     setBarangay("");
+                    setPurok("");
+                    setSitio("");
                   }}
                   className={inputClass}
                 >
@@ -536,50 +550,76 @@ export function AddProjectForm() {
                 </select>
               </div>
               <div>
-                <label className={labelClass}>Municipality</label>
+                <label className={labelClass}>Municipality / City</label>
                 <select
                   value={cityMunicipality}
-                  onChange={(e) => { setCityMunicipality(e.target.value); setBarangay(""); }}
+                  onChange={(e) => {
+                    setCityMunicipality(e.target.value);
+                    setBarangay("");
+                    setPurok("");
+                    setSitio("");
+                  }}
                   disabled={!district}
                   className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
                 >
                   <option value="">Select Municipality</option>
-                  {availableCities.map((city) => (
-                    <option key={city} value={city}>{city}</option>
+                  {availableMunicipalities.map((m) => (
+                    <option key={m.name} value={m.name}>{m.name}</option>
                   ))}
                 </select>
               </div>
               <div>
                 <label className={labelClass}>Barangay</label>
-                <input
-                  type="text"
+                <select
                   value={barangay}
-                  onChange={(e) => setBarangay(e.target.value)}
+                  onChange={(e) => {
+                    setBarangay(e.target.value);
+                    setPurok("");
+                    setSitio("");
+                  }}
                   disabled={!cityMunicipality}
-                  placeholder={cityMunicipality ? "Enter barangay" : "Select Municipality first"}
                   className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
-                />
+                >
+                  <option value="">
+                    {cityMunicipality ? "Select Barangay" : "Select Municipality first"}
+                  </option>
+                  {availableBarangays.map((bg) => (
+                    <option key={bg.name} value={bg.name}>{bg.name}</option>
+                  ))}
+                </select>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className={labelClass}>Purok</label>
-                  <input
-                    type="text"
+                  <select
                     value={purok}
                     onChange={(e) => setPurok(e.target.value)}
-                    placeholder="Purok"
-                    className={inputClass}
-                  />
+                    disabled={!barangay}
+                    className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
+                  >
+                    <option value="">
+                      {barangay ? "Select Purok" : "Select Barangay"}
+                    </option>
+                    {availablePuroks.map((p) => (
+                      <option key={p} value={p}>{p}</option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className={labelClass}>Sitio</label>
-                  <input
-                    type="text"
+                  <select
                     value={sitio}
                     onChange={(e) => setSitio(e.target.value)}
-                    placeholder="Sitio"
-                    className={inputClass}
-                  />
+                    disabled={!barangay}
+                    className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
+                  >
+                    <option value="">
+                      {barangay ? "Select Sitio" : "Select Barangay"}
+                    </option>
+                    {availableSitios.map((s) => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
             </div>
