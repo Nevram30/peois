@@ -492,11 +492,13 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                     <div>
                       <FieldLabel>Current Status</FieldLabel>
                       <Select value={status} onChange={(e) => setStatus(e.target.value)}>
-                        {PROJECT_STATUS_ORDER.map((k) => (
-                          <option key={k} value={k}>
-                            {PROJECT_STATUS_LABEL[k]}
-                          </option>
-                        ))}
+                        {PROJECT_STATUS_ORDER
+                          .filter((k) => k !== "NOT_YET_STARTED" || status === "NOT_YET_STARTED")
+                          .map((k) => (
+                            <option key={k} value={k}>
+                              {PROJECT_STATUS_LABEL[k]}
+                            </option>
+                          ))}
                       </Select>
                     </div>
                   </div>

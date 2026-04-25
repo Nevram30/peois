@@ -109,10 +109,19 @@ function DonutChart({
   const strokeWidth = 28;
   const circumference = 2 * Math.PI * r;
 
+  const visible = segments.filter((s) => s.value > 0);
+  const sumValue = visible.reduce((sum, s) => sum + s.value, 0);
+  const minFraction = visible.length > 1 ? 0.02 : 0;
+  const rawFractions = visible.map((s) =>
+    sumValue > 0 ? s.value / sumValue : 0,
+  );
+  const flooredFractions = rawFractions.map((f) => Math.max(f, minFraction));
+  const flooredSum = flooredFractions.reduce((a, b) => a + b, 0) || 1;
+  const fractions = flooredFractions.map((f) => f / flooredSum);
+
   let cumulativeLen = 0;
-  const arcs = segments.map((seg) => {
-    const fraction = total > 0 ? seg.value / total : 0;
-    const dashLength = fraction * circumference;
+  const arcs = visible.map((seg, i) => {
+    const dashLength = fractions[i]! * circumference;
     const arc = { ...seg, dashLength, dashOffset: -cumulativeLen };
     cumulativeLen += dashLength;
     return arc;
@@ -450,14 +459,17 @@ export default function ProjectsDataListPage() {
             };
           });
 
-        const segments = subEntries
-          .slice()
-          .sort((a, b) => b.value - a.value)
-          .map((e) => ({ label: e.label, value: e.value, color: e.color }));
-
         const orderedSources = SOURCE_OF_FUND_ORDER.filter(
           (s) => (bySource[s] ?? 0) > 0,
         );
+
+        const segments = orderedSources
+          .map((sourceKey) => ({
+            label: FUND_SOURCE_LABELS[sourceKey] ?? sourceKey,
+            value: bySource[sourceKey] ?? 0,
+            color: FUND_SOURCE_COLORS[sourceKey] ?? "#94a3b8",
+          }))
+          .sort((a, b) => b.value - a.value);
 
         const groupedBreakdown = orderedSources.map((sourceKey) => {
           const sourceAmount = bySource[sourceKey] ?? 0;
@@ -521,23 +533,23 @@ export default function ProjectsDataListPage() {
                   Total Annual Allocation
                 </p>
                 <DonutChart segments={segments} total={totalAllocation} />
-                {/* Legend */}
+                {/* Legend (by Source of Fund) */}
                 <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5">
-                  {segments.slice(0, 8).map((seg) => (
-                    <span key={seg.label} className="flex items-center gap-1.5 text-xs text-gray-600">
+                  {groupedBreakdown.slice(0, 8).map((g) => (
+                    <span key={g.sourceKey} className="flex items-center gap-1.5 text-xs text-gray-600">
                       <span
                         className="inline-block h-2.5 w-2.5 rounded-full"
-                        style={{ backgroundColor: seg.color }}
+                        style={{ backgroundColor: FUND_SOURCE_COLORS[g.sourceKey] ?? "#94a3b8" }}
                       />
-                      {seg.label}
+                      {FUND_SOURCE_LABELS[g.sourceKey] ?? g.sourceKey}
                     </span>
                   ))}
-                  {segments.length > 8 && (
+                  {groupedBreakdown.length > 8 && (
                     <span className="text-xs text-gray-400">
-                      +{segments.length - 8} more
+                      +{groupedBreakdown.length - 8} more
                     </span>
                   )}
-                  {segments.length === 0 && (
+                  {groupedBreakdown.length === 0 && (
                     <span className="text-xs text-gray-400">No allocation data for {financial?.budgetYear ?? new Date().getFullYear()}</span>
                   )}
                 </div>
@@ -569,7 +581,7 @@ export default function ProjectsDataListPage() {
               </div>
 
               {/* Right: Source of Funds Breakdown (grouped by sub-category) */}
-              <div className="px-6 py-6">
+              <div className="flex h-full flex-col px-6 py-6">
                 <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-500">
                   Source of Funds Breakdown
                 </p>
@@ -578,7 +590,7 @@ export default function ProjectsDataListPage() {
                     No fund allocation data found for {financial?.budgetYear ?? new Date().getFullYear()}.
                   </p>
                 ) : (
-                  <div className="flex max-h-80 flex-col gap-3 overflow-y-auto pr-1">
+                  <div className="flex max-h-80 flex-col gap-3 overflow-y-auto pr-1 lg:max-h-none lg:min-h-0 lg:flex-1">
                     {groupedBreakdown.map(({ sourceKey, sourceAmount, subs }) => {
                       const sourcePct = totalAllocation > 0
                         ? ((sourceAmount / totalAllocation) * 100).toFixed(1)

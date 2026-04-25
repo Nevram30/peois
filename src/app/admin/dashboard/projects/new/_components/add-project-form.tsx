@@ -144,7 +144,7 @@ export function AddProjectForm() {
   const [trackingNumber, setTrackingNumber] = useState("");
   const [modeOfImplementation, setModeOfImplementation] = useState("");
   const [contractorName, setContractorName] = useState("");
-  const [status, setStatus] = useState<ProjectStatusValue>("NOT_YET_STARTED");
+  const [status, setStatus] = useState<ProjectStatusValue>("FOR_IMPLEMENTATION");
 
   // ── Project Location ─────────────────────────────────────────────────
   const [district, setDistrict] = useState("");
@@ -520,7 +520,7 @@ export function AddProjectForm() {
                       onChange={(e) => setStatus(e.target.value as ProjectStatusValue)}
                       className={inputClass}
                     >
-                      {PROJECT_STATUS_ORDER.map((s) => (
+                      {PROJECT_STATUS_ORDER.filter((s) => s !== "NOT_YET_STARTED").map((s) => (
                         <option key={s} value={s}>{PROJECT_STATUS_LABEL[s]}</option>
                       ))}
                     </select>
