@@ -15,19 +15,16 @@ import {
   type SourceOfFundValue,
   type ProjectStatusValue,
 } from "~/lib/fund-constants";
+import {
+  getMunicipalitiesByDistrict,
+  getBarangaysByMunicipality,
+  getPuroksByBarangay,
+  getSitiosByBarangay,
+} from "~/lib/davao-del-norte-locations";
 
 const DISTRICT_LABEL: Record<string, string> = {
   DISTRICT_I: "District 1",
   DISTRICT_II: "District 2",
-};
-
-const DISTRICT_CITIES: Record<string, string[]> = {
-  DISTRICT_I: ["Angeles City", "Mabalacat City", "Porac", "San Fernando City"],
-  DISTRICT_II: [
-    "Apalit", "Bacolor", "Candaba", "Floridablanca", "Guagua",
-    "Lubao", "Macabebe", "Magalang", "Masantol", "Mexico",
-    "Minalin", "Sasmuan", "Santa Ana", "Santo Tomas",
-  ],
 };
 
 const STATUS_CONFIG: Record<string, { label: string; badge: string; dot: string }> = {
@@ -231,6 +228,23 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   const totalDays = useMemo(() => calcDays(dateStarted, targetCompletion), [dateStarted, targetCompletion]);
   const totalWorkforce = numFemale + numMale;
 
+  const availableMunicipalities = useMemo(
+    () => getMunicipalitiesByDistrict(locDistrict as "DISTRICT_I" | "DISTRICT_II" | ""),
+    [locDistrict],
+  );
+  const availableBarangays = useMemo(
+    () => getBarangaysByMunicipality(cityMunicipality),
+    [cityMunicipality],
+  );
+  const availablePuroks = useMemo(
+    () => getPuroksByBarangay(cityMunicipality, barangay),
+    [cityMunicipality, barangay],
+  );
+  const availableSitios = useMemo(
+    () => getSitiosByBarangay(cityMunicipality, barangay),
+    [cityMunicipality, barangay],
+  );
+
   // ─ Mutations ───────────────────────────────────────────────────────────
   const updateProject = api.project.update.useMutation({
     onSuccess: () => {
@@ -316,6 +330,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
       district: (locDistrict as "DISTRICT_I" | "DISTRICT_II") || null,
       cityMunicipality: cityMunicipality || undefined,
       barangay: barangay || undefined,
+      purok: purok || undefined,
       sitio: sitio || undefined,
       description: description || undefined,
       status: status as ProjectStatusValue,
@@ -554,33 +569,90 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
               <div className="space-y-3 p-4">
                 <div>
                   <FieldLabel>District</FieldLabel>
-                  <Select value={locDistrict} onChange={(e) => { setLocDistrict(e.target.value); setCityMunicipality(""); }}>
+                  <Select
+                    value={locDistrict}
+                    onChange={(e) => {
+                      setLocDistrict(e.target.value);
+                      setCityMunicipality("");
+                      setBarangay("");
+                      setPurok("");
+                      setSitio("");
+                    }}
+                  >
                     <option value="">Select district...</option>
                     <option value="DISTRICT_I">District 1</option>
                     <option value="DISTRICT_II">District 2</option>
                   </Select>
                 </div>
                 <div>
-                  <FieldLabel>Municipality</FieldLabel>
-                  <Select value={cityMunicipality} onChange={(e) => setCityMunicipality(e.target.value)}>
-                    <option value="">Select municipality...</option>
-                    {(DISTRICT_CITIES[locDistrict] ?? []).map((c) => (
-                      <option key={c} value={c}>{c}</option>
+                  <FieldLabel>Municipality / City</FieldLabel>
+                  <Select
+                    value={cityMunicipality}
+                    onChange={(e) => {
+                      setCityMunicipality(e.target.value);
+                      setBarangay("");
+                      setPurok("");
+                      setSitio("");
+                    }}
+                    disabled={!locDistrict}
+                  >
+                    <option value="">
+                      {locDistrict ? "Select municipality..." : "Select district first"}
+                    </option>
+                    {availableMunicipalities.map((m) => (
+                      <option key={m.name} value={m.name}>{m.name}</option>
                     ))}
                   </Select>
                 </div>
                 <div>
                   <FieldLabel>Barangay</FieldLabel>
-                  <Input value={barangay} onChange={(e) => setBarangay(e.target.value)} placeholder="Barangay name" />
+                  <Select
+                    value={barangay}
+                    onChange={(e) => {
+                      setBarangay(e.target.value);
+                      setPurok("");
+                      setSitio("");
+                    }}
+                    disabled={!cityMunicipality}
+                  >
+                    <option value="">
+                      {cityMunicipality ? "Select barangay..." : "Select municipality first"}
+                    </option>
+                    {availableBarangays.map((bg) => (
+                      <option key={bg.name} value={bg.name}>{bg.name}</option>
+                    ))}
+                  </Select>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <FieldLabel>Purok</FieldLabel>
-                    <Input value={purok} onChange={(e) => setPurok(e.target.value)} placeholder="Purok" />
+                    <Select
+                      value={purok}
+                      onChange={(e) => setPurok(e.target.value)}
+                      disabled={!barangay}
+                    >
+                      <option value="">
+                        {barangay ? "Select purok..." : "Select barangay first"}
+                      </option>
+                      {availablePuroks.map((p) => (
+                        <option key={p} value={p}>{p}</option>
+                      ))}
+                    </Select>
                   </div>
                   <div>
                     <FieldLabel>Sitio</FieldLabel>
-                    <Input value={sitio} onChange={(e) => setSitio(e.target.value)} placeholder="Sitio" />
+                    <Select
+                      value={sitio}
+                      onChange={(e) => setSitio(e.target.value)}
+                      disabled={!barangay}
+                    >
+                      <option value="">
+                        {barangay ? "Select sitio..." : "Select barangay first"}
+                      </option>
+                      {availableSitios.map((s) => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </Select>
                   </div>
                 </div>
               </div>

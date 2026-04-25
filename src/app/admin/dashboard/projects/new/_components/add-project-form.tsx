@@ -10,8 +10,11 @@ import {
   SOURCE_OF_FUND_ORDER,
   PROJECT_SUB_TYPE_LABEL,
   SOURCE_TO_SUB_TYPES,
+  PROJECT_STATUS_LABEL,
+  PROJECT_STATUS_ORDER,
   type SourceOfFundValue,
   type ProjectSubTypeValue,
+  type ProjectStatusValue,
 } from "~/lib/fund-constants";
 import {
   getMunicipalitiesByDistrict,
@@ -141,6 +144,7 @@ export function AddProjectForm() {
   const [trackingNumber, setTrackingNumber] = useState("");
   const [modeOfImplementation, setModeOfImplementation] = useState("");
   const [contractorName, setContractorName] = useState("");
+  const [status, setStatus] = useState<ProjectStatusValue>("NOT_YET_STARTED");
 
   // ── Project Location ─────────────────────────────────────────────────
   const [district, setDistrict] = useState("");
@@ -347,7 +351,7 @@ export function AddProjectForm() {
       purok: purok || undefined,
       sitio: sitio || undefined,
       description: description || undefined,
-      status: isDraft ? "NOT_YET_STARTED" : "NOT_YET_STARTED",
+      status: isDraft ? "NOT_YET_STARTED" : status,
       imageUrl: imageUrl || undefined,
       projectCode: trackingNumber || undefined,
     });
@@ -482,7 +486,7 @@ export function AddProjectForm() {
                     </div>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-3 gap-3">
                   <div>
                     <label className={labelClass}>Track Number</label>
                     <input
@@ -507,6 +511,18 @@ export function AddProjectForm() {
                       <option value="">Select Mode</option>
                       <option value="BY_ADMINISTRATION">By Administration</option>
                       <option value="BY_CONTRACT">By Contract</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Status</label>
+                    <select
+                      value={status}
+                      onChange={(e) => setStatus(e.target.value as ProjectStatusValue)}
+                      className={inputClass}
+                    >
+                      {PROJECT_STATUS_ORDER.map((s) => (
+                        <option key={s} value={s}>{PROJECT_STATUS_LABEL[s]}</option>
+                      ))}
                     </select>
                   </div>
                 </div>
