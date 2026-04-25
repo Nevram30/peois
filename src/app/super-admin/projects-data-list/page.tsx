@@ -81,13 +81,82 @@ const SUB_TYPE_COLORS: Record<ProjectSubTypeValue, string> = {
   RESPONSE_CAMP_MGMT: "#4F46E5",
 };
 
-const DONUT_RADIUS = 54;
-const DONUT_CIRCUMFERENCE = 2 * Math.PI * DONUT_RADIUS;
+function formatPeso(value: number): string {
+  return new Intl.NumberFormat("en-PH", {
+    style: "currency",
+    currency: "PHP",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+}
 
-function formatPeso(amount: number): string {
-  if (amount >= 1_000_000_000) return `₱${(amount / 1_000_000_000).toFixed(2)}B`;
-  if (amount >= 1_000_000) return `₱${(amount / 1_000_000).toFixed(2)}M`;
-  return `₱${amount.toLocaleString("en-PH", { minimumFractionDigits: 2 })}`;
+function DonutChart({
+  segments,
+  total,
+}: {
+  segments: { label: string; value: number; color: string }[];
+  total: number;
+}) {
+  const cx = 100;
+  const cy = 100;
+  const r = 64;
+  const strokeWidth = 28;
+  const circumference = 2 * Math.PI * r;
+
+  let cumulativeLen = 0;
+  const arcs = segments.map((seg) => {
+    const fraction = total > 0 ? seg.value / total : 0;
+    const dashLength = fraction * circumference;
+    const arc = { ...seg, dashLength, dashOffset: -cumulativeLen };
+    cumulativeLen += dashLength;
+    return arc;
+  });
+
+  return (
+    <svg viewBox="0 0 200 200" className="h-44 w-44">
+      <g transform={`rotate(-90 ${cx} ${cy})`}>
+        <circle
+          cx={cx}
+          cy={cy}
+          r={r}
+          fill="none"
+          stroke="#e5e7eb"
+          strokeWidth={strokeWidth}
+        />
+        {total > 0 &&
+          arcs.map((arc, i) => (
+            <circle
+              key={i}
+              cx={cx}
+              cy={cy}
+              r={r}
+              fill="none"
+              stroke={arc.color}
+              strokeWidth={strokeWidth}
+              strokeDasharray={`${arc.dashLength} ${circumference}`}
+              strokeDashoffset={arc.dashOffset}
+            />
+          ))}
+      </g>
+      <text
+        x={cx}
+        y={cy - 6}
+        textAnchor="middle"
+        className="fill-gray-900 text-sm font-bold"
+        style={{ fontSize: "11px", fontWeight: 700 }}
+      >
+        {formatPeso(total)}
+      </text>
+      <text
+        x={cx}
+        y={cy + 10}
+        textAnchor="middle"
+        style={{ fontSize: "9px", fill: "#6b7280" }}
+      >
+        Total
+      </text>
+    </svg>
+  );
 }
 
 export default function ProjectsDataListPage() {
@@ -108,127 +177,12 @@ export default function ProjectsDataListPage() {
   const PAGE_SIZE = 10;
 
   const { data: projects, isLoading } = api.project.getAll.useQuery();
-  const { data: stats } = api.project.getStats.useQuery();
+  const statsInput = cardYearFilter ? { budgetYear: cardYearFilter } : undefined;
+  const { data: stats } = api.project.getStats.useQuery(statsInput);
+  const { data: financial } = api.project.getFinancialOverview.useQuery(statsInput);
+  const { data: budgetYears } = api.project.getBudgetYears.useQuery();
 
-  const budgetYear = new Date().getFullYear();
-
-  const cardYearProjects = (projects ?? []).filter((p) =>
-    cardYearFilter
-      ? new Date(p.createdAt).getFullYear().toString() === cardYearFilter
-      : true,
-  );
-
-  const cardStats = cardYearFilter
-    ? {
-        completed: cardYearProjects.filter((p) => p.status === "COMPLETED").length,
-        ongoing: cardYearProjects.filter((p) => p.status === "ON_GOING").length,
-        notYetStarted: cardYearProjects.filter((p) => p.status === "NOT_YET_STARTED").length,
-        suspended: cardYearProjects.filter((p) => p.status === "SUSPENDED").length,
-      }
-    : {
-        completed: stats?.completed ?? 0,
-        ongoing: stats?.ongoing ?? 0,
-        notYetStarted: stats?.notYetStarted ?? 0,
-        suspended: stats?.suspended ?? 0,
-      };
-
-  const noAllotted = cardYearProjects.filter((p) => p.contractCost === 0).length;
-
-  // --- Financial Overview computations (scoped to selected card year) ---
-  const totalAllocation = cardYearProjects.reduce((sum, p) => sum + p.contractCost, 0);
-
-  const bySource = cardYearProjects.reduce<Record<string, number>>((acc, p) => {
-    if (p.contractCost > 0) {
-      acc[p.sourceOfFund] = (acc[p.sourceOfFund] ?? 0) + p.contractCost;
-    }
-    return acc;
-  }, {});
-
-  type SubEntry = {
-    key: string;
-    label: string;
-    amount: number;
-    color: string;
-    sourceOfFund: string;
-  };
-
-  const bySubTypeMap = cardYearProjects.reduce<
-    Record<string, { amount: number; sourceOfFund: string }>
-  >((acc, p) => {
-    if (p.contractCost <= 0) return acc;
-    const key = p.subType ?? `__NONE__:${p.sourceOfFund}`;
-    const existing = acc[key];
-    if (existing) {
-      existing.amount += p.contractCost;
-    } else {
-      acc[key] = { amount: p.contractCost, sourceOfFund: p.sourceOfFund };
-    }
-    return acc;
-  }, {});
-
-  const subEntries: SubEntry[] = Object.entries(bySubTypeMap).map(
-    ([key, v]) => {
-      const isNone = key.startsWith("__NONE__:");
-      const label = isNone
-        ? "Uncategorized"
-        : (PROJECT_SUB_TYPE_LABEL[key as ProjectSubTypeValue] ?? key);
-      const color = isNone
-        ? (FUND_SOURCE_COLORS[v.sourceOfFund] ?? "#6B7280")
-        : (SUB_TYPE_COLORS[key as ProjectSubTypeValue] ?? "#6B7280");
-      return {
-        key,
-        label,
-        amount: v.amount,
-        color,
-        sourceOfFund: v.sourceOfFund,
-      };
-    },
-  );
-
-  const sortedSubs = subEntries.slice().sort((a, b) => b.amount - a.amount);
-
-  const orderedSources = SOURCE_OF_FUND_ORDER.filter(
-    (s) => (bySource[s] ?? 0) > 0,
-  );
-
-  const groupedBreakdown = orderedSources.map((sourceKey) => {
-    const sourceAmount = bySource[sourceKey] ?? 0;
-    const subs = subEntries
-      .filter((e) => e.sourceOfFund === sourceKey)
-      .sort((a, b) => b.amount - a.amount);
-    return { sourceKey, sourceAmount, subs };
-  });
-
-  // Execution rate — average progress across all projects
-  const executionRate =
-    cardYearProjects.length > 0
-      ? cardYearProjects.reduce(
-          (sum, p) =>
-            sum + Math.max(0, Math.min(100, p.completionPercentage ?? 0)),
-          0,
-        ) / cardYearProjects.length
-      : 0;
-
-  // Build donut segments from sub-categories
-  let cumulativeLen = 0;
-  const donutSegments = sortedSubs.map((item) => {
-    const fraction = totalAllocation > 0 ? item.amount / totalAllocation : 0;
-    const dashLength = fraction * DONUT_CIRCUMFERENCE;
-    const seg = { ...item, dashLength, dashOffset: -cumulativeLen };
-    cumulativeLen += dashLength;
-    return seg;
-  });
-  // --- end Financial Overview computations ---
-
-  const availableYears = Array.from(
-    new Set(
-      (projects ?? []).map(
-        (p) =>
-          p.budgetYear ??
-          new Date(p.createdAt).getFullYear().toString(),
-      ),
-    ),
-  ).sort((a, b) => Number(b) - Number(a));
+  const availableYears = budgetYears ?? [];
 
   const availableCities = Array.from(
     new Set(
@@ -311,26 +265,6 @@ export default function ProjectsDataListPage() {
 
   const handlePrint = () => window.print();
 
-  const handleExport = () => {
-    const headers = ["Project ID", "Project Name", "Contract Cost", "District", "Mode", "Status"];
-    const rows = filtered.map((p) => [
-      p.projectCode,
-      `"${p.title.replace(/"/g, '""')}"`,
-      p.contractCost.toFixed(2),
-      p.locationImplementation === "DISTRICT_I" ? "District 1" : "District 2",
-      p.modeOfImplementation === "BY_CONTRACT" ? "By Contract" : "By Administration",
-      STATUS_STYLES[p.status]?.label ?? p.status,
-    ]);
-    const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "projects-data-list.csv";
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
   return (
     <>
       {/* Project Cards Year Filter */}
@@ -387,280 +321,391 @@ export default function ProjectsDataListPage() {
         </div>
       </div>
 
-      {/* Stat Cards */}
-      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      {/* Colored Summary Cards */}
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5">
         {/* Budget Year */}
-        <div className="flex flex-col gap-1 rounded-xl bg-linear-to-br from-blue-600 to-blue-700 p-4 text-white shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wide opacity-80">Budget Year</span>
-            <svg className="h-5 w-5 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <div className="flex flex-col rounded-2xl bg-blue-600 p-4 text-white shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">
+              Budget Year
+            </span>
+            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
             </svg>
           </div>
-          <span className="text-2xl font-bold">{cardYearFilter || budgetYear}</span>
+          <p className="text-3xl font-extrabold leading-none">
+            {financial?.budgetYear ?? new Date().getFullYear()}
+          </p>
+        </div>
+
+        {/* Grand Total Contract */}
+        <div className="flex flex-col rounded-2xl bg-emerald-600 p-4 text-white shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">
+              Grand Total Contract
+            </span>
+            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V12Zm-12 0h.008v.008H6V12Z" />
+            </svg>
+          </div>
+          <p className="text-2xl font-extrabold leading-tight break-all">
+            {formatPeso(financial?.totalAllocation ?? 0)}
+          </p>
+          <p className="mt-1 text-xs opacity-70">All projects</p>
         </div>
 
         {/* Completed */}
-        <div className="flex flex-col gap-1 rounded-xl bg-linear-to-br from-emerald-500 to-emerald-600 p-4 text-white shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wide opacity-80">Completed</span>
-            <svg className="h-5 w-5 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <div className="flex flex-col rounded-2xl bg-teal-500 p-4 text-white shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Completed</span>
+            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
           </div>
-          <span className="text-2xl font-bold">{cardStats.completed}</span>
-          <span className="text-xs opacity-70">Projects</span>
-        </div>
-
-        {/* On-Going */}
-        <div className="flex flex-col gap-1 rounded-xl bg-linear-to-br from-sky-500 to-sky-600 p-4 text-white shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wide opacity-80">On-Going</span>
-            <svg className="h-5 w-5 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-            </svg>
-          </div>
-          <span className="text-2xl font-bold">{cardStats.ongoing}</span>
-          <span className="text-xs opacity-70">Projects</span>
-        </div>
-
-        {/* For Implementation */}
-        <div className="flex flex-col gap-1 rounded-xl bg-linear-to-br from-amber-400 to-amber-500 p-4 text-white shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wide opacity-80">For Implementation</span>
-            <svg className="h-5 w-5 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-            </svg>
-          </div>
-          <span className="text-2xl font-bold">{cardStats.notYetStarted}</span>
-          <span className="text-xs opacity-70">Projects</span>
+          <p className="text-3xl font-extrabold leading-none">{stats?.completed ?? 0}</p>
+          <p className="mt-1 text-xs opacity-70">Projects</p>
         </div>
 
         {/* Suspended */}
-        <div className="flex flex-col gap-1 rounded-xl bg-linear-to-br from-red-500 to-red-600 p-4 text-white shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wide opacity-80">Suspended</span>
-            <svg className="h-5 w-5 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M14.25 9v6m-4.5 0V9M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-            </svg>
-          </div>
-          <span className="text-2xl font-bold">{cardStats.suspended}</span>
-          <span className="text-xs opacity-70">Projects</span>
-        </div>
-
-        {/* No Allotted */}
-        <div className="flex flex-col gap-1 rounded-xl bg-linear-to-br from-gray-600 to-gray-700 p-4 text-white shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wide opacity-80">No Allotted</span>
-            <svg className="h-5 w-5 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <div className="flex flex-col rounded-2xl bg-red-500 p-4 text-white shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Suspended</span>
+            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
             </svg>
           </div>
-          <span className="text-2xl font-bold">{noAllotted}</span>
-          <span className="text-xs opacity-70">Projects</span>
+          <p className="text-3xl font-extrabold leading-none">{stats?.suspended ?? 0}</p>
+          <p className="mt-1 text-xs opacity-70">Projects</p>
+        </div>
+
+        {/* For Implementation */}
+        <div className="flex flex-col rounded-2xl bg-amber-500 p-4 text-white shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">For Implementation</span>
+            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none">{stats?.forImplementation ?? 0}</p>
+          <p className="mt-1 text-xs opacity-70">Projects</p>
+        </div>
+
+        {/* On-Going */}
+        <div className="flex flex-col rounded-2xl bg-orange-400 p-4 text-white shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">On-going</span>
+            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none">{stats?.ongoing ?? 0}</p>
+          <p className="mt-1 text-xs opacity-70">Projects</p>
+        </div>
+
+        {/* Re-alignment */}
+        <div className="flex flex-col rounded-2xl bg-purple-500 p-4 text-white shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Re-alignment</span>
+            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none">{stats?.reAlignment ?? 0}</p>
+          <p className="mt-1 text-xs opacity-70">Projects</p>
+        </div>
+
+        {/* Others */}
+        <div className="flex flex-col rounded-2xl bg-slate-500 p-4 text-white shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Others</span>
+            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none">{stats?.others ?? 0}</p>
+          <p className="mt-1 text-xs opacity-70">Projects</p>
+        </div>
+
+        {/* Not Yet Started */}
+        <div className="flex flex-col rounded-2xl bg-sky-500 p-4 text-white shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Not Yet Started</span>
+            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none">{stats?.notYetStarted ?? 0}</p>
+          <p className="mt-1 text-xs opacity-70">Projects</p>
+        </div>
+
+        {/* No Allotted */}
+        <div className="flex flex-col rounded-2xl bg-gray-700 p-4 text-white shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">No Allotted</span>
+            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none">{stats?.noAllotted ?? 0}</p>
+          <p className="mt-1 text-xs opacity-70">Projects</p>
         </div>
       </div>
 
       {/* Financial Overview */}
-      <div className="mb-6 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-100 px-6 py-3">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">
-              Financial Overview
-            </p>
-            <p className="mt-0.5 text-xs text-gray-400">
-              {cardYearFilter
-                ? `Aggregated project funding for ${cardYearFilter}`
-                : "Aggregated project funding across all years"}
-            </p>
-          </div>
-          <button
-            onClick={handleExport}
-            className="flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-blue-700"
-          >
-            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-            </svg>
-            Export Fiscal Report
-          </button>
-        </div>
+      {(() => {
+        const totalAllocation = financial?.totalAllocation ?? 0;
+        const bySource = financial?.bySource ?? {};
+        const bySubType = financial?.bySubType ?? {};
+        const executionRate = financial?.executionRate ?? 0;
 
-        <div className="grid grid-cols-1 gap-0 lg:grid-cols-3">
-          {/* Left — Donut + Execution Rate */}
-          <div className="flex flex-col items-center justify-center gap-4 border-b border-gray-100 px-6 py-6 lg:border-b-0 lg:border-r">
-            <p className="text-xs font-semibold uppercase tracking-widest text-gray-500">
-              Total Annual Allocation
-            </p>
+        type SubEntry = {
+          key: string;
+          label: string;
+          value: number;
+          color: string;
+          sourceOfFund: string;
+        };
 
-            {/* Donut chart */}
-            <div className="relative">
-              <svg width="140" height="140" viewBox="0 0 140 140">
-                <g transform="rotate(-90 70 70)">
-                  {/* Background circle */}
-                  <circle cx="70" cy="70" r={DONUT_RADIUS} fill="none" stroke="#F3F4F6" strokeWidth="20" />
-                  {/* Segments */}
-                  {donutSegments.map((seg) => (
-                    <circle
-                      key={seg.key}
-                      cx="70"
-                      cy="70"
-                      r={DONUT_RADIUS}
-                      fill="none"
-                      stroke={seg.color}
-                      strokeWidth="20"
-                      strokeDasharray={`${seg.dashLength} ${DONUT_CIRCUMFERENCE}`}
-                      strokeDashoffset={seg.dashOffset}
-                    />
+        const subEntries: SubEntry[] = Object.entries(bySubType)
+          .filter(([, v]) => v.amount > 0)
+          .map(([key, v]) => {
+            const isNone = key.startsWith("__NONE__:");
+            const label = isNone
+              ? "Uncategorized"
+              : (PROJECT_SUB_TYPE_LABEL[key as ProjectSubTypeValue] ?? key);
+            const color = isNone
+              ? (FUND_SOURCE_COLORS[v.sourceOfFund] ?? "#94a3b8")
+              : (SUB_TYPE_COLORS[key as ProjectSubTypeValue] ?? "#94a3b8");
+            return {
+              key,
+              label,
+              value: v.amount,
+              color,
+              sourceOfFund: v.sourceOfFund,
+            };
+          });
+
+        const segments = subEntries
+          .slice()
+          .sort((a, b) => b.value - a.value)
+          .map((e) => ({ label: e.label, value: e.value, color: e.color }));
+
+        const orderedSources = SOURCE_OF_FUND_ORDER.filter(
+          (s) => (bySource[s] ?? 0) > 0,
+        );
+
+        const groupedBreakdown = orderedSources.map((sourceKey) => {
+          const sourceAmount = bySource[sourceKey] ?? 0;
+          const subs = subEntries
+            .filter((e) => e.sourceOfFund === sourceKey)
+            .sort((a, b) => b.value - a.value);
+          return { sourceKey, sourceAmount, subs };
+        });
+
+        return (
+          <div className="mb-8 rounded-2xl border border-gray-100 bg-white shadow-sm">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                  Financial Overview
+                </p>
+                <p className="text-xs text-gray-400">
+                  Source of funds broken down by sub-category
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  const rows: string[][] = [
+                    ["Source of Fund", "Sub-Category", "Amount (PHP)", "Percentage"],
+                  ];
+                  for (const g of groupedBreakdown) {
+                    for (const s of g.subs) {
+                      const pct = totalAllocation > 0 ? ((s.value / totalAllocation) * 100).toFixed(1) : "0.0";
+                      rows.push([
+                        FUND_SOURCE_LABELS[g.sourceKey] ?? g.sourceKey,
+                        s.label,
+                        s.value.toFixed(2),
+                        `${pct}%`,
+                      ]);
+                    }
+                  }
+                  rows.push(["Grand Total", "", totalAllocation.toFixed(2), "100%"]);
+                  const csv = rows.map((r) => r.join(",")).join("\n");
+                  const blob = new Blob([csv], { type: "text/csv" });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `fiscal-report-${financial?.budgetYear ?? ""}.csv`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
+              >
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                </svg>
+                Export Fiscal Report
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-0 lg:grid-cols-2">
+              {/* Left: Donut Chart */}
+              <div className="flex flex-col items-center justify-center gap-4 border-b border-gray-100 px-6 py-6 lg:border-b-0 lg:border-r">
+                <p className="self-start text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  Total Annual Allocation
+                </p>
+                <DonutChart segments={segments} total={totalAllocation} />
+                {/* Legend */}
+                <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5">
+                  {segments.slice(0, 8).map((seg) => (
+                    <span key={seg.label} className="flex items-center gap-1.5 text-xs text-gray-600">
+                      <span
+                        className="inline-block h-2.5 w-2.5 rounded-full"
+                        style={{ backgroundColor: seg.color }}
+                      />
+                      {seg.label}
+                    </span>
                   ))}
-                </g>
-              </svg>
-              {/* Center label */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-lg font-bold text-gray-900">
-                  {formatPeso(totalAllocation)}
-                </span>
-                <span className="text-xs text-gray-400">Total</span>
-              </div>
-            </div>
-
-            {/* Legend */}
-            <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5">
-              {donutSegments.slice(0, 6).map((seg) => (
-                <div key={seg.key} className="flex items-center gap-1.5">
-                  <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: seg.color }} />
-                  <span className="text-xs text-gray-600">{seg.label}</span>
+                  {segments.length > 8 && (
+                    <span className="text-xs text-gray-400">
+                      +{segments.length - 8} more
+                    </span>
+                  )}
+                  {segments.length === 0 && (
+                    <span className="text-xs text-gray-400">No allocation data for {financial?.budgetYear ?? new Date().getFullYear()}</span>
+                  )}
                 </div>
-              ))}
-              {donutSegments.length > 6 && (
-                <span className="text-xs text-gray-400">
-                  +{donutSegments.length - 6} more
-                </span>
-              )}
-            </div>
 
-            {/* Execution Rate */}
-            <div className="w-full rounded-lg bg-gray-50 px-4 py-3">
-              <div className="mb-1.5 flex items-center justify-between">
-                <div className="flex flex-col">
-                  <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                    Execution Rate
-                  </span>
-                  <span className="text-[10px] text-gray-400">
-                    Average progress across all projects
-                    {cardYearFilter ? ` (${cardYearFilter})` : ""}
-                  </span>
-                </div>
-                <span className="text-sm font-bold text-blue-600">
-                  {Math.min(100, Math.max(0, executionRate)).toFixed(1)}%
-                </span>
-              </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
-                <div
-                  className="h-full rounded-full bg-blue-500 transition-all"
-                  style={{
-                    width: `${Math.min(100, Math.max(0, executionRate))}%`,
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Right — Source of Funds Breakdown (grouped by sub-category) */}
-          <div className="col-span-2 px-6 py-6">
-            <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-gray-500">
-              Source of Funds Breakdown
-            </p>
-            {isLoading ? (
-              <div className="flex h-32 items-center justify-center text-sm text-gray-400">Loading...</div>
-            ) : groupedBreakdown.length === 0 ? (
-              <div className="flex h-32 items-center justify-center text-sm text-gray-400">No data available</div>
-            ) : (
-              <div className="grid max-h-96 grid-cols-1 gap-3 overflow-y-auto pr-1 md:grid-cols-2">
-                {groupedBreakdown.map(({ sourceKey, sourceAmount, subs }) => {
-                  const sourcePct = totalAllocation > 0
-                    ? (sourceAmount / totalAllocation) * 100
-                    : 0;
-                  return (
-                    <div
-                      key={sourceKey}
-                      className="rounded-lg border border-gray-100 bg-gray-50/60 p-3"
-                    >
-                      <div className="mb-2 flex items-center justify-between">
-                        <div className="flex min-w-0 items-center gap-2">
-                          <span
-                            className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
-                            style={{ backgroundColor: FUND_SOURCE_COLORS[sourceKey] ?? "#6B7280" }}
-                          />
-                          <span className="truncate text-sm font-semibold text-gray-700">
-                            {FUND_SOURCE_LABELS[sourceKey] ?? sourceKey}
-                          </span>
-                        </div>
-                        <div className="ml-3 shrink-0 text-right">
-                          <p className="text-sm font-bold text-gray-900">
-                            ₱{sourceAmount.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
-                          </p>
-                          <p className="text-[10px] text-gray-400">{sourcePct.toFixed(1)}%</p>
-                        </div>
-                      </div>
-                      {subs.length > 0 && (
-                        <div className="flex flex-col gap-1 border-t border-gray-100 pl-3.5 pt-2">
-                          {subs.map((s) => {
-                            const pct = totalAllocation > 0
-                              ? (s.amount / totalAllocation) * 100
-                              : 0;
-                            return (
-                              <div
-                                key={s.key}
-                                className="flex items-center justify-between gap-2"
-                              >
-                                <div className="flex min-w-0 items-center gap-1.5">
-                                  <span
-                                    className="inline-block h-2 w-2 shrink-0 rounded-full"
-                                    style={{ backgroundColor: s.color }}
-                                  />
-                                  <span className="truncate text-[11px] text-gray-600">
-                                    {s.label}
-                                  </span>
-                                </div>
-                                <div className="shrink-0 text-right">
-                                  <span className="text-[11px] font-semibold text-gray-800">
-                                    ₱{s.amount.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
-                                  </span>
-                                  <span className="ml-1.5 text-[10px] text-gray-400">
-                                    {pct.toFixed(1)}%
-                                  </span>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
+                {/* Execution Rate */}
+                <div className="w-full rounded-lg bg-gray-50 px-3 py-2.5">
+                  <div className="mb-1 flex items-center justify-between text-xs">
+                    <div className="flex flex-col">
+                      <span className="font-semibold uppercase tracking-wider text-gray-500">
+                        Execution Rate
+                      </span>
+                      <span className="text-[10px] font-normal normal-case text-gray-400">
+                        Average progress across all projects
+                      </span>
                     </div>
-                  );
-                })}
+                    <span className="text-sm font-bold text-blue-600">
+                      {Math.min(100, Math.max(0, executionRate)).toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className="h-2.5 w-full overflow-hidden rounded-full bg-gray-200">
+                    <div
+                      className="h-full rounded-full bg-blue-500 transition-all duration-500"
+                      style={{
+                        width: `${Math.min(100, Math.max(0, executionRate))}%`,
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
-            )}
 
-            {/* Grand Total */}
-            <div className="mt-4 flex items-center justify-between rounded-lg border border-blue-100 bg-blue-50 px-4 py-3">
-              <span className="text-sm font-semibold text-blue-700">Grand Total Combined Allocation</span>
-              <span className="text-base font-bold text-blue-800">
-                ₱{totalAllocation.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
-              </span>
+              {/* Right: Source of Funds Breakdown (grouped by sub-category) */}
+              <div className="px-6 py-6">
+                <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  Source of Funds Breakdown
+                </p>
+                {groupedBreakdown.length === 0 ? (
+                  <p className="py-8 text-center text-sm text-gray-400">
+                    No fund allocation data found for {financial?.budgetYear ?? new Date().getFullYear()}.
+                  </p>
+                ) : (
+                  <div className="flex max-h-80 flex-col gap-3 overflow-y-auto pr-1">
+                    {groupedBreakdown.map(({ sourceKey, sourceAmount, subs }) => {
+                      const sourcePct = totalAllocation > 0
+                        ? ((sourceAmount / totalAllocation) * 100).toFixed(1)
+                        : "0.0";
+                      return (
+                        <div
+                          key={sourceKey}
+                          className="rounded-lg border border-gray-100 bg-gray-50/50 p-3"
+                        >
+                          <div className="mb-2 flex items-center justify-between">
+                            <div className="flex items-center gap-1.5">
+                              <span
+                                className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
+                                style={{ backgroundColor: FUND_SOURCE_COLORS[sourceKey] ?? "#94a3b8" }}
+                              />
+                              <span className="text-xs font-semibold text-gray-700">
+                                {FUND_SOURCE_LABELS[sourceKey] ?? sourceKey}
+                              </span>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-xs font-bold text-gray-900">
+                                {formatPeso(sourceAmount)}
+                              </p>
+                              <p className="text-[10px] text-gray-400">{sourcePct}%</p>
+                            </div>
+                          </div>
+                          {subs.length > 0 && (
+                            <div className="flex flex-col gap-1 pl-4">
+                              {subs.map((s) => {
+                                const pct = totalAllocation > 0
+                                  ? ((s.value / totalAllocation) * 100).toFixed(1)
+                                  : "0.0";
+                                return (
+                                  <div
+                                    key={s.key}
+                                    className="flex items-center justify-between gap-2"
+                                  >
+                                    <div className="flex min-w-0 items-center gap-1.5">
+                                      <span
+                                        className="inline-block h-2 w-2 shrink-0 rounded-full"
+                                        style={{ backgroundColor: s.color }}
+                                      />
+                                      <span className="truncate text-[11px] text-gray-600">
+                                        {s.label}
+                                      </span>
+                                    </div>
+                                    <div className="shrink-0 text-right">
+                                      <span className="text-[11px] font-semibold text-gray-800">
+                                        {formatPeso(s.value)}
+                                      </span>
+                                      <span className="ml-1.5 text-[10px] text-gray-400">
+                                        {pct}%
+                                      </span>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Grand Total */}
+                {groupedBreakdown.length > 0 && (
+                  <div className="mt-6 border-t border-gray-100 pt-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-gray-700">
+                        Grand Total Combined Allocation
+                      </span>
+                      <span className="text-sm font-extrabold text-blue-600">
+                        {formatPeso(totalAllocation)}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        );
+      })()}
 
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
         {/* Table Header — title + inline filters */}
         <div className="flex flex-wrap items-center gap-2 border-b border-gray-100 px-5 py-4">
           {/* Title */}
-          <div className="mr-2 shrink-0">
+          {/* <div className="mr-2 shrink-0">
             <h2 className="text-base font-bold text-gray-900">Project Data List</h2>
             <p className="text-xs text-gray-400">Manage Projects</p>
-          </div>
+          </div> */}
 
           {/* Search */}
           <div className="relative min-w-55 flex-1">
