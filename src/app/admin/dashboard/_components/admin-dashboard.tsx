@@ -311,7 +311,7 @@ export function AdminDashboardContent() {
       </div>
 
       {/* Colored Summary Cards */}
-      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5">
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7 xl:grid-cols-7">
         {/* Budget Year */}
         <div className="flex flex-col rounded-2xl bg-blue-600 p-4 text-white shadow-sm">
           <div className="mb-2 flex items-center justify-between">
@@ -325,22 +325,6 @@ export function AdminDashboardContent() {
           <p className="text-3xl font-extrabold leading-none">
             {financial?.budgetYear ?? new Date().getFullYear()}
           </p>
-        </div>
-
-        {/* Grand Total Contract */}
-        <div className="flex flex-col rounded-2xl bg-emerald-600 p-4 text-white shadow-sm">
-          <div className="mb-2 flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">
-              Grand Total Contract
-            </span>
-            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V12Zm-12 0h.008v.008H6V12Z" />
-            </svg>
-          </div>
-          <p className="text-2xl font-extrabold leading-tight break-all">
-            {formatPeso(financial?.totalAllocation ?? 0)}
-          </p>
-          <p className="mt-1 text-xs opacity-70">All projects</p>
         </div>
 
         {/* Completed */}
@@ -415,29 +399,6 @@ export function AdminDashboardContent() {
           <p className="mt-1 text-xs opacity-70">Projects</p>
         </Link>
 
-        {/* Not Yet Started */}
-        <Link href="/admin/dashboard/projects?status=NOT_YET_STARTED" className="flex flex-col rounded-2xl bg-sky-500 p-4 text-white shadow-sm transition hover:bg-sky-600">
-          <div className="mb-2 flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Not Yet Started</span>
-            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
-            </svg>
-          </div>
-          <p className="text-3xl font-extrabold leading-none">{stats?.notYetStarted ?? 0}</p>
-          <p className="mt-1 text-xs opacity-70">Projects</p>
-        </Link>
-
-        {/* No Allotted */}
-        <div className="flex flex-col rounded-2xl bg-gray-700 p-4 text-white shadow-sm">
-          <div className="mb-2 flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">No Allotted</span>
-            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
-            </svg>
-          </div>
-          <p className="text-3xl font-extrabold leading-none">{stats?.noAllotted ?? 0}</p>
-          <p className="mt-1 text-xs opacity-70">Projects</p>
-        </div>
       </div>
 
 
