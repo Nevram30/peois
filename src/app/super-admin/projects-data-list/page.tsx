@@ -186,7 +186,6 @@ export default function ProjectsDataListPage() {
   const [cityFilter, setCityFilter] = useState("");
   const [barangayFilter, setBarangayFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [yearFilter, setYearFilter] = useState("");
   const [cardYearFilter, setCardYearFilter] = useState("");
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 10;
@@ -231,7 +230,7 @@ export default function ProjectsDataListPage() {
     const matchCity = !cityFilter || p.cityMunicipality === cityFilter;
     const matchBarangay = !barangayFilter || p.barangay === barangayFilter;
     const matchStatus = !statusFilter || p.status === statusFilter;
-    const matchYear = !yearFilter || p.budgetYear === yearFilter;
+    const matchYear = !cardYearFilter || p.budgetYear === cardYearFilter;
     return (
       matchSearch &&
       matchDistrict &&
@@ -260,7 +259,7 @@ export default function ProjectsDataListPage() {
     cityFilter ||
     barangayFilter ||
     statusFilter ||
-    yearFilter
+    cardYearFilter
   );
 
   const clearFilters = () => {
@@ -272,7 +271,7 @@ export default function ProjectsDataListPage() {
     setCityFilter("");
     setBarangayFilter("");
     setStatusFilter("");
-    setYearFilter("");
+    setCardYearFilter("");
     resetPage();
   };
 
@@ -300,13 +299,13 @@ export default function ProjectsDataListPage() {
 
         <div className="flex items-center gap-2">
           <label htmlFor="card-year-filter" className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-            Filter by Year
+            Filter by Budget Year
           </label>
           <div className="relative">
             <select
               id="card-year-filter"
               value={cardYearFilter}
-              onChange={(e) => setCardYearFilter(e.target.value)}
+              onChange={(e) => { setCardYearFilter(e.target.value); resetPage(); }}
               className="appearance-none rounded-lg border border-gray-200 bg-gray-50 py-2 pl-3 pr-9 text-sm font-medium text-gray-700 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Years</option>
@@ -335,7 +334,7 @@ export default function ProjectsDataListPage() {
       </div>
 
       {/* Colored Summary Cards */}
-      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7 xl:grid-cols-7">
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8 xl:grid-cols-8">
         {/* Budget Year */}
         <div className="flex flex-col rounded-2xl bg-blue-600 p-4 text-white shadow-sm">
           <div className="mb-2 flex items-center justify-between">
@@ -349,6 +348,18 @@ export default function ProjectsDataListPage() {
           <p className="text-3xl font-extrabold leading-none">
             {financial?.budgetYear ?? new Date().getFullYear()}
           </p>
+        </div>
+
+        {/* Number of Projects */}
+        <div className="flex flex-col rounded-2xl bg-indigo-500 p-4 text-white shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">No. of Projects</span>
+            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none">{stats?.total ?? 0}</p>
+          <p className="mt-1 text-xs opacity-70">Projects</p>
         </div>
 
         {/* Completed */}
@@ -813,23 +824,6 @@ export default function ProjectsDataListPage() {
               <option value="">All Statuses</option>
               {PROJECT_STATUS_ORDER.map((s) => (
                 <option key={s} value={s}>{PROJECT_STATUS_LABEL[s]}</option>
-              ))}
-            </select>
-            <svg className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-            </svg>
-          </div>
-
-          {/* Budget Year */}
-          <div className="relative shrink-0">
-            <select
-              value={yearFilter}
-              onChange={(e) => { setYearFilter(e.target.value); resetPage(); }}
-              className="appearance-none rounded-lg border border-gray-200 bg-gray-50 py-2 pl-3 pr-8 text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">All Budget Years</option>
-              {availableYears.map((y) => (
-                <option key={y} value={y}>{y}</option>
               ))}
             </select>
             <svg className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">

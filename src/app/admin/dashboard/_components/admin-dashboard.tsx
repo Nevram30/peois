@@ -322,7 +322,7 @@ export function AdminDashboardContent() {
       </div>
 
       {/* Colored Summary Cards */}
-      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7 xl:grid-cols-7">
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8 xl:grid-cols-8">
         {/* Budget Year */}
         <div className="flex flex-col rounded-2xl bg-blue-600 p-4 text-white shadow-sm">
           <div className="mb-2 flex items-center justify-between">
@@ -337,6 +337,18 @@ export function AdminDashboardContent() {
             {financial?.budgetYear ?? new Date().getFullYear()}
           </p>
         </div>
+
+        {/* Number of Projects */}
+        <Link href="/admin/dashboard/projects" className="flex flex-col rounded-2xl bg-indigo-500 p-4 text-white shadow-sm transition hover:bg-indigo-600">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">No. of Projects</span>
+            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none">{stats?.total ?? 0}</p>
+          <p className="mt-1 text-xs opacity-70">Projects</p>
+        </Link>
 
         {/* Completed */}
         <Link href="/admin/dashboard/projects?status=COMPLETED" className="flex flex-col rounded-2xl bg-teal-500 p-4 text-white shadow-sm transition hover:bg-teal-600">

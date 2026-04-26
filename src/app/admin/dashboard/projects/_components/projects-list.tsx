@@ -61,10 +61,12 @@ export function ProjectsList() {
   const [districtFilter, setDistrictFilter] = useState("");
   const [statusLocal, setStatusLocal] = useState("");
   const [yearFilter, setYearFilter] = useState("");
+  const [budgetYearFilter, setBudgetYearFilter] = useState("");
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 20;
 
   const { data: projects, isLoading } = api.project.getAll.useQuery();
+  const { data: budgetYears } = api.project.getBudgetYears.useQuery();
 
   const filtered = projects?.filter((p) => {
     if (filterToday) {
@@ -90,6 +92,7 @@ export function ProjectsList() {
         : new Date(p.createdAt).getFullYear().toString();
       if (projectYear !== yearFilter) return false;
     }
+    if (budgetYearFilter && p.budgetYear !== budgetYearFilter) return false;
     if (search) {
       const q = search.toLowerCase();
       if (
@@ -272,9 +275,9 @@ export function ProjectsList() {
             </select>
           </div>
 
-          {/* Year */}
+          {/* Created At Year */}
           <div>
-            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Year</p>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Created At Year</p>
             <select
               value={yearFilter}
               onChange={(e) => { setYearFilter(e.target.value); setPage(1); }}
@@ -283,6 +286,21 @@ export function ProjectsList() {
               <option value="">All Years</option>
               {Array.from({ length: new Date().getFullYear() - 2019 }, (_, i) => new Date().getFullYear() - i).map((y) => (
                 <option key={y} value={y.toString()}>{y}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Budget Year */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Budget Year</p>
+            <select
+              value={budgetYearFilter}
+              onChange={(e) => { setBudgetYearFilter(e.target.value); setPage(1); }}
+              className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            >
+              <option value="">All Budget Years</option>
+              {budgetYears?.map((y) => (
+                <option key={y} value={y}>FY {y}</option>
               ))}
             </select>
           </div>
@@ -328,6 +346,47 @@ export function ProjectsList() {
                 />
               </svg>
               Print
+            </button>
+          </div>
+
+          {/* Clear All */}
+          <div className="ml-auto flex items-end">
+            <button
+              onClick={() => {
+                setSearch("");
+                setSourceOfFundFilter("");
+                setSubTypeFilter("");
+                setDistrictFilter("");
+                setStatusLocal("");
+                setYearFilter("");
+                setBudgetYearFilter("");
+                setPage(1);
+              }}
+              disabled={
+                !search &&
+                !sourceOfFundFilter &&
+                !subTypeFilter &&
+                !districtFilter &&
+                !statusLocal &&
+                !yearFilter &&
+                !budgetYearFilter
+              }
+              className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white"
+            >
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18 18 6M6 6l12 12"
+                />
+              </svg>
+              Clear All
             </button>
           </div>
         </div>
