@@ -22,11 +22,6 @@ import {
   getSitiosByBarangay,
 } from "~/lib/davao-del-norte-locations";
 
-const DISTRICT_LABEL: Record<string, string> = {
-  DISTRICT_I: "District 1",
-  DISTRICT_II: "District 2",
-};
-
 const STATUS_CONFIG: Record<string, { label: string; badge: string; dot: string }> = {
   NOT_YET_STARTED: { label: "Not Yet Started", badge: "bg-gray-100 text-gray-600 border-gray-200", dot: "bg-gray-400" },
   ON_GOING: { label: "On-going", badge: "bg-amber-50  text-amber-700 border-amber-200", dot: "bg-amber-500" },

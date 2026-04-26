@@ -72,7 +72,7 @@ export function NavHeader({ user, userId }: { user: { name?: string | null; emai
 
   return (
     <>
-      <div className="fixed top-0 left-0 right-0 z-40 bg-white shadow-sm">
+      <div className="fixed top-0 left-0 right-0 z-40 bg-white">
         {/* Top bar */}
         <header className="bg-white text-gray-900 border-b border-gray-200">
           <div className="flex items-center justify-between px-6 py-3">
@@ -168,7 +168,7 @@ export function NavHeader({ user, userId }: { user: { name?: string | null; emai
         </header>
 
         {/* Navigation Tabs */}
-        <nav className="flex items-center gap-1 px-6 border-b-2 border-blue-[#1e3a4f] mt-3">
+        <nav className="flex items-center gap-1 px-6 border-b-2 border-black/50 mt-3">
           {NAV_ITEMS.map((item) => {
             const isActive =
               item.href === "/super-admin/dashboard"
@@ -179,7 +179,7 @@ export function NavHeader({ user, userId }: { user: { name?: string | null; emai
                 key={item.href}
                 href={`${item.href}?id=${userId}`}
                 className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-t-md transition ${isActive
-                    ? "bg-[#1e3a4f] text-white"
+                    ? "bg-gray-50 text-black border-2 border-t-black/50 border-l-black/50 border-r-black/50 border-b-0 -mb-0.5 relative"
                     : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
                   }`}
               >

@@ -218,7 +218,7 @@ export default function AdminMessagesPage() {
       <div className="flex-1 overflow-y-auto px-6 py-5">
         <div className="mx-auto max-w-3xl flex flex-col gap-4">
 
-          {thread.map((item, idx) => {
+          {thread.map((item) => {
             if (item.kind === "task") {
               return (
                 <div key="task-created" className="flex flex-col items-center gap-1">
