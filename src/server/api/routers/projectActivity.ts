@@ -14,6 +14,16 @@ export const projectActivityRouter = createTRPCRouter({
       });
     }),
 
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    return ctx.db.projectActivity.findMany({
+      include: {
+        createdBy: { select: { name: true, email: true, image: true } },
+        project: { select: { id: true, projectCode: true, title: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  }),
+
   create: protectedProcedure
     .input(
       z.object({
