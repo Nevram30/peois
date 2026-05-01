@@ -256,9 +256,15 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   });
 
   const recordDisbursement = api.project.createDisbursement.useMutation({
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       setDisbAmount(""); setDisbRef(""); setDisbErrors({});
       void refetchDisbursements();
+      const formatted = variables.amount.toLocaleString("en-PH", { minimumFractionDigits: 2 });
+      const refPart = variables.referenceNumber ? ` (Ref: ${variables.referenceNumber})` : "";
+      addActivity.mutate({
+        projectId: variables.projectId,
+        description: `Recorded disbursement of ₱${formatted}${refPart}.`,
+      });
     },
   });
 
@@ -270,7 +276,13 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   });
 
   const createProjectFile = api.projectFile.create.useMutation({
-    onSuccess: () => void refetchFiles(),
+    onSuccess: (_data, variables) => {
+      void refetchFiles();
+      addActivity.mutate({
+        projectId: variables.projectId,
+        description: `Uploaded ${(variables.fileType ?? "OTHER").toLowerCase()} document "${variables.fileName}".`,
+      });
+    },
   });
 
   const deleteProjectFile = api.projectFile.delete.useMutation({
