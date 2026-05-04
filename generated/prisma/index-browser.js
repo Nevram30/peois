@@ -202,6 +202,7 @@ exports.Prisma.DisbursementScalarFieldEnum = {
   projectId: 'projectId',
   date: 'date',
   referenceNumber: 'referenceNumber',
+  type: 'type',
   amount: 'amount',
   createdById: 'createdById',
   createdAt: 'createdAt'
@@ -371,6 +372,12 @@ exports.ProjectStatus = exports.$Enums.ProjectStatus = {
   FOR_IMPLEMENTATION: 'FOR_IMPLEMENTATION',
   RE_ALIGNMENT: 'RE_ALIGNMENT',
   OTHERS: 'OTHERS'
+};
+
+exports.DisbursementType = exports.$Enums.DisbursementType = {
+  FUEL: 'FUEL',
+  LABOR: 'LABOR',
+  MATERIALS: 'MATERIALS'
 };
 
 exports.NotificationPriority = exports.$Enums.NotificationPriority = {

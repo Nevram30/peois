@@ -183,7 +183,8 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   // ─ Disbursement ────────────────────────────────────────────────────────
   const [disbAmount, setDisbAmount] = useState("");
   const [disbRef, setDisbRef] = useState("");
-  const [disbErrors, setDisbErrors] = useState<{ amount?: string; ref?: string }>({});
+  const [disbType, setDisbType] = useState<"" | "FUEL" | "LABOR" | "MATERIALS">("");
+  const [disbErrors, setDisbErrors] = useState<{ amount?: string; ref?: string; type?: string }>({});
 
   // ─ Task notification ───────────────────────────────────────────────────
   const [notifyUserId, setNotifyUserId] = useState("");
@@ -257,13 +258,14 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
 
   const recordDisbursement = api.project.createDisbursement.useMutation({
     onSuccess: (_data, variables) => {
-      setDisbAmount(""); setDisbRef(""); setDisbErrors({});
+      setDisbAmount(""); setDisbRef(""); setDisbType(""); setDisbErrors({});
       void refetchDisbursements();
       const formatted = variables.amount.toLocaleString("en-PH", { minimumFractionDigits: 2 });
       const refPart = variables.referenceNumber ? ` (Ref: ${variables.referenceNumber})` : "";
+      const typePart = variables.type ? ` [${variables.type}]` : "";
       addActivity.mutate({
         projectId: variables.projectId,
-        description: `Recorded disbursement of ₱${formatted}${refPart}.`,
+        description: `Recorded disbursement of ₱${formatted}${refPart}${typePart}.`,
       });
     },
   });
@@ -349,13 +351,19 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   };
 
   const handleRecordDisbursement = () => {
-    const errors: { amount?: string; ref?: string } = {};
+    const errors: { amount?: string; ref?: string; type?: string } = {};
     const amount = parseFloat(disbAmount);
     if (!disbAmount || isNaN(amount) || amount <= 0) errors.amount = "Amount must be greater than 0.";
     if (!disbRef.trim()) errors.ref = "Reference number is required.";
+    if (!disbType) errors.type = "Type is required.";
     if (Object.keys(errors).length > 0) { setDisbErrors(errors); return; }
     setDisbErrors({});
-    recordDisbursement.mutate({ projectId, amount, referenceNumber: disbRef.trim() });
+    recordDisbursement.mutate({
+      projectId,
+      amount,
+      referenceNumber: disbRef.trim(),
+      type: disbType as "FUEL" | "LABOR" | "MATERIALS",
+    });
   };
 
   const handleSendNotification = () => {
@@ -746,6 +754,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                       <tr className="border-b border-gray-100 bg-gray-50">
                         <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Date</th>
                         <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Reference / Check #</th>
+                        <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Type</th>
                         <th className="px-3 py-2 text-right text-[10px] font-bold uppercase tracking-wider text-gray-400">Amount (₱)</th>
                       </tr>
                     </thead>
@@ -754,12 +763,15 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                         <tr key={d.id} className="hover:bg-gray-50/50">
                           <td className="px-3 py-2.5 text-gray-600">{fmt(d.date)}</td>
                           <td className="px-3 py-2.5 font-mono text-gray-700">{d.referenceNumber ?? "—"}</td>
+                          <td className="px-3 py-2.5 text-gray-700">
+                            {d.type ? d.type.charAt(0) + d.type.slice(1).toLowerCase() : "—"}
+                          </td>
                           <td className="px-3 py-2.5 text-right font-semibold text-gray-900">
                             {d.amount.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
                           </td>
                         </tr>
                       )) : (
-                        <tr><td colSpan={3} className="px-3 py-6 text-center text-gray-400">No disbursements recorded yet.</td></tr>
+                        <tr><td colSpan={4} className="px-3 py-6 text-center text-gray-400">No disbursements recorded yet.</td></tr>
                       )}
                     </tbody>
                   </table>
@@ -784,6 +796,21 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                     error={!!disbErrors.ref}
                     className="flex-1"
                   />
+                  <div className="w-36 shrink-0">
+                    <Select
+                      value={disbType}
+                      onChange={(e) => {
+                        setDisbType(e.target.value as "" | "FUEL" | "LABOR" | "MATERIALS");
+                        setDisbErrors((p) => ({ ...p, type: undefined }));
+                      }}
+                      className={disbErrors.type ? "border-red-300" : ""}
+                    >
+                      <option value="">Type *</option>
+                      <option value="FUEL">Fuel</option>
+                      <option value="LABOR">Labor</option>
+                      <option value="MATERIALS">Materials</option>
+                    </Select>
+                  </div>
                   <button
                     type="button" onClick={handleRecordDisbursement}
                     disabled={recordDisbursement.isPending}
@@ -792,10 +819,11 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                     {recordDisbursement.isPending ? "..." : "Record"}
                   </button>
                 </div>
-                {(disbErrors.amount ?? disbErrors.ref) && (
+                {(disbErrors.amount ?? disbErrors.ref ?? disbErrors.type) && (
                   <div className="mt-1 space-y-0.5">
                     {disbErrors.amount && <p className="text-xs text-red-500">{disbErrors.amount}</p>}
                     {disbErrors.ref && <p className="text-xs text-red-500">{disbErrors.ref}</p>}
+                    {disbErrors.type && <p className="text-xs text-red-500">{disbErrors.type}</p>}
                   </div>
                 )}
 

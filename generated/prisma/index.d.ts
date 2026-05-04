@@ -208,6 +208,15 @@ export const ProjectFileType: {
 export type ProjectFileType = (typeof ProjectFileType)[keyof typeof ProjectFileType]
 
 
+export const DisbursementType: {
+  FUEL: 'FUEL',
+  LABOR: 'LABOR',
+  MATERIALS: 'MATERIALS'
+};
+
+export type DisbursementType = (typeof DisbursementType)[keyof typeof DisbursementType]
+
+
 export const DocumentStatus: {
   DRAFT: 'DRAFT',
   FOR_REVIEW: 'FOR_REVIEW',
@@ -262,6 +271,10 @@ export const DocumentType: typeof $Enums.DocumentType
 export type ProjectFileType = $Enums.ProjectFileType
 
 export const ProjectFileType: typeof $Enums.ProjectFileType
+
+export type DisbursementType = $Enums.DisbursementType
+
+export const DisbursementType: typeof $Enums.DisbursementType
 
 export type DocumentStatus = $Enums.DocumentStatus
 
@@ -7485,6 +7498,7 @@ export namespace Prisma {
     projectId: string | null
     date: Date | null
     referenceNumber: string | null
+    type: $Enums.DisbursementType | null
     amount: number | null
     createdById: string | null
     createdAt: Date | null
@@ -7495,6 +7509,7 @@ export namespace Prisma {
     projectId: string | null
     date: Date | null
     referenceNumber: string | null
+    type: $Enums.DisbursementType | null
     amount: number | null
     createdById: string | null
     createdAt: Date | null
@@ -7505,6 +7520,7 @@ export namespace Prisma {
     projectId: number
     date: number
     referenceNumber: number
+    type: number
     amount: number
     createdById: number
     createdAt: number
@@ -7525,6 +7541,7 @@ export namespace Prisma {
     projectId?: true
     date?: true
     referenceNumber?: true
+    type?: true
     amount?: true
     createdById?: true
     createdAt?: true
@@ -7535,6 +7552,7 @@ export namespace Prisma {
     projectId?: true
     date?: true
     referenceNumber?: true
+    type?: true
     amount?: true
     createdById?: true
     createdAt?: true
@@ -7545,6 +7563,7 @@ export namespace Prisma {
     projectId?: true
     date?: true
     referenceNumber?: true
+    type?: true
     amount?: true
     createdById?: true
     createdAt?: true
@@ -7642,6 +7661,7 @@ export namespace Prisma {
     projectId: string
     date: Date
     referenceNumber: string | null
+    type: $Enums.DisbursementType | null
     amount: number
     createdById: string
     createdAt: Date
@@ -7671,6 +7691,7 @@ export namespace Prisma {
     projectId?: boolean
     date?: boolean
     referenceNumber?: boolean
+    type?: boolean
     amount?: boolean
     createdById?: boolean
     createdAt?: boolean
@@ -7683,6 +7704,7 @@ export namespace Prisma {
     projectId?: boolean
     date?: boolean
     referenceNumber?: boolean
+    type?: boolean
     amount?: boolean
     createdById?: boolean
     createdAt?: boolean
@@ -7695,6 +7717,7 @@ export namespace Prisma {
     projectId?: boolean
     date?: boolean
     referenceNumber?: boolean
+    type?: boolean
     amount?: boolean
     createdById?: boolean
     createdAt?: boolean
@@ -7707,12 +7730,13 @@ export namespace Prisma {
     projectId?: boolean
     date?: boolean
     referenceNumber?: boolean
+    type?: boolean
     amount?: boolean
     createdById?: boolean
     createdAt?: boolean
   }
 
-  export type DisbursementOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "date" | "referenceNumber" | "amount" | "createdById" | "createdAt", ExtArgs["result"]["disbursement"]>
+  export type DisbursementOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "date" | "referenceNumber" | "type" | "amount" | "createdById" | "createdAt", ExtArgs["result"]["disbursement"]>
   export type DisbursementInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
@@ -7737,6 +7761,7 @@ export namespace Prisma {
       projectId: string
       date: Date
       referenceNumber: string | null
+      type: $Enums.DisbursementType | null
       amount: number
       createdById: string
       createdAt: Date
@@ -8169,6 +8194,7 @@ export namespace Prisma {
     readonly projectId: FieldRef<"Disbursement", 'String'>
     readonly date: FieldRef<"Disbursement", 'DateTime'>
     readonly referenceNumber: FieldRef<"Disbursement", 'String'>
+    readonly type: FieldRef<"Disbursement", 'DisbursementType'>
     readonly amount: FieldRef<"Disbursement", 'Float'>
     readonly createdById: FieldRef<"Disbursement", 'String'>
     readonly createdAt: FieldRef<"Disbursement", 'DateTime'>
@@ -15572,6 +15598,7 @@ export namespace Prisma {
     projectId: 'projectId',
     date: 'date',
     referenceNumber: 'referenceNumber',
+    type: 'type',
     amount: 'amount',
     createdById: 'createdById',
     createdAt: 'createdAt'
@@ -15863,6 +15890,20 @@ export namespace Prisma {
    * Reference to a field of type 'ProjectStatus[]'
    */
   export type ListEnumProjectStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProjectStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'DisbursementType'
+   */
+  export type EnumDisbursementTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DisbursementType'>
+    
+
+
+  /**
+   * Reference to a field of type 'DisbursementType[]'
+   */
+  export type ListEnumDisbursementTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DisbursementType[]'>
     
 
 
@@ -16424,6 +16465,7 @@ export namespace Prisma {
     projectId?: StringFilter<"Disbursement"> | string
     date?: DateTimeFilter<"Disbursement"> | Date | string
     referenceNumber?: StringNullableFilter<"Disbursement"> | string | null
+    type?: EnumDisbursementTypeNullableFilter<"Disbursement"> | $Enums.DisbursementType | null
     amount?: FloatFilter<"Disbursement"> | number
     createdById?: StringFilter<"Disbursement"> | string
     createdAt?: DateTimeFilter<"Disbursement"> | Date | string
@@ -16436,6 +16478,7 @@ export namespace Prisma {
     projectId?: SortOrder
     date?: SortOrder
     referenceNumber?: SortOrderInput | SortOrder
+    type?: SortOrderInput | SortOrder
     amount?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
@@ -16451,6 +16494,7 @@ export namespace Prisma {
     projectId?: StringFilter<"Disbursement"> | string
     date?: DateTimeFilter<"Disbursement"> | Date | string
     referenceNumber?: StringNullableFilter<"Disbursement"> | string | null
+    type?: EnumDisbursementTypeNullableFilter<"Disbursement"> | $Enums.DisbursementType | null
     amount?: FloatFilter<"Disbursement"> | number
     createdById?: StringFilter<"Disbursement"> | string
     createdAt?: DateTimeFilter<"Disbursement"> | Date | string
@@ -16463,6 +16507,7 @@ export namespace Prisma {
     projectId?: SortOrder
     date?: SortOrder
     referenceNumber?: SortOrderInput | SortOrder
+    type?: SortOrderInput | SortOrder
     amount?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
@@ -16481,6 +16526,7 @@ export namespace Prisma {
     projectId?: StringWithAggregatesFilter<"Disbursement"> | string
     date?: DateTimeWithAggregatesFilter<"Disbursement"> | Date | string
     referenceNumber?: StringNullableWithAggregatesFilter<"Disbursement"> | string | null
+    type?: EnumDisbursementTypeNullableWithAggregatesFilter<"Disbursement"> | $Enums.DisbursementType | null
     amount?: FloatWithAggregatesFilter<"Disbursement"> | number
     createdById?: StringWithAggregatesFilter<"Disbursement"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Disbursement"> | Date | string
@@ -17545,6 +17591,7 @@ export namespace Prisma {
     id?: string
     date?: Date | string
     referenceNumber?: string | null
+    type?: $Enums.DisbursementType | null
     amount: number
     createdAt?: Date | string
     project: ProjectCreateNestedOneWithoutDisbursementsInput
@@ -17556,6 +17603,7 @@ export namespace Prisma {
     projectId: string
     date?: Date | string
     referenceNumber?: string | null
+    type?: $Enums.DisbursementType | null
     amount: number
     createdById: string
     createdAt?: Date | string
@@ -17565,6 +17613,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     referenceNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: NullableEnumDisbursementTypeFieldUpdateOperationsInput | $Enums.DisbursementType | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutDisbursementsNestedInput
@@ -17576,6 +17625,7 @@ export namespace Prisma {
     projectId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     referenceNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: NullableEnumDisbursementTypeFieldUpdateOperationsInput | $Enums.DisbursementType | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17586,6 +17636,7 @@ export namespace Prisma {
     projectId: string
     date?: Date | string
     referenceNumber?: string | null
+    type?: $Enums.DisbursementType | null
     amount: number
     createdById: string
     createdAt?: Date | string
@@ -17595,6 +17646,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     referenceNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: NullableEnumDisbursementTypeFieldUpdateOperationsInput | $Enums.DisbursementType | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -17604,6 +17656,7 @@ export namespace Prisma {
     projectId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     referenceNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: NullableEnumDisbursementTypeFieldUpdateOperationsInput | $Enums.DisbursementType | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18783,11 +18836,19 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
+  export type EnumDisbursementTypeNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.DisbursementType | EnumDisbursementTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.DisbursementType[] | ListEnumDisbursementTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.DisbursementType[] | ListEnumDisbursementTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumDisbursementTypeNullableFilter<$PrismaModel> | $Enums.DisbursementType | null
+  }
+
   export type DisbursementCountOrderByAggregateInput = {
     id?: SortOrder
     projectId?: SortOrder
     date?: SortOrder
     referenceNumber?: SortOrder
+    type?: SortOrder
     amount?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
@@ -18802,6 +18863,7 @@ export namespace Prisma {
     projectId?: SortOrder
     date?: SortOrder
     referenceNumber?: SortOrder
+    type?: SortOrder
     amount?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
@@ -18812,6 +18874,7 @@ export namespace Prisma {
     projectId?: SortOrder
     date?: SortOrder
     referenceNumber?: SortOrder
+    type?: SortOrder
     amount?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
@@ -18819,6 +18882,16 @@ export namespace Prisma {
 
   export type DisbursementSumOrderByAggregateInput = {
     amount?: SortOrder
+  }
+
+  export type EnumDisbursementTypeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DisbursementType | EnumDisbursementTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.DisbursementType[] | ListEnumDisbursementTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.DisbursementType[] | ListEnumDisbursementTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumDisbursementTypeNullableWithAggregatesFilter<$PrismaModel> | $Enums.DisbursementType | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumDisbursementTypeNullableFilter<$PrismaModel>
+    _max?: NestedEnumDisbursementTypeNullableFilter<$PrismaModel>
   }
 
   export type EnumNotificationPriorityFilter<$PrismaModel = never> = {
@@ -19947,6 +20020,10 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type NullableEnumDisbursementTypeFieldUpdateOperationsInput = {
+    set?: $Enums.DisbursementType | null
+  }
+
   export type ProjectUpdateOneRequiredWithoutDisbursementsNestedInput = {
     create?: XOR<ProjectCreateWithoutDisbursementsInput, ProjectUncheckedCreateWithoutDisbursementsInput>
     connectOrCreate?: ProjectCreateOrConnectWithoutDisbursementsInput
@@ -20553,6 +20630,23 @@ export namespace Prisma {
     _max?: NestedEnumProjectStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumDisbursementTypeNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.DisbursementType | EnumDisbursementTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.DisbursementType[] | ListEnumDisbursementTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.DisbursementType[] | ListEnumDisbursementTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumDisbursementTypeNullableFilter<$PrismaModel> | $Enums.DisbursementType | null
+  }
+
+  export type NestedEnumDisbursementTypeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DisbursementType | EnumDisbursementTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.DisbursementType[] | ListEnumDisbursementTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.DisbursementType[] | ListEnumDisbursementTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumDisbursementTypeNullableWithAggregatesFilter<$PrismaModel> | $Enums.DisbursementType | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumDisbursementTypeNullableFilter<$PrismaModel>
+    _max?: NestedEnumDisbursementTypeNullableFilter<$PrismaModel>
+  }
+
   export type NestedEnumNotificationPriorityFilter<$PrismaModel = never> = {
     equals?: $Enums.NotificationPriority | EnumNotificationPriorityFieldRefInput<$PrismaModel>
     in?: $Enums.NotificationPriority[] | ListEnumNotificationPriorityFieldRefInput<$PrismaModel>
@@ -20902,6 +20996,7 @@ export namespace Prisma {
     id?: string
     date?: Date | string
     referenceNumber?: string | null
+    type?: $Enums.DisbursementType | null
     amount: number
     createdAt?: Date | string
     project: ProjectCreateNestedOneWithoutDisbursementsInput
@@ -20912,6 +21007,7 @@ export namespace Prisma {
     projectId: string
     date?: Date | string
     referenceNumber?: string | null
+    type?: $Enums.DisbursementType | null
     amount: number
     createdAt?: Date | string
   }
@@ -21258,6 +21354,7 @@ export namespace Prisma {
     projectId?: StringFilter<"Disbursement"> | string
     date?: DateTimeFilter<"Disbursement"> | Date | string
     referenceNumber?: StringNullableFilter<"Disbursement"> | string | null
+    type?: EnumDisbursementTypeNullableFilter<"Disbursement"> | $Enums.DisbursementType | null
     amount?: FloatFilter<"Disbursement"> | number
     createdById?: StringFilter<"Disbursement"> | string
     createdAt?: DateTimeFilter<"Disbursement"> | Date | string
@@ -21579,6 +21676,7 @@ export namespace Prisma {
     id?: string
     date?: Date | string
     referenceNumber?: string | null
+    type?: $Enums.DisbursementType | null
     amount: number
     createdAt?: Date | string
     createdBy: UserCreateNestedOneWithoutDisbursementsInput
@@ -21588,6 +21686,7 @@ export namespace Prisma {
     id?: string
     date?: Date | string
     referenceNumber?: string | null
+    type?: $Enums.DisbursementType | null
     amount: number
     createdById: string
     createdAt?: Date | string
@@ -23844,6 +23943,7 @@ export namespace Prisma {
     projectId: string
     date?: Date | string
     referenceNumber?: string | null
+    type?: $Enums.DisbursementType | null
     amount: number
     createdAt?: Date | string
   }
@@ -24145,6 +24245,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     referenceNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: NullableEnumDisbursementTypeFieldUpdateOperationsInput | $Enums.DisbursementType | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutDisbursementsNestedInput
@@ -24155,6 +24256,7 @@ export namespace Prisma {
     projectId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     referenceNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: NullableEnumDisbursementTypeFieldUpdateOperationsInput | $Enums.DisbursementType | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -24164,6 +24266,7 @@ export namespace Prisma {
     projectId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     referenceNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: NullableEnumDisbursementTypeFieldUpdateOperationsInput | $Enums.DisbursementType | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -24305,6 +24408,7 @@ export namespace Prisma {
     id?: string
     date?: Date | string
     referenceNumber?: string | null
+    type?: $Enums.DisbursementType | null
     amount: number
     createdById: string
     createdAt?: Date | string
@@ -24356,6 +24460,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     referenceNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: NullableEnumDisbursementTypeFieldUpdateOperationsInput | $Enums.DisbursementType | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneRequiredWithoutDisbursementsNestedInput
@@ -24365,6 +24470,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     referenceNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: NullableEnumDisbursementTypeFieldUpdateOperationsInput | $Enums.DisbursementType | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24374,6 +24480,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     referenceNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: NullableEnumDisbursementTypeFieldUpdateOperationsInput | $Enums.DisbursementType | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

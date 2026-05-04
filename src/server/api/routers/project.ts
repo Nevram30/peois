@@ -254,6 +254,7 @@ export const projectRouter = createTRPCRouter({
         projectId: z.string(),
         amount: z.number().min(0),
         referenceNumber: z.string().optional(),
+        type: z.enum(["FUEL", "LABOR", "MATERIALS"]).optional(),
         date: z.date().optional(),
       }),
     )
@@ -263,6 +264,7 @@ export const projectRouter = createTRPCRouter({
           projectId: input.projectId,
           amount: input.amount,
           referenceNumber: input.referenceNumber,
+          type: input.type,
           date: input.date ?? new Date(),
           createdById: ctx.session.user.id,
         },
