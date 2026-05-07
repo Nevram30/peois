@@ -88,7 +88,7 @@ export function NavHeader({ user, userId }: { user: { name?: string | null; emai
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg overflow-hidden bg-gray-100">
                 <Image
-                  src="/image/logo.png"
+                  src="/image/logo.jpeg"
                   alt="PEO Logo"
                   width={40}
                   height={40}

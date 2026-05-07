@@ -60,12 +60,12 @@ export default function LoginPage() {
         <div className="rounded-b-2xl bg-white px-10 py-10 shadow-md">
           {/* Logo */}
           <div className="mb-6 flex flex-col items-center">
-            <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gray-100">
+            <div className="mb-4 flex h-25 w-25 items-center justify-center rounded-full bg-gray-100">
               <Image
                 src="/favicon.ico"
                 alt="PEO Logo"
-                width={56}
-                height={56}
+                width={105}
+                height={105}
                 className="rounded-full object-contain"
               />
             </div>
