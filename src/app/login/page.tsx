@@ -38,7 +38,7 @@ export default function LoginPage() {
 
       // Full page reload so the server picks up the new JWT cookie.
       if (role === "SUPER_ADMIN") {
-        window.location.href = "/super-admin/dashboard";
+        window.location.href = "/super-admin/dashboardv2";
       } else if (role === "ADMIN") {
         window.location.href = "/admin/dashboard";
       } else if (role === "USER") {

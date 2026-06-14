@@ -44,3 +44,21 @@ export const projectActivityRouter = createTRPCRouter({
       });
     }),
 });
+
+
+/*routers structure:
+
+export const projectActivityRouter = createTRPCRouter({
+
+  getAll: protectedProcedure.query(async ({ ctx }) => { 
+  
+  return ctx.db.projectActivity.findMany({
+  
+  })
+  
+  }),
+
+  create: protectedProcedure.input().mutation(async ({ ctx, input }) => {     })
+
+
+})*/

@@ -12,15 +12,15 @@ import {
   type SourceOfFundValue,
 } from "~/lib/fund-constants";
 
-const STATUS_BADGE: Record<string, string> = {
-  NOT_YET_STARTED: "bg-gray-500 text-white",
-  ON_GOING: "bg-orange-500 text-white",
-  COMPLETED: "bg-green-500 text-white",
-  SUSPENDED: "bg-red-500 text-white",
-  FOR_IMPLEMENTATION: "bg-blue-500 text-white",
-  RE_ALIGNMENT: "bg-amber-500 text-white",
-  OTHERS: "bg-gray-500 text-white",
-};
+// const STATUS_BADGE: Record<string, string> = {
+//   NOT_YET_STARTED: "bg-gray-500 text-white",
+//   ON_GOING: "bg-orange-500 text-white",
+//   COMPLETED: "bg-green-500 text-white",
+//   SUSPENDED: "bg-red-500 text-white",
+//   FOR_IMPLEMENTATION: "bg-blue-500 text-white",
+//   RE_ALIGNMENT: "bg-amber-500 text-white",
+//   OTHERS: "bg-gray-500 text-white",
+// };
 
 const STATUS_PILL: Record<string, string> = {
   NOT_YET_STARTED: "bg-gray-50 text-gray-600 border border-gray-200",
@@ -147,13 +147,13 @@ export function UserProjectDetail({ projectId }: Props) {
   const totalDays =
     project.dateStarted && project.targetCompletionDate
       ? Math.max(
-          0,
-          Math.ceil(
-            (new Date(project.targetCompletionDate).getTime() -
-              new Date(project.dateStarted).getTime()) /
-              (1000 * 60 * 60 * 24),
-          ),
-        )
+        0,
+        Math.ceil(
+          (new Date(project.targetCompletionDate).getTime() -
+            new Date(project.dateStarted).getTime()) /
+          (1000 * 60 * 60 * 24),
+        ),
+      )
       : project.duration;
 
   const engineers = (project.projectEngineer ?? "")

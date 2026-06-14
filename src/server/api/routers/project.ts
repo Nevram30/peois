@@ -30,7 +30,6 @@ export const projectRouter = createTRPCRouter({
       });
     }),
 
-
   create: protectedProcedure
     .input(
       z.object({
@@ -378,6 +377,46 @@ export const projectRouter = createTRPCRouter({
     });
     return rows.map((r) => r.budgetYear).filter((y): y is string => Boolean(y));
   }),
+
+  // getDistrictData: protectedProcedure
+  //   .query(async ({ ctx}) => {
+  //     const districtCounts = await ctx.db.project.groupBy({
+  //       by: ["district"],
+  //       where: { district: { not: null } },
+  //       _count: { district: true },
+  //     });
+
+  //     return districtCounts.map((d) => ({
+  //       district: d.district!,
+  //       count: d._count.district,
+  //     }));
+  //   }),
+
+  //get district 1 and district 2 status like how many ongoing, completed, etc. in each district
+  getDistrictData: protectedProcedure
+    .query(async ({ ctx }) => {
+      const districts = ["DISTRICT_I", "DISTRICT_II"] as const;
+
+      const data = await Promise.all(
+        districts.map(async (district) => {
+          const counts = await ctx.db.project.groupBy({
+            by: ["status"],
+            where: { district },
+            _count: { status: true },
+          });
+
+          return {
+            district,
+            counts: counts.reduce((acc, curr) => {
+              acc[curr.status] = curr._count.status;
+              return acc;
+            }, {} as Record<string, number>),
+          };
+        }),
+      );
+
+      return data;
+    }),
 
   getFinancialOverview: protectedProcedure
     .input(z.object({ budgetYear: z.string().optional() }).optional())
