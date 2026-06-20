@@ -38,7 +38,17 @@ ________________________________________________________________
 ## ADMIN
 
 - FRONT END
-    - Redesign super admin dashboard
+    - Admin Dashboard
+        - Redesign super admin dashboard
+    - Projects
+        - Add New Project
+            - Project Identity & Status
+                - Change the Card Design of Project Identity & Status. [Done]
+            - Funding & Disbursement Tracking Card
+                - Change the Card Design of Funding & Disbursement Tracking. [Done]
+            - Project Timeline Card
+                - Add new Data fields ( Adjustment Types and Justification Description)
+                    - What are the adjustment types?.
 
 - BACKEND
     - 

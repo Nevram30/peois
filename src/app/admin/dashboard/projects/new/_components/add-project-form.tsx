@@ -112,6 +112,17 @@ const BillIcon = (
     <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
   </svg>
 );
+const ClipboardClockIcon = (
+  <svg className="h-9 w-9" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h.008m-3.008 9h11.25a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125H9.75M8.25 8.25h6.75" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 15.75v2.25l1.5 1.5m4.5-1.5a6 6 0 1 1-12 0 6 6 0 0 1 12 0Z" />
+  </svg>
+);
+const WalletIcon = (
+  <svg className="h-9 w-9" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a2.25 2.25 0 0 0-2.25-2.25H15a3 3 0 1 1-6 0H5.25A2.25 2.25 0 0 0 3 12m18 0v6a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 9m18 0V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v3" />
+  </svg>
+);
 const CalendarIcon = (
   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
     <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
@@ -145,6 +156,7 @@ export function AddProjectForm() {
   const [modeOfImplementation, setModeOfImplementation] = useState("");
   const [contractorName, setContractorName] = useState("");
   const [status, setStatus] = useState<ProjectStatusValue>("FOR_IMPLEMENTATION");
+  const [completionPercentage, setCompletionPercentage] = useState("0");
 
   // ── Project Location ─────────────────────────────────────────────────
   const [district, setDistrict] = useState("");
@@ -333,6 +345,7 @@ export function AddProjectForm() {
       sourceOfFund: sourceOfFund as SourceOfFundValue,
       projectCost: parseFloat(projectCost.replace(/,/g, "")) || 0,
       contractCost: parseFloat(contractCost.replace(/,/g, "")) || 0,
+      completionPercentage: Math.max(0, Math.min(100, parseInt(completionPercentage) || 0)),
       contractorName:
         modeOfImplementation === "BY_CONTRACT" ? contractorName || undefined : undefined,
       projectEngineer: engineers.join(", ") || undefined,
@@ -471,7 +484,8 @@ export function AddProjectForm() {
                       />
                     </div>
                   </div>
-                  <div>
+                  {/* Contract Cost field hidden from UI per request — kept in code for state/submission logic */}
+                  {/* <div>
                     <label className={labelClass}>Contract Cost</label>
                     <div className="relative">
                       <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">₱</span>
@@ -485,9 +499,21 @@ export function AddProjectForm() {
                         className={`${inputClass} pl-7`}
                       />
                     </div>
+                  </div> */}
+                  <div>
+                    <label className={labelClass}>Current Status</label>
+                    <select
+                      value={status}
+                      onChange={(e) => setStatus(e.target.value as ProjectStatusValue)}
+                      className={inputClass}
+                    >
+                      {PROJECT_STATUS_ORDER.filter((s) => s !== "NOT_YET_STARTED").map((s) => (
+                        <option key={s} value={s}>{PROJECT_STATUS_LABEL[s]}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className={labelClass}>Track Number</label>
                     <input
@@ -514,31 +540,39 @@ export function AddProjectForm() {
                       <option value="BY_CONTRACT">By Contract</option>
                     </select>
                   </div>
-                  <div>
-                    <label className={labelClass}>Status</label>
-                    <select
-                      value={status}
-                      onChange={(e) => setStatus(e.target.value as ProjectStatusValue)}
-                      className={inputClass}
-                    >
-                      {PROJECT_STATUS_ORDER.filter((s) => s !== "NOT_YET_STARTED").map((s) => (
-                        <option key={s} value={s}>{PROJECT_STATUS_LABEL[s]}</option>
-                      ))}
-                    </select>
-                  </div>
                 </div>
-                {modeOfImplementation === "BY_CONTRACT" && (
+                <div className="grid grid-cols-2 gap-3">
+                  {modeOfImplementation === "BY_CONTRACT" ? (
+                    <div>
+                      <label className={labelClass}>Contractor Name <span className="text-red-500">*</span></label>
+                      <input
+                        type="text"
+                        value={contractorName}
+                        onChange={(e) => setContractorName(e.target.value)}
+                        placeholder="Enter contractor name"
+                        className={inputClass}
+                      />
+                    </div>
+                  ) : (
+                    <div />
+                  )}
                   <div>
-                    <label className={labelClass}>Contractor Name <span className="text-red-500">*</span></label>
+                    <div className="mb-1 flex items-center justify-between">
+                      <label className={labelClass}>Physical Progress</label>
+                      <span className="text-xs font-semibold text-gray-400">
+                        ({Math.max(0, Math.min(100, parseInt(completionPercentage) || 0))}%)
+                      </span>
+                    </div>
                     <input
-                      type="text"
-                      value={contractorName}
-                      onChange={(e) => setContractorName(e.target.value)}
-                      placeholder="Enter contractor name"
-                      className={inputClass}
+                      type="range"
+                      min={0}
+                      max={100}
+                      value={Math.max(0, Math.min(100, parseInt(completionPercentage) || 0))}
+                      onChange={(e) => setCompletionPercentage(e.target.value)}
+                      className="h-2.5 w-full cursor-pointer appearance-none rounded-full bg-gray-100 accent-blue-900"
                     />
                   </div>
-                )}
+                </div>
               </div>
             </div>
           </section>
@@ -646,58 +680,89 @@ export function AddProjectForm() {
         {/* ── Funding & Disbursement Tracking ───────────────────────── */}
         <section className={cardClass}>
           <SectionHeader icon={BillIcon} title="Funding & Disbursement Tracking" />
-          <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-3">
-            <div>
-              <label className={labelClass}>Source of Fund <span className="text-red-500">*</span></label>
-              <select
-                required
-                value={sourceOfFund}
-                onChange={(e) => {
-                  const next = e.target.value as SourceOfFundValue | "";
-                  setSourceOfFund(next);
-                  const allowed = next ? SOURCE_TO_SUB_TYPES[next] : [];
-                  if (!allowed.includes(subType as ProjectSubTypeValue)) setSubType("");
-                }}
-                className={inputClass}
-              >
-                <option value="">Select Source</option>
-                {SOURCE_OF_FUND_ORDER.map((k) => (
-                  <option key={k} value={k}>{SOURCE_OF_FUND_LABEL[k]}</option>
-                ))}
-              </select>
+          <div className="grid grid-cols-1 gap-6 p-5 lg:grid-cols-[minmax(0,320px)_1fr]">
+            {/* Left column — funding selects */}
+            <div className="space-y-4">
+              <div>
+                <label className={labelClass}>Source of Fund <span className="text-red-500">*</span></label>
+                <select
+                  required
+                  value={sourceOfFund}
+                  onChange={(e) => {
+                    const next = e.target.value as SourceOfFundValue | "";
+                    setSourceOfFund(next);
+                    const allowed = next ? SOURCE_TO_SUB_TYPES[next] : [];
+                    if (!allowed.includes(subType as ProjectSubTypeValue)) setSubType("");
+                  }}
+                  className={inputClass}
+                >
+                  <option value="">Select Source</option>
+                  {SOURCE_OF_FUND_ORDER.map((k) => (
+                    <option key={k} value={k}>{SOURCE_OF_FUND_LABEL[k]}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className={labelClass}>Fund Category</label>
+                <select
+                  value={subType}
+                  onChange={(e) => setSubType(e.target.value)}
+                  disabled={!sourceOfFund || availableSubTypes.length === 0}
+                  className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
+                >
+                  <option value="">
+                    {!sourceOfFund
+                      ? "Select Source first"
+                      : availableSubTypes.length === 0
+                        ? "No sub-categories available"
+                        : "Select Sub-Category"}
+                  </option>
+                  {availableSubTypes.map((k) => (
+                    <option key={k} value={k}>{PROJECT_SUB_TYPE_LABEL[k]}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className={labelClass}>Budget Year</label>
+                <select
+                  value={budgetYear}
+                  onChange={(e) => setBudgetYear(e.target.value)}
+                  className={inputClass}
+                >
+                  <option value="">Select year</option>
+                  {Array.from({ length: 10 }, (_, i) => String(new Date().getFullYear() - i)).map((y) => (
+                    <option key={y} value={y}>{y}</option>
+                  ))}
+                </select>
+              </div>
             </div>
-            <div>
-              <label className={labelClass}>Fund Category</label>
-              <select
-                value={subType}
-                onChange={(e) => setSubType(e.target.value)}
-                disabled={!sourceOfFund || availableSubTypes.length === 0}
-                className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
-              >
-                <option value="">
-                  {!sourceOfFund
-                    ? "Select Source first"
-                    : availableSubTypes.length === 0
-                      ? "No sub-categories available"
-                      : "Select Sub-Category"}
-                </option>
-                {availableSubTypes.map((k) => (
-                  <option key={k} value={k}>{PROJECT_SUB_TYPE_LABEL[k]}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>Budget Year</label>
-              <select
-                value={budgetYear}
-                onChange={(e) => setBudgetYear(e.target.value)}
-                className={inputClass}
-              >
-                <option value="">Select year</option>
-                {Array.from({ length: 10 }, (_, i) => String(new Date().getFullYear() - i)).map((y) => (
-                  <option key={y} value={y}>{y}</option>
-                ))}
-              </select>
+
+            {/* Right column — tracking placeholders (available after project init) */}
+            <div className="space-y-6">
+              <div>
+                <p className={labelClass}>Recent Disbursements</p>
+                <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-200 bg-gray-50/60 px-6 py-10 text-center">
+                  <span className="text-gray-300">{ClipboardClockIcon}</span>
+                  <p className="mt-3 text-sm font-semibold text-gray-500">
+                    Disbursement tracking will be available after project initialization.
+                  </p>
+                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                    Awaiting system activation of financial module
+                  </p>
+                </div>
+              </div>
+              <div>
+                <p className={labelClass}>Revised Contract Cost History</p>
+                <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-200 bg-gray-50/60 px-6 py-10 text-center">
+                  <span className="text-gray-300">{WalletIcon}</span>
+                  <p className="mt-3 text-sm font-semibold text-gray-500">
+                    Revised Contract tracking will be available after project initialization.
+                  </p>
+                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                    Awaiting system activation of financial module
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </section>
