@@ -361,7 +361,8 @@ exports.SourceOfFund = exports.$Enums.SourceOfFund = {
   MOOE: 'MOOE',
   NCDC: 'NCDC',
   PRDP: 'PRDP',
-  MIADP: 'MIADP'
+  MIADP: 'MIADP',
+  CONFIDENTIAL: 'CONFIDENTIAL'
 };
 
 exports.ProjectStatus = exports.$Enums.ProjectStatus = {

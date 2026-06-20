@@ -1027,11 +1027,10 @@ export default function ProjectsDataListPage() {
               <button
                 key={p}
                 onClick={() => setPage(p)}
-                className={`flex h-8 w-8 items-center justify-center rounded-lg text-xs font-medium transition ${
-                  p === safePage
-                    ? "bg-blue-600 text-white shadow-sm"
-                    : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
-                }`}
+                className={`flex h-8 w-8 items-center justify-center rounded-lg text-xs font-medium transition ${p === safePage
+                  ? "bg-blue-600 text-white shadow-sm"
+                  : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                  }`}
               >
                 {p}
               </button>

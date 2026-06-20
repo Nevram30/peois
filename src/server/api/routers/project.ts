@@ -69,10 +69,10 @@ export const projectRouter = createTRPCRouter({
       const duration =
         input.dateStarted && input.targetCompletionDate
           ? Math.ceil(
-              (input.targetCompletionDate.getTime() -
-                input.dateStarted.getTime()) /
-                (1000 * 60 * 60 * 24),
-            )
+            (input.targetCompletionDate.getTime() -
+              input.dateStarted.getTime()) /
+            (1000 * 60 * 60 * 24),
+          )
           : 0;
 
       const numPersons = input.numFemale + input.numMale;
@@ -115,7 +115,7 @@ export const projectRouter = createTRPCRouter({
         },
       });
     }),
-    
+
   update: protectedProcedure
     .input(
       z.object({
@@ -156,10 +156,10 @@ export const projectRouter = createTRPCRouter({
       const duration =
         data.dateStarted && data.targetCompletionDate
           ? Math.ceil(
-              (data.targetCompletionDate.getTime() -
-                data.dateStarted.getTime()) /
-                (1000 * 60 * 60 * 24),
-            )
+            (data.targetCompletionDate.getTime() -
+              data.dateStarted.getTime()) /
+            (1000 * 60 * 60 * 24),
+          )
           : 0;
       const numPersons = data.numFemale + data.numMale;
 
@@ -225,9 +225,9 @@ export const projectRouter = createTRPCRouter({
       const duration =
         data.dateStarted && data.targetCompletionDate
           ? Math.ceil(
-              (data.targetCompletionDate.getTime() - data.dateStarted.getTime()) /
-                (1000 * 60 * 60 * 24),
-            )
+            (data.targetCompletionDate.getTime() - data.dateStarted.getTime()) /
+            (1000 * 60 * 60 * 24),
+          )
           : 0;
 
       const [project] = await ctx.db.$transaction([
@@ -421,55 +421,59 @@ export const projectRouter = createTRPCRouter({
   getFinancialOverview: protectedProcedure
     .input(z.object({ budgetYear: z.string().optional() }).optional())
     .query(async ({ ctx, input }) => {
-    const currentYear = new Date().getFullYear().toString();
-    const where = input?.budgetYear ? { budgetYear: input.budgetYear } : {};
+      const currentYear = new Date().getFullYear().toString();
+      const where = input?.budgetYear ? { budgetYear: input.budgetYear } : {};
 
-    const projects = await ctx.db.project.findMany({
-      where,
-      select: {
-        sourceOfFund: true,
-        subType: true,
-        contractCost: true,
-        completionPercentage: true,
-      },
-    });
+      const projects = await ctx.db.project.findMany({
+        where,
+        select: {
+          sourceOfFund: true,
+          subType: true,
+          projectCost: true,
+          completionPercentage: true,
+        },
+      });
 
-    const bySource: Record<string, number> = {};
-    const bySubType: Record<string, { amount: number; sourceOfFund: string }> = {};
-    let totalAllocation = 0;
-    let progressSum = 0;
+      const bySource: Record<string, number> = {};
+      const bySubType: Record<string, { amount: number; sourceOfFund: string }> = {};
 
-    for (const p of projects) {
-      progressSum += Math.max(0, Math.min(100, p.completionPercentage ?? 0));
+      let totalAllocation = 0;
+      let progressSum = 0;
 
-      if (p.contractCost > 0) {
-        bySource[p.sourceOfFund] = (bySource[p.sourceOfFund] ?? 0) + p.contractCost;
-        totalAllocation += p.contractCost;
+      for (const p of projects) {
 
-        const subKey = p.subType ?? `__NONE__:${p.sourceOfFund}`;
-        const existing = bySubType[subKey];
-        if (existing) {
-          existing.amount += p.contractCost;
-        } else {
-          bySubType[subKey] = {
-            amount: p.contractCost,
-            sourceOfFund: p.sourceOfFund,
-          };
+        progressSum += Math.max(0, Math.min(100, p.completionPercentage ?? 0));
+
+        if (p.projectCost > 0) {
+          bySource[p.sourceOfFund] = (bySource[p.sourceOfFund] ?? 0) + p.projectCost;
+          totalAllocation += p.projectCost;
+
+          const subKey = p.subType ?? `__NONE__:${p.sourceOfFund}`;
+          const existing = bySubType[subKey];
+          if (existing) {
+            existing.amount += p.projectCost;
+          } else {
+            bySubType[subKey] = {
+              amount: p.projectCost,
+              sourceOfFund: p.sourceOfFund,
+            };
+          }
         }
       }
-    }
 
-    const executionRate =
-      projects.length > 0
-        ? Math.min(100, Math.max(0, progressSum / projects.length))
-        : 0;
+      const executionRate =
+        projects.length > 0
+          ? Math.min(100, Math.max(0, progressSum / projects.length))
+          : 0;
 
-    return {
-      budgetYear: input?.budgetYear ?? currentYear,
-      totalAllocation,
-      bySource,
-      bySubType,
-      executionRate: Math.round(executionRate * 10) / 10,
-    };
-  }),
+      return {
+        budgetYear: input?.budgetYear ?? currentYear,
+        totalAllocation,
+        bySource,
+        bySubType,
+        executionRate: Math.round(executionRate * 10) / 10,
+      };
+
+
+    }),
 });

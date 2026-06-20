@@ -46,6 +46,7 @@ enum SourceOfFund {
   NCDC
   PRDP
   MIADP
+  CONFIDENTIAL
 }
 
 enum District {

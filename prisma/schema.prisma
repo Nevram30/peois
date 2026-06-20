@@ -46,6 +46,7 @@ enum SourceOfFund {
     NCDC
     PRDP
     MIADP
+    CONFIDENTIAL
 }
 
 enum District {
@@ -125,41 +126,41 @@ enum DocumentStatus {
 }
 
 model User {
-    id            String        @id @default(cuid())
-    name          String?
-    email         String        @unique
-    password      String
-    role          UserRole      @default(ADMIN)
-    employeeId    String?       @unique
-    designation   String?
-    division      String?
-    contactNumber String?
-    sex           Sex?
-    status        UserStatus    @default(PENDING)
-    emailVerified DateTime?
-    image         String?
-    createdAt     DateTime      @default(now())
-    updatedAt     DateTime      @updatedAt
-    posts              Post[]
-    projects           Project[]
-    sessions                   UserSession[]
-    documents                  Document[]
-    projectActivities          ProjectActivity[]
-    disbursements              Disbursement[]
-    taskNotificationsReceived  TaskNotification[] @relation("UserNotificationsReceived")
-    taskNotificationsCreated   TaskNotification[] @relation("UserNotificationsCreated")
-    taskReplies                TaskReply[]
-    projectFiles               ProjectFile[]
+    id                        String             @id @default(cuid())
+    name                      String?
+    email                     String             @unique
+    password                  String
+    role                      UserRole           @default(ADMIN)
+    employeeId                String?            @unique
+    designation               String?
+    division                  String?
+    contactNumber             String?
+    sex                       Sex?
+    status                    UserStatus         @default(PENDING)
+    emailVerified             DateTime?
+    image                     String?
+    createdAt                 DateTime           @default(now())
+    updatedAt                 DateTime           @updatedAt
+    posts                     Post[]
+    projects                  Project[]
+    sessions                  UserSession[]
+    documents                 Document[]
+    projectActivities         ProjectActivity[]
+    disbursements             Disbursement[]
+    taskNotificationsReceived TaskNotification[] @relation("UserNotificationsReceived")
+    taskNotificationsCreated  TaskNotification[] @relation("UserNotificationsCreated")
+    taskReplies               TaskReply[]
+    projectFiles              ProjectFile[]
 }
 
 model UserSession {
-    id        String   @id @default(cuid())
-    userId    String
-    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    ipAddress String?
-    userAgent String?
-    createdAt DateTime @default(now())
-    expiresAt DateTime
+    id         String   @id @default(cuid())
+    userId     String
+    user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    ipAddress  String?
+    userAgent  String?
+    createdAt  DateTime @default(now())
+    expiresAt  DateTime
     lastActive DateTime @default(now())
 
     @@index([userId])
@@ -167,51 +168,50 @@ model UserSession {
 }
 
 model Project {
-    id                    String               @id @default(cuid())
-    projectCode           String               @unique
-    title                 String
-    subType               ProjectSubType?
-    modeOfImplementation  ModeOfImplementation
+    id                     String               @id @default(cuid())
+    projectCode            String               @unique
+    title                  String
+    subType                ProjectSubType?
+    modeOfImplementation   ModeOfImplementation
     locationImplementation District
-    sourceOfFund          SourceOfFund
-    projectCost           Float                @default(0)
-    contractCost          Float                @default(0)
-    contractorName        String?
-    projectEngineer       String?
-    budgetYear            String?
-    dateStarted           DateTime?
-    targetCompletionDate  DateTime?
-    duration              Int                  @default(0)
-    revisedCompletionDate DateTime?
-    dateCompleted         DateTime?
-    daysSuspended         Int                  @default(0)
-    daysExtended          Int                  @default(0)
-    numFemale             Int                  @default(0)
-    numMale               Int                  @default(0)
-    numPersons            Int                  @default(0)
-    numManDays            Int                  @default(0)
-    district              District?
-    cityMunicipality      String?
-    barangay              String?
-    purok                 String?
-    sitio                 String?
-    description           String?
-    status                ProjectStatus        @default(NOT_YET_STARTED)
-    completionPercentage  Int                  @default(0)
+    sourceOfFund           SourceOfFund
+    projectCost            Float                @default(0)
+    contractCost           Float                @default(0)
+    contractorName         String?
+    projectEngineer        String?
+    budgetYear             String?
+    dateStarted            DateTime?
+    targetCompletionDate   DateTime?
+    duration               Int                  @default(0)
+    revisedCompletionDate  DateTime?
+    dateCompleted          DateTime?
+    daysSuspended          Int                  @default(0)
+    daysExtended           Int                  @default(0)
+    numFemale              Int                  @default(0)
+    numMale                Int                  @default(0)
+    numPersons             Int                  @default(0)
+    numManDays             Int                  @default(0)
+    district               District?
+    cityMunicipality       String?
+    barangay               String?
+    purok                  String?
+    sitio                  String?
+    description            String?
+    status                 ProjectStatus        @default(NOT_YET_STARTED)
+    completionPercentage   Int                  @default(0)
 
-    
-    imageUrl              String?
-    documentUrl           String?
-    documentName          String?
-    createdBy             User                 @relation(fields: [createdById], references: [id])
-    createdById           String
-    createdAt             DateTime             @default(now())
-    updatedAt             DateTime             @updatedAt
+    imageUrl     String?
+    documentUrl  String?
+    documentName String?
+    createdBy    User     @relation(fields: [createdById], references: [id])
+    createdById  String
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
 
-    activities            ProjectActivity[]
-    disbursements         Disbursement[]
-    taskNotifications     TaskNotification[]
-    files                 ProjectFile[]
+    activities        ProjectActivity[]
+    disbursements     Disbursement[]
+    taskNotifications TaskNotification[]
+    files             ProjectFile[]
 
     @@index([title])
     @@index([status])
@@ -296,30 +296,30 @@ model TaskReplyDocument {
 }
 
 model Document {
-    id             String         @id @default(cuid())
-    documentCode   String         @unique
-    type           DocumentType
-    title          String
-    description    String?
-    status         DocumentStatus @default(DRAFT)
+    id           String         @id @default(cuid())
+    documentCode String         @unique
+    type         DocumentType
+    title        String
+    description  String?
+    status       DocumentStatus @default(DRAFT)
 
-    filePath       String?
-    fileName       String?
-    fileSize       Int?
+    filePath String?
+    fileName String?
+    fileSize Int?
 
-    amount         Float?
-    purpose        String?
+    amount  Float?
+    purpose String?
 
-    district       District
-    projectRef     String?
+    district   District
+    projectRef String?
 
-    releasedAt     DateTime?
-    releasedTo     String?
+    releasedAt DateTime?
+    releasedTo String?
 
-    createdBy      User           @relation(fields: [createdById], references: [id])
-    createdById    String
-    createdAt      DateTime       @default(now())
-    updatedAt      DateTime       @updatedAt
+    createdBy   User     @relation(fields: [createdById], references: [id])
+    createdById String
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
 
     @@index([type])
     @@index([status])
@@ -354,4 +354,3 @@ model Post {
 
     @@index([name])
 }
-

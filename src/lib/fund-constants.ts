@@ -13,6 +13,7 @@ export const SOURCE_OF_FUND_VALUES = [
   "NCDC",
   "PRDP",
   "MIADP",
+  "CONFIDENTIAL",
 ] as const;
 
 export type SourceOfFundValue = (typeof SOURCE_OF_FUND_VALUES)[number];
@@ -61,6 +62,7 @@ export const SOURCE_OF_FUND_LABEL: Record<SourceOfFundValue, string> = {
   AID: "Aid",
   LOAN: "Loan",
   OTHERS: "Others",
+  CONFIDENTIAL: "5% Confidential Fund",
 };
 
 export const PROJECT_SUB_TYPE_LABEL: Record<ProjectSubTypeValue, string> = {
@@ -125,6 +127,7 @@ export const SOURCE_TO_SUB_TYPES: Record<SourceOfFundValue, ProjectSubTypeValue[
   AID: [],
   LOAN: [],
   OTHERS: [],
+  CONFIDENTIAL: [],
 };
 
 export const PROJECT_STATUS_VALUES = [
@@ -162,6 +165,7 @@ export const PROJECT_STATUS_ORDER: ProjectStatusValue[] = [
 export const SOURCE_OF_FUND_ORDER: SourceOfFundValue[] = [
   "TWENTY_PERCENT_DEV_FUND",
   "FIVE_PERCENT_CONFIDENTIAL_FUND",
+  "CONFIDENTIAL",
   "SEF",
   "PPOC",
   "LDRRM",

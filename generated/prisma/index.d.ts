@@ -121,7 +121,8 @@ export const SourceOfFund: {
   MOOE: 'MOOE',
   NCDC: 'NCDC',
   PRDP: 'PRDP',
-  MIADP: 'MIADP'
+  MIADP: 'MIADP',
+  CONFIDENTIAL: 'CONFIDENTIAL'
 };
 
 export type SourceOfFund = (typeof SourceOfFund)[keyof typeof SourceOfFund]

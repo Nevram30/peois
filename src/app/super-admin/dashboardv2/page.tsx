@@ -1,10 +1,16 @@
 "use client";
 
 import { api } from "~/trpc/react";
-import type { AllocationEntry, DistrictCardProps, LegendEntry, MiniLegendProps, Segment, StatCard, UserCard, UserIconProps, DonutChartProps } from "./super.admin.types";
+import type { DistrictCardProps, LegendEntry, MiniLegendProps, Segment, StatCard, UserCard, UserIconProps, DonutChartProps } from "./super.admin.types";
 import type { DistrictCardItem, ProjectStatus, StatusCounts } from "./super.adminv2.types";
 import { STATUS_COLORS, STATUS_LABELS } from "./super.adminv2.types";
-import { formatPeso } from "~/helper/formatter";
+import { formatPeso } from "~/helper/formatter"
+import { formatToPHPBillions, formatToPHPMillions } from "~/helper/formatter";
+import {
+    SOURCE_OF_FUND_ORDER,
+    PROJECT_SUB_TYPE_LABEL,
+    type ProjectSubTypeValue,
+} from "~/lib/fund-constants";
 
 // ── DonutChart ─────────────────────────────────────────────────
 function DonutChart({ segments, size = 120, thickness = 28, centerLabel }: DonutChartProps) {
@@ -48,14 +54,6 @@ function DonutChart({ segments, size = 120, thickness = 28, centerLabel }: Donut
         </svg>
     );
 }
-
-const allocSegments: Segment[] = [
-    { value: 920000000, color: "#1e3a8a" }, { value: 480000000, color: "#2563eb" },
-    { value: 340000000, color: "#7c3aed" }, { value: 115000000, color: "#059669" },
-    { value: 85000000, color: "#d97706" }, { value: 120000000, color: "#dc2626" },
-    { value: 65500000, color: "#0891b2" }, { value: 42000000, color: "#9333ea" },
-    { value: 28000000, color: "#64748b" }, { value: 18200000, color: "#f97316" },
-];
 
 const remainingData: LegendEntry[] = [
     { label: "General Fund", amount: "₱152,900,000.00", color: "#1e3a8a" },
@@ -200,6 +198,140 @@ function MiniLegend({ data, negative = false }: MiniLegendProps) {
     );
 }
 
+// ── Annual Allocation & Source Breakdown ───────────────────────
+const SOURCE_COLORS: Record<string, string> = {
+    TWENTY_PERCENT_DEV_FUND: "#1e3a8a",
+    FIVE_PERCENT_CONFIDENTIAL_FUND: "#dc2626",
+    CONFIDENTIAL: "#dc2626",
+    GENERAL_FUND: "#2563eb",
+    LDRRM: "#059669",
+    MOOE: "#9333ea",
+    MIADP: "#64748b",
+    NCDC: "#cbd5e1",
+    PPOC: "#94a3b8",
+    PRDP: "#475569",
+    SEF: "#f97316",
+    TRUST_FUND: "#15803d",
+    AID: "#0891b2",
+    LOAN: "#7c3aed",
+    OTHERS: "#a8a29e",
+};
+
+const SOURCE_SHORT_LABEL: Record<string, string> = {
+    TWENTY_PERCENT_DEV_FUND: "20% DEVELOPMENT FUND",
+    FIVE_PERCENT_CONFIDENTIAL_FUND: "5% CONFIDENTIAL FUND",
+    CONFIDENTIAL: "5% CONFIDENTIAL FUND",
+    GENERAL_FUND: "GENERAL FUND",
+    LDRRM: "LDRRM",
+    MOOE: "MOOE",
+    MIADP: "MIADP",
+    NCDC: "NCDC",
+    PPOC: "PPOC",
+    PRDP: "PRDP",
+    SEF: "SEF",
+    TRUST_FUND: "TRUST FUND",
+    AID: "AID",
+    LOAN: "LOAN",
+    OTHERS: "OTHERS",
+};
+
+type BySubTypeMap = Record<string, { amount: number; sourceOfFund: string }>;
+
+type AnnualAllocationCardProps = {
+    bySource: Record<string, number>;
+    bySubType: BySubTypeMap;
+    total: number;
+    budgetYear: string;
+};
+
+function AnnualAllocationCard({ bySource, bySubType, total, budgetYear }: AnnualAllocationCardProps) {
+    // Order known sources first, then append any unmapped sources that have allocations.
+    const ordered = [...SOURCE_OF_FUND_ORDER, "CONFIDENTIAL", ...Object.keys(bySource)].filter(
+        (src, i, arr) => arr.indexOf(src) === i && (bySource[src] ?? 0) > 0,
+    );
+
+    const entries = ordered.map((src) => {
+        const amount = bySource[src] ?? 0;
+        const subTypes = Object.entries(bySubType)
+            .filter(([key, v]) => v.sourceOfFund === src && !key.startsWith("__NONE__"))
+            .map(([key, v]) => ({
+                label: PROJECT_SUB_TYPE_LABEL[key as ProjectSubTypeValue] ?? key,
+                amount: v.amount,
+            }))
+            .sort((a, b) => b.amount - a.amount);
+        return {
+            src,
+            label: SOURCE_SHORT_LABEL[src] ?? src,
+            color: SOURCE_COLORS[src] ?? "#94a3b8",
+            amount,
+            pct: total > 0 ? Math.round((amount / total) * 100) : 0,
+            subTypes,
+        };
+    });
+
+    const segments: Segment[] = entries.map((e) => ({ value: e.amount, color: e.color }));
+
+    return (
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-3 border border-slate-200">
+            <div className="p-5">
+                <div className="flex items-center justify-between mb-4">
+                    <p className="text-[12px] font-extrabold text-slate-800 tracking-widest uppercase">
+                        Annual Allocation &amp; Source Breakdown
+                    </p>
+                    <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 rounded px-2 py-0.5">
+                        FY {budgetYear}
+                    </span>
+                </div>
+
+                <div className="flex items-start gap-8">
+                    <div className="shrink-0 pt-2">
+                        <DonutChart segments={segments} size={150} thickness={34} centerLabel={formatToPHPBillions(total)} />
+                    </div>
+
+                    <div className="flex-1 columns-2 gap-12 *:break-inside-avoid">
+                        {entries.map((e) => (
+                            <div key={e.src} className="mb-2.5">
+                                <div className="flex items-center justify-between gap-2">
+                                    <div className="flex items-center gap-2 min-w-0">
+                                        <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: e.color }} />
+                                        <span className="text-[11.5px] font-extrabold text-slate-800 tracking-wide truncate">
+                                            {e.label}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center gap-3 shrink-0">
+                                        <span className="text-[10px] text-slate-400">{e.pct}%</span>
+                                        <span className="text-[12px] font-bold text-slate-800 tabular-nums">
+                                            {formatToPHPMillions(e.amount)}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {e.subTypes.length > 0 && (
+                                    <div className="mt-1 ml-1 border-l border-slate-200 pl-3 flex flex-col gap-0.5">
+                                        {e.subTypes.map((s) => (
+                                            <div key={s.label} className="flex items-center justify-between gap-2">
+                                                <span className="text-[10.5px] text-slate-500 truncate">{s.label}</span>
+                                                <span className="text-[10.5px] text-slate-500 tabular-nums shrink-0">
+                                                    {formatToPHPMillions(s.amount)}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            <div className="bg-[#1e3a8a] text-white px-6 py-3.5 flex justify-between items-center text-[12px] font-bold tracking-widest uppercase">
+                <span>Total Combined Allocation</span>
+                <span className="tabular-nums">{formatPeso(total)}</span>
+            </div>
+        </div>
+    );
+}
+
 // ── Main Dashboard ─────────────────────────────────────────────
 const PEOISDashboard = () => {
 
@@ -208,6 +340,10 @@ const PEOISDashboard = () => {
     const { data: projectAllocationData } = api.project.getFinancialOverview.useQuery();
     const { data: districtData } = api.project.getDistrictData.useQuery();
 
+    console.log("Stats:", statsData);
+    console.log("User Stats:", userData);
+    console.log("Project Allocation:", projectAllocationData);
+    console.log("District Data:", districtData);
     const TotalAllocation = projectAllocationData
         ? Object.values(projectAllocationData.bySource).reduce((s, v) => s + v, 0)
         : 0;
@@ -228,20 +364,6 @@ const PEOISDashboard = () => {
         { label: "INACTIVE USERS", value: userData?.inactive ?? "0", border: "border-l-slate-400", iconBg: "bg-slate-100", iconColor: "#64748b", type: "slash" },
         { label: "PENDING APPROVAL", value: userData?.pending ?? "0", border: "border-l-amber-500", iconBg: "bg-amber-100", iconColor: "#d97706", type: "plus" },
     ];
-
-    const allocationData: AllocationEntry[] = [
-        { label: "General Fund", pct: "38%", amount: formatPeso(projectAllocationData?.bySource?.GENERAL_FUND), color: "#1e3a8a" },
-        { label: "5% Confidential", pct: "5%", amount: formatPeso(projectAllocationData?.bySource?.CONFIDENTIAL), color: "#dc2626" },
-        { label: "20% Dev. Fund", pct: "20%", amount: formatPeso(projectAllocationData?.bySource?.DEV_FUND), color: "#2563eb" },
-        { label: "PRDP (Rural)", pct: "3%", amount: formatPeso(projectAllocationData?.bySource?.PRDP), color: "#0891b2" },
-        { label: "Trust Fund", pct: "14%", amount: formatPeso(projectAllocationData?.bySource?.TRUST_FUND), color: "#7c3aed" },
-        { label: "PPOC (Peace)", pct: "2%", amount: formatPeso(projectAllocationData?.bySource?.PPOC), color: "#9333ea" },
-        { label: "LDRRM", pct: "5%", amount: formatPeso(projectAllocationData?.bySource?.LDRRM), color: "#059669" },
-        { label: "NCDC", pct: "1%", amount: formatPeso(projectAllocationData?.bySource?.NCDC), color: "#64748b" },
-        { label: "SEF (Education)", pct: "4%", amount: formatPeso(projectAllocationData?.bySource?.SEF), color: "#d97706" },
-        { label: "MIADP", pct: "8%", amount: formatPeso(projectAllocationData?.bySource?.MIADP), color: "#f97316" },
-    ];
-
 
     return (
         <div className="bg-slate-100 min-h-screen p-4 font-sans text-slate-800">
@@ -301,36 +423,13 @@ const PEOISDashboard = () => {
                 ))}
             </div>
 
-            {/* Annual Allocation */}
-            <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-3">
-                <div className="p-4 flex items-center gap-6">
-                    <div className="shrink-0">
-                        <p className="text-[11px] font-extrabold text-slate-800 tracking-widest mb-3">
-                            ANNUAL ALLOCATION &amp; SOURCE BREAKDOWN
-                        </p>
-                        <DonutChart segments={allocSegments} size={130} thickness={32} centerLabel="₱2.42B" />
-                    </div>
-                    <div className="grid grid-cols-2 gap-x-6 gap-y-1.25 flex-1 text-[11px]">
-                        {allocationData.map((d) => (
-                            <div key={d.label} className="flex items-center justify-between">
-                                <div className="flex items-center gap-1.5">
-                                    <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: d.color }} />
-                                    <span className="text-slate-600">{d.label}</span>
-                                </div>
-                                <div className="flex items-center gap-2 shrink-0">
-                                    <span className="text-slate-400 text-[10px]">{d.pct}</span>
-                                    <span className="font-bold text-slate-800">{d.amount}</span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                    <p className="text-[10px] text-slate-400 self-start pt-1">FY 2024</p>
-                </div>
-                <div className="bg-[#1e3a8a] text-white px-5 py-2.5 flex justify-between items-center text-[12px] font-bold tracking-widest">
-                    <span>TOTAL COMBINED ALLOCATION</span>
-                    <span>{formatPeso(TotalAllocation)}</span>
-                </div>
-            </div>
+            {/* Annual Allocation & Source Breakdown */}
+            <AnnualAllocationCard
+                bySource={projectAllocationData?.bySource ?? {}}
+                bySubType={projectAllocationData?.bySubType ?? {}}
+                total={TotalAllocation}
+                budgetYear={projectAllocationData?.budgetYear ?? "2024"}
+            />
 
             {/* Remaining Balance & Disbursement */}
             <div className="grid grid-cols-2 gap-3">

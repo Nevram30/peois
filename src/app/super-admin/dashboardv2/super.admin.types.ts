@@ -64,8 +64,8 @@ export type MiniLegendProps = {
 }
 
 export type DistrictCardItem = {
-  label: string;
-  value: number;
-  color: string;
+    label: string;
+    value: number;
+    color: string;
 }
 
