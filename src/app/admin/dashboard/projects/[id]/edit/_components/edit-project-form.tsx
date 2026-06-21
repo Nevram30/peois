@@ -39,6 +39,13 @@ const PRIORITY_CONFIG = {
   URGENT: { label: "URGENT", bg: "bg-purple-50", border: "border-purple-200", text: "text-purple-700", dot: "bg-purple-500", activeBg: "bg-purple-600", activeText: "text-white" },
 } as const;
 
+const TIMELINE_ADJ_TYPE_CONFIG: Record<string, { label: string; badge: string }> = {
+  EXTENSION: { label: "Extension", badge: "bg-blue-50 text-blue-700 border-blue-200" },
+  SUSPENSION: { label: "Suspension", badge: "bg-red-50 text-red-700 border-red-200" },
+  RESUMPTION: { label: "Resumption", badge: "bg-green-50 text-green-700 border-green-200" },
+  REVISION: { label: "Revision", badge: "bg-amber-50 text-amber-700 border-amber-200" },
+};
+
 function fmt(d: Date | string | null | undefined) {
   if (!d) return "—";
   return new Date(d).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" });
@@ -47,12 +54,6 @@ function fmt(d: Date | string | null | undefined) {
 function toInputDate(d: Date | string | null | undefined) {
   if (!d) return "";
   return new Date(d).toISOString().slice(0, 10);
-}
-
-function calcDays(start: string, end: string) {
-  if (!start || !end) return 0;
-  const diff = new Date(end).getTime() - new Date(start).getTime();
-  return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
 }
 
 // ─── Section card wrapper ────────────────────────────────────────────────────
@@ -135,6 +136,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   const { data: activities } = api.projectActivity.getByProjectId.useQuery({ projectId });
   const { data: disbursements, refetch: refetchDisbursements } = api.project.getDisbursements.useQuery({ projectId });
   const { data: variationOrders, refetch: refetchVariationOrders } = api.project.getVariationOrders.useQuery({ projectId });
+  const { data: timelineAdjustments, refetch: refetchTimelineAdjustments } = api.project.getTimelineAdjustments.useQuery({ projectId });
   const { data: projectFiles, refetch: refetchFiles } = api.projectFile.getByProjectId.useQuery({ projectId });
   const { startUpload } = useUploadThing("projectFileUploader");
   const { data: usersForSelect } = api.user.getForSelect.useQuery();
@@ -187,6 +189,14 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   const [disbType, setDisbType] = useState<"" | "FUEL" | "LABOR" | "MATERIALS">("");
   const [disbErrors, setDisbErrors] = useState<{ amount?: string; ref?: string; type?: string }>({});
 
+  // ─ Timeline Adjustment ──────────────────────────────────────────────────
+  const [adjStartDate, setAdjStartDate] = useState("");
+  const [adjEndDate, setAdjEndDate] = useState("");
+  const [adjDays, setAdjDays] = useState("");
+  const [adjType, setAdjType] = useState<"" | "EXTENSION" | "SUSPENSION" | "RESUMPTION" | "REVISION">("");
+  const [adjJustification, setAdjJustification] = useState("");
+  const [adjError, setAdjError] = useState<string | null>(null);
+
   // ─ Variation Order (backup fund) ────────────────────────────────────────
   const [revisedSourceOfFund, setRevisedSourceOfFund] = useState<SourceOfFundValue | "">("");
   const [revisedVariation, setRevisedVariation] = useState("");
@@ -227,7 +237,6 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
     setMediaName(project.documentName ?? "");
   }, [project]);
 
-  const totalDays = useMemo(() => calcDays(dateStarted, targetCompletion), [dateStarted, targetCompletion]);
   const totalWorkforce = numFemale + numMale;
 
   const availableMunicipalities = useMemo(
@@ -285,6 +294,17 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
       addActivity.mutate({
         projectId: variables.projectId,
         description: `Recorded variation order of ₱${formatted}${srcPart}.`,
+      });
+    },
+  });
+
+  const recordTimelineAdjustment = api.project.createTimelineAdjustment.useMutation({
+    onSuccess: (_data, variables) => {
+      setAdjStartDate(""); setAdjEndDate(""); setAdjDays(""); setAdjType(""); setAdjJustification(""); setAdjError(null);
+      void refetchTimelineAdjustments();
+      addActivity.mutate({
+        projectId: variables.projectId,
+        description: `Recorded ${variables.type.toLowerCase()} timeline adjustment of ${variables.duration} day(s).`,
       });
     },
   });
@@ -396,6 +416,22 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
       projectId,
       amount,
       sourceOfFund: revisedSourceOfFund || undefined,
+    });
+  };
+
+  const handleRecordTimelineAdjustment = () => {
+    if (!adjStartDate || !adjEndDate) { setAdjError("Start date and end date are required."); return; }
+    if (!adjType) { setAdjError("Adjustment type is required."); return; }
+    const days = parseInt(adjDays, 10);
+    if (!adjDays || isNaN(days) || days < 0) { setAdjError("Days must be 0 or greater."); return; }
+    setAdjError(null);
+    recordTimelineAdjustment.mutate({
+      projectId,
+      startDate: new Date(adjStartDate),
+      endDate: new Date(adjEndDate),
+      duration: days,
+      type: adjType,
+      justification: adjJustification.trim() || undefined,
     });
   };
 
@@ -951,40 +987,88 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
             </div>
           </SectionCard>
 
-          {/* ── Date Timeline ── */}
+          {/* ── Project Timeline ── */}
           <SectionCard>
-            <div className="grid grid-cols-4 divide-x divide-gray-100">
-              {[
-                {
-                  label: "Date Started",
-                  content: (
-                    <Input type="date" value={dateStarted} onChange={(e) => setDateStarted(e.target.value)} />
-                  ),
-                },
-                {
-                  label: "Original Target",
-                  content: (
-                    <Input type="date" value={targetCompletion} onChange={(e) => setTargetCompletion(e.target.value)} />
-                  ),
-                },
-                {
-                  label: "Revised Target Completion",
-                  content: (
-                    <Input type="date" value={revisedCompletion} onChange={(e) => setRevisedCompletion(e.target.value)} />
-                  ),
-                },
-                {
-                  label: "Total Days",
-                  content: (
-                    <p className="text-lg font-extrabold text-gray-800">{totalDays} <span className="text-xs font-medium text-gray-400">Days</span></p>
-                  ),
-                },
-              ].map(({ label, content }) => (
-                <div key={label} className="px-5 py-4">
-                  <FieldLabel>{label}</FieldLabel>
-                  {content}
+            <SectionHeader
+              icon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" /></svg>}
+              title="Project Timeline"
+              action={<button type="button" className="text-gray-400 hover:text-gray-600"><EditIcon /></button>}
+            />
+            <div className="p-4">
+              <FieldLabel>Timeline Adjustment History</FieldLabel>
+              <div className="overflow-hidden rounded-lg border border-gray-200">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Start Date</th>
+                      <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">End Date</th>
+                      <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Duration</th>
+                      <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Adjustment Type</th>
+                      <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Justification Record</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {timelineAdjustments && timelineAdjustments.length > 0 ? timelineAdjustments.map((a) => {
+                      const cfg = TIMELINE_ADJ_TYPE_CONFIG[a.type] ?? { label: a.type, badge: "bg-gray-50 text-gray-600 border-gray-200" };
+                      return (
+                        <tr key={a.id} className="hover:bg-gray-50/50">
+                          <td className="px-3 py-2.5 text-gray-600">{fmt(a.startDate)}</td>
+                          <td className="px-3 py-2.5 text-gray-600">{fmt(a.endDate)}</td>
+                          <td className="px-3 py-2.5 font-semibold text-gray-800">{a.duration} Days</td>
+                          <td className="px-3 py-2.5">
+                            <span className={`inline-flex rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${cfg.badge}`}>{cfg.label}</span>
+                          </td>
+                          <td className="px-3 py-2.5 italic text-gray-600">{a.justification ?? "—"}</td>
+                        </tr>
+                      );
+                    }) : (
+                      <tr><td colSpan={5} className="px-3 py-6 text-center text-gray-400">No timeline adjustments recorded yet.</td></tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Record form — with labels */}
+              <div className="mt-3 flex items-end gap-2">
+                <div className="w-40 shrink-0">
+                  <FieldLabel>Date Started</FieldLabel>
+                  <Input type="date" value={adjStartDate} onChange={(e) => { setAdjStartDate(e.target.value); setAdjError(null); }} error={!!adjError && !adjStartDate} />
                 </div>
-              ))}
+                <div className="w-40 shrink-0">
+                  <FieldLabel>End Date</FieldLabel>
+                  <Input type="date" value={adjEndDate} onChange={(e) => { setAdjEndDate(e.target.value); setAdjError(null); }} error={!!adjError && !adjEndDate} />
+                </div>
+                <div className="w-24 shrink-0">
+                  <FieldLabel>Days</FieldLabel>
+                  <Input type="number" min={0} placeholder="0" value={adjDays} onChange={(e) => { setAdjDays(e.target.value); setAdjError(null); }} error={!!adjError && !adjDays} />
+                </div>
+                <div className="w-40 shrink-0">
+                  <FieldLabel>Type</FieldLabel>
+                  <Select
+                    value={adjType}
+                    onChange={(e) => { setAdjType(e.target.value as typeof adjType); setAdjError(null); }}
+                    className={adjError && !adjType ? "border-red-300" : ""}
+                  >
+                    <option value="">Type</option>
+                    {Object.entries(TIMELINE_ADJ_TYPE_CONFIG).map(([value, { label }]) => (
+                      <option key={value} value={value}>{label}</option>
+                    ))}
+                  </Select>
+                </div>
+                <div className="flex-1">
+                  <FieldLabel>Justification / Basis</FieldLabel>
+                  <Input type="text" placeholder="Justification / Basis..." value={adjJustification} onChange={(e) => setAdjJustification(e.target.value)} />
+                </div>
+                <button
+                  type="button"
+                  onClick={handleRecordTimelineAdjustment}
+                  disabled={recordTimelineAdjustment.isPending}
+                  className="rounded-lg bg-blue-900 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-blue-800 disabled:opacity-50"
+                >
+                  {recordTimelineAdjustment.isPending ? "..." : "Record"}
+                </button>
+              </div>
+              {adjError && <p className="mt-1 text-xs text-red-500">{adjError}</p>}
             </div>
           </SectionCard>
 

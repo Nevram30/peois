@@ -44,6 +44,11 @@ export type Disbursement = $Result.DefaultSelection<Prisma.$DisbursementPayload>
  */
 export type VariationOrder = $Result.DefaultSelection<Prisma.$VariationOrderPayload>
 /**
+ * Model TimelineAdjustment
+ * 
+ */
+export type TimelineAdjustment = $Result.DefaultSelection<Prisma.$TimelineAdjustmentPayload>
+/**
  * Model TaskNotification
  * 
  */
@@ -223,6 +228,16 @@ export const DisbursementType: {
 export type DisbursementType = (typeof DisbursementType)[keyof typeof DisbursementType]
 
 
+export const TimelineAdjustmentType: {
+  EXTENSION: 'EXTENSION',
+  SUSPENSION: 'SUSPENSION',
+  RESUMPTION: 'RESUMPTION',
+  REVISION: 'REVISION'
+};
+
+export type TimelineAdjustmentType = (typeof TimelineAdjustmentType)[keyof typeof TimelineAdjustmentType]
+
+
 export const DocumentStatus: {
   DRAFT: 'DRAFT',
   FOR_REVIEW: 'FOR_REVIEW',
@@ -281,6 +296,10 @@ export const ProjectFileType: typeof $Enums.ProjectFileType
 export type DisbursementType = $Enums.DisbursementType
 
 export const DisbursementType: typeof $Enums.DisbursementType
+
+export type TimelineAdjustmentType = $Enums.TimelineAdjustmentType
+
+export const TimelineAdjustmentType: typeof $Enums.TimelineAdjustmentType
 
 export type DocumentStatus = $Enums.DocumentStatus
 
@@ -463,6 +482,16 @@ export class PrismaClient<
     * ```
     */
   get variationOrder(): Prisma.VariationOrderDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.timelineAdjustment`: Exposes CRUD operations for the **TimelineAdjustment** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TimelineAdjustments
+    * const timelineAdjustments = await prisma.timelineAdjustment.findMany()
+    * ```
+    */
+  get timelineAdjustment(): Prisma.TimelineAdjustmentDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.taskNotification`: Exposes CRUD operations for the **TaskNotification** model.
@@ -970,6 +999,7 @@ export namespace Prisma {
     ProjectActivity: 'ProjectActivity',
     Disbursement: 'Disbursement',
     VariationOrder: 'VariationOrder',
+    TimelineAdjustment: 'TimelineAdjustment',
     TaskNotification: 'TaskNotification',
     TaskReply: 'TaskReply',
     TaskReplyDocument: 'TaskReplyDocument',
@@ -994,7 +1024,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "userSession" | "project" | "projectActivity" | "disbursement" | "variationOrder" | "taskNotification" | "taskReply" | "taskReplyDocument" | "document" | "projectFile" | "post"
+      modelProps: "user" | "userSession" | "project" | "projectActivity" | "disbursement" | "variationOrder" | "timelineAdjustment" | "taskNotification" | "taskReply" | "taskReplyDocument" | "document" | "projectFile" | "post"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1439,6 +1469,80 @@ export namespace Prisma {
           count: {
             args: Prisma.VariationOrderCountArgs<ExtArgs>
             result: $Utils.Optional<VariationOrderCountAggregateOutputType> | number
+          }
+        }
+      }
+      TimelineAdjustment: {
+        payload: Prisma.$TimelineAdjustmentPayload<ExtArgs>
+        fields: Prisma.TimelineAdjustmentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TimelineAdjustmentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TimelineAdjustmentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TimelineAdjustmentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TimelineAdjustmentPayload>
+          }
+          findFirst: {
+            args: Prisma.TimelineAdjustmentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TimelineAdjustmentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TimelineAdjustmentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TimelineAdjustmentPayload>
+          }
+          findMany: {
+            args: Prisma.TimelineAdjustmentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TimelineAdjustmentPayload>[]
+          }
+          create: {
+            args: Prisma.TimelineAdjustmentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TimelineAdjustmentPayload>
+          }
+          createMany: {
+            args: Prisma.TimelineAdjustmentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TimelineAdjustmentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TimelineAdjustmentPayload>[]
+          }
+          delete: {
+            args: Prisma.TimelineAdjustmentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TimelineAdjustmentPayload>
+          }
+          update: {
+            args: Prisma.TimelineAdjustmentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TimelineAdjustmentPayload>
+          }
+          deleteMany: {
+            args: Prisma.TimelineAdjustmentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TimelineAdjustmentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TimelineAdjustmentUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TimelineAdjustmentPayload>[]
+          }
+          upsert: {
+            args: Prisma.TimelineAdjustmentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TimelineAdjustmentPayload>
+          }
+          aggregate: {
+            args: Prisma.TimelineAdjustmentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTimelineAdjustment>
+          }
+          groupBy: {
+            args: Prisma.TimelineAdjustmentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TimelineAdjustmentGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TimelineAdjustmentCountArgs<ExtArgs>
+            result: $Utils.Optional<TimelineAdjustmentCountAggregateOutputType> | number
           }
         }
       }
@@ -1988,6 +2092,7 @@ export namespace Prisma {
     projectActivity?: ProjectActivityOmit
     disbursement?: DisbursementOmit
     variationOrder?: VariationOrderOmit
+    timelineAdjustment?: TimelineAdjustmentOmit
     taskNotification?: TaskNotificationOmit
     taskReply?: TaskReplyOmit
     taskReplyDocument?: TaskReplyDocumentOmit
@@ -2085,6 +2190,7 @@ export namespace Prisma {
     taskNotificationsCreated: number
     taskReplies: number
     projectFiles: number
+    timelineAdjustments: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2099,6 +2205,7 @@ export namespace Prisma {
     taskNotificationsCreated?: boolean | UserCountOutputTypeCountTaskNotificationsCreatedArgs
     taskReplies?: boolean | UserCountOutputTypeCountTaskRepliesArgs
     projectFiles?: boolean | UserCountOutputTypeCountProjectFilesArgs
+    timelineAdjustments?: boolean | UserCountOutputTypeCountTimelineAdjustmentsArgs
   }
 
   // Custom InputTypes
@@ -2189,6 +2296,13 @@ export namespace Prisma {
     where?: ProjectFileWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountTimelineAdjustmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TimelineAdjustmentWhereInput
+  }
+
 
   /**
    * Count Type ProjectCountOutputType
@@ -2200,6 +2314,7 @@ export namespace Prisma {
     variationOrders: number
     taskNotifications: number
     files: number
+    timelineAdjustments: number
   }
 
   export type ProjectCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2208,6 +2323,7 @@ export namespace Prisma {
     variationOrders?: boolean | ProjectCountOutputTypeCountVariationOrdersArgs
     taskNotifications?: boolean | ProjectCountOutputTypeCountTaskNotificationsArgs
     files?: boolean | ProjectCountOutputTypeCountFilesArgs
+    timelineAdjustments?: boolean | ProjectCountOutputTypeCountTimelineAdjustmentsArgs
   }
 
   // Custom InputTypes
@@ -2254,6 +2370,13 @@ export namespace Prisma {
    */
   export type ProjectCountOutputTypeCountFilesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ProjectFileWhereInput
+  }
+
+  /**
+   * ProjectCountOutputType without action
+   */
+  export type ProjectCountOutputTypeCountTimelineAdjustmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TimelineAdjustmentWhereInput
   }
 
 
@@ -2578,6 +2701,7 @@ export namespace Prisma {
     taskNotificationsCreated?: boolean | User$taskNotificationsCreatedArgs<ExtArgs>
     taskReplies?: boolean | User$taskRepliesArgs<ExtArgs>
     projectFiles?: boolean | User$projectFilesArgs<ExtArgs>
+    timelineAdjustments?: boolean | User$timelineAdjustmentsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2648,6 +2772,7 @@ export namespace Prisma {
     taskNotificationsCreated?: boolean | User$taskNotificationsCreatedArgs<ExtArgs>
     taskReplies?: boolean | User$taskRepliesArgs<ExtArgs>
     projectFiles?: boolean | User$projectFilesArgs<ExtArgs>
+    timelineAdjustments?: boolean | User$timelineAdjustmentsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2667,6 +2792,7 @@ export namespace Prisma {
       taskNotificationsCreated: Prisma.$TaskNotificationPayload<ExtArgs>[]
       taskReplies: Prisma.$TaskReplyPayload<ExtArgs>[]
       projectFiles: Prisma.$ProjectFilePayload<ExtArgs>[]
+      timelineAdjustments: Prisma.$TimelineAdjustmentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3089,6 +3215,7 @@ export namespace Prisma {
     taskNotificationsCreated<T extends User$taskNotificationsCreatedArgs<ExtArgs> = {}>(args?: Subset<T, User$taskNotificationsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskNotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     taskReplies<T extends User$taskRepliesArgs<ExtArgs> = {}>(args?: Subset<T, User$taskRepliesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskReplyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     projectFiles<T extends User$projectFilesArgs<ExtArgs> = {}>(args?: Subset<T, User$projectFilesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectFilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    timelineAdjustments<T extends User$timelineAdjustmentsArgs<ExtArgs> = {}>(args?: Subset<T, User$timelineAdjustmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TimelineAdjustmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3782,6 +3909,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ProjectFileScalarFieldEnum | ProjectFileScalarFieldEnum[]
+  }
+
+  /**
+   * User.timelineAdjustments
+   */
+  export type User$timelineAdjustmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimelineAdjustment
+     */
+    select?: TimelineAdjustmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TimelineAdjustment
+     */
+    omit?: TimelineAdjustmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimelineAdjustmentInclude<ExtArgs> | null
+    where?: TimelineAdjustmentWhereInput
+    orderBy?: TimelineAdjustmentOrderByWithRelationInput | TimelineAdjustmentOrderByWithRelationInput[]
+    cursor?: TimelineAdjustmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TimelineAdjustmentScalarFieldEnum | TimelineAdjustmentScalarFieldEnum[]
   }
 
   /**
@@ -5383,6 +5534,7 @@ export namespace Prisma {
     variationOrders?: boolean | Project$variationOrdersArgs<ExtArgs>
     taskNotifications?: boolean | Project$taskNotificationsArgs<ExtArgs>
     files?: boolean | Project$filesArgs<ExtArgs>
+    timelineAdjustments?: boolean | Project$timelineAdjustmentsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["project"]>
 
@@ -5516,6 +5668,7 @@ export namespace Prisma {
     variationOrders?: boolean | Project$variationOrdersArgs<ExtArgs>
     taskNotifications?: boolean | Project$taskNotificationsArgs<ExtArgs>
     files?: boolean | Project$filesArgs<ExtArgs>
+    timelineAdjustments?: boolean | Project$timelineAdjustmentsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProjectIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5534,6 +5687,7 @@ export namespace Prisma {
       variationOrders: Prisma.$VariationOrderPayload<ExtArgs>[]
       taskNotifications: Prisma.$TaskNotificationPayload<ExtArgs>[]
       files: Prisma.$ProjectFilePayload<ExtArgs>[]
+      timelineAdjustments: Prisma.$TimelineAdjustmentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5973,6 +6127,7 @@ export namespace Prisma {
     variationOrders<T extends Project$variationOrdersArgs<ExtArgs> = {}>(args?: Subset<T, Project$variationOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VariationOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     taskNotifications<T extends Project$taskNotificationsArgs<ExtArgs> = {}>(args?: Subset<T, Project$taskNotificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskNotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     files<T extends Project$filesArgs<ExtArgs> = {}>(args?: Subset<T, Project$filesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectFilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    timelineAdjustments<T extends Project$timelineAdjustmentsArgs<ExtArgs> = {}>(args?: Subset<T, Project$timelineAdjustmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TimelineAdjustmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6552,6 +6707,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ProjectFileScalarFieldEnum | ProjectFileScalarFieldEnum[]
+  }
+
+  /**
+   * Project.timelineAdjustments
+   */
+  export type Project$timelineAdjustmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimelineAdjustment
+     */
+    select?: TimelineAdjustmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TimelineAdjustment
+     */
+    omit?: TimelineAdjustmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimelineAdjustmentInclude<ExtArgs> | null
+    where?: TimelineAdjustmentWhereInput
+    orderBy?: TimelineAdjustmentOrderByWithRelationInput | TimelineAdjustmentOrderByWithRelationInput[]
+    cursor?: TimelineAdjustmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TimelineAdjustmentScalarFieldEnum | TimelineAdjustmentScalarFieldEnum[]
   }
 
   /**
@@ -9901,6 +10080,1158 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: VariationOrderInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TimelineAdjustment
+   */
+
+  export type AggregateTimelineAdjustment = {
+    _count: TimelineAdjustmentCountAggregateOutputType | null
+    _avg: TimelineAdjustmentAvgAggregateOutputType | null
+    _sum: TimelineAdjustmentSumAggregateOutputType | null
+    _min: TimelineAdjustmentMinAggregateOutputType | null
+    _max: TimelineAdjustmentMaxAggregateOutputType | null
+  }
+
+  export type TimelineAdjustmentAvgAggregateOutputType = {
+    duration: number | null
+  }
+
+  export type TimelineAdjustmentSumAggregateOutputType = {
+    duration: number | null
+  }
+
+  export type TimelineAdjustmentMinAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    startDate: Date | null
+    endDate: Date | null
+    duration: number | null
+    type: $Enums.TimelineAdjustmentType | null
+    justification: string | null
+    createdById: string | null
+    createdAt: Date | null
+  }
+
+  export type TimelineAdjustmentMaxAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    startDate: Date | null
+    endDate: Date | null
+    duration: number | null
+    type: $Enums.TimelineAdjustmentType | null
+    justification: string | null
+    createdById: string | null
+    createdAt: Date | null
+  }
+
+  export type TimelineAdjustmentCountAggregateOutputType = {
+    id: number
+    projectId: number
+    startDate: number
+    endDate: number
+    duration: number
+    type: number
+    justification: number
+    createdById: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type TimelineAdjustmentAvgAggregateInputType = {
+    duration?: true
+  }
+
+  export type TimelineAdjustmentSumAggregateInputType = {
+    duration?: true
+  }
+
+  export type TimelineAdjustmentMinAggregateInputType = {
+    id?: true
+    projectId?: true
+    startDate?: true
+    endDate?: true
+    duration?: true
+    type?: true
+    justification?: true
+    createdById?: true
+    createdAt?: true
+  }
+
+  export type TimelineAdjustmentMaxAggregateInputType = {
+    id?: true
+    projectId?: true
+    startDate?: true
+    endDate?: true
+    duration?: true
+    type?: true
+    justification?: true
+    createdById?: true
+    createdAt?: true
+  }
+
+  export type TimelineAdjustmentCountAggregateInputType = {
+    id?: true
+    projectId?: true
+    startDate?: true
+    endDate?: true
+    duration?: true
+    type?: true
+    justification?: true
+    createdById?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type TimelineAdjustmentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TimelineAdjustment to aggregate.
+     */
+    where?: TimelineAdjustmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TimelineAdjustments to fetch.
+     */
+    orderBy?: TimelineAdjustmentOrderByWithRelationInput | TimelineAdjustmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TimelineAdjustmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TimelineAdjustments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TimelineAdjustments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TimelineAdjustments
+    **/
+    _count?: true | TimelineAdjustmentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: TimelineAdjustmentAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TimelineAdjustmentSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TimelineAdjustmentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TimelineAdjustmentMaxAggregateInputType
+  }
+
+  export type GetTimelineAdjustmentAggregateType<T extends TimelineAdjustmentAggregateArgs> = {
+        [P in keyof T & keyof AggregateTimelineAdjustment]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTimelineAdjustment[P]>
+      : GetScalarType<T[P], AggregateTimelineAdjustment[P]>
+  }
+
+
+
+
+  export type TimelineAdjustmentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TimelineAdjustmentWhereInput
+    orderBy?: TimelineAdjustmentOrderByWithAggregationInput | TimelineAdjustmentOrderByWithAggregationInput[]
+    by: TimelineAdjustmentScalarFieldEnum[] | TimelineAdjustmentScalarFieldEnum
+    having?: TimelineAdjustmentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TimelineAdjustmentCountAggregateInputType | true
+    _avg?: TimelineAdjustmentAvgAggregateInputType
+    _sum?: TimelineAdjustmentSumAggregateInputType
+    _min?: TimelineAdjustmentMinAggregateInputType
+    _max?: TimelineAdjustmentMaxAggregateInputType
+  }
+
+  export type TimelineAdjustmentGroupByOutputType = {
+    id: string
+    projectId: string
+    startDate: Date
+    endDate: Date
+    duration: number
+    type: $Enums.TimelineAdjustmentType
+    justification: string | null
+    createdById: string
+    createdAt: Date
+    _count: TimelineAdjustmentCountAggregateOutputType | null
+    _avg: TimelineAdjustmentAvgAggregateOutputType | null
+    _sum: TimelineAdjustmentSumAggregateOutputType | null
+    _min: TimelineAdjustmentMinAggregateOutputType | null
+    _max: TimelineAdjustmentMaxAggregateOutputType | null
+  }
+
+  type GetTimelineAdjustmentGroupByPayload<T extends TimelineAdjustmentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TimelineAdjustmentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TimelineAdjustmentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TimelineAdjustmentGroupByOutputType[P]>
+            : GetScalarType<T[P], TimelineAdjustmentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TimelineAdjustmentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    duration?: boolean
+    type?: boolean
+    justification?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["timelineAdjustment"]>
+
+  export type TimelineAdjustmentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    duration?: boolean
+    type?: boolean
+    justification?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["timelineAdjustment"]>
+
+  export type TimelineAdjustmentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    duration?: boolean
+    type?: boolean
+    justification?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["timelineAdjustment"]>
+
+  export type TimelineAdjustmentSelectScalar = {
+    id?: boolean
+    projectId?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    duration?: boolean
+    type?: boolean
+    justification?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+  }
+
+  export type TimelineAdjustmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "startDate" | "endDate" | "duration" | "type" | "justification" | "createdById" | "createdAt", ExtArgs["result"]["timelineAdjustment"]>
+  export type TimelineAdjustmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type TimelineAdjustmentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type TimelineAdjustmentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $TimelineAdjustmentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TimelineAdjustment"
+    objects: {
+      project: Prisma.$ProjectPayload<ExtArgs>
+      createdBy: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      projectId: string
+      startDate: Date
+      endDate: Date
+      duration: number
+      type: $Enums.TimelineAdjustmentType
+      justification: string | null
+      createdById: string
+      createdAt: Date
+    }, ExtArgs["result"]["timelineAdjustment"]>
+    composites: {}
+  }
+
+  type TimelineAdjustmentGetPayload<S extends boolean | null | undefined | TimelineAdjustmentDefaultArgs> = $Result.GetResult<Prisma.$TimelineAdjustmentPayload, S>
+
+  type TimelineAdjustmentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TimelineAdjustmentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TimelineAdjustmentCountAggregateInputType | true
+    }
+
+  export interface TimelineAdjustmentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TimelineAdjustment'], meta: { name: 'TimelineAdjustment' } }
+    /**
+     * Find zero or one TimelineAdjustment that matches the filter.
+     * @param {TimelineAdjustmentFindUniqueArgs} args - Arguments to find a TimelineAdjustment
+     * @example
+     * // Get one TimelineAdjustment
+     * const timelineAdjustment = await prisma.timelineAdjustment.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TimelineAdjustmentFindUniqueArgs>(args: SelectSubset<T, TimelineAdjustmentFindUniqueArgs<ExtArgs>>): Prisma__TimelineAdjustmentClient<$Result.GetResult<Prisma.$TimelineAdjustmentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TimelineAdjustment that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TimelineAdjustmentFindUniqueOrThrowArgs} args - Arguments to find a TimelineAdjustment
+     * @example
+     * // Get one TimelineAdjustment
+     * const timelineAdjustment = await prisma.timelineAdjustment.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TimelineAdjustmentFindUniqueOrThrowArgs>(args: SelectSubset<T, TimelineAdjustmentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TimelineAdjustmentClient<$Result.GetResult<Prisma.$TimelineAdjustmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TimelineAdjustment that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TimelineAdjustmentFindFirstArgs} args - Arguments to find a TimelineAdjustment
+     * @example
+     * // Get one TimelineAdjustment
+     * const timelineAdjustment = await prisma.timelineAdjustment.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TimelineAdjustmentFindFirstArgs>(args?: SelectSubset<T, TimelineAdjustmentFindFirstArgs<ExtArgs>>): Prisma__TimelineAdjustmentClient<$Result.GetResult<Prisma.$TimelineAdjustmentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TimelineAdjustment that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TimelineAdjustmentFindFirstOrThrowArgs} args - Arguments to find a TimelineAdjustment
+     * @example
+     * // Get one TimelineAdjustment
+     * const timelineAdjustment = await prisma.timelineAdjustment.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TimelineAdjustmentFindFirstOrThrowArgs>(args?: SelectSubset<T, TimelineAdjustmentFindFirstOrThrowArgs<ExtArgs>>): Prisma__TimelineAdjustmentClient<$Result.GetResult<Prisma.$TimelineAdjustmentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TimelineAdjustments that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TimelineAdjustmentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TimelineAdjustments
+     * const timelineAdjustments = await prisma.timelineAdjustment.findMany()
+     * 
+     * // Get first 10 TimelineAdjustments
+     * const timelineAdjustments = await prisma.timelineAdjustment.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const timelineAdjustmentWithIdOnly = await prisma.timelineAdjustment.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TimelineAdjustmentFindManyArgs>(args?: SelectSubset<T, TimelineAdjustmentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TimelineAdjustmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TimelineAdjustment.
+     * @param {TimelineAdjustmentCreateArgs} args - Arguments to create a TimelineAdjustment.
+     * @example
+     * // Create one TimelineAdjustment
+     * const TimelineAdjustment = await prisma.timelineAdjustment.create({
+     *   data: {
+     *     // ... data to create a TimelineAdjustment
+     *   }
+     * })
+     * 
+     */
+    create<T extends TimelineAdjustmentCreateArgs>(args: SelectSubset<T, TimelineAdjustmentCreateArgs<ExtArgs>>): Prisma__TimelineAdjustmentClient<$Result.GetResult<Prisma.$TimelineAdjustmentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TimelineAdjustments.
+     * @param {TimelineAdjustmentCreateManyArgs} args - Arguments to create many TimelineAdjustments.
+     * @example
+     * // Create many TimelineAdjustments
+     * const timelineAdjustment = await prisma.timelineAdjustment.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TimelineAdjustmentCreateManyArgs>(args?: SelectSubset<T, TimelineAdjustmentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TimelineAdjustments and returns the data saved in the database.
+     * @param {TimelineAdjustmentCreateManyAndReturnArgs} args - Arguments to create many TimelineAdjustments.
+     * @example
+     * // Create many TimelineAdjustments
+     * const timelineAdjustment = await prisma.timelineAdjustment.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TimelineAdjustments and only return the `id`
+     * const timelineAdjustmentWithIdOnly = await prisma.timelineAdjustment.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TimelineAdjustmentCreateManyAndReturnArgs>(args?: SelectSubset<T, TimelineAdjustmentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TimelineAdjustmentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a TimelineAdjustment.
+     * @param {TimelineAdjustmentDeleteArgs} args - Arguments to delete one TimelineAdjustment.
+     * @example
+     * // Delete one TimelineAdjustment
+     * const TimelineAdjustment = await prisma.timelineAdjustment.delete({
+     *   where: {
+     *     // ... filter to delete one TimelineAdjustment
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TimelineAdjustmentDeleteArgs>(args: SelectSubset<T, TimelineAdjustmentDeleteArgs<ExtArgs>>): Prisma__TimelineAdjustmentClient<$Result.GetResult<Prisma.$TimelineAdjustmentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TimelineAdjustment.
+     * @param {TimelineAdjustmentUpdateArgs} args - Arguments to update one TimelineAdjustment.
+     * @example
+     * // Update one TimelineAdjustment
+     * const timelineAdjustment = await prisma.timelineAdjustment.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TimelineAdjustmentUpdateArgs>(args: SelectSubset<T, TimelineAdjustmentUpdateArgs<ExtArgs>>): Prisma__TimelineAdjustmentClient<$Result.GetResult<Prisma.$TimelineAdjustmentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TimelineAdjustments.
+     * @param {TimelineAdjustmentDeleteManyArgs} args - Arguments to filter TimelineAdjustments to delete.
+     * @example
+     * // Delete a few TimelineAdjustments
+     * const { count } = await prisma.timelineAdjustment.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TimelineAdjustmentDeleteManyArgs>(args?: SelectSubset<T, TimelineAdjustmentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TimelineAdjustments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TimelineAdjustmentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TimelineAdjustments
+     * const timelineAdjustment = await prisma.timelineAdjustment.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TimelineAdjustmentUpdateManyArgs>(args: SelectSubset<T, TimelineAdjustmentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TimelineAdjustments and returns the data updated in the database.
+     * @param {TimelineAdjustmentUpdateManyAndReturnArgs} args - Arguments to update many TimelineAdjustments.
+     * @example
+     * // Update many TimelineAdjustments
+     * const timelineAdjustment = await prisma.timelineAdjustment.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more TimelineAdjustments and only return the `id`
+     * const timelineAdjustmentWithIdOnly = await prisma.timelineAdjustment.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TimelineAdjustmentUpdateManyAndReturnArgs>(args: SelectSubset<T, TimelineAdjustmentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TimelineAdjustmentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one TimelineAdjustment.
+     * @param {TimelineAdjustmentUpsertArgs} args - Arguments to update or create a TimelineAdjustment.
+     * @example
+     * // Update or create a TimelineAdjustment
+     * const timelineAdjustment = await prisma.timelineAdjustment.upsert({
+     *   create: {
+     *     // ... data to create a TimelineAdjustment
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TimelineAdjustment we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TimelineAdjustmentUpsertArgs>(args: SelectSubset<T, TimelineAdjustmentUpsertArgs<ExtArgs>>): Prisma__TimelineAdjustmentClient<$Result.GetResult<Prisma.$TimelineAdjustmentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of TimelineAdjustments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TimelineAdjustmentCountArgs} args - Arguments to filter TimelineAdjustments to count.
+     * @example
+     * // Count the number of TimelineAdjustments
+     * const count = await prisma.timelineAdjustment.count({
+     *   where: {
+     *     // ... the filter for the TimelineAdjustments we want to count
+     *   }
+     * })
+    **/
+    count<T extends TimelineAdjustmentCountArgs>(
+      args?: Subset<T, TimelineAdjustmentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TimelineAdjustmentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TimelineAdjustment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TimelineAdjustmentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TimelineAdjustmentAggregateArgs>(args: Subset<T, TimelineAdjustmentAggregateArgs>): Prisma.PrismaPromise<GetTimelineAdjustmentAggregateType<T>>
+
+    /**
+     * Group by TimelineAdjustment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TimelineAdjustmentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TimelineAdjustmentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TimelineAdjustmentGroupByArgs['orderBy'] }
+        : { orderBy?: TimelineAdjustmentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TimelineAdjustmentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTimelineAdjustmentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TimelineAdjustment model
+   */
+  readonly fields: TimelineAdjustmentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TimelineAdjustment.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TimelineAdjustmentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TimelineAdjustment model
+   */
+  interface TimelineAdjustmentFieldRefs {
+    readonly id: FieldRef<"TimelineAdjustment", 'String'>
+    readonly projectId: FieldRef<"TimelineAdjustment", 'String'>
+    readonly startDate: FieldRef<"TimelineAdjustment", 'DateTime'>
+    readonly endDate: FieldRef<"TimelineAdjustment", 'DateTime'>
+    readonly duration: FieldRef<"TimelineAdjustment", 'Int'>
+    readonly type: FieldRef<"TimelineAdjustment", 'TimelineAdjustmentType'>
+    readonly justification: FieldRef<"TimelineAdjustment", 'String'>
+    readonly createdById: FieldRef<"TimelineAdjustment", 'String'>
+    readonly createdAt: FieldRef<"TimelineAdjustment", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TimelineAdjustment findUnique
+   */
+  export type TimelineAdjustmentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimelineAdjustment
+     */
+    select?: TimelineAdjustmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TimelineAdjustment
+     */
+    omit?: TimelineAdjustmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimelineAdjustmentInclude<ExtArgs> | null
+    /**
+     * Filter, which TimelineAdjustment to fetch.
+     */
+    where: TimelineAdjustmentWhereUniqueInput
+  }
+
+  /**
+   * TimelineAdjustment findUniqueOrThrow
+   */
+  export type TimelineAdjustmentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimelineAdjustment
+     */
+    select?: TimelineAdjustmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TimelineAdjustment
+     */
+    omit?: TimelineAdjustmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimelineAdjustmentInclude<ExtArgs> | null
+    /**
+     * Filter, which TimelineAdjustment to fetch.
+     */
+    where: TimelineAdjustmentWhereUniqueInput
+  }
+
+  /**
+   * TimelineAdjustment findFirst
+   */
+  export type TimelineAdjustmentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimelineAdjustment
+     */
+    select?: TimelineAdjustmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TimelineAdjustment
+     */
+    omit?: TimelineAdjustmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimelineAdjustmentInclude<ExtArgs> | null
+    /**
+     * Filter, which TimelineAdjustment to fetch.
+     */
+    where?: TimelineAdjustmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TimelineAdjustments to fetch.
+     */
+    orderBy?: TimelineAdjustmentOrderByWithRelationInput | TimelineAdjustmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TimelineAdjustments.
+     */
+    cursor?: TimelineAdjustmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TimelineAdjustments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TimelineAdjustments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TimelineAdjustments.
+     */
+    distinct?: TimelineAdjustmentScalarFieldEnum | TimelineAdjustmentScalarFieldEnum[]
+  }
+
+  /**
+   * TimelineAdjustment findFirstOrThrow
+   */
+  export type TimelineAdjustmentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimelineAdjustment
+     */
+    select?: TimelineAdjustmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TimelineAdjustment
+     */
+    omit?: TimelineAdjustmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimelineAdjustmentInclude<ExtArgs> | null
+    /**
+     * Filter, which TimelineAdjustment to fetch.
+     */
+    where?: TimelineAdjustmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TimelineAdjustments to fetch.
+     */
+    orderBy?: TimelineAdjustmentOrderByWithRelationInput | TimelineAdjustmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TimelineAdjustments.
+     */
+    cursor?: TimelineAdjustmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TimelineAdjustments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TimelineAdjustments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TimelineAdjustments.
+     */
+    distinct?: TimelineAdjustmentScalarFieldEnum | TimelineAdjustmentScalarFieldEnum[]
+  }
+
+  /**
+   * TimelineAdjustment findMany
+   */
+  export type TimelineAdjustmentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimelineAdjustment
+     */
+    select?: TimelineAdjustmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TimelineAdjustment
+     */
+    omit?: TimelineAdjustmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimelineAdjustmentInclude<ExtArgs> | null
+    /**
+     * Filter, which TimelineAdjustments to fetch.
+     */
+    where?: TimelineAdjustmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TimelineAdjustments to fetch.
+     */
+    orderBy?: TimelineAdjustmentOrderByWithRelationInput | TimelineAdjustmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TimelineAdjustments.
+     */
+    cursor?: TimelineAdjustmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TimelineAdjustments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TimelineAdjustments.
+     */
+    skip?: number
+    distinct?: TimelineAdjustmentScalarFieldEnum | TimelineAdjustmentScalarFieldEnum[]
+  }
+
+  /**
+   * TimelineAdjustment create
+   */
+  export type TimelineAdjustmentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimelineAdjustment
+     */
+    select?: TimelineAdjustmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TimelineAdjustment
+     */
+    omit?: TimelineAdjustmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimelineAdjustmentInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TimelineAdjustment.
+     */
+    data: XOR<TimelineAdjustmentCreateInput, TimelineAdjustmentUncheckedCreateInput>
+  }
+
+  /**
+   * TimelineAdjustment createMany
+   */
+  export type TimelineAdjustmentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TimelineAdjustments.
+     */
+    data: TimelineAdjustmentCreateManyInput | TimelineAdjustmentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TimelineAdjustment createManyAndReturn
+   */
+  export type TimelineAdjustmentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimelineAdjustment
+     */
+    select?: TimelineAdjustmentSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TimelineAdjustment
+     */
+    omit?: TimelineAdjustmentOmit<ExtArgs> | null
+    /**
+     * The data used to create many TimelineAdjustments.
+     */
+    data: TimelineAdjustmentCreateManyInput | TimelineAdjustmentCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimelineAdjustmentIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TimelineAdjustment update
+   */
+  export type TimelineAdjustmentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimelineAdjustment
+     */
+    select?: TimelineAdjustmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TimelineAdjustment
+     */
+    omit?: TimelineAdjustmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimelineAdjustmentInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TimelineAdjustment.
+     */
+    data: XOR<TimelineAdjustmentUpdateInput, TimelineAdjustmentUncheckedUpdateInput>
+    /**
+     * Choose, which TimelineAdjustment to update.
+     */
+    where: TimelineAdjustmentWhereUniqueInput
+  }
+
+  /**
+   * TimelineAdjustment updateMany
+   */
+  export type TimelineAdjustmentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TimelineAdjustments.
+     */
+    data: XOR<TimelineAdjustmentUpdateManyMutationInput, TimelineAdjustmentUncheckedUpdateManyInput>
+    /**
+     * Filter which TimelineAdjustments to update
+     */
+    where?: TimelineAdjustmentWhereInput
+    /**
+     * Limit how many TimelineAdjustments to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TimelineAdjustment updateManyAndReturn
+   */
+  export type TimelineAdjustmentUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimelineAdjustment
+     */
+    select?: TimelineAdjustmentSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TimelineAdjustment
+     */
+    omit?: TimelineAdjustmentOmit<ExtArgs> | null
+    /**
+     * The data used to update TimelineAdjustments.
+     */
+    data: XOR<TimelineAdjustmentUpdateManyMutationInput, TimelineAdjustmentUncheckedUpdateManyInput>
+    /**
+     * Filter which TimelineAdjustments to update
+     */
+    where?: TimelineAdjustmentWhereInput
+    /**
+     * Limit how many TimelineAdjustments to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimelineAdjustmentIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TimelineAdjustment upsert
+   */
+  export type TimelineAdjustmentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimelineAdjustment
+     */
+    select?: TimelineAdjustmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TimelineAdjustment
+     */
+    omit?: TimelineAdjustmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimelineAdjustmentInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TimelineAdjustment to update in case it exists.
+     */
+    where: TimelineAdjustmentWhereUniqueInput
+    /**
+     * In case the TimelineAdjustment found by the `where` argument doesn't exist, create a new TimelineAdjustment with this data.
+     */
+    create: XOR<TimelineAdjustmentCreateInput, TimelineAdjustmentUncheckedCreateInput>
+    /**
+     * In case the TimelineAdjustment was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TimelineAdjustmentUpdateInput, TimelineAdjustmentUncheckedUpdateInput>
+  }
+
+  /**
+   * TimelineAdjustment delete
+   */
+  export type TimelineAdjustmentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimelineAdjustment
+     */
+    select?: TimelineAdjustmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TimelineAdjustment
+     */
+    omit?: TimelineAdjustmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimelineAdjustmentInclude<ExtArgs> | null
+    /**
+     * Filter which TimelineAdjustment to delete.
+     */
+    where: TimelineAdjustmentWhereUniqueInput
+  }
+
+  /**
+   * TimelineAdjustment deleteMany
+   */
+  export type TimelineAdjustmentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TimelineAdjustments to delete
+     */
+    where?: TimelineAdjustmentWhereInput
+    /**
+     * Limit how many TimelineAdjustments to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TimelineAdjustment without action
+   */
+  export type TimelineAdjustmentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimelineAdjustment
+     */
+    select?: TimelineAdjustmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TimelineAdjustment
+     */
+    omit?: TimelineAdjustmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimelineAdjustmentInclude<ExtArgs> | null
   }
 
 
@@ -16912,6 +18243,21 @@ export namespace Prisma {
   export type VariationOrderScalarFieldEnum = (typeof VariationOrderScalarFieldEnum)[keyof typeof VariationOrderScalarFieldEnum]
 
 
+  export const TimelineAdjustmentScalarFieldEnum: {
+    id: 'id',
+    projectId: 'projectId',
+    startDate: 'startDate',
+    endDate: 'endDate',
+    duration: 'duration',
+    type: 'type',
+    justification: 'justification',
+    createdById: 'createdById',
+    createdAt: 'createdAt'
+  };
+
+  export type TimelineAdjustmentScalarFieldEnum = (typeof TimelineAdjustmentScalarFieldEnum)[keyof typeof TimelineAdjustmentScalarFieldEnum]
+
+
   export const TaskNotificationScalarFieldEnum: {
     id: 'id',
     projectId: 'projectId',
@@ -17213,6 +18559,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'TimelineAdjustmentType'
+   */
+  export type EnumTimelineAdjustmentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TimelineAdjustmentType'>
+    
+
+
+  /**
+   * Reference to a field of type 'TimelineAdjustmentType[]'
+   */
+  export type ListEnumTimelineAdjustmentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TimelineAdjustmentType[]'>
+    
+
+
+  /**
    * Reference to a field of type 'NotificationPriority'
    */
   export type EnumNotificationPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationPriority'>
@@ -17308,6 +18668,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationListRelationFilter
     taskReplies?: TaskReplyListRelationFilter
     projectFiles?: ProjectFileListRelationFilter
+    timelineAdjustments?: TimelineAdjustmentListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -17337,6 +18698,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationOrderByRelationAggregateInput
     taskReplies?: TaskReplyOrderByRelationAggregateInput
     projectFiles?: ProjectFileOrderByRelationAggregateInput
+    timelineAdjustments?: TimelineAdjustmentOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -17369,6 +18731,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationListRelationFilter
     taskReplies?: TaskReplyListRelationFilter
     projectFiles?: ProjectFileListRelationFilter
+    timelineAdjustments?: TimelineAdjustmentListRelationFilter
   }, "id" | "email" | "employeeId">
 
   export type UserOrderByWithAggregationInput = {
@@ -17525,6 +18888,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderListRelationFilter
     taskNotifications?: TaskNotificationListRelationFilter
     files?: ProjectFileListRelationFilter
+    timelineAdjustments?: TimelineAdjustmentListRelationFilter
   }
 
   export type ProjectOrderByWithRelationInput = {
@@ -17571,6 +18935,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderOrderByRelationAggregateInput
     taskNotifications?: TaskNotificationOrderByRelationAggregateInput
     files?: ProjectFileOrderByRelationAggregateInput
+    timelineAdjustments?: TimelineAdjustmentOrderByRelationAggregateInput
   }
 
   export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -17620,6 +18985,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderListRelationFilter
     taskNotifications?: TaskNotificationListRelationFilter
     files?: ProjectFileListRelationFilter
+    timelineAdjustments?: TimelineAdjustmentListRelationFilter
   }, "id" | "projectCode">
 
   export type ProjectOrderByWithAggregationInput = {
@@ -17911,6 +19277,86 @@ export namespace Prisma {
     amount?: FloatWithAggregatesFilter<"VariationOrder"> | number
     createdById?: StringWithAggregatesFilter<"VariationOrder"> | string
     createdAt?: DateTimeWithAggregatesFilter<"VariationOrder"> | Date | string
+  }
+
+  export type TimelineAdjustmentWhereInput = {
+    AND?: TimelineAdjustmentWhereInput | TimelineAdjustmentWhereInput[]
+    OR?: TimelineAdjustmentWhereInput[]
+    NOT?: TimelineAdjustmentWhereInput | TimelineAdjustmentWhereInput[]
+    id?: StringFilter<"TimelineAdjustment"> | string
+    projectId?: StringFilter<"TimelineAdjustment"> | string
+    startDate?: DateTimeFilter<"TimelineAdjustment"> | Date | string
+    endDate?: DateTimeFilter<"TimelineAdjustment"> | Date | string
+    duration?: IntFilter<"TimelineAdjustment"> | number
+    type?: EnumTimelineAdjustmentTypeFilter<"TimelineAdjustment"> | $Enums.TimelineAdjustmentType
+    justification?: StringNullableFilter<"TimelineAdjustment"> | string | null
+    createdById?: StringFilter<"TimelineAdjustment"> | string
+    createdAt?: DateTimeFilter<"TimelineAdjustment"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type TimelineAdjustmentOrderByWithRelationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    duration?: SortOrder
+    type?: SortOrder
+    justification?: SortOrderInput | SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    project?: ProjectOrderByWithRelationInput
+    createdBy?: UserOrderByWithRelationInput
+  }
+
+  export type TimelineAdjustmentWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: TimelineAdjustmentWhereInput | TimelineAdjustmentWhereInput[]
+    OR?: TimelineAdjustmentWhereInput[]
+    NOT?: TimelineAdjustmentWhereInput | TimelineAdjustmentWhereInput[]
+    projectId?: StringFilter<"TimelineAdjustment"> | string
+    startDate?: DateTimeFilter<"TimelineAdjustment"> | Date | string
+    endDate?: DateTimeFilter<"TimelineAdjustment"> | Date | string
+    duration?: IntFilter<"TimelineAdjustment"> | number
+    type?: EnumTimelineAdjustmentTypeFilter<"TimelineAdjustment"> | $Enums.TimelineAdjustmentType
+    justification?: StringNullableFilter<"TimelineAdjustment"> | string | null
+    createdById?: StringFilter<"TimelineAdjustment"> | string
+    createdAt?: DateTimeFilter<"TimelineAdjustment"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type TimelineAdjustmentOrderByWithAggregationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    duration?: SortOrder
+    type?: SortOrder
+    justification?: SortOrderInput | SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    _count?: TimelineAdjustmentCountOrderByAggregateInput
+    _avg?: TimelineAdjustmentAvgOrderByAggregateInput
+    _max?: TimelineAdjustmentMaxOrderByAggregateInput
+    _min?: TimelineAdjustmentMinOrderByAggregateInput
+    _sum?: TimelineAdjustmentSumOrderByAggregateInput
+  }
+
+  export type TimelineAdjustmentScalarWhereWithAggregatesInput = {
+    AND?: TimelineAdjustmentScalarWhereWithAggregatesInput | TimelineAdjustmentScalarWhereWithAggregatesInput[]
+    OR?: TimelineAdjustmentScalarWhereWithAggregatesInput[]
+    NOT?: TimelineAdjustmentScalarWhereWithAggregatesInput | TimelineAdjustmentScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TimelineAdjustment"> | string
+    projectId?: StringWithAggregatesFilter<"TimelineAdjustment"> | string
+    startDate?: DateTimeWithAggregatesFilter<"TimelineAdjustment"> | Date | string
+    endDate?: DateTimeWithAggregatesFilter<"TimelineAdjustment"> | Date | string
+    duration?: IntWithAggregatesFilter<"TimelineAdjustment"> | number
+    type?: EnumTimelineAdjustmentTypeWithAggregatesFilter<"TimelineAdjustment"> | $Enums.TimelineAdjustmentType
+    justification?: StringNullableWithAggregatesFilter<"TimelineAdjustment"> | string | null
+    createdById?: StringWithAggregatesFilter<"TimelineAdjustment"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"TimelineAdjustment"> | Date | string
   }
 
   export type TaskNotificationWhereInput = {
@@ -18411,6 +19857,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -18440,6 +19887,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUpdateInput = {
@@ -18469,6 +19917,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -18498,6 +19947,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -18666,6 +20116,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
     files?: ProjectFileCreateNestedManyWithoutProjectInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateInput = {
@@ -18711,6 +20162,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUpdateInput = {
@@ -18756,6 +20208,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateInput = {
@@ -18801,6 +20254,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderUncheckedUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateManyInput = {
@@ -19115,6 +20569,88 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
     amount?: FloatFieldUpdateOperationsInput | number
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TimelineAdjustmentCreateInput = {
+    id?: string
+    startDate: Date | string
+    endDate: Date | string
+    duration: number
+    type: $Enums.TimelineAdjustmentType
+    justification?: string | null
+    createdAt?: Date | string
+    project: ProjectCreateNestedOneWithoutTimelineAdjustmentsInput
+    createdBy: UserCreateNestedOneWithoutTimelineAdjustmentsInput
+  }
+
+  export type TimelineAdjustmentUncheckedCreateInput = {
+    id?: string
+    projectId: string
+    startDate: Date | string
+    endDate: Date | string
+    duration: number
+    type: $Enums.TimelineAdjustmentType
+    justification?: string | null
+    createdById: string
+    createdAt?: Date | string
+  }
+
+  export type TimelineAdjustmentUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    duration?: IntFieldUpdateOperationsInput | number
+    type?: EnumTimelineAdjustmentTypeFieldUpdateOperationsInput | $Enums.TimelineAdjustmentType
+    justification?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutTimelineAdjustmentsNestedInput
+    createdBy?: UserUpdateOneRequiredWithoutTimelineAdjustmentsNestedInput
+  }
+
+  export type TimelineAdjustmentUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    duration?: IntFieldUpdateOperationsInput | number
+    type?: EnumTimelineAdjustmentTypeFieldUpdateOperationsInput | $Enums.TimelineAdjustmentType
+    justification?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TimelineAdjustmentCreateManyInput = {
+    id?: string
+    projectId: string
+    startDate: Date | string
+    endDate: Date | string
+    duration: number
+    type: $Enums.TimelineAdjustmentType
+    justification?: string | null
+    createdById: string
+    createdAt?: Date | string
+  }
+
+  export type TimelineAdjustmentUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    duration?: IntFieldUpdateOperationsInput | number
+    type?: EnumTimelineAdjustmentTypeFieldUpdateOperationsInput | $Enums.TimelineAdjustmentType
+    justification?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TimelineAdjustmentUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    duration?: IntFieldUpdateOperationsInput | number
+    type?: EnumTimelineAdjustmentTypeFieldUpdateOperationsInput | $Enums.TimelineAdjustmentType
+    justification?: NullableStringFieldUpdateOperationsInput | string | null
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -19744,6 +21280,12 @@ export namespace Prisma {
     none?: ProjectFileWhereInput
   }
 
+  export type TimelineAdjustmentListRelationFilter = {
+    every?: TimelineAdjustmentWhereInput
+    some?: TimelineAdjustmentWhereInput
+    none?: TimelineAdjustmentWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -19786,6 +21328,10 @@ export namespace Prisma {
   }
 
   export type ProjectFileOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TimelineAdjustmentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -20416,6 +21962,67 @@ export namespace Prisma {
     _max?: NestedEnumSourceOfFundNullableFilter<$PrismaModel>
   }
 
+  export type EnumTimelineAdjustmentTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.TimelineAdjustmentType | EnumTimelineAdjustmentTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.TimelineAdjustmentType[] | ListEnumTimelineAdjustmentTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TimelineAdjustmentType[] | ListEnumTimelineAdjustmentTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumTimelineAdjustmentTypeFilter<$PrismaModel> | $Enums.TimelineAdjustmentType
+  }
+
+  export type TimelineAdjustmentCountOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    duration?: SortOrder
+    type?: SortOrder
+    justification?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type TimelineAdjustmentAvgOrderByAggregateInput = {
+    duration?: SortOrder
+  }
+
+  export type TimelineAdjustmentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    duration?: SortOrder
+    type?: SortOrder
+    justification?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type TimelineAdjustmentMinOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    duration?: SortOrder
+    type?: SortOrder
+    justification?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type TimelineAdjustmentSumOrderByAggregateInput = {
+    duration?: SortOrder
+  }
+
+  export type EnumTimelineAdjustmentTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TimelineAdjustmentType | EnumTimelineAdjustmentTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.TimelineAdjustmentType[] | ListEnumTimelineAdjustmentTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TimelineAdjustmentType[] | ListEnumTimelineAdjustmentTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumTimelineAdjustmentTypeWithAggregatesFilter<$PrismaModel> | $Enums.TimelineAdjustmentType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTimelineAdjustmentTypeFilter<$PrismaModel>
+    _max?: NestedEnumTimelineAdjustmentTypeFilter<$PrismaModel>
+  }
+
   export type EnumNotificationPriorityFilter<$PrismaModel = never> = {
     equals?: $Enums.NotificationPriority | EnumNotificationPriorityFieldRefInput<$PrismaModel>
     in?: $Enums.NotificationPriority[] | ListEnumNotificationPriorityFieldRefInput<$PrismaModel>
@@ -20895,6 +22502,13 @@ export namespace Prisma {
     connect?: ProjectFileWhereUniqueInput | ProjectFileWhereUniqueInput[]
   }
 
+  export type TimelineAdjustmentCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<TimelineAdjustmentCreateWithoutCreatedByInput, TimelineAdjustmentUncheckedCreateWithoutCreatedByInput> | TimelineAdjustmentCreateWithoutCreatedByInput[] | TimelineAdjustmentUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: TimelineAdjustmentCreateOrConnectWithoutCreatedByInput | TimelineAdjustmentCreateOrConnectWithoutCreatedByInput[]
+    createMany?: TimelineAdjustmentCreateManyCreatedByInputEnvelope
+    connect?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
+  }
+
   export type PostUncheckedCreateNestedManyWithoutCreatedByInput = {
     create?: XOR<PostCreateWithoutCreatedByInput, PostUncheckedCreateWithoutCreatedByInput> | PostCreateWithoutCreatedByInput[] | PostUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: PostCreateOrConnectWithoutCreatedByInput | PostCreateOrConnectWithoutCreatedByInput[]
@@ -20970,6 +22584,13 @@ export namespace Prisma {
     connectOrCreate?: ProjectFileCreateOrConnectWithoutCreatedByInput | ProjectFileCreateOrConnectWithoutCreatedByInput[]
     createMany?: ProjectFileCreateManyCreatedByInputEnvelope
     connect?: ProjectFileWhereUniqueInput | ProjectFileWhereUniqueInput[]
+  }
+
+  export type TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<TimelineAdjustmentCreateWithoutCreatedByInput, TimelineAdjustmentUncheckedCreateWithoutCreatedByInput> | TimelineAdjustmentCreateWithoutCreatedByInput[] | TimelineAdjustmentUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: TimelineAdjustmentCreateOrConnectWithoutCreatedByInput | TimelineAdjustmentCreateOrConnectWithoutCreatedByInput[]
+    createMany?: TimelineAdjustmentCreateManyCreatedByInputEnvelope
+    connect?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -21154,6 +22775,20 @@ export namespace Prisma {
     deleteMany?: ProjectFileScalarWhereInput | ProjectFileScalarWhereInput[]
   }
 
+  export type TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<TimelineAdjustmentCreateWithoutCreatedByInput, TimelineAdjustmentUncheckedCreateWithoutCreatedByInput> | TimelineAdjustmentCreateWithoutCreatedByInput[] | TimelineAdjustmentUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: TimelineAdjustmentCreateOrConnectWithoutCreatedByInput | TimelineAdjustmentCreateOrConnectWithoutCreatedByInput[]
+    upsert?: TimelineAdjustmentUpsertWithWhereUniqueWithoutCreatedByInput | TimelineAdjustmentUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: TimelineAdjustmentCreateManyCreatedByInputEnvelope
+    set?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
+    disconnect?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
+    delete?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
+    connect?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
+    update?: TimelineAdjustmentUpdateWithWhereUniqueWithoutCreatedByInput | TimelineAdjustmentUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: TimelineAdjustmentUpdateManyWithWhereWithoutCreatedByInput | TimelineAdjustmentUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: TimelineAdjustmentScalarWhereInput | TimelineAdjustmentScalarWhereInput[]
+  }
+
   export type PostUncheckedUpdateManyWithoutCreatedByNestedInput = {
     create?: XOR<PostCreateWithoutCreatedByInput, PostUncheckedCreateWithoutCreatedByInput> | PostCreateWithoutCreatedByInput[] | PostUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: PostCreateOrConnectWithoutCreatedByInput | PostCreateOrConnectWithoutCreatedByInput[]
@@ -21308,6 +22943,20 @@ export namespace Prisma {
     deleteMany?: ProjectFileScalarWhereInput | ProjectFileScalarWhereInput[]
   }
 
+  export type TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<TimelineAdjustmentCreateWithoutCreatedByInput, TimelineAdjustmentUncheckedCreateWithoutCreatedByInput> | TimelineAdjustmentCreateWithoutCreatedByInput[] | TimelineAdjustmentUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: TimelineAdjustmentCreateOrConnectWithoutCreatedByInput | TimelineAdjustmentCreateOrConnectWithoutCreatedByInput[]
+    upsert?: TimelineAdjustmentUpsertWithWhereUniqueWithoutCreatedByInput | TimelineAdjustmentUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: TimelineAdjustmentCreateManyCreatedByInputEnvelope
+    set?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
+    disconnect?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
+    delete?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
+    connect?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
+    update?: TimelineAdjustmentUpdateWithWhereUniqueWithoutCreatedByInput | TimelineAdjustmentUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: TimelineAdjustmentUpdateManyWithWhereWithoutCreatedByInput | TimelineAdjustmentUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: TimelineAdjustmentScalarWhereInput | TimelineAdjustmentScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutSessionsInput = {
     create?: XOR<UserCreateWithoutSessionsInput, UserUncheckedCreateWithoutSessionsInput>
     connectOrCreate?: UserCreateOrConnectWithoutSessionsInput
@@ -21363,6 +23012,13 @@ export namespace Prisma {
     connect?: ProjectFileWhereUniqueInput | ProjectFileWhereUniqueInput[]
   }
 
+  export type TimelineAdjustmentCreateNestedManyWithoutProjectInput = {
+    create?: XOR<TimelineAdjustmentCreateWithoutProjectInput, TimelineAdjustmentUncheckedCreateWithoutProjectInput> | TimelineAdjustmentCreateWithoutProjectInput[] | TimelineAdjustmentUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: TimelineAdjustmentCreateOrConnectWithoutProjectInput | TimelineAdjustmentCreateOrConnectWithoutProjectInput[]
+    createMany?: TimelineAdjustmentCreateManyProjectInputEnvelope
+    connect?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
+  }
+
   export type ProjectActivityUncheckedCreateNestedManyWithoutProjectInput = {
     create?: XOR<ProjectActivityCreateWithoutProjectInput, ProjectActivityUncheckedCreateWithoutProjectInput> | ProjectActivityCreateWithoutProjectInput[] | ProjectActivityUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: ProjectActivityCreateOrConnectWithoutProjectInput | ProjectActivityCreateOrConnectWithoutProjectInput[]
@@ -21396,6 +23052,13 @@ export namespace Prisma {
     connectOrCreate?: ProjectFileCreateOrConnectWithoutProjectInput | ProjectFileCreateOrConnectWithoutProjectInput[]
     createMany?: ProjectFileCreateManyProjectInputEnvelope
     connect?: ProjectFileWhereUniqueInput | ProjectFileWhereUniqueInput[]
+  }
+
+  export type TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput = {
+    create?: XOR<TimelineAdjustmentCreateWithoutProjectInput, TimelineAdjustmentUncheckedCreateWithoutProjectInput> | TimelineAdjustmentCreateWithoutProjectInput[] | TimelineAdjustmentUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: TimelineAdjustmentCreateOrConnectWithoutProjectInput | TimelineAdjustmentCreateOrConnectWithoutProjectInput[]
+    createMany?: TimelineAdjustmentCreateManyProjectInputEnvelope
+    connect?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
   }
 
   export type NullableEnumProjectSubTypeFieldUpdateOperationsInput = {
@@ -21516,6 +23179,20 @@ export namespace Prisma {
     deleteMany?: ProjectFileScalarWhereInput | ProjectFileScalarWhereInput[]
   }
 
+  export type TimelineAdjustmentUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<TimelineAdjustmentCreateWithoutProjectInput, TimelineAdjustmentUncheckedCreateWithoutProjectInput> | TimelineAdjustmentCreateWithoutProjectInput[] | TimelineAdjustmentUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: TimelineAdjustmentCreateOrConnectWithoutProjectInput | TimelineAdjustmentCreateOrConnectWithoutProjectInput[]
+    upsert?: TimelineAdjustmentUpsertWithWhereUniqueWithoutProjectInput | TimelineAdjustmentUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: TimelineAdjustmentCreateManyProjectInputEnvelope
+    set?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
+    disconnect?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
+    delete?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
+    connect?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
+    update?: TimelineAdjustmentUpdateWithWhereUniqueWithoutProjectInput | TimelineAdjustmentUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: TimelineAdjustmentUpdateManyWithWhereWithoutProjectInput | TimelineAdjustmentUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: TimelineAdjustmentScalarWhereInput | TimelineAdjustmentScalarWhereInput[]
+  }
+
   export type ProjectActivityUncheckedUpdateManyWithoutProjectNestedInput = {
     create?: XOR<ProjectActivityCreateWithoutProjectInput, ProjectActivityUncheckedCreateWithoutProjectInput> | ProjectActivityCreateWithoutProjectInput[] | ProjectActivityUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: ProjectActivityCreateOrConnectWithoutProjectInput | ProjectActivityCreateOrConnectWithoutProjectInput[]
@@ -21584,6 +23261,20 @@ export namespace Prisma {
     update?: ProjectFileUpdateWithWhereUniqueWithoutProjectInput | ProjectFileUpdateWithWhereUniqueWithoutProjectInput[]
     updateMany?: ProjectFileUpdateManyWithWhereWithoutProjectInput | ProjectFileUpdateManyWithWhereWithoutProjectInput[]
     deleteMany?: ProjectFileScalarWhereInput | ProjectFileScalarWhereInput[]
+  }
+
+  export type TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<TimelineAdjustmentCreateWithoutProjectInput, TimelineAdjustmentUncheckedCreateWithoutProjectInput> | TimelineAdjustmentCreateWithoutProjectInput[] | TimelineAdjustmentUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: TimelineAdjustmentCreateOrConnectWithoutProjectInput | TimelineAdjustmentCreateOrConnectWithoutProjectInput[]
+    upsert?: TimelineAdjustmentUpsertWithWhereUniqueWithoutProjectInput | TimelineAdjustmentUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: TimelineAdjustmentCreateManyProjectInputEnvelope
+    set?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
+    disconnect?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
+    delete?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
+    connect?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
+    update?: TimelineAdjustmentUpdateWithWhereUniqueWithoutProjectInput | TimelineAdjustmentUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: TimelineAdjustmentUpdateManyWithWhereWithoutProjectInput | TimelineAdjustmentUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: TimelineAdjustmentScalarWhereInput | TimelineAdjustmentScalarWhereInput[]
   }
 
   export type ProjectCreateNestedOneWithoutActivitiesInput = {
@@ -21676,6 +23367,38 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutVariationOrdersInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutVariationOrdersInput, UserUpdateWithoutVariationOrdersInput>, UserUncheckedUpdateWithoutVariationOrdersInput>
+  }
+
+  export type ProjectCreateNestedOneWithoutTimelineAdjustmentsInput = {
+    create?: XOR<ProjectCreateWithoutTimelineAdjustmentsInput, ProjectUncheckedCreateWithoutTimelineAdjustmentsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutTimelineAdjustmentsInput
+    connect?: ProjectWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutTimelineAdjustmentsInput = {
+    create?: XOR<UserCreateWithoutTimelineAdjustmentsInput, UserUncheckedCreateWithoutTimelineAdjustmentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTimelineAdjustmentsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumTimelineAdjustmentTypeFieldUpdateOperationsInput = {
+    set?: $Enums.TimelineAdjustmentType
+  }
+
+  export type ProjectUpdateOneRequiredWithoutTimelineAdjustmentsNestedInput = {
+    create?: XOR<ProjectCreateWithoutTimelineAdjustmentsInput, ProjectUncheckedCreateWithoutTimelineAdjustmentsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutTimelineAdjustmentsInput
+    upsert?: ProjectUpsertWithoutTimelineAdjustmentsInput
+    connect?: ProjectWhereUniqueInput
+    update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutTimelineAdjustmentsInput, ProjectUpdateWithoutTimelineAdjustmentsInput>, ProjectUncheckedUpdateWithoutTimelineAdjustmentsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutTimelineAdjustmentsNestedInput = {
+    create?: XOR<UserCreateWithoutTimelineAdjustmentsInput, UserUncheckedCreateWithoutTimelineAdjustmentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTimelineAdjustmentsInput
+    upsert?: UserUpsertWithoutTimelineAdjustmentsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTimelineAdjustmentsInput, UserUpdateWithoutTimelineAdjustmentsInput>, UserUncheckedUpdateWithoutTimelineAdjustmentsInput>
   }
 
   export type ProjectCreateNestedOneWithoutTaskNotificationsInput = {
@@ -22302,6 +24025,23 @@ export namespace Prisma {
     _max?: NestedEnumSourceOfFundNullableFilter<$PrismaModel>
   }
 
+  export type NestedEnumTimelineAdjustmentTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.TimelineAdjustmentType | EnumTimelineAdjustmentTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.TimelineAdjustmentType[] | ListEnumTimelineAdjustmentTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TimelineAdjustmentType[] | ListEnumTimelineAdjustmentTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumTimelineAdjustmentTypeFilter<$PrismaModel> | $Enums.TimelineAdjustmentType
+  }
+
+  export type NestedEnumTimelineAdjustmentTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TimelineAdjustmentType | EnumTimelineAdjustmentTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.TimelineAdjustmentType[] | ListEnumTimelineAdjustmentTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TimelineAdjustmentType[] | ListEnumTimelineAdjustmentTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumTimelineAdjustmentTypeWithAggregatesFilter<$PrismaModel> | $Enums.TimelineAdjustmentType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTimelineAdjustmentTypeFilter<$PrismaModel>
+    _max?: NestedEnumTimelineAdjustmentTypeFilter<$PrismaModel>
+  }
+
   export type NestedEnumNotificationPriorityFilter<$PrismaModel = never> = {
     equals?: $Enums.NotificationPriority | EnumNotificationPriorityFieldRefInput<$PrismaModel>
     in?: $Enums.NotificationPriority[] | ListEnumNotificationPriorityFieldRefInput<$PrismaModel>
@@ -22491,6 +24231,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
     files?: ProjectFileCreateNestedManyWithoutProjectInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutCreatedByInput = {
@@ -22535,6 +24276,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutCreatedByInput = {
@@ -22830,6 +24572,38 @@ export namespace Prisma {
 
   export type ProjectFileCreateManyCreatedByInputEnvelope = {
     data: ProjectFileCreateManyCreatedByInput | ProjectFileCreateManyCreatedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TimelineAdjustmentCreateWithoutCreatedByInput = {
+    id?: string
+    startDate: Date | string
+    endDate: Date | string
+    duration: number
+    type: $Enums.TimelineAdjustmentType
+    justification?: string | null
+    createdAt?: Date | string
+    project: ProjectCreateNestedOneWithoutTimelineAdjustmentsInput
+  }
+
+  export type TimelineAdjustmentUncheckedCreateWithoutCreatedByInput = {
+    id?: string
+    projectId: string
+    startDate: Date | string
+    endDate: Date | string
+    duration: number
+    type: $Enums.TimelineAdjustmentType
+    justification?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TimelineAdjustmentCreateOrConnectWithoutCreatedByInput = {
+    where: TimelineAdjustmentWhereUniqueInput
+    create: XOR<TimelineAdjustmentCreateWithoutCreatedByInput, TimelineAdjustmentUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type TimelineAdjustmentCreateManyCreatedByInputEnvelope = {
+    data: TimelineAdjustmentCreateManyCreatedByInput | TimelineAdjustmentCreateManyCreatedByInput[]
     skipDuplicates?: boolean
   }
 
@@ -23179,6 +24953,37 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"ProjectFile"> | Date | string
   }
 
+  export type TimelineAdjustmentUpsertWithWhereUniqueWithoutCreatedByInput = {
+    where: TimelineAdjustmentWhereUniqueInput
+    update: XOR<TimelineAdjustmentUpdateWithoutCreatedByInput, TimelineAdjustmentUncheckedUpdateWithoutCreatedByInput>
+    create: XOR<TimelineAdjustmentCreateWithoutCreatedByInput, TimelineAdjustmentUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type TimelineAdjustmentUpdateWithWhereUniqueWithoutCreatedByInput = {
+    where: TimelineAdjustmentWhereUniqueInput
+    data: XOR<TimelineAdjustmentUpdateWithoutCreatedByInput, TimelineAdjustmentUncheckedUpdateWithoutCreatedByInput>
+  }
+
+  export type TimelineAdjustmentUpdateManyWithWhereWithoutCreatedByInput = {
+    where: TimelineAdjustmentScalarWhereInput
+    data: XOR<TimelineAdjustmentUpdateManyMutationInput, TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByInput>
+  }
+
+  export type TimelineAdjustmentScalarWhereInput = {
+    AND?: TimelineAdjustmentScalarWhereInput | TimelineAdjustmentScalarWhereInput[]
+    OR?: TimelineAdjustmentScalarWhereInput[]
+    NOT?: TimelineAdjustmentScalarWhereInput | TimelineAdjustmentScalarWhereInput[]
+    id?: StringFilter<"TimelineAdjustment"> | string
+    projectId?: StringFilter<"TimelineAdjustment"> | string
+    startDate?: DateTimeFilter<"TimelineAdjustment"> | Date | string
+    endDate?: DateTimeFilter<"TimelineAdjustment"> | Date | string
+    duration?: IntFilter<"TimelineAdjustment"> | number
+    type?: EnumTimelineAdjustmentTypeFilter<"TimelineAdjustment"> | $Enums.TimelineAdjustmentType
+    justification?: StringNullableFilter<"TimelineAdjustment"> | string | null
+    createdById?: StringFilter<"TimelineAdjustment"> | string
+    createdAt?: DateTimeFilter<"TimelineAdjustment"> | Date | string
+  }
+
   export type UserCreateWithoutSessionsInput = {
     id?: string
     name?: string | null
@@ -23205,6 +25010,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -23233,6 +25039,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -23277,6 +25084,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -23305,6 +25113,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutProjectsInput = {
@@ -23333,6 +25142,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutProjectsInput = {
@@ -23361,6 +25171,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutProjectsInput = {
@@ -23514,6 +25325,38 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type TimelineAdjustmentCreateWithoutProjectInput = {
+    id?: string
+    startDate: Date | string
+    endDate: Date | string
+    duration: number
+    type: $Enums.TimelineAdjustmentType
+    justification?: string | null
+    createdAt?: Date | string
+    createdBy: UserCreateNestedOneWithoutTimelineAdjustmentsInput
+  }
+
+  export type TimelineAdjustmentUncheckedCreateWithoutProjectInput = {
+    id?: string
+    startDate: Date | string
+    endDate: Date | string
+    duration: number
+    type: $Enums.TimelineAdjustmentType
+    justification?: string | null
+    createdById: string
+    createdAt?: Date | string
+  }
+
+  export type TimelineAdjustmentCreateOrConnectWithoutProjectInput = {
+    where: TimelineAdjustmentWhereUniqueInput
+    create: XOR<TimelineAdjustmentCreateWithoutProjectInput, TimelineAdjustmentUncheckedCreateWithoutProjectInput>
+  }
+
+  export type TimelineAdjustmentCreateManyProjectInputEnvelope = {
+    data: TimelineAdjustmentCreateManyProjectInput | TimelineAdjustmentCreateManyProjectInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutProjectsInput = {
     update: XOR<UserUpdateWithoutProjectsInput, UserUncheckedUpdateWithoutProjectsInput>
     create: XOR<UserCreateWithoutProjectsInput, UserUncheckedCreateWithoutProjectsInput>
@@ -23551,6 +25394,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectsInput = {
@@ -23579,6 +25423,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectActivityUpsertWithWhereUniqueWithoutProjectInput = {
@@ -23661,6 +25506,22 @@ export namespace Prisma {
     data: XOR<ProjectFileUpdateManyMutationInput, ProjectFileUncheckedUpdateManyWithoutProjectInput>
   }
 
+  export type TimelineAdjustmentUpsertWithWhereUniqueWithoutProjectInput = {
+    where: TimelineAdjustmentWhereUniqueInput
+    update: XOR<TimelineAdjustmentUpdateWithoutProjectInput, TimelineAdjustmentUncheckedUpdateWithoutProjectInput>
+    create: XOR<TimelineAdjustmentCreateWithoutProjectInput, TimelineAdjustmentUncheckedCreateWithoutProjectInput>
+  }
+
+  export type TimelineAdjustmentUpdateWithWhereUniqueWithoutProjectInput = {
+    where: TimelineAdjustmentWhereUniqueInput
+    data: XOR<TimelineAdjustmentUpdateWithoutProjectInput, TimelineAdjustmentUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type TimelineAdjustmentUpdateManyWithWhereWithoutProjectInput = {
+    where: TimelineAdjustmentScalarWhereInput
+    data: XOR<TimelineAdjustmentUpdateManyMutationInput, TimelineAdjustmentUncheckedUpdateManyWithoutProjectInput>
+  }
+
   export type ProjectCreateWithoutActivitiesInput = {
     id?: string
     projectCode: string
@@ -23703,6 +25564,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
     files?: ProjectFileCreateNestedManyWithoutProjectInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutActivitiesInput = {
@@ -23747,6 +25609,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutActivitiesInput = {
@@ -23780,6 +25643,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutProjectActivitiesInput = {
@@ -23808,6 +25672,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutProjectActivitiesInput = {
@@ -23868,6 +25733,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutActivitiesInput = {
@@ -23912,6 +25778,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderUncheckedUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutProjectActivitiesInput = {
@@ -23951,6 +25818,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectActivitiesInput = {
@@ -23979,6 +25847,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectCreateWithoutDisbursementsInput = {
@@ -24023,6 +25892,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
     files?: ProjectFileCreateNestedManyWithoutProjectInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutDisbursementsInput = {
@@ -24067,6 +25937,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutDisbursementsInput = {
@@ -24100,6 +25971,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutDisbursementsInput = {
@@ -24128,6 +26000,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutDisbursementsInput = {
@@ -24188,6 +26061,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutDisbursementsInput = {
@@ -24232,6 +26106,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderUncheckedUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutDisbursementsInput = {
@@ -24271,6 +26146,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDisbursementsInput = {
@@ -24299,6 +26175,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectCreateWithoutVariationOrdersInput = {
@@ -24343,6 +26220,7 @@ export namespace Prisma {
     disbursements?: DisbursementCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
     files?: ProjectFileCreateNestedManyWithoutProjectInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutVariationOrdersInput = {
@@ -24387,6 +26265,7 @@ export namespace Prisma {
     disbursements?: DisbursementUncheckedCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutVariationOrdersInput = {
@@ -24420,6 +26299,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutVariationOrdersInput = {
@@ -24448,6 +26328,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutVariationOrdersInput = {
@@ -24508,6 +26389,7 @@ export namespace Prisma {
     disbursements?: DisbursementUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutVariationOrdersInput = {
@@ -24552,6 +26434,7 @@ export namespace Prisma {
     disbursements?: DisbursementUncheckedUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutVariationOrdersInput = {
@@ -24591,6 +26474,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutVariationOrdersInput = {
@@ -24615,6 +26499,335 @@ export namespace Prisma {
     documents?: DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
     projectActivities?: ProjectActivityUncheckedUpdateManyWithoutCreatedByNestedInput
     disbursements?: DisbursementUncheckedUpdateManyWithoutCreatedByNestedInput
+    taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
+    taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
+    taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type ProjectCreateWithoutTimelineAdjustmentsInput = {
+    id?: string
+    projectCode: string
+    title: string
+    subType?: $Enums.ProjectSubType | null
+    modeOfImplementation: $Enums.ModeOfImplementation
+    locationImplementation: $Enums.District
+    sourceOfFund: $Enums.SourceOfFund
+    projectCost?: number
+    contractCost?: number
+    contractorName?: string | null
+    projectEngineer?: string | null
+    budgetYear?: string | null
+    dateStarted?: Date | string | null
+    targetCompletionDate?: Date | string | null
+    duration?: number
+    revisedCompletionDate?: Date | string | null
+    dateCompleted?: Date | string | null
+    daysSuspended?: number
+    daysExtended?: number
+    numFemale?: number
+    numMale?: number
+    numPersons?: number
+    numManDays?: number
+    district?: $Enums.District | null
+    cityMunicipality?: string | null
+    barangay?: string | null
+    purok?: string | null
+    sitio?: string | null
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    completionPercentage?: number
+    imageUrl?: string | null
+    documentUrl?: string | null
+    documentName?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: UserCreateNestedOneWithoutProjectsInput
+    activities?: ProjectActivityCreateNestedManyWithoutProjectInput
+    disbursements?: DisbursementCreateNestedManyWithoutProjectInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutProjectInput
+    taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
+    files?: ProjectFileCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectUncheckedCreateWithoutTimelineAdjustmentsInput = {
+    id?: string
+    projectCode: string
+    title: string
+    subType?: $Enums.ProjectSubType | null
+    modeOfImplementation: $Enums.ModeOfImplementation
+    locationImplementation: $Enums.District
+    sourceOfFund: $Enums.SourceOfFund
+    projectCost?: number
+    contractCost?: number
+    contractorName?: string | null
+    projectEngineer?: string | null
+    budgetYear?: string | null
+    dateStarted?: Date | string | null
+    targetCompletionDate?: Date | string | null
+    duration?: number
+    revisedCompletionDate?: Date | string | null
+    dateCompleted?: Date | string | null
+    daysSuspended?: number
+    daysExtended?: number
+    numFemale?: number
+    numMale?: number
+    numPersons?: number
+    numManDays?: number
+    district?: $Enums.District | null
+    cityMunicipality?: string | null
+    barangay?: string | null
+    purok?: string | null
+    sitio?: string | null
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    completionPercentage?: number
+    imageUrl?: string | null
+    documentUrl?: string | null
+    documentName?: string | null
+    createdById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    activities?: ProjectActivityUncheckedCreateNestedManyWithoutProjectInput
+    disbursements?: DisbursementUncheckedCreateNestedManyWithoutProjectInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutProjectInput
+    taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
+    files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectCreateOrConnectWithoutTimelineAdjustmentsInput = {
+    where: ProjectWhereUniqueInput
+    create: XOR<ProjectCreateWithoutTimelineAdjustmentsInput, ProjectUncheckedCreateWithoutTimelineAdjustmentsInput>
+  }
+
+  export type UserCreateWithoutTimelineAdjustmentsInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password: string
+    role?: $Enums.UserRole
+    employeeId?: string | null
+    designation?: string | null
+    division?: string | null
+    contactNumber?: string | null
+    sex?: $Enums.Sex | null
+    status?: $Enums.UserStatus
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    posts?: PostCreateNestedManyWithoutCreatedByInput
+    projects?: ProjectCreateNestedManyWithoutCreatedByInput
+    sessions?: UserSessionCreateNestedManyWithoutUserInput
+    documents?: DocumentCreateNestedManyWithoutCreatedByInput
+    projectActivities?: ProjectActivityCreateNestedManyWithoutCreatedByInput
+    disbursements?: DisbursementCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutCreatedByInput
+    taskNotificationsReceived?: TaskNotificationCreateNestedManyWithoutNotifyUserInput
+    taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
+    taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
+    projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutTimelineAdjustmentsInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password: string
+    role?: $Enums.UserRole
+    employeeId?: string | null
+    designation?: string | null
+    division?: string | null
+    contactNumber?: string | null
+    sex?: $Enums.Sex | null
+    status?: $Enums.UserStatus
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
+    projects?: ProjectUncheckedCreateNestedManyWithoutCreatedByInput
+    sessions?: UserSessionUncheckedCreateNestedManyWithoutUserInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutCreatedByInput
+    projectActivities?: ProjectActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    disbursements?: DisbursementUncheckedCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutCreatedByInput
+    taskNotificationsReceived?: TaskNotificationUncheckedCreateNestedManyWithoutNotifyUserInput
+    taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
+    taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
+    projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutTimelineAdjustmentsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutTimelineAdjustmentsInput, UserUncheckedCreateWithoutTimelineAdjustmentsInput>
+  }
+
+  export type ProjectUpsertWithoutTimelineAdjustmentsInput = {
+    update: XOR<ProjectUpdateWithoutTimelineAdjustmentsInput, ProjectUncheckedUpdateWithoutTimelineAdjustmentsInput>
+    create: XOR<ProjectCreateWithoutTimelineAdjustmentsInput, ProjectUncheckedCreateWithoutTimelineAdjustmentsInput>
+    where?: ProjectWhereInput
+  }
+
+  export type ProjectUpdateToOneWithWhereWithoutTimelineAdjustmentsInput = {
+    where?: ProjectWhereInput
+    data: XOR<ProjectUpdateWithoutTimelineAdjustmentsInput, ProjectUncheckedUpdateWithoutTimelineAdjustmentsInput>
+  }
+
+  export type ProjectUpdateWithoutTimelineAdjustmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectCode?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
+    locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
+    sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
+    projectCost?: FloatFieldUpdateOperationsInput | number
+    contractCost?: FloatFieldUpdateOperationsInput | number
+    contractorName?: NullableStringFieldUpdateOperationsInput | string | null
+    projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
+    budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duration?: IntFieldUpdateOperationsInput | number
+    revisedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCompleted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    daysSuspended?: IntFieldUpdateOperationsInput | number
+    daysExtended?: IntFieldUpdateOperationsInput | number
+    numFemale?: IntFieldUpdateOperationsInput | number
+    numMale?: IntFieldUpdateOperationsInput | number
+    numPersons?: IntFieldUpdateOperationsInput | number
+    numManDays?: IntFieldUpdateOperationsInput | number
+    district?: NullableEnumDistrictFieldUpdateOperationsInput | $Enums.District | null
+    cityMunicipality?: NullableStringFieldUpdateOperationsInput | string | null
+    barangay?: NullableStringFieldUpdateOperationsInput | string | null
+    purok?: NullableStringFieldUpdateOperationsInput | string | null
+    sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    completionPercentage?: IntFieldUpdateOperationsInput | number
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    documentName?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutProjectsNestedInput
+    activities?: ProjectActivityUpdateManyWithoutProjectNestedInput
+    disbursements?: DisbursementUpdateManyWithoutProjectNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutProjectNestedInput
+    taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
+    files?: ProjectFileUpdateManyWithoutProjectNestedInput
+  }
+
+  export type ProjectUncheckedUpdateWithoutTimelineAdjustmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectCode?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
+    locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
+    sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
+    projectCost?: FloatFieldUpdateOperationsInput | number
+    contractCost?: FloatFieldUpdateOperationsInput | number
+    contractorName?: NullableStringFieldUpdateOperationsInput | string | null
+    projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
+    budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duration?: IntFieldUpdateOperationsInput | number
+    revisedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCompleted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    daysSuspended?: IntFieldUpdateOperationsInput | number
+    daysExtended?: IntFieldUpdateOperationsInput | number
+    numFemale?: IntFieldUpdateOperationsInput | number
+    numMale?: IntFieldUpdateOperationsInput | number
+    numPersons?: IntFieldUpdateOperationsInput | number
+    numManDays?: IntFieldUpdateOperationsInput | number
+    district?: NullableEnumDistrictFieldUpdateOperationsInput | $Enums.District | null
+    cityMunicipality?: NullableStringFieldUpdateOperationsInput | string | null
+    barangay?: NullableStringFieldUpdateOperationsInput | string | null
+    purok?: NullableStringFieldUpdateOperationsInput | string | null
+    sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    completionPercentage?: IntFieldUpdateOperationsInput | number
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    documentName?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    activities?: ProjectActivityUncheckedUpdateManyWithoutProjectNestedInput
+    disbursements?: DisbursementUncheckedUpdateManyWithoutProjectNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutProjectNestedInput
+    taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
+    files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
+  }
+
+  export type UserUpsertWithoutTimelineAdjustmentsInput = {
+    update: XOR<UserUpdateWithoutTimelineAdjustmentsInput, UserUncheckedUpdateWithoutTimelineAdjustmentsInput>
+    create: XOR<UserCreateWithoutTimelineAdjustmentsInput, UserUncheckedCreateWithoutTimelineAdjustmentsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutTimelineAdjustmentsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutTimelineAdjustmentsInput, UserUncheckedUpdateWithoutTimelineAdjustmentsInput>
+  }
+
+  export type UserUpdateWithoutTimelineAdjustmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    designation?: NullableStringFieldUpdateOperationsInput | string | null
+    division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    posts?: PostUpdateManyWithoutCreatedByNestedInput
+    projects?: ProjectUpdateManyWithoutCreatedByNestedInput
+    sessions?: UserSessionUpdateManyWithoutUserNestedInput
+    documents?: DocumentUpdateManyWithoutCreatedByNestedInput
+    projectActivities?: ProjectActivityUpdateManyWithoutCreatedByNestedInput
+    disbursements?: DisbursementUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutCreatedByNestedInput
+    taskNotificationsReceived?: TaskNotificationUpdateManyWithoutNotifyUserNestedInput
+    taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
+    taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
+    projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutTimelineAdjustmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    designation?: NullableStringFieldUpdateOperationsInput | string | null
+    division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
+    projects?: ProjectUncheckedUpdateManyWithoutCreatedByNestedInput
+    sessions?: UserSessionUncheckedUpdateManyWithoutUserNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectActivities?: ProjectActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    disbursements?: DisbursementUncheckedUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutCreatedByNestedInput
     taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -24663,6 +26876,7 @@ export namespace Prisma {
     disbursements?: DisbursementCreateNestedManyWithoutProjectInput
     variationOrders?: VariationOrderCreateNestedManyWithoutProjectInput
     files?: ProjectFileCreateNestedManyWithoutProjectInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutTaskNotificationsInput = {
@@ -24707,6 +26921,7 @@ export namespace Prisma {
     disbursements?: DisbursementUncheckedCreateNestedManyWithoutProjectInput
     variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutProjectInput
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutTaskNotificationsInput = {
@@ -24740,6 +26955,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTaskNotificationsReceivedInput = {
@@ -24768,6 +26984,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTaskNotificationsReceivedInput = {
@@ -24801,6 +27018,7 @@ export namespace Prisma {
     taskNotificationsReceived?: TaskNotificationCreateNestedManyWithoutNotifyUserInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTaskNotificationsCreatedInput = {
@@ -24829,6 +27047,7 @@ export namespace Prisma {
     taskNotificationsReceived?: TaskNotificationUncheckedCreateNestedManyWithoutNotifyUserInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTaskNotificationsCreatedInput = {
@@ -24917,6 +27136,7 @@ export namespace Prisma {
     disbursements?: DisbursementUpdateManyWithoutProjectNestedInput
     variationOrders?: VariationOrderUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutTaskNotificationsInput = {
@@ -24961,6 +27181,7 @@ export namespace Prisma {
     disbursements?: DisbursementUncheckedUpdateManyWithoutProjectNestedInput
     variationOrders?: VariationOrderUncheckedUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutTaskNotificationsReceivedInput = {
@@ -25000,6 +27221,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTaskNotificationsReceivedInput = {
@@ -25028,6 +27250,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUpsertWithoutTaskNotificationsCreatedInput = {
@@ -25067,6 +27290,7 @@ export namespace Prisma {
     taskNotificationsReceived?: TaskNotificationUpdateManyWithoutNotifyUserNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTaskNotificationsCreatedInput = {
@@ -25095,6 +27319,7 @@ export namespace Prisma {
     taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type TaskReplyUpsertWithWhereUniqueWithoutTaskNotificationInput = {
@@ -25168,6 +27393,7 @@ export namespace Prisma {
     taskNotificationsReceived?: TaskNotificationCreateNestedManyWithoutNotifyUserInput
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTaskRepliesInput = {
@@ -25196,6 +27422,7 @@ export namespace Prisma {
     taskNotificationsReceived?: TaskNotificationUncheckedCreateNestedManyWithoutNotifyUserInput
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTaskRepliesInput = {
@@ -25303,6 +27530,7 @@ export namespace Prisma {
     taskNotificationsReceived?: TaskNotificationUpdateManyWithoutNotifyUserNestedInput
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTaskRepliesInput = {
@@ -25331,6 +27559,7 @@ export namespace Prisma {
     taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type TaskReplyDocumentUpsertWithWhereUniqueWithoutReplyInput = {
@@ -25440,6 +27669,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutDocumentsInput = {
@@ -25468,6 +27698,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutDocumentsInput = {
@@ -25512,6 +27743,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDocumentsInput = {
@@ -25540,6 +27772,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectCreateWithoutFilesInput = {
@@ -25584,6 +27817,7 @@ export namespace Prisma {
     disbursements?: DisbursementCreateNestedManyWithoutProjectInput
     variationOrders?: VariationOrderCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutFilesInput = {
@@ -25628,6 +27862,7 @@ export namespace Prisma {
     disbursements?: DisbursementUncheckedCreateNestedManyWithoutProjectInput
     variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutFilesInput = {
@@ -25661,6 +27896,7 @@ export namespace Prisma {
     taskNotificationsReceived?: TaskNotificationCreateNestedManyWithoutNotifyUserInput
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutProjectFilesInput = {
@@ -25689,6 +27925,7 @@ export namespace Prisma {
     taskNotificationsReceived?: TaskNotificationUncheckedCreateNestedManyWithoutNotifyUserInput
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutProjectFilesInput = {
@@ -25749,6 +27986,7 @@ export namespace Prisma {
     disbursements?: DisbursementUpdateManyWithoutProjectNestedInput
     variationOrders?: VariationOrderUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutFilesInput = {
@@ -25793,6 +28031,7 @@ export namespace Prisma {
     disbursements?: DisbursementUncheckedUpdateManyWithoutProjectNestedInput
     variationOrders?: VariationOrderUncheckedUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutProjectFilesInput = {
@@ -25832,6 +28071,7 @@ export namespace Prisma {
     taskNotificationsReceived?: TaskNotificationUpdateManyWithoutNotifyUserNestedInput
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectFilesInput = {
@@ -25860,6 +28100,7 @@ export namespace Prisma {
     taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutPostsInput = {
@@ -25888,6 +28129,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutPostsInput = {
@@ -25916,6 +28158,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutPostsInput = {
@@ -25960,6 +28203,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPostsInput = {
@@ -25988,6 +28232,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type PostCreateManyCreatedByInput = {
@@ -26131,6 +28376,17 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type TimelineAdjustmentCreateManyCreatedByInput = {
+    id?: string
+    projectId: string
+    startDate: Date | string
+    endDate: Date | string
+    duration: number
+    type: $Enums.TimelineAdjustmentType
+    justification?: string | null
+    createdAt?: Date | string
+  }
+
   export type PostUpdateWithoutCreatedByInput = {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26193,6 +28449,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutCreatedByInput = {
@@ -26237,6 +28494,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderUncheckedUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateManyWithoutCreatedByInput = {
@@ -26569,6 +28827,39 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type TimelineAdjustmentUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    duration?: IntFieldUpdateOperationsInput | number
+    type?: EnumTimelineAdjustmentTypeFieldUpdateOperationsInput | $Enums.TimelineAdjustmentType
+    justification?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutTimelineAdjustmentsNestedInput
+  }
+
+  export type TimelineAdjustmentUncheckedUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    duration?: IntFieldUpdateOperationsInput | number
+    type?: EnumTimelineAdjustmentTypeFieldUpdateOperationsInput | $Enums.TimelineAdjustmentType
+    justification?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    duration?: IntFieldUpdateOperationsInput | number
+    type?: EnumTimelineAdjustmentTypeFieldUpdateOperationsInput | $Enums.TimelineAdjustmentType
+    justification?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ProjectActivityCreateManyProjectInput = {
     id?: string
     description: string
@@ -26612,6 +28903,17 @@ export namespace Prisma {
     fileUrl: string
     fileType?: $Enums.ProjectFileType
     fileSize?: number | null
+    createdById: string
+    createdAt?: Date | string
+  }
+
+  export type TimelineAdjustmentCreateManyProjectInput = {
+    id?: string
+    startDate: Date | string
+    endDate: Date | string
+    duration: number
+    type: $Enums.TimelineAdjustmentType
+    justification?: string | null
     createdById: string
     createdAt?: Date | string
   }
@@ -26755,6 +29057,39 @@ export namespace Prisma {
     fileUrl?: StringFieldUpdateOperationsInput | string
     fileType?: EnumProjectFileTypeFieldUpdateOperationsInput | $Enums.ProjectFileType
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TimelineAdjustmentUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    duration?: IntFieldUpdateOperationsInput | number
+    type?: EnumTimelineAdjustmentTypeFieldUpdateOperationsInput | $Enums.TimelineAdjustmentType
+    justification?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutTimelineAdjustmentsNestedInput
+  }
+
+  export type TimelineAdjustmentUncheckedUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    duration?: IntFieldUpdateOperationsInput | number
+    type?: EnumTimelineAdjustmentTypeFieldUpdateOperationsInput | $Enums.TimelineAdjustmentType
+    justification?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TimelineAdjustmentUncheckedUpdateManyWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    duration?: IntFieldUpdateOperationsInput | number
+    type?: EnumTimelineAdjustmentTypeFieldUpdateOperationsInput | $Enums.TimelineAdjustmentType
+    justification?: NullableStringFieldUpdateOperationsInput | string | null
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

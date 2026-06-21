@@ -118,6 +118,13 @@ enum DisbursementType {
     MATERIALS
 }
 
+enum TimelineAdjustmentType {
+    EXTENSION
+    SUSPENSION
+    RESUMPTION
+    REVISION
+}
+
 enum DocumentStatus {
     DRAFT
     FOR_REVIEW
@@ -152,6 +159,7 @@ model User {
     taskNotificationsCreated  TaskNotification[] @relation("UserNotificationsCreated")
     taskReplies               TaskReply[]
     projectFiles              ProjectFile[]
+    timelineAdjustments       TimelineAdjustment[]
 }
 
 model UserSession {
@@ -209,11 +217,12 @@ model Project {
     createdAt    DateTime @default(now())
     updatedAt    DateTime @updatedAt
 
-    activities        ProjectActivity[]
-    disbursements     Disbursement[]
-    variationOrders   VariationOrder[]
-    taskNotifications TaskNotification[]
-    files             ProjectFile[]
+    activities          ProjectActivity[]
+    disbursements       Disbursement[]
+    variationOrders     VariationOrder[]
+    taskNotifications   TaskNotification[]
+    files               ProjectFile[]
+    timelineAdjustments TimelineAdjustment[]
 
     @@index([title])
     @@index([status])
@@ -259,6 +268,23 @@ model VariationOrder {
     createdBy    User          @relation(fields: [createdById], references: [id])
     createdById  String
     createdAt    DateTime      @default(now())
+
+    @@index([projectId])
+    @@index([createdById])
+}
+
+model TimelineAdjustment {
+    id            String                 @id @default(cuid())
+    projectId     String
+    project       Project                @relation(fields: [projectId], references: [id], onDelete: Cascade)
+    startDate     DateTime
+    endDate       DateTime
+    duration      Int
+    type          TimelineAdjustmentType
+    justification String?
+    createdBy     User                   @relation(fields: [createdById], references: [id])
+    createdById   String
+    createdAt     DateTime               @default(now())
 
     @@index([projectId])
     @@index([createdById])

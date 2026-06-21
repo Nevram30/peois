@@ -118,6 +118,13 @@ enum DisbursementType {
   MATERIALS
 }
 
+enum TimelineAdjustmentType {
+  EXTENSION
+  SUSPENSION
+  RESUMPTION
+  REVISION
+}
+
 enum DocumentStatus {
   DRAFT
   FOR_REVIEW
@@ -126,21 +133,21 @@ enum DocumentStatus {
 }
 
 model User {
-  id                        String             @id @default(cuid())
+  id                        String               @id @default(cuid())
   name                      String?
-  email                     String             @unique
+  email                     String               @unique
   password                  String
-  role                      UserRole           @default(ADMIN)
-  employeeId                String?            @unique
+  role                      UserRole             @default(ADMIN)
+  employeeId                String?              @unique
   designation               String?
   division                  String?
   contactNumber             String?
   sex                       Sex?
-  status                    UserStatus         @default(PENDING)
+  status                    UserStatus           @default(PENDING)
   emailVerified             DateTime?
   image                     String?
-  createdAt                 DateTime           @default(now())
-  updatedAt                 DateTime           @updatedAt
+  createdAt                 DateTime             @default(now())
+  updatedAt                 DateTime             @updatedAt
   posts                     Post[]
   projects                  Project[]
   sessions                  UserSession[]
@@ -148,10 +155,11 @@ model User {
   projectActivities         ProjectActivity[]
   disbursements             Disbursement[]
   variationOrders           VariationOrder[]
-  taskNotificationsReceived TaskNotification[] @relation("UserNotificationsReceived")
-  taskNotificationsCreated  TaskNotification[] @relation("UserNotificationsCreated")
+  taskNotificationsReceived TaskNotification[]   @relation("UserNotificationsReceived")
+  taskNotificationsCreated  TaskNotification[]   @relation("UserNotificationsCreated")
   taskReplies               TaskReply[]
   projectFiles              ProjectFile[]
+  timelineAdjustments       TimelineAdjustment[]
 }
 
 model UserSession {
@@ -209,11 +217,12 @@ model Project {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  activities        ProjectActivity[]
-  disbursements     Disbursement[]
-  variationOrders   VariationOrder[]
-  taskNotifications TaskNotification[]
-  files             ProjectFile[]
+  activities          ProjectActivity[]
+  disbursements       Disbursement[]
+  variationOrders     VariationOrder[]
+  taskNotifications   TaskNotification[]
+  files               ProjectFile[]
+  timelineAdjustments TimelineAdjustment[]
 
   @@index([title])
   @@index([status])
@@ -259,6 +268,23 @@ model VariationOrder {
   createdBy    User          @relation(fields: [createdById], references: [id])
   createdById  String
   createdAt    DateTime      @default(now())
+
+  @@index([projectId])
+  @@index([createdById])
+}
+
+model TimelineAdjustment {
+  id            String                 @id @default(cuid())
+  projectId     String
+  project       Project                @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  startDate     DateTime
+  endDate       DateTime
+  duration      Int
+  type          TimelineAdjustmentType
+  justification String?
+  createdBy     User                   @relation(fields: [createdById], references: [id])
+  createdById   String
+  createdAt     DateTime               @default(now())
 
   @@index([projectId])
   @@index([createdById])

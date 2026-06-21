@@ -218,6 +218,18 @@ exports.Prisma.VariationOrderScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.TimelineAdjustmentScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  duration: 'duration',
+  type: 'type',
+  justification: 'justification',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.TaskNotificationScalarFieldEnum = {
   id: 'id',
   projectId: 'projectId',
@@ -391,6 +403,13 @@ exports.DisbursementType = exports.$Enums.DisbursementType = {
   MATERIALS: 'MATERIALS'
 };
 
+exports.TimelineAdjustmentType = exports.$Enums.TimelineAdjustmentType = {
+  EXTENSION: 'EXTENSION',
+  SUSPENSION: 'SUSPENSION',
+  RESUMPTION: 'RESUMPTION',
+  REVISION: 'REVISION'
+};
+
 exports.NotificationPriority = exports.$Enums.NotificationPriority = {
   LOW: 'LOW',
   MEDIUM: 'MEDIUM',
@@ -426,6 +445,7 @@ exports.Prisma.ModelName = {
   ProjectActivity: 'ProjectActivity',
   Disbursement: 'Disbursement',
   VariationOrder: 'VariationOrder',
+  TimelineAdjustment: 'TimelineAdjustment',
   TaskNotification: 'TaskNotification',
   TaskReply: 'TaskReply',
   TaskReplyDocument: 'TaskReplyDocument',

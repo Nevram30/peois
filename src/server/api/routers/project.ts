@@ -312,6 +312,40 @@ export const projectRouter = createTRPCRouter({
       });
     }),
 
+  createTimelineAdjustment: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+        startDate: z.date(),
+        endDate: z.date(),
+        duration: z.number().int().min(0),
+        type: z.enum(["EXTENSION", "SUSPENSION", "RESUMPTION", "REVISION"]),
+        justification: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.timelineAdjustment.create({
+        data: {
+          projectId: input.projectId,
+          startDate: input.startDate,
+          endDate: input.endDate,
+          duration: input.duration,
+          type: input.type,
+          justification: input.justification,
+          createdById: ctx.session.user.id,
+        },
+      });
+    }),
+
+  getTimelineAdjustments: protectedProcedure
+    .input(z.object({ projectId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return ctx.db.timelineAdjustment.findMany({
+        where: { projectId: input.projectId },
+        orderBy: { startDate: "asc" },
+      });
+    }),
+
   sendTaskNotification: protectedProcedure
     .input(
       z.object({
