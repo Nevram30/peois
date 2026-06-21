@@ -2,23 +2,48 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
 import { api } from "~/trpc/react";
+import {
+  PROJECT_STATUS_LABEL,
+  PROJECT_SUB_TYPE_LABEL,
+  SOURCE_OF_FUND_LABEL,
+  type ProjectStatusValue,
+  type ProjectSubTypeValue,
+  type SourceOfFundValue,
+} from "~/lib/fund-constants";
 
-const STATUS_BADGE: Record<string, string> = {
-  NOT_YET_STARTED: "bg-gray-500 text-white",
-  ON_GOING: "bg-orange-500 text-white",
-  COMPLETED: "bg-green-500 text-white",
-  SUSPENDED: "bg-red-500 text-white",
+const STATUS_PILL: Record<string, string> = {
+  NOT_YET_STARTED: "bg-gray-50 text-gray-600 border border-gray-200",
+  ON_GOING: "bg-orange-50 text-orange-600 border border-orange-200",
+  COMPLETED: "bg-green-50 text-green-600 border border-green-200",
+  SUSPENDED: "bg-red-50 text-red-600 border border-red-200",
+  FOR_IMPLEMENTATION: "bg-blue-50 text-blue-600 border border-blue-200",
+  RE_ALIGNMENT: "bg-amber-50 text-amber-600 border border-amber-200",
+  OTHERS: "bg-gray-50 text-gray-600 border border-gray-200",
 };
 
-const STATUS_LABEL: Record<string, string> = {
-  NOT_YET_STARTED: "Not Yet Started",
-  ON_GOING: "Ongoing",
-  COMPLETED: "Completed",
-  SUSPENDED: "Suspended",
+const FILE_TYPE_PILL: Record<string, string> = {
+  IMAGE: "bg-blue-50 text-blue-600 border border-blue-200",
+  BLUEPRINT: "bg-indigo-50 text-indigo-600 border border-indigo-200",
+  REPORT: "bg-emerald-50 text-emerald-600 border border-emerald-200",
+  CONTRACT: "bg-amber-50 text-amber-600 border border-amber-200",
+  PERMIT: "bg-purple-50 text-purple-600 border border-purple-200",
+  OTHER: "bg-gray-50 text-gray-600 border border-gray-200",
 };
 
+const FILE_TYPE_LABEL: Record<string, string> = {
+  IMAGE: "Image",
+  BLUEPRINT: "Blueprint",
+  REPORT: "Report",
+  CONTRACT: "Contract",
+  PERMIT: "Permit",
+  OTHER: "Other",
+};
+
+const DISTRICT_LABEL: Record<string, string> = {
+  DISTRICT_I: "District 1",
+  DISTRICT_II: "District 2",
+};
 
 function fmt(d: Date | string | null | undefined) {
   if (!d) return "—";
@@ -27,6 +52,15 @@ function fmt(d: Date | string | null | undefined) {
     day: "numeric",
     year: "numeric",
   });
+}
+
+function fmtInput(d: Date | string | null | undefined) {
+  if (!d) return "";
+  const date = new Date(d);
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  const yyyy = date.getFullYear();
+  return `${mm}/${dd}/${yyyy}`;
 }
 
 function timeAgo(d: Date | string) {
@@ -39,16 +73,27 @@ function timeAgo(d: Date | string) {
   return `${days} day${days !== 1 ? "s" : ""} ago`;
 }
 
+function peso(n: number | null | undefined) {
+  const v = typeof n === "number" ? n : 0;
+  return `₱ ${v.toLocaleString("en-PH", { minimumFractionDigits: 2 })}`;
+}
+
 const card = "rounded-xl border border-gray-200 bg-white p-6 shadow-sm";
+const sectionTitle = "flex items-center gap-2 border-b border-gray-100 pb-4 mb-5";
+const fieldLabel = "text-[11px] font-semibold uppercase tracking-wider text-gray-400";
+const fieldBox =
+  "mt-1.5 w-full rounded-lg border border-gray-200 bg-gray-50 px-3.5 py-2.5 text-sm text-gray-800";
 
 interface Props {
   projectId: string;
 }
 
 export function ProjectDetail({ projectId }: Props) {
-  const [showUnderDev, setShowUnderDev] = useState(false);
   const { data: project, isLoading } = api.project.getById.useQuery({ id: projectId });
   const { data: activities } = api.projectActivity.getByProjectId.useQuery({ projectId });
+  const { data: disbursements } = api.project.getDisbursements.useQuery({ projectId });
+  const { data: variationOrders } = api.project.getVariationOrders.useQuery({ projectId });
+  const { data: files } = api.projectFile.getByProjectId.useQuery({ projectId });
 
   if (isLoading) {
     return (
@@ -62,227 +107,815 @@ export function ProjectDetail({ projectId }: Props) {
     return (
       <div className="flex min-h-75 flex-col items-center justify-center gap-3 text-gray-400">
         <p>Project not found.</p>
-        <Link href="/admin/dashboard/projects" className="text-sm font-medium text-blue-600 hover:underline">
+        <Link
+          href="/admin/dashboard/projects"
+          className="text-sm font-medium text-blue-600 hover:underline"
+        >
           Back to Projects
         </Link>
       </div>
     );
   }
 
-  const badgeClass = STATUS_BADGE[project.status] ?? "bg-gray-500 text-white";
-  const statusLabel = STATUS_LABEL[project.status] ?? project.status;
+  const pillClass = STATUS_PILL[project.status] ?? STATUS_PILL.OTHERS!;
+  const statusLabel =
+    PROJECT_STATUS_LABEL[project.status as ProjectStatusValue] ?? project.status;
+
+  const sourceLabel = project.sourceOfFund
+    ? (SOURCE_OF_FUND_LABEL[project.sourceOfFund as SourceOfFundValue] ?? project.sourceOfFund)
+    : "—";
+  const subTypeLabel = project.subType
+    ? (PROJECT_SUB_TYPE_LABEL[project.subType as ProjectSubTypeValue] ?? project.subType)
+    : "—";
+
+  const districtLabel = project.district
+    ? (DISTRICT_LABEL[project.district] ?? project.district)
+    : "—";
+
+  // Balances — mirror the edit form's calculations so the view is consistent.
+  const totalDisb = (disbursements ?? []).reduce((s, d) => s + d.amount, 0);
+  const primaryFundBalance = (project.projectCost ?? 0) - totalDisb;
+  const variationOrderBalance = (variationOrders ?? []).reduce((s, v) => s + v.amount, 0);
+  const totalRemainingBalance = primaryFundBalance + variationOrderBalance;
+
+  const totalDays =
+    project.dateStarted && project.targetCompletionDate
+      ? Math.max(
+        0,
+        Math.ceil(
+          (new Date(project.targetCompletionDate).getTime() -
+            new Date(project.dateStarted).getTime()) /
+          (1000 * 60 * 60 * 24),
+        ),
+      )
+      : project.duration;
+
+  const engineers = (project.projectEngineer ?? "")
+    .split(/[,;]/)
+    .map((s) => s.trim())
+    .filter(Boolean);
 
   return (
     <div className="min-h-screen bg-gray-50 px-6 py-8">
-      {/* Breadcrumb */}
-      <nav className="mb-5 flex items-center gap-1.5 text-sm text-gray-500">
-        <Link href="/admin/dashboard" className="hover:text-gray-700">Dashboard</Link>
-        <span>/</span>
-        <Link href="/admin/dashboard/projects" className="hover:text-gray-700">Projects</Link>
-        <span>/</span>
-        <span className="font-medium text-gray-900">Project Details</span>
-      </nav>
+      {/* Breadcrumb + Edit action */}
+      <div className="mb-5 flex items-center justify-between">
+        <nav className="flex items-center gap-1.5 text-sm text-gray-500">
+          <Link href="/admin/dashboard" className="hover:text-gray-700">
+            Dashboard
+          </Link>
+          <span>/</span>
+          <Link href="/admin/dashboard/projects" className="hover:text-gray-700">
+            Projects
+          </Link>
+          <span>/</span>
+          <span className="font-medium text-gray-900">Project Details</span>
+        </nav>
+
+        <Link
+          href={`/admin/dashboard/projects/${projectId}/edit`}
+          className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125" />
+          </svg>
+          Edit Project
+        </Link>
+      </div>
 
       <div className="space-y-6">
-
-        {/* ── Hero Card ── */}
-        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-          <div className="flex flex-col sm:flex-row">
-            {/* Image */}
-            <div className="relative h-64 w-full shrink-0 sm:h-auto sm:w-120">
-              {project.imageUrl ? (
-                <Image src={project.imageUrl} alt={project.title} fill className="object-cover" />
-              ) : (
-                <div className="flex h-full min-h-64 w-full items-center justify-center bg-gray-200">
-                  <svg className="h-20 w-20 text-gray-300" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Z" />
-                  </svg>
-                </div>
-              )}
-              <span className={`absolute top-4 left-4 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-widest shadow ${badgeClass}`}>
-                {statusLabel}
-              </span>
+        {/* ── Top row: Identity & Status (left, wide) + Location (right) ── */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {/* Project Identity & Status */}
+          <section className={`${card} lg:col-span-2`}>
+            <div className={sectionTitle}>
+              <svg
+                className="h-5 w-5 text-blue-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                />
+              </svg>
+              <h2 className="text-sm font-bold uppercase tracking-wider text-gray-700">
+                Project Identity &amp; Status
+              </h2>
             </div>
 
-            {/* Info */}
-            <div className="flex flex-1 flex-col justify-between p-7">
-              <div>
-                <div className="mb-1 flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-widest text-blue-600">Active Project</span>
-                  <span className="text-xs text-gray-400">Last updated: {timeAgo(project.updatedAt)}</span>
-                </div>
-                <h1 className="mt-1 text-2xl font-extrabold leading-snug text-gray-900">{project.title}</h1>
+            <div className="flex flex-col gap-5 sm:flex-row">
+              {/* Image */}
+              <div className="relative h-40 w-full shrink-0 overflow-hidden rounded-xl border border-gray-200 bg-linear-to-br from-slate-700 to-slate-900 sm:h-44 sm:w-44">
+                {project.imageUrl ? (
+                  <Image
+                    src={project.imageUrl}
+                    alt={project.title}
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-gray-400">
+                    <svg
+                      className="h-14 w-14"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.2}
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"
+                      />
+                    </svg>
+                  </div>
+                )}
+                <span className="absolute bottom-2 left-2 rounded-md bg-black/60 px-2 py-0.5 text-[10px] font-mono font-semibold text-white">
+                  # {project.projectCode}
+                </span>
               </div>
 
-              {/* info boxes */}
-              <div className="mt-6 grid grid-cols-2 gap-3">
-                {/* Tracking Number */}
-                <div className="flex items-center gap-3 rounded-xl bg-gray-50 px-4 py-3">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50">
-                    <svg className="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M7.864 4.243A7.5 7.5 0 0 1 19.5 10.5c0 2.92-.556 5.709-1.568 8.268M5.742 6.364A7.465 7.465 0 0 0 4.5 10.5a7.464 7.464 0 0 1-1.15 3.993m1.989 3.559A11.209 11.209 0 0 0 8.25 10.5a3.75 3.75 0 1 1 7.5 0c0 .527-.021 1.049-.064 1.565M12 10.5a14.94 14.94 0 0 1-3.6 9.75m6.633-4.596a18.666 18.666 0 0 1-2.485 5.33" />
-                    </svg>
+              {/* Right column - fields */}
+              <div className="flex-1 space-y-3">
+                <div>
+                  <label className={fieldLabel}>Project Title</label>
+                  <div className={fieldBox}>{project.title}</div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div>
+                    <label className={fieldLabel}>Project Cost</label>
+                    <div className={fieldBox}>{peso(project.projectCost)}</div>
                   </div>
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Tracking Number</p>
-                    <p className="mt-0.5 font-mono text-sm font-bold text-gray-900">{project.projectCode}</p>
+                    <label className={fieldLabel}>Current Status</label>
+                    <div
+                      className={`mt-1.5 flex w-full items-center justify-between rounded-lg px-3.5 py-2.5 text-sm font-semibold ${pillClass}`}
+                    >
+                      <span>{statusLabel}</span>
+                      <svg
+                        className="h-4 w-4 opacity-60"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={2}
+                        stroke="currentColor"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                      </svg>
+                    </div>
                   </div>
                 </div>
 
-                {/* Project Cost */}
-                <div className="flex items-center gap-3 rounded-xl bg-gray-50 px-4 py-3">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50">
-                    <svg className="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
-                    </svg>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div>
+                    <label className={fieldLabel}>Track Number</label>
+                    <div className={`${fieldBox} font-mono`}>{project.projectCode}</div>
                   </div>
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Project Cost</p>
-                    <p className="mt-0.5 text-sm font-bold text-gray-900">
-                      ₱ {project.contractCost.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Implementer */}
-                <div className="flex items-center gap-3 rounded-xl bg-gray-50 px-4 py-3">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50">
-                    <svg className="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Implementer</p>
-                    <p className="mt-0.5 text-sm font-bold text-gray-900">
+                    <label className={fieldLabel}>Implementation Mode</label>
+                    <div className={fieldBox}>
                       {project.modeOfImplementation === "BY_ADMINISTRATION"
                         ? "By Administration"
-                        : project.contractorName
-                          ? `By Contract — ${project.contractorName}`
-                          : "By Contract"}
-                    </p>
+                        : "By Contract"}
+                    </div>
                   </div>
                 </div>
 
-                {/* Target Completion */}
-                <div className="flex items-center gap-3 rounded-xl bg-gray-50 px-4 py-3">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50">
-                    <svg className="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
-                    </svg>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div>
+                    <label className={fieldLabel}>Contractor Name</label>
+                    <div className={fieldBox}>{project.contractorName ?? "—"}</div>
                   </div>
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Target Completion</p>
-                    <p className="mt-0.5 text-sm font-bold text-gray-900">{fmt(project.targetCompletionDate)}</p>
+                    <label className={fieldLabel}>Contract Cost</label>
+                    <div className={fieldBox}>{peso(project.contractCost)}</div>
                   </div>
                 </div>
 
-                {/* Progress Percentage */}
-                <div className="col-span-2 flex items-center gap-3 rounded-xl bg-gray-50 px-4 py-3">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50">
-                    <svg className="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
-                    </svg>
+                {/* Progress */}
+                <div className="pt-2">
+                  <div className="flex items-center justify-between">
+                    <label className={fieldLabel}>Physical Progress</label>
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                      {project.completionPercentage}%
+                    </span>
                   </div>
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Progress</p>
-                    <p className="mt-0.5 text-sm font-bold text-gray-900">{project.completionPercentage}%</p>
+                  <div className="mt-2 flex items-center gap-3">
+                    <div className="relative h-2.5 flex-1 overflow-hidden rounded-full bg-gray-200">
+                      <div
+                        className="h-full rounded-full bg-blue-700 transition-all"
+                        style={{ width: `${project.completionPercentage}%` }}
+                      />
+                    </div>
+                    <span className="text-xs font-bold text-gray-700">
+                      {project.completionPercentage}%
+                    </span>
                   </div>
                 </div>
               </div>
+            </div>
+          </section>
 
-              {/* Action buttons */}
-              <div className="mt-6 flex items-center gap-3">
-                <div className="group relative">
-                  <button
-                    type="button"
-                    disabled
-                    className="inline-flex cursor-not-allowed items-center gap-2 rounded-xl border border-gray-200 bg-gray-100 px-5 py-2.5 text-sm font-semibold text-gray-400 shadow-sm"
-                  >
-                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                    </svg>
-                    Export Report
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowUnderDev(true)}
-                    className="absolute inset-0 rounded-xl"
-                    aria-label="Export Report - Under Development"
-                  />
+          {/* Project Location */}
+          <section className={card}>
+            <div className={sectionTitle}>
+              <svg
+                className="h-5 w-5 text-blue-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
+                />
+              </svg>
+              <h2 className="text-sm font-bold uppercase tracking-wider text-gray-700">
+                Project Location
+              </h2>
+            </div>
+
+            <div className="space-y-3">
+              <div>
+                <label className={fieldLabel}>District</label>
+                <div className={fieldBox}>{districtLabel}</div>
+              </div>
+              <div>
+                <label className={fieldLabel}>Municipality</label>
+                <div className={fieldBox}>{project.cityMunicipality ?? "—"}</div>
+              </div>
+              <div>
+                <label className={fieldLabel}>Barangay</label>
+                <div className={fieldBox}>{project.barangay ?? "—"}</div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className={fieldLabel}>Purok</label>
+                  <div className={fieldBox}>{project.purok ?? "—"}</div>
+                </div>
+                <div>
+                  <label className={fieldLabel}>Sitio</label>
+                  <div className={fieldBox}>{project.sitio ?? "N/A"}</div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        {/* ── Funding & Disbursement Tracking ── */}
+        <section className={card}>
+          <div className={sectionTitle}>
+            <svg
+              className="h-5 w-5 text-blue-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 12a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V12zm-12 0h.008v.008H6V12z"
+              />
+            </svg>
+            <h2 className="text-sm font-bold uppercase tracking-wider text-gray-700">
+              Funding &amp; Disbursement Tracking
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            {/* Left: fields + balances */}
+            <div className="space-y-3 lg:col-span-1">
+              <div>
+                <label className={fieldLabel}>Source of Fund</label>
+                <div className={fieldBox}>{sourceLabel}</div>
+              </div>
+              <div>
+                <label className={fieldLabel}>Fund Category</label>
+                <div className={fieldBox}>{subTypeLabel}</div>
+              </div>
+              <div>
+                <label className={fieldLabel}>Budget Year</label>
+                <div className={fieldBox}>{project.budgetYear ?? "—"}</div>
+              </div>
+              <div className="rounded-lg border border-blue-100 bg-blue-50 px-3.5 py-3">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-blue-500">
+                  Total Remaining Balance
+                </p>
+                <p className="mt-1 text-lg font-extrabold text-blue-700">
+                  {peso(totalRemainingBalance)}
+                </p>
+              </div>
+              <div className="rounded-lg border border-gray-200 bg-gray-50 px-3.5 py-2.5">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                  Primary Fund Balance (General Fund)
+                </p>
+                <p className="mt-0.5 text-sm font-bold text-gray-800">{peso(primaryFundBalance)}</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 bg-gray-50 px-3.5 py-2.5">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                  Variation Order Balance (20% DF)
+                </p>
+                <p className="mt-0.5 text-sm font-bold text-gray-800">{peso(variationOrderBalance)}</p>
+              </div>
+              <p className="text-[10px] italic text-gray-400">
+                * Calculated based on Total Cost vs Recorded Disbursements + Variation Order
+              </p>
+            </div>
+
+            {/* Right: Recent Disbursements + Revised Contract Cost History */}
+            <div className="space-y-5 lg:col-span-2">
+              <div>
+                <p className={fieldLabel}>Recent Disbursements</p>
+                <div className="mt-1.5 overflow-hidden rounded-lg border border-gray-200">
+                  <table className="w-full text-sm">
+                    <thead className="bg-gray-50">
+                      <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                        <th className="px-4 py-3">Date</th>
+                        <th className="px-4 py-3">Reference / Check #</th>
+                        <th className="px-4 py-3">Type</th>
+                        <th className="px-4 py-3 text-right">Amount (₱)</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {disbursements && disbursements.length > 0 ? (
+                        disbursements.map((d) => (
+                          <tr key={d.id} className="text-gray-700">
+                            <td className="px-4 py-3 text-gray-500">{fmt(d.date)}</td>
+                            <td className="px-4 py-3 font-mono text-xs">
+                              {d.referenceNumber ?? "—"}
+                            </td>
+                            <td className="px-4 py-3 text-gray-500">
+                              {d.type ? d.type.charAt(0) + d.type.slice(1).toLowerCase() : "—"}
+                            </td>
+                            <td className="px-4 py-3 text-right font-semibold">
+                              {d.amount.toLocaleString("en-PH", {
+                                minimumFractionDigits: 2,
+                              })}
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td
+                            colSpan={4}
+                            className="px-4 py-8 text-center text-sm text-gray-400"
+                          >
+                            No disbursements recorded yet.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div>
+                <p className={fieldLabel}>Revised Contract Cost History</p>
+                <div className="mt-1.5 overflow-hidden rounded-lg border border-gray-200">
+                  <table className="w-full text-sm">
+                    <thead className="bg-gray-50">
+                      <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                        <th className="px-4 py-3">Date</th>
+                        <th className="px-4 py-3">Original Cost</th>
+                        <th className="px-4 py-3">Source of Fund</th>
+                        <th className="px-4 py-3">Variation Order</th>
+                        <th className="px-4 py-3 text-right">Revised Total</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {variationOrders && variationOrders.length > 0 ? (
+                        (() => {
+                          let running = project.projectCost ?? 0;
+                          return variationOrders.map((v) => {
+                            const original = running;
+                            running += v.amount;
+                            return (
+                              <tr key={v.id} className="text-gray-700">
+                                <td className="px-4 py-3 text-gray-500">{fmt(v.date)}</td>
+                                <td className="px-4 py-3">
+                                  {original.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
+                                </td>
+                                <td className="px-4 py-3">
+                                  {v.sourceOfFund
+                                    ? (SOURCE_OF_FUND_LABEL[v.sourceOfFund] ?? v.sourceOfFund)
+                                    : "—"}
+                                </td>
+                                <td className="px-4 py-3">
+                                  {v.amount.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
+                                </td>
+                                <td className="px-4 py-3 text-right font-semibold">
+                                  {running.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
+                                </td>
+                              </tr>
+                            );
+                          });
+                        })()
+                      ) : (
+                        <tr>
+                          <td
+                            colSpan={5}
+                            className="px-4 py-8 text-center text-sm text-gray-400"
+                          >
+                            No variation orders recorded yet.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* ── Activity Log (full width) ── */}
+        {/* ── Project Timeline ── */}
+        <section className={card}>
+          <div className={sectionTitle}>
+            <svg
+              className="h-5 w-5 text-blue-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"
+              />
+            </svg>
+            <h2 className="text-sm font-bold uppercase tracking-wider text-gray-700">
+              Project Timeline
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div>
+              <label className={fieldLabel}>Date Started</label>
+              <div className={fieldBox}>{fmtInput(project.dateStarted) || "—"}</div>
+            </div>
+            <div>
+              <label className={fieldLabel}>Original Target</label>
+              <div className={fieldBox}>{fmtInput(project.targetCompletionDate) || "—"}</div>
+            </div>
+            <div>
+              <label className={fieldLabel}>Revised Target Completion</label>
+              <div className={`${fieldBox} ${project.revisedCompletionDate ? "" : "text-gray-400"}`}>
+                {fmtInput(project.revisedCompletionDate) || "mm/dd/yyyy"}
+              </div>
+            </div>
+            <div>
+              <label className={fieldLabel}>Total Days</label>
+              <div className="mt-1.5 w-full rounded-lg border border-blue-200 bg-blue-50 px-3.5 py-2.5 text-sm font-semibold text-blue-700">
+                {totalDays} Days
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Workforce Distribution ── */}
+        <section className={card}>
+          <div className={`${sectionTitle} justify-between`}>
+            <div className="flex items-center gap-2">
+              <svg
+                className="h-5 w-5 text-blue-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
+                />
+              </svg>
+              <h2 className="text-sm font-bold uppercase tracking-wider text-gray-700">
+                Workforce Distribution
+              </h2>
+            </div>
+            <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-blue-600">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-blue-500" />
+              </span>
+              Live Updates
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                    Female Personnel
+                  </p>
+                  <p className="mt-2 text-3xl font-bold text-gray-900">{project.numFemale}</p>
+                </div>
+                <span className="text-xl text-pink-400">♀</span>
+              </div>
+            </div>
+            <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                    Male Personnel
+                  </p>
+                  <p className="mt-2 text-3xl font-bold text-gray-900">{project.numMale}</p>
+                </div>
+                <span className="text-xl text-blue-400">♂</span>
+              </div>
+            </div>
+            <div className="rounded-xl border border-blue-200 bg-blue-50 p-5">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-blue-500">
+                    Total Workforce
+                  </p>
+                  <p className="mt-2 text-3xl font-bold text-blue-700">{project.numPersons}</p>
+                </div>
+                <svg
+                  className="h-5 w-5 text-blue-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Project In-Charge & Profile ── */}
+        <section className={card}>
+          <div className={sectionTitle}>
+            <svg
+              className="h-5 w-5 text-blue-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+              />
+            </svg>
+            <h2 className="text-sm font-bold uppercase tracking-wider text-gray-700">
+              Project In-Charge &amp; Profile
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+            <div>
+              <label className={fieldLabel}>Engineers In-Charge</label>
+              <div className="mt-1.5 flex min-h-11 flex-wrap items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2">
+                {engineers.length > 0 ? (
+                  engineers.map((eng) => (
+                    <span
+                      key={eng}
+                      className="rounded-md border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 shadow-sm"
+                    >
+                      {eng}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-sm text-gray-400">—</span>
+                )}
+              </div>
+            </div>
+            <div>
+              <label className={fieldLabel}>Project Profile</label>
+              <div className="mt-1.5 min-h-22 w-full whitespace-pre-wrap rounded-lg border border-gray-200 bg-gray-50 px-3.5 py-2.5 text-sm text-gray-700">
+                {project.description ?? "—"}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Project Documentation ── */}
+        <section className={card}>
+          <div className={sectionTitle}>
+            <svg
+              className="h-5 w-5 text-blue-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"
+              />
+            </svg>
+            <h2 className="text-sm font-bold uppercase tracking-wider text-gray-700">
+              Project Documentation
+            </h2>
+          </div>
+
+          <div className="overflow-hidden rounded-lg border border-gray-200">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-50">
+                <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                  <th className="px-4 py-3">File Name</th>
+                  <th className="px-4 py-3">Type</th>
+                  <th className="px-4 py-3">Upload Date</th>
+                  <th className="px-4 py-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {files && files.length > 0 ? (
+                  files.map((f) => (
+                    <tr key={f.id} className="text-gray-700">
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2.5">
+                          <svg
+                            className="h-4 w-4 text-blue-500"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={2}
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                            />
+                          </svg>
+                          <span className="font-medium">{f.fileName}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`inline-flex rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${FILE_TYPE_PILL[f.fileType] ?? FILE_TYPE_PILL.OTHER}`}
+                        >
+                          {FILE_TYPE_LABEL[f.fileType] ?? f.fileType}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-gray-500">{fmt(f.createdAt)}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center justify-end gap-3">
+                          <a
+                            href={f.fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-500 hover:text-blue-700"
+                            aria-label={`View ${f.fileName}`}
+                          >
+                            <svg
+                              className="h-4 w-4"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={2}
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                            </svg>
+                          </a>
+                          <a
+                            href={f.fileUrl}
+                            download={f.fileName}
+                            className="text-blue-500 hover:text-blue-700"
+                            aria-label={`Download ${f.fileName}`}
+                          >
+                            <svg
+                              className="h-4 w-4"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={2}
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
+                              />
+                            </svg>
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={4}
+                      className="px-4 py-8 text-center text-sm text-gray-400"
+                    >
+                      No documents uploaded yet.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* ── Administrative Update History / Audit Trail ── */}
         <section className={card}>
           <div className="mb-5 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <svg className="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              <svg
+                className="h-5 w-5 text-blue-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                />
               </svg>
-              <h2 className="text-base font-bold text-gray-900">Project History / Activity Log</h2>
+              <h2 className="text-sm font-bold uppercase tracking-wider text-gray-700">
+                Administrative Update History / Audit Trail
+              </h2>
             </div>
-            <Link
-              href={`/admin/dashboard/projects/${projectId}/edit`}
-              className="flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-800"
-            >
-              View All Logs
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-              </svg>
-            </Link>
           </div>
 
           {activities && activities.length > 0 ? (
             <div className="rounded-xl border border-gray-100 bg-gray-50/50">
               {/* Header row */}
-              <div className="grid grid-cols-[160px_1fr_180px] border-b border-gray-200 px-5 py-3">
-                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">Date</span>
-                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">Description</span>
-                <span className="text-right text-xs font-semibold uppercase tracking-wider text-gray-400">User</span>
+              <div className="grid grid-cols-[180px_1fr_180px] border-b border-gray-200 px-5 py-3">
+                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                  Timestamp
+                </span>
+                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                  Justification Record
+                </span>
+                <span className="text-right text-xs font-semibold uppercase tracking-wider text-gray-400">
+                  Administrator
+                </span>
               </div>
-              {/* Scrollable rows — max 15 visible */}
+              {/* Scrollable rows */}
               <div className="max-h-210 overflow-y-auto">
                 {activities.map((a, i) => {
-                  const dotColors = ["bg-blue-500", "bg-green-500", "bg-purple-500", "bg-gray-300"];
+                  const dotColors = [
+                    "bg-blue-500",
+                    "bg-green-500",
+                    "bg-purple-500",
+                    "bg-gray-300",
+                  ];
                   const dot = dotColors[i % dotColors.length]!;
-                  const displayName = a.createdBy.name ?? a.createdBy.email ?? "U";
-                  const initial = displayName.charAt(0).toUpperCase();
                   return (
                     <div
                       key={a.id}
-                      className="grid grid-cols-[160px_1fr_180px] items-center border-b border-gray-100 px-5 py-4 last:border-0"
+                      className="grid grid-cols-[180px_1fr_180px] items-center border-b border-gray-100 px-5 py-4 last:border-0"
                     >
                       <div className="flex flex-col gap-0.5">
-                        <span className="text-sm text-gray-500">
-                          {new Date(a.createdAt).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" })}
+                        <span className="text-sm text-gray-600">
+                          {new Date(a.createdAt).toLocaleDateString("en-PH", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })}
                         </span>
                         <span className="text-xs text-gray-400">
-                          {new Date(a.createdAt).toLocaleTimeString("en-PH", { hour: "numeric", minute: "2-digit", hour12: true })}
+                          {new Date(a.createdAt).toLocaleTimeString("en-PH", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            hour12: false,
+                          })}
                         </span>
                       </div>
                       <div className="flex items-center gap-2.5">
                         <span className={`h-2 w-2 shrink-0 rounded-full ${dot}`} />
-                        <span className="text-sm text-gray-700">{a.description}</span>
+                        <span className="text-sm italic text-gray-700">{a.description}</span>
                       </div>
-                      <div className="flex flex-col items-end gap-1">
-                        {a.createdBy.image ? (
-                          <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-full">
-                            <Image
-                              src={a.createdBy.image}
-                              alt={displayName}
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
-                        ) : (
-                          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-semibold text-blue-700">
-                            {initial}
-                          </div>
-                        )}
-                        <span className="truncate text-xs font-medium text-gray-700">{displayName}</span>
+                      <div className="flex justify-end">
+                        <span className="rounded-lg border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-700 shadow-sm">
+                          {a.createdBy.name ?? a.createdBy.email}
+                        </span>
                       </div>
                     </div>
                   );
@@ -290,52 +923,39 @@ export function ProjectDetail({ projectId }: Props) {
               </div>
             </div>
           ) : (
-            <p className="py-8 text-center text-sm text-gray-400">No activity logged yet.</p>
+            <p className="py-8 text-center text-sm text-gray-400">
+              No administrative updates logged yet.
+            </p>
           )}
         </section>
 
         {/* Footer */}
-        <div className="border-t border-gray-200 pt-4 pb-8">
+        <div className="flex items-center justify-between border-t border-gray-200 pt-4 pb-8">
           <Link
             href="/admin/dashboard/projects"
             className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
           >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 19.5 8.25 12l7.5-7.5"
+              />
             </svg>
             Back to Projects
           </Link>
-        </div>
 
+          <span className="text-xs text-gray-400">
+            Last updated: {timeAgo(project.updatedAt)}
+          </span>
+        </div>
       </div>
-
-      {/* Under Development Modal */}
-      {showUnderDev && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="mx-4 w-full max-w-sm rounded-2xl bg-white p-8 shadow-2xl">
-            <div className="flex flex-col items-center gap-4 text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-100">
-                <svg className="h-8 w-8 text-amber-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437 1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008Z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-gray-900">Under Development</h3>
-                <p className="mt-2 text-sm text-gray-500">
-                  The Export Report feature is currently under development and will be available in a future update.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowUnderDev(false)}
-                className="mt-2 w-full rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
-              >
-                Got it
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

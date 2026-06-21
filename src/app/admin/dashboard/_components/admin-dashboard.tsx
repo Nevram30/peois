@@ -858,7 +858,7 @@ export function AdminDashboardContent() {
                       <td className="px-4 py-4">
                         <button
                           onClick={() =>
-                            router.push(`/admin/dashboard/projects/${p.id}`)
+                            router.push(`/admin/dashboard/projects/${p.id}/view`)
                           }
                           className="inline-flex items-center gap-1.5 rounded-lg bg-green-500 px-3 py-1.5 text-white transition hover:bg-green-600"
                           title="View project"

@@ -522,19 +522,14 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
 
                 {/* Fields */}
                 <div className="min-w-0 flex-1 space-y-3 p-4">
-                  <div>
-                    <FieldLabel>Project Title</FieldLabel>
-                    <p className="truncate text-sm font-semibold text-gray-900">{project.title}</p>
-                  </div>
-
                   <div className="grid grid-cols-2 gap-3">
+                    <div className="min-w-0">
+                      <FieldLabel>Project Title</FieldLabel>
+                      <p className="truncate text-sm font-semibold text-gray-900">{project.title}</p>
+                    </div>
                     <div>
                       <FieldLabel>Project Cost</FieldLabel>
                       <p className="text-sm font-semibold text-gray-900">₱ {project.projectCost?.toLocaleString("en-PH", { minimumFractionDigits: 2 }) ?? "—"}</p>
-                    </div>
-                    <div>
-                      <FieldLabel>Contract Cost</FieldLabel>
-                      <p className="text-sm font-bold text-red-600">₱ {project.contractCost.toLocaleString("en-PH", { minimumFractionDigits: 2 })}</p>
                     </div>
                   </div>
 
