@@ -147,6 +147,7 @@ model User {
   documents                 Document[]
   projectActivities         ProjectActivity[]
   disbursements             Disbursement[]
+  variationOrders           VariationOrder[]
   taskNotificationsReceived TaskNotification[] @relation("UserNotificationsReceived")
   taskNotificationsCreated  TaskNotification[] @relation("UserNotificationsCreated")
   taskReplies               TaskReply[]
@@ -210,6 +211,7 @@ model Project {
 
   activities        ProjectActivity[]
   disbursements     Disbursement[]
+  variationOrders   VariationOrder[]
   taskNotifications TaskNotification[]
   files             ProjectFile[]
 
@@ -242,6 +244,21 @@ model Disbursement {
   createdBy       User              @relation(fields: [createdById], references: [id])
   createdById     String
   createdAt       DateTime          @default(now())
+
+  @@index([projectId])
+  @@index([createdById])
+}
+
+model VariationOrder {
+  id           String        @id @default(cuid())
+  projectId    String
+  project      Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  date         DateTime      @default(now())
+  sourceOfFund SourceOfFund?
+  amount       Float
+  createdBy    User          @relation(fields: [createdById], references: [id])
+  createdById  String
+  createdAt    DateTime      @default(now())
 
   @@index([projectId])
   @@index([createdById])

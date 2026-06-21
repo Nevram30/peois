@@ -282,6 +282,36 @@ export const projectRouter = createTRPCRouter({
       });
     }),
 
+  createVariationOrder: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+        amount: z.number().min(0),
+        sourceOfFund: z.enum(SOURCE_OF_FUND_VALUES).optional(),
+        date: z.date().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.variationOrder.create({
+        data: {
+          projectId: input.projectId,
+          amount: input.amount,
+          sourceOfFund: input.sourceOfFund,
+          date: input.date ?? new Date(),
+          createdById: ctx.session.user.id,
+        },
+      });
+    }),
+
+  getVariationOrders: protectedProcedure
+    .input(z.object({ projectId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return ctx.db.variationOrder.findMany({
+        where: { projectId: input.projectId },
+        orderBy: { date: "asc" },
+      });
+    }),
+
   sendTaskNotification: protectedProcedure
     .input(
       z.object({

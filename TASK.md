@@ -46,6 +46,7 @@ ________________________________________________________________
                 - Change the Card Design of Project Identity & Status. [Done]
             - Funding & Disbursement Tracking Card
                 - Change the Card Design of Funding & Disbursement Tracking. [Done]
+                - Add Revised Contract Cost History Table and Input field for Variation Order. [DOne]
             - Project Timeline Card
                 - Add new Data fields ( Adjustment Types and Justification Description)
                     - What are the adjustment types?.
@@ -62,3 +63,10 @@ _________________________________________________________________
 
 - BACKEND
     - 
+
+
+PROMPT
+
+Funding & Disbursement Tracking CARD
+
+- in the /admin/dashboard/projects/[id]/page.tsx in the card Funding & Disbursement Tracking you will have to render on the edit form The Total Remaining Balance which is the Primary Fund Balance plus the Variation Order Balance (20 % DF), and The Primary Fund Balance is the Project Cost, The adding of data for Variation Order Balance (20 % DF) and the Contract Cost is below the Revised Contract Cost History in the image will not be implemented only Source of Fund dropdown select and input field variation and the Record button 

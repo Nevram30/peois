@@ -39,6 +39,11 @@ export type ProjectActivity = $Result.DefaultSelection<Prisma.$ProjectActivityPa
  */
 export type Disbursement = $Result.DefaultSelection<Prisma.$DisbursementPayload>
 /**
+ * Model VariationOrder
+ * 
+ */
+export type VariationOrder = $Result.DefaultSelection<Prisma.$VariationOrderPayload>
+/**
  * Model TaskNotification
  * 
  */
@@ -448,6 +453,16 @@ export class PrismaClient<
     * ```
     */
   get disbursement(): Prisma.DisbursementDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.variationOrder`: Exposes CRUD operations for the **VariationOrder** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more VariationOrders
+    * const variationOrders = await prisma.variationOrder.findMany()
+    * ```
+    */
+  get variationOrder(): Prisma.VariationOrderDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.taskNotification`: Exposes CRUD operations for the **TaskNotification** model.
@@ -954,6 +969,7 @@ export namespace Prisma {
     Project: 'Project',
     ProjectActivity: 'ProjectActivity',
     Disbursement: 'Disbursement',
+    VariationOrder: 'VariationOrder',
     TaskNotification: 'TaskNotification',
     TaskReply: 'TaskReply',
     TaskReplyDocument: 'TaskReplyDocument',
@@ -978,7 +994,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "userSession" | "project" | "projectActivity" | "disbursement" | "taskNotification" | "taskReply" | "taskReplyDocument" | "document" | "projectFile" | "post"
+      modelProps: "user" | "userSession" | "project" | "projectActivity" | "disbursement" | "variationOrder" | "taskNotification" | "taskReply" | "taskReplyDocument" | "document" | "projectFile" | "post"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1349,6 +1365,80 @@ export namespace Prisma {
           count: {
             args: Prisma.DisbursementCountArgs<ExtArgs>
             result: $Utils.Optional<DisbursementCountAggregateOutputType> | number
+          }
+        }
+      }
+      VariationOrder: {
+        payload: Prisma.$VariationOrderPayload<ExtArgs>
+        fields: Prisma.VariationOrderFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.VariationOrderFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VariationOrderPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.VariationOrderFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VariationOrderPayload>
+          }
+          findFirst: {
+            args: Prisma.VariationOrderFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VariationOrderPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.VariationOrderFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VariationOrderPayload>
+          }
+          findMany: {
+            args: Prisma.VariationOrderFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VariationOrderPayload>[]
+          }
+          create: {
+            args: Prisma.VariationOrderCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VariationOrderPayload>
+          }
+          createMany: {
+            args: Prisma.VariationOrderCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.VariationOrderCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VariationOrderPayload>[]
+          }
+          delete: {
+            args: Prisma.VariationOrderDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VariationOrderPayload>
+          }
+          update: {
+            args: Prisma.VariationOrderUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VariationOrderPayload>
+          }
+          deleteMany: {
+            args: Prisma.VariationOrderDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.VariationOrderUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.VariationOrderUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VariationOrderPayload>[]
+          }
+          upsert: {
+            args: Prisma.VariationOrderUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VariationOrderPayload>
+          }
+          aggregate: {
+            args: Prisma.VariationOrderAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateVariationOrder>
+          }
+          groupBy: {
+            args: Prisma.VariationOrderGroupByArgs<ExtArgs>
+            result: $Utils.Optional<VariationOrderGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.VariationOrderCountArgs<ExtArgs>
+            result: $Utils.Optional<VariationOrderCountAggregateOutputType> | number
           }
         }
       }
@@ -1897,6 +1987,7 @@ export namespace Prisma {
     project?: ProjectOmit
     projectActivity?: ProjectActivityOmit
     disbursement?: DisbursementOmit
+    variationOrder?: VariationOrderOmit
     taskNotification?: TaskNotificationOmit
     taskReply?: TaskReplyOmit
     taskReplyDocument?: TaskReplyDocumentOmit
@@ -1989,6 +2080,7 @@ export namespace Prisma {
     documents: number
     projectActivities: number
     disbursements: number
+    variationOrders: number
     taskNotificationsReceived: number
     taskNotificationsCreated: number
     taskReplies: number
@@ -2002,6 +2094,7 @@ export namespace Prisma {
     documents?: boolean | UserCountOutputTypeCountDocumentsArgs
     projectActivities?: boolean | UserCountOutputTypeCountProjectActivitiesArgs
     disbursements?: boolean | UserCountOutputTypeCountDisbursementsArgs
+    variationOrders?: boolean | UserCountOutputTypeCountVariationOrdersArgs
     taskNotificationsReceived?: boolean | UserCountOutputTypeCountTaskNotificationsReceivedArgs
     taskNotificationsCreated?: boolean | UserCountOutputTypeCountTaskNotificationsCreatedArgs
     taskReplies?: boolean | UserCountOutputTypeCountTaskRepliesArgs
@@ -2064,6 +2157,13 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
+  export type UserCountOutputTypeCountVariationOrdersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: VariationOrderWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
   export type UserCountOutputTypeCountTaskNotificationsReceivedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TaskNotificationWhereInput
   }
@@ -2097,6 +2197,7 @@ export namespace Prisma {
   export type ProjectCountOutputType = {
     activities: number
     disbursements: number
+    variationOrders: number
     taskNotifications: number
     files: number
   }
@@ -2104,6 +2205,7 @@ export namespace Prisma {
   export type ProjectCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     activities?: boolean | ProjectCountOutputTypeCountActivitiesArgs
     disbursements?: boolean | ProjectCountOutputTypeCountDisbursementsArgs
+    variationOrders?: boolean | ProjectCountOutputTypeCountVariationOrdersArgs
     taskNotifications?: boolean | ProjectCountOutputTypeCountTaskNotificationsArgs
     files?: boolean | ProjectCountOutputTypeCountFilesArgs
   }
@@ -2131,6 +2233,13 @@ export namespace Prisma {
    */
   export type ProjectCountOutputTypeCountDisbursementsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: DisbursementWhereInput
+  }
+
+  /**
+   * ProjectCountOutputType without action
+   */
+  export type ProjectCountOutputTypeCountVariationOrdersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: VariationOrderWhereInput
   }
 
   /**
@@ -2464,6 +2573,7 @@ export namespace Prisma {
     documents?: boolean | User$documentsArgs<ExtArgs>
     projectActivities?: boolean | User$projectActivitiesArgs<ExtArgs>
     disbursements?: boolean | User$disbursementsArgs<ExtArgs>
+    variationOrders?: boolean | User$variationOrdersArgs<ExtArgs>
     taskNotificationsReceived?: boolean | User$taskNotificationsReceivedArgs<ExtArgs>
     taskNotificationsCreated?: boolean | User$taskNotificationsCreatedArgs<ExtArgs>
     taskReplies?: boolean | User$taskRepliesArgs<ExtArgs>
@@ -2533,6 +2643,7 @@ export namespace Prisma {
     documents?: boolean | User$documentsArgs<ExtArgs>
     projectActivities?: boolean | User$projectActivitiesArgs<ExtArgs>
     disbursements?: boolean | User$disbursementsArgs<ExtArgs>
+    variationOrders?: boolean | User$variationOrdersArgs<ExtArgs>
     taskNotificationsReceived?: boolean | User$taskNotificationsReceivedArgs<ExtArgs>
     taskNotificationsCreated?: boolean | User$taskNotificationsCreatedArgs<ExtArgs>
     taskReplies?: boolean | User$taskRepliesArgs<ExtArgs>
@@ -2551,6 +2662,7 @@ export namespace Prisma {
       documents: Prisma.$DocumentPayload<ExtArgs>[]
       projectActivities: Prisma.$ProjectActivityPayload<ExtArgs>[]
       disbursements: Prisma.$DisbursementPayload<ExtArgs>[]
+      variationOrders: Prisma.$VariationOrderPayload<ExtArgs>[]
       taskNotificationsReceived: Prisma.$TaskNotificationPayload<ExtArgs>[]
       taskNotificationsCreated: Prisma.$TaskNotificationPayload<ExtArgs>[]
       taskReplies: Prisma.$TaskReplyPayload<ExtArgs>[]
@@ -2972,6 +3084,7 @@ export namespace Prisma {
     documents<T extends User$documentsArgs<ExtArgs> = {}>(args?: Subset<T, User$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     projectActivities<T extends User$projectActivitiesArgs<ExtArgs> = {}>(args?: Subset<T, User$projectActivitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     disbursements<T extends User$disbursementsArgs<ExtArgs> = {}>(args?: Subset<T, User$disbursementsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DisbursementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    variationOrders<T extends User$variationOrdersArgs<ExtArgs> = {}>(args?: Subset<T, User$variationOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VariationOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     taskNotificationsReceived<T extends User$taskNotificationsReceivedArgs<ExtArgs> = {}>(args?: Subset<T, User$taskNotificationsReceivedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskNotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     taskNotificationsCreated<T extends User$taskNotificationsCreatedArgs<ExtArgs> = {}>(args?: Subset<T, User$taskNotificationsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskNotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     taskReplies<T extends User$taskRepliesArgs<ExtArgs> = {}>(args?: Subset<T, User$taskRepliesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskReplyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3549,6 +3662,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: DisbursementScalarFieldEnum | DisbursementScalarFieldEnum[]
+  }
+
+  /**
+   * User.variationOrders
+   */
+  export type User$variationOrdersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VariationOrder
+     */
+    select?: VariationOrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VariationOrder
+     */
+    omit?: VariationOrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VariationOrderInclude<ExtArgs> | null
+    where?: VariationOrderWhereInput
+    orderBy?: VariationOrderOrderByWithRelationInput | VariationOrderOrderByWithRelationInput[]
+    cursor?: VariationOrderWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: VariationOrderScalarFieldEnum | VariationOrderScalarFieldEnum[]
   }
 
   /**
@@ -5243,6 +5380,7 @@ export namespace Prisma {
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
     activities?: boolean | Project$activitiesArgs<ExtArgs>
     disbursements?: boolean | Project$disbursementsArgs<ExtArgs>
+    variationOrders?: boolean | Project$variationOrdersArgs<ExtArgs>
     taskNotifications?: boolean | Project$taskNotificationsArgs<ExtArgs>
     files?: boolean | Project$filesArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
@@ -5375,6 +5513,7 @@ export namespace Prisma {
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
     activities?: boolean | Project$activitiesArgs<ExtArgs>
     disbursements?: boolean | Project$disbursementsArgs<ExtArgs>
+    variationOrders?: boolean | Project$variationOrdersArgs<ExtArgs>
     taskNotifications?: boolean | Project$taskNotificationsArgs<ExtArgs>
     files?: boolean | Project$filesArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
@@ -5392,6 +5531,7 @@ export namespace Prisma {
       createdBy: Prisma.$UserPayload<ExtArgs>
       activities: Prisma.$ProjectActivityPayload<ExtArgs>[]
       disbursements: Prisma.$DisbursementPayload<ExtArgs>[]
+      variationOrders: Prisma.$VariationOrderPayload<ExtArgs>[]
       taskNotifications: Prisma.$TaskNotificationPayload<ExtArgs>[]
       files: Prisma.$ProjectFilePayload<ExtArgs>[]
     }
@@ -5830,6 +5970,7 @@ export namespace Prisma {
     createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     activities<T extends Project$activitiesArgs<ExtArgs> = {}>(args?: Subset<T, Project$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     disbursements<T extends Project$disbursementsArgs<ExtArgs> = {}>(args?: Subset<T, Project$disbursementsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DisbursementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    variationOrders<T extends Project$variationOrdersArgs<ExtArgs> = {}>(args?: Subset<T, Project$variationOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VariationOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     taskNotifications<T extends Project$taskNotificationsArgs<ExtArgs> = {}>(args?: Subset<T, Project$taskNotificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskNotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     files<T extends Project$filesArgs<ExtArgs> = {}>(args?: Subset<T, Project$filesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectFilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -6339,6 +6480,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: DisbursementScalarFieldEnum | DisbursementScalarFieldEnum[]
+  }
+
+  /**
+   * Project.variationOrders
+   */
+  export type Project$variationOrdersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VariationOrder
+     */
+    select?: VariationOrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VariationOrder
+     */
+    omit?: VariationOrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VariationOrderInclude<ExtArgs> | null
+    where?: VariationOrderWhereInput
+    orderBy?: VariationOrderOrderByWithRelationInput | VariationOrderOrderByWithRelationInput[]
+    cursor?: VariationOrderWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: VariationOrderScalarFieldEnum | VariationOrderScalarFieldEnum[]
   }
 
   /**
@@ -8610,6 +8775,1132 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: DisbursementInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model VariationOrder
+   */
+
+  export type AggregateVariationOrder = {
+    _count: VariationOrderCountAggregateOutputType | null
+    _avg: VariationOrderAvgAggregateOutputType | null
+    _sum: VariationOrderSumAggregateOutputType | null
+    _min: VariationOrderMinAggregateOutputType | null
+    _max: VariationOrderMaxAggregateOutputType | null
+  }
+
+  export type VariationOrderAvgAggregateOutputType = {
+    amount: number | null
+  }
+
+  export type VariationOrderSumAggregateOutputType = {
+    amount: number | null
+  }
+
+  export type VariationOrderMinAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    date: Date | null
+    sourceOfFund: $Enums.SourceOfFund | null
+    amount: number | null
+    createdById: string | null
+    createdAt: Date | null
+  }
+
+  export type VariationOrderMaxAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    date: Date | null
+    sourceOfFund: $Enums.SourceOfFund | null
+    amount: number | null
+    createdById: string | null
+    createdAt: Date | null
+  }
+
+  export type VariationOrderCountAggregateOutputType = {
+    id: number
+    projectId: number
+    date: number
+    sourceOfFund: number
+    amount: number
+    createdById: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type VariationOrderAvgAggregateInputType = {
+    amount?: true
+  }
+
+  export type VariationOrderSumAggregateInputType = {
+    amount?: true
+  }
+
+  export type VariationOrderMinAggregateInputType = {
+    id?: true
+    projectId?: true
+    date?: true
+    sourceOfFund?: true
+    amount?: true
+    createdById?: true
+    createdAt?: true
+  }
+
+  export type VariationOrderMaxAggregateInputType = {
+    id?: true
+    projectId?: true
+    date?: true
+    sourceOfFund?: true
+    amount?: true
+    createdById?: true
+    createdAt?: true
+  }
+
+  export type VariationOrderCountAggregateInputType = {
+    id?: true
+    projectId?: true
+    date?: true
+    sourceOfFund?: true
+    amount?: true
+    createdById?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type VariationOrderAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which VariationOrder to aggregate.
+     */
+    where?: VariationOrderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VariationOrders to fetch.
+     */
+    orderBy?: VariationOrderOrderByWithRelationInput | VariationOrderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: VariationOrderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VariationOrders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VariationOrders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned VariationOrders
+    **/
+    _count?: true | VariationOrderCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: VariationOrderAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: VariationOrderSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: VariationOrderMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: VariationOrderMaxAggregateInputType
+  }
+
+  export type GetVariationOrderAggregateType<T extends VariationOrderAggregateArgs> = {
+        [P in keyof T & keyof AggregateVariationOrder]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateVariationOrder[P]>
+      : GetScalarType<T[P], AggregateVariationOrder[P]>
+  }
+
+
+
+
+  export type VariationOrderGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: VariationOrderWhereInput
+    orderBy?: VariationOrderOrderByWithAggregationInput | VariationOrderOrderByWithAggregationInput[]
+    by: VariationOrderScalarFieldEnum[] | VariationOrderScalarFieldEnum
+    having?: VariationOrderScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: VariationOrderCountAggregateInputType | true
+    _avg?: VariationOrderAvgAggregateInputType
+    _sum?: VariationOrderSumAggregateInputType
+    _min?: VariationOrderMinAggregateInputType
+    _max?: VariationOrderMaxAggregateInputType
+  }
+
+  export type VariationOrderGroupByOutputType = {
+    id: string
+    projectId: string
+    date: Date
+    sourceOfFund: $Enums.SourceOfFund | null
+    amount: number
+    createdById: string
+    createdAt: Date
+    _count: VariationOrderCountAggregateOutputType | null
+    _avg: VariationOrderAvgAggregateOutputType | null
+    _sum: VariationOrderSumAggregateOutputType | null
+    _min: VariationOrderMinAggregateOutputType | null
+    _max: VariationOrderMaxAggregateOutputType | null
+  }
+
+  type GetVariationOrderGroupByPayload<T extends VariationOrderGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<VariationOrderGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof VariationOrderGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], VariationOrderGroupByOutputType[P]>
+            : GetScalarType<T[P], VariationOrderGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type VariationOrderSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    date?: boolean
+    sourceOfFund?: boolean
+    amount?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["variationOrder"]>
+
+  export type VariationOrderSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    date?: boolean
+    sourceOfFund?: boolean
+    amount?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["variationOrder"]>
+
+  export type VariationOrderSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    date?: boolean
+    sourceOfFund?: boolean
+    amount?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["variationOrder"]>
+
+  export type VariationOrderSelectScalar = {
+    id?: boolean
+    projectId?: boolean
+    date?: boolean
+    sourceOfFund?: boolean
+    amount?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+  }
+
+  export type VariationOrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "date" | "sourceOfFund" | "amount" | "createdById" | "createdAt", ExtArgs["result"]["variationOrder"]>
+  export type VariationOrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type VariationOrderIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type VariationOrderIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $VariationOrderPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "VariationOrder"
+    objects: {
+      project: Prisma.$ProjectPayload<ExtArgs>
+      createdBy: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      projectId: string
+      date: Date
+      sourceOfFund: $Enums.SourceOfFund | null
+      amount: number
+      createdById: string
+      createdAt: Date
+    }, ExtArgs["result"]["variationOrder"]>
+    composites: {}
+  }
+
+  type VariationOrderGetPayload<S extends boolean | null | undefined | VariationOrderDefaultArgs> = $Result.GetResult<Prisma.$VariationOrderPayload, S>
+
+  type VariationOrderCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<VariationOrderFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: VariationOrderCountAggregateInputType | true
+    }
+
+  export interface VariationOrderDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['VariationOrder'], meta: { name: 'VariationOrder' } }
+    /**
+     * Find zero or one VariationOrder that matches the filter.
+     * @param {VariationOrderFindUniqueArgs} args - Arguments to find a VariationOrder
+     * @example
+     * // Get one VariationOrder
+     * const variationOrder = await prisma.variationOrder.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends VariationOrderFindUniqueArgs>(args: SelectSubset<T, VariationOrderFindUniqueArgs<ExtArgs>>): Prisma__VariationOrderClient<$Result.GetResult<Prisma.$VariationOrderPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one VariationOrder that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {VariationOrderFindUniqueOrThrowArgs} args - Arguments to find a VariationOrder
+     * @example
+     * // Get one VariationOrder
+     * const variationOrder = await prisma.variationOrder.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends VariationOrderFindUniqueOrThrowArgs>(args: SelectSubset<T, VariationOrderFindUniqueOrThrowArgs<ExtArgs>>): Prisma__VariationOrderClient<$Result.GetResult<Prisma.$VariationOrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first VariationOrder that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VariationOrderFindFirstArgs} args - Arguments to find a VariationOrder
+     * @example
+     * // Get one VariationOrder
+     * const variationOrder = await prisma.variationOrder.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends VariationOrderFindFirstArgs>(args?: SelectSubset<T, VariationOrderFindFirstArgs<ExtArgs>>): Prisma__VariationOrderClient<$Result.GetResult<Prisma.$VariationOrderPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first VariationOrder that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VariationOrderFindFirstOrThrowArgs} args - Arguments to find a VariationOrder
+     * @example
+     * // Get one VariationOrder
+     * const variationOrder = await prisma.variationOrder.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends VariationOrderFindFirstOrThrowArgs>(args?: SelectSubset<T, VariationOrderFindFirstOrThrowArgs<ExtArgs>>): Prisma__VariationOrderClient<$Result.GetResult<Prisma.$VariationOrderPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more VariationOrders that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VariationOrderFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all VariationOrders
+     * const variationOrders = await prisma.variationOrder.findMany()
+     * 
+     * // Get first 10 VariationOrders
+     * const variationOrders = await prisma.variationOrder.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const variationOrderWithIdOnly = await prisma.variationOrder.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends VariationOrderFindManyArgs>(args?: SelectSubset<T, VariationOrderFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VariationOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a VariationOrder.
+     * @param {VariationOrderCreateArgs} args - Arguments to create a VariationOrder.
+     * @example
+     * // Create one VariationOrder
+     * const VariationOrder = await prisma.variationOrder.create({
+     *   data: {
+     *     // ... data to create a VariationOrder
+     *   }
+     * })
+     * 
+     */
+    create<T extends VariationOrderCreateArgs>(args: SelectSubset<T, VariationOrderCreateArgs<ExtArgs>>): Prisma__VariationOrderClient<$Result.GetResult<Prisma.$VariationOrderPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many VariationOrders.
+     * @param {VariationOrderCreateManyArgs} args - Arguments to create many VariationOrders.
+     * @example
+     * // Create many VariationOrders
+     * const variationOrder = await prisma.variationOrder.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends VariationOrderCreateManyArgs>(args?: SelectSubset<T, VariationOrderCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many VariationOrders and returns the data saved in the database.
+     * @param {VariationOrderCreateManyAndReturnArgs} args - Arguments to create many VariationOrders.
+     * @example
+     * // Create many VariationOrders
+     * const variationOrder = await prisma.variationOrder.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many VariationOrders and only return the `id`
+     * const variationOrderWithIdOnly = await prisma.variationOrder.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends VariationOrderCreateManyAndReturnArgs>(args?: SelectSubset<T, VariationOrderCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VariationOrderPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a VariationOrder.
+     * @param {VariationOrderDeleteArgs} args - Arguments to delete one VariationOrder.
+     * @example
+     * // Delete one VariationOrder
+     * const VariationOrder = await prisma.variationOrder.delete({
+     *   where: {
+     *     // ... filter to delete one VariationOrder
+     *   }
+     * })
+     * 
+     */
+    delete<T extends VariationOrderDeleteArgs>(args: SelectSubset<T, VariationOrderDeleteArgs<ExtArgs>>): Prisma__VariationOrderClient<$Result.GetResult<Prisma.$VariationOrderPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one VariationOrder.
+     * @param {VariationOrderUpdateArgs} args - Arguments to update one VariationOrder.
+     * @example
+     * // Update one VariationOrder
+     * const variationOrder = await prisma.variationOrder.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends VariationOrderUpdateArgs>(args: SelectSubset<T, VariationOrderUpdateArgs<ExtArgs>>): Prisma__VariationOrderClient<$Result.GetResult<Prisma.$VariationOrderPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more VariationOrders.
+     * @param {VariationOrderDeleteManyArgs} args - Arguments to filter VariationOrders to delete.
+     * @example
+     * // Delete a few VariationOrders
+     * const { count } = await prisma.variationOrder.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends VariationOrderDeleteManyArgs>(args?: SelectSubset<T, VariationOrderDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more VariationOrders.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VariationOrderUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many VariationOrders
+     * const variationOrder = await prisma.variationOrder.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends VariationOrderUpdateManyArgs>(args: SelectSubset<T, VariationOrderUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more VariationOrders and returns the data updated in the database.
+     * @param {VariationOrderUpdateManyAndReturnArgs} args - Arguments to update many VariationOrders.
+     * @example
+     * // Update many VariationOrders
+     * const variationOrder = await prisma.variationOrder.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more VariationOrders and only return the `id`
+     * const variationOrderWithIdOnly = await prisma.variationOrder.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends VariationOrderUpdateManyAndReturnArgs>(args: SelectSubset<T, VariationOrderUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VariationOrderPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one VariationOrder.
+     * @param {VariationOrderUpsertArgs} args - Arguments to update or create a VariationOrder.
+     * @example
+     * // Update or create a VariationOrder
+     * const variationOrder = await prisma.variationOrder.upsert({
+     *   create: {
+     *     // ... data to create a VariationOrder
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the VariationOrder we want to update
+     *   }
+     * })
+     */
+    upsert<T extends VariationOrderUpsertArgs>(args: SelectSubset<T, VariationOrderUpsertArgs<ExtArgs>>): Prisma__VariationOrderClient<$Result.GetResult<Prisma.$VariationOrderPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of VariationOrders.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VariationOrderCountArgs} args - Arguments to filter VariationOrders to count.
+     * @example
+     * // Count the number of VariationOrders
+     * const count = await prisma.variationOrder.count({
+     *   where: {
+     *     // ... the filter for the VariationOrders we want to count
+     *   }
+     * })
+    **/
+    count<T extends VariationOrderCountArgs>(
+      args?: Subset<T, VariationOrderCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], VariationOrderCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a VariationOrder.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VariationOrderAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends VariationOrderAggregateArgs>(args: Subset<T, VariationOrderAggregateArgs>): Prisma.PrismaPromise<GetVariationOrderAggregateType<T>>
+
+    /**
+     * Group by VariationOrder.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VariationOrderGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends VariationOrderGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: VariationOrderGroupByArgs['orderBy'] }
+        : { orderBy?: VariationOrderGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, VariationOrderGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetVariationOrderGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the VariationOrder model
+   */
+  readonly fields: VariationOrderFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for VariationOrder.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__VariationOrderClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the VariationOrder model
+   */
+  interface VariationOrderFieldRefs {
+    readonly id: FieldRef<"VariationOrder", 'String'>
+    readonly projectId: FieldRef<"VariationOrder", 'String'>
+    readonly date: FieldRef<"VariationOrder", 'DateTime'>
+    readonly sourceOfFund: FieldRef<"VariationOrder", 'SourceOfFund'>
+    readonly amount: FieldRef<"VariationOrder", 'Float'>
+    readonly createdById: FieldRef<"VariationOrder", 'String'>
+    readonly createdAt: FieldRef<"VariationOrder", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * VariationOrder findUnique
+   */
+  export type VariationOrderFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VariationOrder
+     */
+    select?: VariationOrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VariationOrder
+     */
+    omit?: VariationOrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VariationOrderInclude<ExtArgs> | null
+    /**
+     * Filter, which VariationOrder to fetch.
+     */
+    where: VariationOrderWhereUniqueInput
+  }
+
+  /**
+   * VariationOrder findUniqueOrThrow
+   */
+  export type VariationOrderFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VariationOrder
+     */
+    select?: VariationOrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VariationOrder
+     */
+    omit?: VariationOrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VariationOrderInclude<ExtArgs> | null
+    /**
+     * Filter, which VariationOrder to fetch.
+     */
+    where: VariationOrderWhereUniqueInput
+  }
+
+  /**
+   * VariationOrder findFirst
+   */
+  export type VariationOrderFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VariationOrder
+     */
+    select?: VariationOrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VariationOrder
+     */
+    omit?: VariationOrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VariationOrderInclude<ExtArgs> | null
+    /**
+     * Filter, which VariationOrder to fetch.
+     */
+    where?: VariationOrderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VariationOrders to fetch.
+     */
+    orderBy?: VariationOrderOrderByWithRelationInput | VariationOrderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for VariationOrders.
+     */
+    cursor?: VariationOrderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VariationOrders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VariationOrders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of VariationOrders.
+     */
+    distinct?: VariationOrderScalarFieldEnum | VariationOrderScalarFieldEnum[]
+  }
+
+  /**
+   * VariationOrder findFirstOrThrow
+   */
+  export type VariationOrderFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VariationOrder
+     */
+    select?: VariationOrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VariationOrder
+     */
+    omit?: VariationOrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VariationOrderInclude<ExtArgs> | null
+    /**
+     * Filter, which VariationOrder to fetch.
+     */
+    where?: VariationOrderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VariationOrders to fetch.
+     */
+    orderBy?: VariationOrderOrderByWithRelationInput | VariationOrderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for VariationOrders.
+     */
+    cursor?: VariationOrderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VariationOrders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VariationOrders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of VariationOrders.
+     */
+    distinct?: VariationOrderScalarFieldEnum | VariationOrderScalarFieldEnum[]
+  }
+
+  /**
+   * VariationOrder findMany
+   */
+  export type VariationOrderFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VariationOrder
+     */
+    select?: VariationOrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VariationOrder
+     */
+    omit?: VariationOrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VariationOrderInclude<ExtArgs> | null
+    /**
+     * Filter, which VariationOrders to fetch.
+     */
+    where?: VariationOrderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VariationOrders to fetch.
+     */
+    orderBy?: VariationOrderOrderByWithRelationInput | VariationOrderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing VariationOrders.
+     */
+    cursor?: VariationOrderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VariationOrders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VariationOrders.
+     */
+    skip?: number
+    distinct?: VariationOrderScalarFieldEnum | VariationOrderScalarFieldEnum[]
+  }
+
+  /**
+   * VariationOrder create
+   */
+  export type VariationOrderCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VariationOrder
+     */
+    select?: VariationOrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VariationOrder
+     */
+    omit?: VariationOrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VariationOrderInclude<ExtArgs> | null
+    /**
+     * The data needed to create a VariationOrder.
+     */
+    data: XOR<VariationOrderCreateInput, VariationOrderUncheckedCreateInput>
+  }
+
+  /**
+   * VariationOrder createMany
+   */
+  export type VariationOrderCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many VariationOrders.
+     */
+    data: VariationOrderCreateManyInput | VariationOrderCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * VariationOrder createManyAndReturn
+   */
+  export type VariationOrderCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VariationOrder
+     */
+    select?: VariationOrderSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the VariationOrder
+     */
+    omit?: VariationOrderOmit<ExtArgs> | null
+    /**
+     * The data used to create many VariationOrders.
+     */
+    data: VariationOrderCreateManyInput | VariationOrderCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VariationOrderIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * VariationOrder update
+   */
+  export type VariationOrderUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VariationOrder
+     */
+    select?: VariationOrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VariationOrder
+     */
+    omit?: VariationOrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VariationOrderInclude<ExtArgs> | null
+    /**
+     * The data needed to update a VariationOrder.
+     */
+    data: XOR<VariationOrderUpdateInput, VariationOrderUncheckedUpdateInput>
+    /**
+     * Choose, which VariationOrder to update.
+     */
+    where: VariationOrderWhereUniqueInput
+  }
+
+  /**
+   * VariationOrder updateMany
+   */
+  export type VariationOrderUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update VariationOrders.
+     */
+    data: XOR<VariationOrderUpdateManyMutationInput, VariationOrderUncheckedUpdateManyInput>
+    /**
+     * Filter which VariationOrders to update
+     */
+    where?: VariationOrderWhereInput
+    /**
+     * Limit how many VariationOrders to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * VariationOrder updateManyAndReturn
+   */
+  export type VariationOrderUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VariationOrder
+     */
+    select?: VariationOrderSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the VariationOrder
+     */
+    omit?: VariationOrderOmit<ExtArgs> | null
+    /**
+     * The data used to update VariationOrders.
+     */
+    data: XOR<VariationOrderUpdateManyMutationInput, VariationOrderUncheckedUpdateManyInput>
+    /**
+     * Filter which VariationOrders to update
+     */
+    where?: VariationOrderWhereInput
+    /**
+     * Limit how many VariationOrders to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VariationOrderIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * VariationOrder upsert
+   */
+  export type VariationOrderUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VariationOrder
+     */
+    select?: VariationOrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VariationOrder
+     */
+    omit?: VariationOrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VariationOrderInclude<ExtArgs> | null
+    /**
+     * The filter to search for the VariationOrder to update in case it exists.
+     */
+    where: VariationOrderWhereUniqueInput
+    /**
+     * In case the VariationOrder found by the `where` argument doesn't exist, create a new VariationOrder with this data.
+     */
+    create: XOR<VariationOrderCreateInput, VariationOrderUncheckedCreateInput>
+    /**
+     * In case the VariationOrder was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<VariationOrderUpdateInput, VariationOrderUncheckedUpdateInput>
+  }
+
+  /**
+   * VariationOrder delete
+   */
+  export type VariationOrderDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VariationOrder
+     */
+    select?: VariationOrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VariationOrder
+     */
+    omit?: VariationOrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VariationOrderInclude<ExtArgs> | null
+    /**
+     * Filter which VariationOrder to delete.
+     */
+    where: VariationOrderWhereUniqueInput
+  }
+
+  /**
+   * VariationOrder deleteMany
+   */
+  export type VariationOrderDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which VariationOrders to delete
+     */
+    where?: VariationOrderWhereInput
+    /**
+     * Limit how many VariationOrders to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * VariationOrder without action
+   */
+  export type VariationOrderDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VariationOrder
+     */
+    select?: VariationOrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VariationOrder
+     */
+    omit?: VariationOrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VariationOrderInclude<ExtArgs> | null
   }
 
 
@@ -15608,6 +16899,19 @@ export namespace Prisma {
   export type DisbursementScalarFieldEnum = (typeof DisbursementScalarFieldEnum)[keyof typeof DisbursementScalarFieldEnum]
 
 
+  export const VariationOrderScalarFieldEnum: {
+    id: 'id',
+    projectId: 'projectId',
+    date: 'date',
+    sourceOfFund: 'sourceOfFund',
+    amount: 'amount',
+    createdById: 'createdById',
+    createdAt: 'createdAt'
+  };
+
+  export type VariationOrderScalarFieldEnum = (typeof VariationOrderScalarFieldEnum)[keyof typeof VariationOrderScalarFieldEnum]
+
+
   export const TaskNotificationScalarFieldEnum: {
     id: 'id',
     projectId: 'projectId',
@@ -15999,6 +17303,7 @@ export namespace Prisma {
     documents?: DocumentListRelationFilter
     projectActivities?: ProjectActivityListRelationFilter
     disbursements?: DisbursementListRelationFilter
+    variationOrders?: VariationOrderListRelationFilter
     taskNotificationsReceived?: TaskNotificationListRelationFilter
     taskNotificationsCreated?: TaskNotificationListRelationFilter
     taskReplies?: TaskReplyListRelationFilter
@@ -16027,6 +17332,7 @@ export namespace Prisma {
     documents?: DocumentOrderByRelationAggregateInput
     projectActivities?: ProjectActivityOrderByRelationAggregateInput
     disbursements?: DisbursementOrderByRelationAggregateInput
+    variationOrders?: VariationOrderOrderByRelationAggregateInput
     taskNotificationsReceived?: TaskNotificationOrderByRelationAggregateInput
     taskNotificationsCreated?: TaskNotificationOrderByRelationAggregateInput
     taskReplies?: TaskReplyOrderByRelationAggregateInput
@@ -16058,6 +17364,7 @@ export namespace Prisma {
     documents?: DocumentListRelationFilter
     projectActivities?: ProjectActivityListRelationFilter
     disbursements?: DisbursementListRelationFilter
+    variationOrders?: VariationOrderListRelationFilter
     taskNotificationsReceived?: TaskNotificationListRelationFilter
     taskNotificationsCreated?: TaskNotificationListRelationFilter
     taskReplies?: TaskReplyListRelationFilter
@@ -16215,6 +17522,7 @@ export namespace Prisma {
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
     activities?: ProjectActivityListRelationFilter
     disbursements?: DisbursementListRelationFilter
+    variationOrders?: VariationOrderListRelationFilter
     taskNotifications?: TaskNotificationListRelationFilter
     files?: ProjectFileListRelationFilter
   }
@@ -16260,6 +17568,7 @@ export namespace Prisma {
     createdBy?: UserOrderByWithRelationInput
     activities?: ProjectActivityOrderByRelationAggregateInput
     disbursements?: DisbursementOrderByRelationAggregateInput
+    variationOrders?: VariationOrderOrderByRelationAggregateInput
     taskNotifications?: TaskNotificationOrderByRelationAggregateInput
     files?: ProjectFileOrderByRelationAggregateInput
   }
@@ -16308,6 +17617,7 @@ export namespace Prisma {
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
     activities?: ProjectActivityListRelationFilter
     disbursements?: DisbursementListRelationFilter
+    variationOrders?: VariationOrderListRelationFilter
     taskNotifications?: TaskNotificationListRelationFilter
     files?: ProjectFileListRelationFilter
   }, "id" | "projectCode">
@@ -16531,6 +17841,76 @@ export namespace Prisma {
     amount?: FloatWithAggregatesFilter<"Disbursement"> | number
     createdById?: StringWithAggregatesFilter<"Disbursement"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Disbursement"> | Date | string
+  }
+
+  export type VariationOrderWhereInput = {
+    AND?: VariationOrderWhereInput | VariationOrderWhereInput[]
+    OR?: VariationOrderWhereInput[]
+    NOT?: VariationOrderWhereInput | VariationOrderWhereInput[]
+    id?: StringFilter<"VariationOrder"> | string
+    projectId?: StringFilter<"VariationOrder"> | string
+    date?: DateTimeFilter<"VariationOrder"> | Date | string
+    sourceOfFund?: EnumSourceOfFundNullableFilter<"VariationOrder"> | $Enums.SourceOfFund | null
+    amount?: FloatFilter<"VariationOrder"> | number
+    createdById?: StringFilter<"VariationOrder"> | string
+    createdAt?: DateTimeFilter<"VariationOrder"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type VariationOrderOrderByWithRelationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    date?: SortOrder
+    sourceOfFund?: SortOrderInput | SortOrder
+    amount?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    project?: ProjectOrderByWithRelationInput
+    createdBy?: UserOrderByWithRelationInput
+  }
+
+  export type VariationOrderWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: VariationOrderWhereInput | VariationOrderWhereInput[]
+    OR?: VariationOrderWhereInput[]
+    NOT?: VariationOrderWhereInput | VariationOrderWhereInput[]
+    projectId?: StringFilter<"VariationOrder"> | string
+    date?: DateTimeFilter<"VariationOrder"> | Date | string
+    sourceOfFund?: EnumSourceOfFundNullableFilter<"VariationOrder"> | $Enums.SourceOfFund | null
+    amount?: FloatFilter<"VariationOrder"> | number
+    createdById?: StringFilter<"VariationOrder"> | string
+    createdAt?: DateTimeFilter<"VariationOrder"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type VariationOrderOrderByWithAggregationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    date?: SortOrder
+    sourceOfFund?: SortOrderInput | SortOrder
+    amount?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    _count?: VariationOrderCountOrderByAggregateInput
+    _avg?: VariationOrderAvgOrderByAggregateInput
+    _max?: VariationOrderMaxOrderByAggregateInput
+    _min?: VariationOrderMinOrderByAggregateInput
+    _sum?: VariationOrderSumOrderByAggregateInput
+  }
+
+  export type VariationOrderScalarWhereWithAggregatesInput = {
+    AND?: VariationOrderScalarWhereWithAggregatesInput | VariationOrderScalarWhereWithAggregatesInput[]
+    OR?: VariationOrderScalarWhereWithAggregatesInput[]
+    NOT?: VariationOrderScalarWhereWithAggregatesInput | VariationOrderScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"VariationOrder"> | string
+    projectId?: StringWithAggregatesFilter<"VariationOrder"> | string
+    date?: DateTimeWithAggregatesFilter<"VariationOrder"> | Date | string
+    sourceOfFund?: EnumSourceOfFundNullableWithAggregatesFilter<"VariationOrder"> | $Enums.SourceOfFund | null
+    amount?: FloatWithAggregatesFilter<"VariationOrder"> | number
+    createdById?: StringWithAggregatesFilter<"VariationOrder"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"VariationOrder"> | Date | string
   }
 
   export type TaskNotificationWhereInput = {
@@ -17026,6 +18406,7 @@ export namespace Prisma {
     documents?: DocumentCreateNestedManyWithoutCreatedByInput
     projectActivities?: ProjectActivityCreateNestedManyWithoutCreatedByInput
     disbursements?: DisbursementCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutCreatedByInput
     taskNotificationsReceived?: TaskNotificationCreateNestedManyWithoutNotifyUserInput
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
@@ -17054,6 +18435,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedCreateNestedManyWithoutCreatedByInput
     projectActivities?: ProjectActivityUncheckedCreateNestedManyWithoutCreatedByInput
     disbursements?: DisbursementUncheckedCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutCreatedByInput
     taskNotificationsReceived?: TaskNotificationUncheckedCreateNestedManyWithoutNotifyUserInput
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
@@ -17082,6 +18464,7 @@ export namespace Prisma {
     documents?: DocumentUpdateManyWithoutCreatedByNestedInput
     projectActivities?: ProjectActivityUpdateManyWithoutCreatedByNestedInput
     disbursements?: DisbursementUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutCreatedByNestedInput
     taskNotificationsReceived?: TaskNotificationUpdateManyWithoutNotifyUserNestedInput
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
@@ -17110,6 +18493,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
     projectActivities?: ProjectActivityUncheckedUpdateManyWithoutCreatedByNestedInput
     disbursements?: DisbursementUncheckedUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutCreatedByNestedInput
     taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -17279,6 +18663,7 @@ export namespace Prisma {
     createdBy: UserCreateNestedOneWithoutProjectsInput
     activities?: ProjectActivityCreateNestedManyWithoutProjectInput
     disbursements?: DisbursementCreateNestedManyWithoutProjectInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
     files?: ProjectFileCreateNestedManyWithoutProjectInput
   }
@@ -17323,6 +18708,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     activities?: ProjectActivityUncheckedCreateNestedManyWithoutProjectInput
     disbursements?: DisbursementUncheckedCreateNestedManyWithoutProjectInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
   }
@@ -17367,6 +18753,7 @@ export namespace Prisma {
     createdBy?: UserUpdateOneRequiredWithoutProjectsNestedInput
     activities?: ProjectActivityUpdateManyWithoutProjectNestedInput
     disbursements?: DisbursementUpdateManyWithoutProjectNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
   }
@@ -17411,6 +18798,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     activities?: ProjectActivityUncheckedUpdateManyWithoutProjectNestedInput
     disbursements?: DisbursementUncheckedUpdateManyWithoutProjectNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
   }
@@ -17658,6 +19046,74 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     referenceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     type?: NullableEnumDisbursementTypeFieldUpdateOperationsInput | $Enums.DisbursementType | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VariationOrderCreateInput = {
+    id?: string
+    date?: Date | string
+    sourceOfFund?: $Enums.SourceOfFund | null
+    amount: number
+    createdAt?: Date | string
+    project: ProjectCreateNestedOneWithoutVariationOrdersInput
+    createdBy: UserCreateNestedOneWithoutVariationOrdersInput
+  }
+
+  export type VariationOrderUncheckedCreateInput = {
+    id?: string
+    projectId: string
+    date?: Date | string
+    sourceOfFund?: $Enums.SourceOfFund | null
+    amount: number
+    createdById: string
+    createdAt?: Date | string
+  }
+
+  export type VariationOrderUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutVariationOrdersNestedInput
+    createdBy?: UserUpdateOneRequiredWithoutVariationOrdersNestedInput
+  }
+
+  export type VariationOrderUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VariationOrderCreateManyInput = {
+    id?: string
+    projectId: string
+    date?: Date | string
+    sourceOfFund?: $Enums.SourceOfFund | null
+    amount: number
+    createdById: string
+    createdAt?: Date | string
+  }
+
+  export type VariationOrderUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VariationOrderUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18264,6 +19720,12 @@ export namespace Prisma {
     none?: DisbursementWhereInput
   }
 
+  export type VariationOrderListRelationFilter = {
+    every?: VariationOrderWhereInput
+    some?: VariationOrderWhereInput
+    none?: VariationOrderWhereInput
+  }
+
   export type TaskNotificationListRelationFilter = {
     every?: TaskNotificationWhereInput
     some?: TaskNotificationWhereInput
@@ -18308,6 +19770,10 @@ export namespace Prisma {
   }
 
   export type DisbursementOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type VariationOrderOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -18895,6 +20361,61 @@ export namespace Prisma {
     _max?: NestedEnumDisbursementTypeNullableFilter<$PrismaModel>
   }
 
+  export type EnumSourceOfFundNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.SourceOfFund | EnumSourceOfFundFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SourceOfFund[] | ListEnumSourceOfFundFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SourceOfFund[] | ListEnumSourceOfFundFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSourceOfFundNullableFilter<$PrismaModel> | $Enums.SourceOfFund | null
+  }
+
+  export type VariationOrderCountOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    date?: SortOrder
+    sourceOfFund?: SortOrder
+    amount?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type VariationOrderAvgOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type VariationOrderMaxOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    date?: SortOrder
+    sourceOfFund?: SortOrder
+    amount?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type VariationOrderMinOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    date?: SortOrder
+    sourceOfFund?: SortOrder
+    amount?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type VariationOrderSumOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type EnumSourceOfFundNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SourceOfFund | EnumSourceOfFundFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SourceOfFund[] | ListEnumSourceOfFundFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SourceOfFund[] | ListEnumSourceOfFundFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSourceOfFundNullableWithAggregatesFilter<$PrismaModel> | $Enums.SourceOfFund | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumSourceOfFundNullableFilter<$PrismaModel>
+    _max?: NestedEnumSourceOfFundNullableFilter<$PrismaModel>
+  }
+
   export type EnumNotificationPriorityFilter<$PrismaModel = never> = {
     equals?: $Enums.NotificationPriority | EnumNotificationPriorityFieldRefInput<$PrismaModel>
     in?: $Enums.NotificationPriority[] | ListEnumNotificationPriorityFieldRefInput<$PrismaModel>
@@ -19339,6 +20860,13 @@ export namespace Prisma {
     connect?: DisbursementWhereUniqueInput | DisbursementWhereUniqueInput[]
   }
 
+  export type VariationOrderCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<VariationOrderCreateWithoutCreatedByInput, VariationOrderUncheckedCreateWithoutCreatedByInput> | VariationOrderCreateWithoutCreatedByInput[] | VariationOrderUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: VariationOrderCreateOrConnectWithoutCreatedByInput | VariationOrderCreateOrConnectWithoutCreatedByInput[]
+    createMany?: VariationOrderCreateManyCreatedByInputEnvelope
+    connect?: VariationOrderWhereUniqueInput | VariationOrderWhereUniqueInput[]
+  }
+
   export type TaskNotificationCreateNestedManyWithoutNotifyUserInput = {
     create?: XOR<TaskNotificationCreateWithoutNotifyUserInput, TaskNotificationUncheckedCreateWithoutNotifyUserInput> | TaskNotificationCreateWithoutNotifyUserInput[] | TaskNotificationUncheckedCreateWithoutNotifyUserInput[]
     connectOrCreate?: TaskNotificationCreateOrConnectWithoutNotifyUserInput | TaskNotificationCreateOrConnectWithoutNotifyUserInput[]
@@ -19407,6 +20935,13 @@ export namespace Prisma {
     connectOrCreate?: DisbursementCreateOrConnectWithoutCreatedByInput | DisbursementCreateOrConnectWithoutCreatedByInput[]
     createMany?: DisbursementCreateManyCreatedByInputEnvelope
     connect?: DisbursementWhereUniqueInput | DisbursementWhereUniqueInput[]
+  }
+
+  export type VariationOrderUncheckedCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<VariationOrderCreateWithoutCreatedByInput, VariationOrderUncheckedCreateWithoutCreatedByInput> | VariationOrderCreateWithoutCreatedByInput[] | VariationOrderUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: VariationOrderCreateOrConnectWithoutCreatedByInput | VariationOrderCreateOrConnectWithoutCreatedByInput[]
+    createMany?: VariationOrderCreateManyCreatedByInputEnvelope
+    connect?: VariationOrderWhereUniqueInput | VariationOrderWhereUniqueInput[]
   }
 
   export type TaskNotificationUncheckedCreateNestedManyWithoutNotifyUserInput = {
@@ -19549,6 +21084,20 @@ export namespace Prisma {
     deleteMany?: DisbursementScalarWhereInput | DisbursementScalarWhereInput[]
   }
 
+  export type VariationOrderUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<VariationOrderCreateWithoutCreatedByInput, VariationOrderUncheckedCreateWithoutCreatedByInput> | VariationOrderCreateWithoutCreatedByInput[] | VariationOrderUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: VariationOrderCreateOrConnectWithoutCreatedByInput | VariationOrderCreateOrConnectWithoutCreatedByInput[]
+    upsert?: VariationOrderUpsertWithWhereUniqueWithoutCreatedByInput | VariationOrderUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: VariationOrderCreateManyCreatedByInputEnvelope
+    set?: VariationOrderWhereUniqueInput | VariationOrderWhereUniqueInput[]
+    disconnect?: VariationOrderWhereUniqueInput | VariationOrderWhereUniqueInput[]
+    delete?: VariationOrderWhereUniqueInput | VariationOrderWhereUniqueInput[]
+    connect?: VariationOrderWhereUniqueInput | VariationOrderWhereUniqueInput[]
+    update?: VariationOrderUpdateWithWhereUniqueWithoutCreatedByInput | VariationOrderUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: VariationOrderUpdateManyWithWhereWithoutCreatedByInput | VariationOrderUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: VariationOrderScalarWhereInput | VariationOrderScalarWhereInput[]
+  }
+
   export type TaskNotificationUpdateManyWithoutNotifyUserNestedInput = {
     create?: XOR<TaskNotificationCreateWithoutNotifyUserInput, TaskNotificationUncheckedCreateWithoutNotifyUserInput> | TaskNotificationCreateWithoutNotifyUserInput[] | TaskNotificationUncheckedCreateWithoutNotifyUserInput[]
     connectOrCreate?: TaskNotificationCreateOrConnectWithoutNotifyUserInput | TaskNotificationCreateOrConnectWithoutNotifyUserInput[]
@@ -19689,6 +21238,20 @@ export namespace Prisma {
     deleteMany?: DisbursementScalarWhereInput | DisbursementScalarWhereInput[]
   }
 
+  export type VariationOrderUncheckedUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<VariationOrderCreateWithoutCreatedByInput, VariationOrderUncheckedCreateWithoutCreatedByInput> | VariationOrderCreateWithoutCreatedByInput[] | VariationOrderUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: VariationOrderCreateOrConnectWithoutCreatedByInput | VariationOrderCreateOrConnectWithoutCreatedByInput[]
+    upsert?: VariationOrderUpsertWithWhereUniqueWithoutCreatedByInput | VariationOrderUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: VariationOrderCreateManyCreatedByInputEnvelope
+    set?: VariationOrderWhereUniqueInput | VariationOrderWhereUniqueInput[]
+    disconnect?: VariationOrderWhereUniqueInput | VariationOrderWhereUniqueInput[]
+    delete?: VariationOrderWhereUniqueInput | VariationOrderWhereUniqueInput[]
+    connect?: VariationOrderWhereUniqueInput | VariationOrderWhereUniqueInput[]
+    update?: VariationOrderUpdateWithWhereUniqueWithoutCreatedByInput | VariationOrderUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: VariationOrderUpdateManyWithWhereWithoutCreatedByInput | VariationOrderUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: VariationOrderScalarWhereInput | VariationOrderScalarWhereInput[]
+  }
+
   export type TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput = {
     create?: XOR<TaskNotificationCreateWithoutNotifyUserInput, TaskNotificationUncheckedCreateWithoutNotifyUserInput> | TaskNotificationCreateWithoutNotifyUserInput[] | TaskNotificationUncheckedCreateWithoutNotifyUserInput[]
     connectOrCreate?: TaskNotificationCreateOrConnectWithoutNotifyUserInput | TaskNotificationCreateOrConnectWithoutNotifyUserInput[]
@@ -19779,6 +21342,13 @@ export namespace Prisma {
     connect?: DisbursementWhereUniqueInput | DisbursementWhereUniqueInput[]
   }
 
+  export type VariationOrderCreateNestedManyWithoutProjectInput = {
+    create?: XOR<VariationOrderCreateWithoutProjectInput, VariationOrderUncheckedCreateWithoutProjectInput> | VariationOrderCreateWithoutProjectInput[] | VariationOrderUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: VariationOrderCreateOrConnectWithoutProjectInput | VariationOrderCreateOrConnectWithoutProjectInput[]
+    createMany?: VariationOrderCreateManyProjectInputEnvelope
+    connect?: VariationOrderWhereUniqueInput | VariationOrderWhereUniqueInput[]
+  }
+
   export type TaskNotificationCreateNestedManyWithoutProjectInput = {
     create?: XOR<TaskNotificationCreateWithoutProjectInput, TaskNotificationUncheckedCreateWithoutProjectInput> | TaskNotificationCreateWithoutProjectInput[] | TaskNotificationUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: TaskNotificationCreateOrConnectWithoutProjectInput | TaskNotificationCreateOrConnectWithoutProjectInput[]
@@ -19805,6 +21375,13 @@ export namespace Prisma {
     connectOrCreate?: DisbursementCreateOrConnectWithoutProjectInput | DisbursementCreateOrConnectWithoutProjectInput[]
     createMany?: DisbursementCreateManyProjectInputEnvelope
     connect?: DisbursementWhereUniqueInput | DisbursementWhereUniqueInput[]
+  }
+
+  export type VariationOrderUncheckedCreateNestedManyWithoutProjectInput = {
+    create?: XOR<VariationOrderCreateWithoutProjectInput, VariationOrderUncheckedCreateWithoutProjectInput> | VariationOrderCreateWithoutProjectInput[] | VariationOrderUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: VariationOrderCreateOrConnectWithoutProjectInput | VariationOrderCreateOrConnectWithoutProjectInput[]
+    createMany?: VariationOrderCreateManyProjectInputEnvelope
+    connect?: VariationOrderWhereUniqueInput | VariationOrderWhereUniqueInput[]
   }
 
   export type TaskNotificationUncheckedCreateNestedManyWithoutProjectInput = {
@@ -19897,6 +21474,20 @@ export namespace Prisma {
     deleteMany?: DisbursementScalarWhereInput | DisbursementScalarWhereInput[]
   }
 
+  export type VariationOrderUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<VariationOrderCreateWithoutProjectInput, VariationOrderUncheckedCreateWithoutProjectInput> | VariationOrderCreateWithoutProjectInput[] | VariationOrderUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: VariationOrderCreateOrConnectWithoutProjectInput | VariationOrderCreateOrConnectWithoutProjectInput[]
+    upsert?: VariationOrderUpsertWithWhereUniqueWithoutProjectInput | VariationOrderUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: VariationOrderCreateManyProjectInputEnvelope
+    set?: VariationOrderWhereUniqueInput | VariationOrderWhereUniqueInput[]
+    disconnect?: VariationOrderWhereUniqueInput | VariationOrderWhereUniqueInput[]
+    delete?: VariationOrderWhereUniqueInput | VariationOrderWhereUniqueInput[]
+    connect?: VariationOrderWhereUniqueInput | VariationOrderWhereUniqueInput[]
+    update?: VariationOrderUpdateWithWhereUniqueWithoutProjectInput | VariationOrderUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: VariationOrderUpdateManyWithWhereWithoutProjectInput | VariationOrderUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: VariationOrderScalarWhereInput | VariationOrderScalarWhereInput[]
+  }
+
   export type TaskNotificationUpdateManyWithoutProjectNestedInput = {
     create?: XOR<TaskNotificationCreateWithoutProjectInput, TaskNotificationUncheckedCreateWithoutProjectInput> | TaskNotificationCreateWithoutProjectInput[] | TaskNotificationUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: TaskNotificationCreateOrConnectWithoutProjectInput | TaskNotificationCreateOrConnectWithoutProjectInput[]
@@ -19951,6 +21542,20 @@ export namespace Prisma {
     update?: DisbursementUpdateWithWhereUniqueWithoutProjectInput | DisbursementUpdateWithWhereUniqueWithoutProjectInput[]
     updateMany?: DisbursementUpdateManyWithWhereWithoutProjectInput | DisbursementUpdateManyWithWhereWithoutProjectInput[]
     deleteMany?: DisbursementScalarWhereInput | DisbursementScalarWhereInput[]
+  }
+
+  export type VariationOrderUncheckedUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<VariationOrderCreateWithoutProjectInput, VariationOrderUncheckedCreateWithoutProjectInput> | VariationOrderCreateWithoutProjectInput[] | VariationOrderUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: VariationOrderCreateOrConnectWithoutProjectInput | VariationOrderCreateOrConnectWithoutProjectInput[]
+    upsert?: VariationOrderUpsertWithWhereUniqueWithoutProjectInput | VariationOrderUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: VariationOrderCreateManyProjectInputEnvelope
+    set?: VariationOrderWhereUniqueInput | VariationOrderWhereUniqueInput[]
+    disconnect?: VariationOrderWhereUniqueInput | VariationOrderWhereUniqueInput[]
+    delete?: VariationOrderWhereUniqueInput | VariationOrderWhereUniqueInput[]
+    connect?: VariationOrderWhereUniqueInput | VariationOrderWhereUniqueInput[]
+    update?: VariationOrderUpdateWithWhereUniqueWithoutProjectInput | VariationOrderUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: VariationOrderUpdateManyWithWhereWithoutProjectInput | VariationOrderUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: VariationOrderScalarWhereInput | VariationOrderScalarWhereInput[]
   }
 
   export type TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput = {
@@ -20039,6 +21644,38 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutDisbursementsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDisbursementsInput, UserUpdateWithoutDisbursementsInput>, UserUncheckedUpdateWithoutDisbursementsInput>
+  }
+
+  export type ProjectCreateNestedOneWithoutVariationOrdersInput = {
+    create?: XOR<ProjectCreateWithoutVariationOrdersInput, ProjectUncheckedCreateWithoutVariationOrdersInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutVariationOrdersInput
+    connect?: ProjectWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutVariationOrdersInput = {
+    create?: XOR<UserCreateWithoutVariationOrdersInput, UserUncheckedCreateWithoutVariationOrdersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutVariationOrdersInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type NullableEnumSourceOfFundFieldUpdateOperationsInput = {
+    set?: $Enums.SourceOfFund | null
+  }
+
+  export type ProjectUpdateOneRequiredWithoutVariationOrdersNestedInput = {
+    create?: XOR<ProjectCreateWithoutVariationOrdersInput, ProjectUncheckedCreateWithoutVariationOrdersInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutVariationOrdersInput
+    upsert?: ProjectUpsertWithoutVariationOrdersInput
+    connect?: ProjectWhereUniqueInput
+    update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutVariationOrdersInput, ProjectUpdateWithoutVariationOrdersInput>, ProjectUncheckedUpdateWithoutVariationOrdersInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutVariationOrdersNestedInput = {
+    create?: XOR<UserCreateWithoutVariationOrdersInput, UserUncheckedCreateWithoutVariationOrdersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutVariationOrdersInput
+    upsert?: UserUpsertWithoutVariationOrdersInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutVariationOrdersInput, UserUpdateWithoutVariationOrdersInput>, UserUncheckedUpdateWithoutVariationOrdersInput>
   }
 
   export type ProjectCreateNestedOneWithoutTaskNotificationsInput = {
@@ -20648,6 +22285,23 @@ export namespace Prisma {
     _max?: NestedEnumDisbursementTypeNullableFilter<$PrismaModel>
   }
 
+  export type NestedEnumSourceOfFundNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.SourceOfFund | EnumSourceOfFundFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SourceOfFund[] | ListEnumSourceOfFundFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SourceOfFund[] | ListEnumSourceOfFundFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSourceOfFundNullableFilter<$PrismaModel> | $Enums.SourceOfFund | null
+  }
+
+  export type NestedEnumSourceOfFundNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SourceOfFund | EnumSourceOfFundFieldRefInput<$PrismaModel> | null
+    in?: $Enums.SourceOfFund[] | ListEnumSourceOfFundFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.SourceOfFund[] | ListEnumSourceOfFundFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumSourceOfFundNullableWithAggregatesFilter<$PrismaModel> | $Enums.SourceOfFund | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumSourceOfFundNullableFilter<$PrismaModel>
+    _max?: NestedEnumSourceOfFundNullableFilter<$PrismaModel>
+  }
+
   export type NestedEnumNotificationPriorityFilter<$PrismaModel = never> = {
     equals?: $Enums.NotificationPriority | EnumNotificationPriorityFieldRefInput<$PrismaModel>
     in?: $Enums.NotificationPriority[] | ListEnumNotificationPriorityFieldRefInput<$PrismaModel>
@@ -20834,6 +22488,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     activities?: ProjectActivityCreateNestedManyWithoutProjectInput
     disbursements?: DisbursementCreateNestedManyWithoutProjectInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
     files?: ProjectFileCreateNestedManyWithoutProjectInput
   }
@@ -20877,6 +22532,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     activities?: ProjectActivityUncheckedCreateNestedManyWithoutProjectInput
     disbursements?: DisbursementUncheckedCreateNestedManyWithoutProjectInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
   }
@@ -21020,6 +22676,34 @@ export namespace Prisma {
 
   export type DisbursementCreateManyCreatedByInputEnvelope = {
     data: DisbursementCreateManyCreatedByInput | DisbursementCreateManyCreatedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type VariationOrderCreateWithoutCreatedByInput = {
+    id?: string
+    date?: Date | string
+    sourceOfFund?: $Enums.SourceOfFund | null
+    amount: number
+    createdAt?: Date | string
+    project: ProjectCreateNestedOneWithoutVariationOrdersInput
+  }
+
+  export type VariationOrderUncheckedCreateWithoutCreatedByInput = {
+    id?: string
+    projectId: string
+    date?: Date | string
+    sourceOfFund?: $Enums.SourceOfFund | null
+    amount: number
+    createdAt?: Date | string
+  }
+
+  export type VariationOrderCreateOrConnectWithoutCreatedByInput = {
+    where: VariationOrderWhereUniqueInput
+    create: XOR<VariationOrderCreateWithoutCreatedByInput, VariationOrderUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type VariationOrderCreateManyCreatedByInputEnvelope = {
+    data: VariationOrderCreateManyCreatedByInput | VariationOrderCreateManyCreatedByInput[]
     skipDuplicates?: boolean
   }
 
@@ -21361,6 +23045,35 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Disbursement"> | Date | string
   }
 
+  export type VariationOrderUpsertWithWhereUniqueWithoutCreatedByInput = {
+    where: VariationOrderWhereUniqueInput
+    update: XOR<VariationOrderUpdateWithoutCreatedByInput, VariationOrderUncheckedUpdateWithoutCreatedByInput>
+    create: XOR<VariationOrderCreateWithoutCreatedByInput, VariationOrderUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type VariationOrderUpdateWithWhereUniqueWithoutCreatedByInput = {
+    where: VariationOrderWhereUniqueInput
+    data: XOR<VariationOrderUpdateWithoutCreatedByInput, VariationOrderUncheckedUpdateWithoutCreatedByInput>
+  }
+
+  export type VariationOrderUpdateManyWithWhereWithoutCreatedByInput = {
+    where: VariationOrderScalarWhereInput
+    data: XOR<VariationOrderUpdateManyMutationInput, VariationOrderUncheckedUpdateManyWithoutCreatedByInput>
+  }
+
+  export type VariationOrderScalarWhereInput = {
+    AND?: VariationOrderScalarWhereInput | VariationOrderScalarWhereInput[]
+    OR?: VariationOrderScalarWhereInput[]
+    NOT?: VariationOrderScalarWhereInput | VariationOrderScalarWhereInput[]
+    id?: StringFilter<"VariationOrder"> | string
+    projectId?: StringFilter<"VariationOrder"> | string
+    date?: DateTimeFilter<"VariationOrder"> | Date | string
+    sourceOfFund?: EnumSourceOfFundNullableFilter<"VariationOrder"> | $Enums.SourceOfFund | null
+    amount?: FloatFilter<"VariationOrder"> | number
+    createdById?: StringFilter<"VariationOrder"> | string
+    createdAt?: DateTimeFilter<"VariationOrder"> | Date | string
+  }
+
   export type TaskNotificationUpsertWithWhereUniqueWithoutNotifyUserInput = {
     where: TaskNotificationWhereUniqueInput
     update: XOR<TaskNotificationUpdateWithoutNotifyUserInput, TaskNotificationUncheckedUpdateWithoutNotifyUserInput>
@@ -21487,6 +23200,7 @@ export namespace Prisma {
     documents?: DocumentCreateNestedManyWithoutCreatedByInput
     projectActivities?: ProjectActivityCreateNestedManyWithoutCreatedByInput
     disbursements?: DisbursementCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutCreatedByInput
     taskNotificationsReceived?: TaskNotificationCreateNestedManyWithoutNotifyUserInput
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
@@ -21514,6 +23228,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedCreateNestedManyWithoutCreatedByInput
     projectActivities?: ProjectActivityUncheckedCreateNestedManyWithoutCreatedByInput
     disbursements?: DisbursementUncheckedCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutCreatedByInput
     taskNotificationsReceived?: TaskNotificationUncheckedCreateNestedManyWithoutNotifyUserInput
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
@@ -21557,6 +23272,7 @@ export namespace Prisma {
     documents?: DocumentUpdateManyWithoutCreatedByNestedInput
     projectActivities?: ProjectActivityUpdateManyWithoutCreatedByNestedInput
     disbursements?: DisbursementUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutCreatedByNestedInput
     taskNotificationsReceived?: TaskNotificationUpdateManyWithoutNotifyUserNestedInput
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
@@ -21584,6 +23300,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
     projectActivities?: ProjectActivityUncheckedUpdateManyWithoutCreatedByNestedInput
     disbursements?: DisbursementUncheckedUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutCreatedByNestedInput
     taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -21611,6 +23328,7 @@ export namespace Prisma {
     documents?: DocumentCreateNestedManyWithoutCreatedByInput
     projectActivities?: ProjectActivityCreateNestedManyWithoutCreatedByInput
     disbursements?: DisbursementCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutCreatedByInput
     taskNotificationsReceived?: TaskNotificationCreateNestedManyWithoutNotifyUserInput
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
@@ -21638,6 +23356,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedCreateNestedManyWithoutCreatedByInput
     projectActivities?: ProjectActivityUncheckedCreateNestedManyWithoutCreatedByInput
     disbursements?: DisbursementUncheckedCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutCreatedByInput
     taskNotificationsReceived?: TaskNotificationUncheckedCreateNestedManyWithoutNotifyUserInput
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
@@ -21700,6 +23419,34 @@ export namespace Prisma {
 
   export type DisbursementCreateManyProjectInputEnvelope = {
     data: DisbursementCreateManyProjectInput | DisbursementCreateManyProjectInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type VariationOrderCreateWithoutProjectInput = {
+    id?: string
+    date?: Date | string
+    sourceOfFund?: $Enums.SourceOfFund | null
+    amount: number
+    createdAt?: Date | string
+    createdBy: UserCreateNestedOneWithoutVariationOrdersInput
+  }
+
+  export type VariationOrderUncheckedCreateWithoutProjectInput = {
+    id?: string
+    date?: Date | string
+    sourceOfFund?: $Enums.SourceOfFund | null
+    amount: number
+    createdById: string
+    createdAt?: Date | string
+  }
+
+  export type VariationOrderCreateOrConnectWithoutProjectInput = {
+    where: VariationOrderWhereUniqueInput
+    create: XOR<VariationOrderCreateWithoutProjectInput, VariationOrderUncheckedCreateWithoutProjectInput>
+  }
+
+  export type VariationOrderCreateManyProjectInputEnvelope = {
+    data: VariationOrderCreateManyProjectInput | VariationOrderCreateManyProjectInput[]
     skipDuplicates?: boolean
   }
 
@@ -21799,6 +23546,7 @@ export namespace Prisma {
     documents?: DocumentUpdateManyWithoutCreatedByNestedInput
     projectActivities?: ProjectActivityUpdateManyWithoutCreatedByNestedInput
     disbursements?: DisbursementUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutCreatedByNestedInput
     taskNotificationsReceived?: TaskNotificationUpdateManyWithoutNotifyUserNestedInput
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
@@ -21826,6 +23574,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
     projectActivities?: ProjectActivityUncheckedUpdateManyWithoutCreatedByNestedInput
     disbursements?: DisbursementUncheckedUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutCreatedByNestedInput
     taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -21862,6 +23611,22 @@ export namespace Prisma {
   export type DisbursementUpdateManyWithWhereWithoutProjectInput = {
     where: DisbursementScalarWhereInput
     data: XOR<DisbursementUpdateManyMutationInput, DisbursementUncheckedUpdateManyWithoutProjectInput>
+  }
+
+  export type VariationOrderUpsertWithWhereUniqueWithoutProjectInput = {
+    where: VariationOrderWhereUniqueInput
+    update: XOR<VariationOrderUpdateWithoutProjectInput, VariationOrderUncheckedUpdateWithoutProjectInput>
+    create: XOR<VariationOrderCreateWithoutProjectInput, VariationOrderUncheckedCreateWithoutProjectInput>
+  }
+
+  export type VariationOrderUpdateWithWhereUniqueWithoutProjectInput = {
+    where: VariationOrderWhereUniqueInput
+    data: XOR<VariationOrderUpdateWithoutProjectInput, VariationOrderUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type VariationOrderUpdateManyWithWhereWithoutProjectInput = {
+    where: VariationOrderScalarWhereInput
+    data: XOR<VariationOrderUpdateManyMutationInput, VariationOrderUncheckedUpdateManyWithoutProjectInput>
   }
 
   export type TaskNotificationUpsertWithWhereUniqueWithoutProjectInput = {
@@ -21935,6 +23700,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     createdBy: UserCreateNestedOneWithoutProjectsInput
     disbursements?: DisbursementCreateNestedManyWithoutProjectInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
     files?: ProjectFileCreateNestedManyWithoutProjectInput
   }
@@ -21978,6 +23744,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     disbursements?: DisbursementUncheckedCreateNestedManyWithoutProjectInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
   }
@@ -22008,6 +23775,7 @@ export namespace Prisma {
     sessions?: UserSessionCreateNestedManyWithoutUserInput
     documents?: DocumentCreateNestedManyWithoutCreatedByInput
     disbursements?: DisbursementCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutCreatedByInput
     taskNotificationsReceived?: TaskNotificationCreateNestedManyWithoutNotifyUserInput
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
@@ -22035,6 +23803,7 @@ export namespace Prisma {
     sessions?: UserSessionUncheckedCreateNestedManyWithoutUserInput
     documents?: DocumentUncheckedCreateNestedManyWithoutCreatedByInput
     disbursements?: DisbursementUncheckedCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutCreatedByInput
     taskNotificationsReceived?: TaskNotificationUncheckedCreateNestedManyWithoutNotifyUserInput
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
@@ -22096,6 +23865,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneRequiredWithoutProjectsNestedInput
     disbursements?: DisbursementUpdateManyWithoutProjectNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
   }
@@ -22139,6 +23909,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     disbursements?: DisbursementUncheckedUpdateManyWithoutProjectNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
   }
@@ -22175,6 +23946,7 @@ export namespace Prisma {
     sessions?: UserSessionUpdateManyWithoutUserNestedInput
     documents?: DocumentUpdateManyWithoutCreatedByNestedInput
     disbursements?: DisbursementUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutCreatedByNestedInput
     taskNotificationsReceived?: TaskNotificationUpdateManyWithoutNotifyUserNestedInput
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
@@ -22202,6 +23974,7 @@ export namespace Prisma {
     sessions?: UserSessionUncheckedUpdateManyWithoutUserNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
     disbursements?: DisbursementUncheckedUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutCreatedByNestedInput
     taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -22247,6 +24020,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     createdBy: UserCreateNestedOneWithoutProjectsInput
     activities?: ProjectActivityCreateNestedManyWithoutProjectInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
     files?: ProjectFileCreateNestedManyWithoutProjectInput
   }
@@ -22290,6 +24064,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     activities?: ProjectActivityUncheckedCreateNestedManyWithoutProjectInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
   }
@@ -22320,6 +24095,7 @@ export namespace Prisma {
     sessions?: UserSessionCreateNestedManyWithoutUserInput
     documents?: DocumentCreateNestedManyWithoutCreatedByInput
     projectActivities?: ProjectActivityCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutCreatedByInput
     taskNotificationsReceived?: TaskNotificationCreateNestedManyWithoutNotifyUserInput
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
@@ -22347,6 +24123,7 @@ export namespace Prisma {
     sessions?: UserSessionUncheckedCreateNestedManyWithoutUserInput
     documents?: DocumentUncheckedCreateNestedManyWithoutCreatedByInput
     projectActivities?: ProjectActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutCreatedByInput
     taskNotificationsReceived?: TaskNotificationUncheckedCreateNestedManyWithoutNotifyUserInput
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
@@ -22408,6 +24185,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneRequiredWithoutProjectsNestedInput
     activities?: ProjectActivityUpdateManyWithoutProjectNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
   }
@@ -22451,6 +24229,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     activities?: ProjectActivityUncheckedUpdateManyWithoutProjectNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
   }
@@ -22487,6 +24266,7 @@ export namespace Prisma {
     sessions?: UserSessionUpdateManyWithoutUserNestedInput
     documents?: DocumentUpdateManyWithoutCreatedByNestedInput
     projectActivities?: ProjectActivityUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutCreatedByNestedInput
     taskNotificationsReceived?: TaskNotificationUpdateManyWithoutNotifyUserNestedInput
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
@@ -22514,6 +24294,327 @@ export namespace Prisma {
     sessions?: UserSessionUncheckedUpdateManyWithoutUserNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
     projectActivities?: ProjectActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+    taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
+    taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
+    taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type ProjectCreateWithoutVariationOrdersInput = {
+    id?: string
+    projectCode: string
+    title: string
+    subType?: $Enums.ProjectSubType | null
+    modeOfImplementation: $Enums.ModeOfImplementation
+    locationImplementation: $Enums.District
+    sourceOfFund: $Enums.SourceOfFund
+    projectCost?: number
+    contractCost?: number
+    contractorName?: string | null
+    projectEngineer?: string | null
+    budgetYear?: string | null
+    dateStarted?: Date | string | null
+    targetCompletionDate?: Date | string | null
+    duration?: number
+    revisedCompletionDate?: Date | string | null
+    dateCompleted?: Date | string | null
+    daysSuspended?: number
+    daysExtended?: number
+    numFemale?: number
+    numMale?: number
+    numPersons?: number
+    numManDays?: number
+    district?: $Enums.District | null
+    cityMunicipality?: string | null
+    barangay?: string | null
+    purok?: string | null
+    sitio?: string | null
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    completionPercentage?: number
+    imageUrl?: string | null
+    documentUrl?: string | null
+    documentName?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: UserCreateNestedOneWithoutProjectsInput
+    activities?: ProjectActivityCreateNestedManyWithoutProjectInput
+    disbursements?: DisbursementCreateNestedManyWithoutProjectInput
+    taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
+    files?: ProjectFileCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectUncheckedCreateWithoutVariationOrdersInput = {
+    id?: string
+    projectCode: string
+    title: string
+    subType?: $Enums.ProjectSubType | null
+    modeOfImplementation: $Enums.ModeOfImplementation
+    locationImplementation: $Enums.District
+    sourceOfFund: $Enums.SourceOfFund
+    projectCost?: number
+    contractCost?: number
+    contractorName?: string | null
+    projectEngineer?: string | null
+    budgetYear?: string | null
+    dateStarted?: Date | string | null
+    targetCompletionDate?: Date | string | null
+    duration?: number
+    revisedCompletionDate?: Date | string | null
+    dateCompleted?: Date | string | null
+    daysSuspended?: number
+    daysExtended?: number
+    numFemale?: number
+    numMale?: number
+    numPersons?: number
+    numManDays?: number
+    district?: $Enums.District | null
+    cityMunicipality?: string | null
+    barangay?: string | null
+    purok?: string | null
+    sitio?: string | null
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    completionPercentage?: number
+    imageUrl?: string | null
+    documentUrl?: string | null
+    documentName?: string | null
+    createdById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    activities?: ProjectActivityUncheckedCreateNestedManyWithoutProjectInput
+    disbursements?: DisbursementUncheckedCreateNestedManyWithoutProjectInput
+    taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
+    files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectCreateOrConnectWithoutVariationOrdersInput = {
+    where: ProjectWhereUniqueInput
+    create: XOR<ProjectCreateWithoutVariationOrdersInput, ProjectUncheckedCreateWithoutVariationOrdersInput>
+  }
+
+  export type UserCreateWithoutVariationOrdersInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password: string
+    role?: $Enums.UserRole
+    employeeId?: string | null
+    designation?: string | null
+    division?: string | null
+    contactNumber?: string | null
+    sex?: $Enums.Sex | null
+    status?: $Enums.UserStatus
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    posts?: PostCreateNestedManyWithoutCreatedByInput
+    projects?: ProjectCreateNestedManyWithoutCreatedByInput
+    sessions?: UserSessionCreateNestedManyWithoutUserInput
+    documents?: DocumentCreateNestedManyWithoutCreatedByInput
+    projectActivities?: ProjectActivityCreateNestedManyWithoutCreatedByInput
+    disbursements?: DisbursementCreateNestedManyWithoutCreatedByInput
+    taskNotificationsReceived?: TaskNotificationCreateNestedManyWithoutNotifyUserInput
+    taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
+    taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
+    projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutVariationOrdersInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password: string
+    role?: $Enums.UserRole
+    employeeId?: string | null
+    designation?: string | null
+    division?: string | null
+    contactNumber?: string | null
+    sex?: $Enums.Sex | null
+    status?: $Enums.UserStatus
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
+    projects?: ProjectUncheckedCreateNestedManyWithoutCreatedByInput
+    sessions?: UserSessionUncheckedCreateNestedManyWithoutUserInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutCreatedByInput
+    projectActivities?: ProjectActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    disbursements?: DisbursementUncheckedCreateNestedManyWithoutCreatedByInput
+    taskNotificationsReceived?: TaskNotificationUncheckedCreateNestedManyWithoutNotifyUserInput
+    taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
+    taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
+    projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutVariationOrdersInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutVariationOrdersInput, UserUncheckedCreateWithoutVariationOrdersInput>
+  }
+
+  export type ProjectUpsertWithoutVariationOrdersInput = {
+    update: XOR<ProjectUpdateWithoutVariationOrdersInput, ProjectUncheckedUpdateWithoutVariationOrdersInput>
+    create: XOR<ProjectCreateWithoutVariationOrdersInput, ProjectUncheckedCreateWithoutVariationOrdersInput>
+    where?: ProjectWhereInput
+  }
+
+  export type ProjectUpdateToOneWithWhereWithoutVariationOrdersInput = {
+    where?: ProjectWhereInput
+    data: XOR<ProjectUpdateWithoutVariationOrdersInput, ProjectUncheckedUpdateWithoutVariationOrdersInput>
+  }
+
+  export type ProjectUpdateWithoutVariationOrdersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectCode?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
+    locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
+    sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
+    projectCost?: FloatFieldUpdateOperationsInput | number
+    contractCost?: FloatFieldUpdateOperationsInput | number
+    contractorName?: NullableStringFieldUpdateOperationsInput | string | null
+    projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
+    budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duration?: IntFieldUpdateOperationsInput | number
+    revisedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCompleted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    daysSuspended?: IntFieldUpdateOperationsInput | number
+    daysExtended?: IntFieldUpdateOperationsInput | number
+    numFemale?: IntFieldUpdateOperationsInput | number
+    numMale?: IntFieldUpdateOperationsInput | number
+    numPersons?: IntFieldUpdateOperationsInput | number
+    numManDays?: IntFieldUpdateOperationsInput | number
+    district?: NullableEnumDistrictFieldUpdateOperationsInput | $Enums.District | null
+    cityMunicipality?: NullableStringFieldUpdateOperationsInput | string | null
+    barangay?: NullableStringFieldUpdateOperationsInput | string | null
+    purok?: NullableStringFieldUpdateOperationsInput | string | null
+    sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    completionPercentage?: IntFieldUpdateOperationsInput | number
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    documentName?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutProjectsNestedInput
+    activities?: ProjectActivityUpdateManyWithoutProjectNestedInput
+    disbursements?: DisbursementUpdateManyWithoutProjectNestedInput
+    taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
+    files?: ProjectFileUpdateManyWithoutProjectNestedInput
+  }
+
+  export type ProjectUncheckedUpdateWithoutVariationOrdersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectCode?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
+    locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
+    sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
+    projectCost?: FloatFieldUpdateOperationsInput | number
+    contractCost?: FloatFieldUpdateOperationsInput | number
+    contractorName?: NullableStringFieldUpdateOperationsInput | string | null
+    projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
+    budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duration?: IntFieldUpdateOperationsInput | number
+    revisedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCompleted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    daysSuspended?: IntFieldUpdateOperationsInput | number
+    daysExtended?: IntFieldUpdateOperationsInput | number
+    numFemale?: IntFieldUpdateOperationsInput | number
+    numMale?: IntFieldUpdateOperationsInput | number
+    numPersons?: IntFieldUpdateOperationsInput | number
+    numManDays?: IntFieldUpdateOperationsInput | number
+    district?: NullableEnumDistrictFieldUpdateOperationsInput | $Enums.District | null
+    cityMunicipality?: NullableStringFieldUpdateOperationsInput | string | null
+    barangay?: NullableStringFieldUpdateOperationsInput | string | null
+    purok?: NullableStringFieldUpdateOperationsInput | string | null
+    sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    completionPercentage?: IntFieldUpdateOperationsInput | number
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    documentName?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    activities?: ProjectActivityUncheckedUpdateManyWithoutProjectNestedInput
+    disbursements?: DisbursementUncheckedUpdateManyWithoutProjectNestedInput
+    taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
+    files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
+  }
+
+  export type UserUpsertWithoutVariationOrdersInput = {
+    update: XOR<UserUpdateWithoutVariationOrdersInput, UserUncheckedUpdateWithoutVariationOrdersInput>
+    create: XOR<UserCreateWithoutVariationOrdersInput, UserUncheckedCreateWithoutVariationOrdersInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutVariationOrdersInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutVariationOrdersInput, UserUncheckedUpdateWithoutVariationOrdersInput>
+  }
+
+  export type UserUpdateWithoutVariationOrdersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    designation?: NullableStringFieldUpdateOperationsInput | string | null
+    division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    posts?: PostUpdateManyWithoutCreatedByNestedInput
+    projects?: ProjectUpdateManyWithoutCreatedByNestedInput
+    sessions?: UserSessionUpdateManyWithoutUserNestedInput
+    documents?: DocumentUpdateManyWithoutCreatedByNestedInput
+    projectActivities?: ProjectActivityUpdateManyWithoutCreatedByNestedInput
+    disbursements?: DisbursementUpdateManyWithoutCreatedByNestedInput
+    taskNotificationsReceived?: TaskNotificationUpdateManyWithoutNotifyUserNestedInput
+    taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
+    taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
+    projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutVariationOrdersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    designation?: NullableStringFieldUpdateOperationsInput | string | null
+    division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
+    projects?: ProjectUncheckedUpdateManyWithoutCreatedByNestedInput
+    sessions?: UserSessionUncheckedUpdateManyWithoutUserNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectActivities?: ProjectActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    disbursements?: DisbursementUncheckedUpdateManyWithoutCreatedByNestedInput
     taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -22560,6 +24661,7 @@ export namespace Prisma {
     createdBy: UserCreateNestedOneWithoutProjectsInput
     activities?: ProjectActivityCreateNestedManyWithoutProjectInput
     disbursements?: DisbursementCreateNestedManyWithoutProjectInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutProjectInput
     files?: ProjectFileCreateNestedManyWithoutProjectInput
   }
 
@@ -22603,6 +24705,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     activities?: ProjectActivityUncheckedCreateNestedManyWithoutProjectInput
     disbursements?: DisbursementUncheckedCreateNestedManyWithoutProjectInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutProjectInput
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
   }
 
@@ -22633,6 +24736,7 @@ export namespace Prisma {
     documents?: DocumentCreateNestedManyWithoutCreatedByInput
     projectActivities?: ProjectActivityCreateNestedManyWithoutCreatedByInput
     disbursements?: DisbursementCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutCreatedByInput
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
@@ -22660,6 +24764,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedCreateNestedManyWithoutCreatedByInput
     projectActivities?: ProjectActivityUncheckedCreateNestedManyWithoutCreatedByInput
     disbursements?: DisbursementUncheckedCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutCreatedByInput
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
@@ -22692,6 +24797,7 @@ export namespace Prisma {
     documents?: DocumentCreateNestedManyWithoutCreatedByInput
     projectActivities?: ProjectActivityCreateNestedManyWithoutCreatedByInput
     disbursements?: DisbursementCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutCreatedByInput
     taskNotificationsReceived?: TaskNotificationCreateNestedManyWithoutNotifyUserInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
@@ -22719,6 +24825,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedCreateNestedManyWithoutCreatedByInput
     projectActivities?: ProjectActivityUncheckedCreateNestedManyWithoutCreatedByInput
     disbursements?: DisbursementUncheckedCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutCreatedByInput
     taskNotificationsReceived?: TaskNotificationUncheckedCreateNestedManyWithoutNotifyUserInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
@@ -22808,6 +24915,7 @@ export namespace Prisma {
     createdBy?: UserUpdateOneRequiredWithoutProjectsNestedInput
     activities?: ProjectActivityUpdateManyWithoutProjectNestedInput
     disbursements?: DisbursementUpdateManyWithoutProjectNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
   }
 
@@ -22851,6 +24959,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     activities?: ProjectActivityUncheckedUpdateManyWithoutProjectNestedInput
     disbursements?: DisbursementUncheckedUpdateManyWithoutProjectNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
   }
 
@@ -22887,6 +24996,7 @@ export namespace Prisma {
     documents?: DocumentUpdateManyWithoutCreatedByNestedInput
     projectActivities?: ProjectActivityUpdateManyWithoutCreatedByNestedInput
     disbursements?: DisbursementUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutCreatedByNestedInput
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
@@ -22914,6 +25024,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
     projectActivities?: ProjectActivityUncheckedUpdateManyWithoutCreatedByNestedInput
     disbursements?: DisbursementUncheckedUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutCreatedByNestedInput
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -22952,6 +25063,7 @@ export namespace Prisma {
     documents?: DocumentUpdateManyWithoutCreatedByNestedInput
     projectActivities?: ProjectActivityUpdateManyWithoutCreatedByNestedInput
     disbursements?: DisbursementUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutCreatedByNestedInput
     taskNotificationsReceived?: TaskNotificationUpdateManyWithoutNotifyUserNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
@@ -22979,6 +25091,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
     projectActivities?: ProjectActivityUncheckedUpdateManyWithoutCreatedByNestedInput
     disbursements?: DisbursementUncheckedUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutCreatedByNestedInput
     taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -23051,6 +25164,7 @@ export namespace Prisma {
     documents?: DocumentCreateNestedManyWithoutCreatedByInput
     projectActivities?: ProjectActivityCreateNestedManyWithoutCreatedByInput
     disbursements?: DisbursementCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutCreatedByInput
     taskNotificationsReceived?: TaskNotificationCreateNestedManyWithoutNotifyUserInput
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
@@ -23078,6 +25192,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedCreateNestedManyWithoutCreatedByInput
     projectActivities?: ProjectActivityUncheckedCreateNestedManyWithoutCreatedByInput
     disbursements?: DisbursementUncheckedCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutCreatedByInput
     taskNotificationsReceived?: TaskNotificationUncheckedCreateNestedManyWithoutNotifyUserInput
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
@@ -23184,6 +25299,7 @@ export namespace Prisma {
     documents?: DocumentUpdateManyWithoutCreatedByNestedInput
     projectActivities?: ProjectActivityUpdateManyWithoutCreatedByNestedInput
     disbursements?: DisbursementUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutCreatedByNestedInput
     taskNotificationsReceived?: TaskNotificationUpdateManyWithoutNotifyUserNestedInput
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
@@ -23211,6 +25327,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
     projectActivities?: ProjectActivityUncheckedUpdateManyWithoutCreatedByNestedInput
     disbursements?: DisbursementUncheckedUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutCreatedByNestedInput
     taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -23318,6 +25435,7 @@ export namespace Prisma {
     sessions?: UserSessionCreateNestedManyWithoutUserInput
     projectActivities?: ProjectActivityCreateNestedManyWithoutCreatedByInput
     disbursements?: DisbursementCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutCreatedByInput
     taskNotificationsReceived?: TaskNotificationCreateNestedManyWithoutNotifyUserInput
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
@@ -23345,6 +25463,7 @@ export namespace Prisma {
     sessions?: UserSessionUncheckedCreateNestedManyWithoutUserInput
     projectActivities?: ProjectActivityUncheckedCreateNestedManyWithoutCreatedByInput
     disbursements?: DisbursementUncheckedCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutCreatedByInput
     taskNotificationsReceived?: TaskNotificationUncheckedCreateNestedManyWithoutNotifyUserInput
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
@@ -23388,6 +25507,7 @@ export namespace Prisma {
     sessions?: UserSessionUpdateManyWithoutUserNestedInput
     projectActivities?: ProjectActivityUpdateManyWithoutCreatedByNestedInput
     disbursements?: DisbursementUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutCreatedByNestedInput
     taskNotificationsReceived?: TaskNotificationUpdateManyWithoutNotifyUserNestedInput
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
@@ -23415,6 +25535,7 @@ export namespace Prisma {
     sessions?: UserSessionUncheckedUpdateManyWithoutUserNestedInput
     projectActivities?: ProjectActivityUncheckedUpdateManyWithoutCreatedByNestedInput
     disbursements?: DisbursementUncheckedUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutCreatedByNestedInput
     taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -23461,6 +25582,7 @@ export namespace Prisma {
     createdBy: UserCreateNestedOneWithoutProjectsInput
     activities?: ProjectActivityCreateNestedManyWithoutProjectInput
     disbursements?: DisbursementCreateNestedManyWithoutProjectInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
   }
 
@@ -23504,6 +25626,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     activities?: ProjectActivityUncheckedCreateNestedManyWithoutProjectInput
     disbursements?: DisbursementUncheckedCreateNestedManyWithoutProjectInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
   }
 
@@ -23534,6 +25657,7 @@ export namespace Prisma {
     documents?: DocumentCreateNestedManyWithoutCreatedByInput
     projectActivities?: ProjectActivityCreateNestedManyWithoutCreatedByInput
     disbursements?: DisbursementCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutCreatedByInput
     taskNotificationsReceived?: TaskNotificationCreateNestedManyWithoutNotifyUserInput
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
@@ -23561,6 +25685,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedCreateNestedManyWithoutCreatedByInput
     projectActivities?: ProjectActivityUncheckedCreateNestedManyWithoutCreatedByInput
     disbursements?: DisbursementUncheckedCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutCreatedByInput
     taskNotificationsReceived?: TaskNotificationUncheckedCreateNestedManyWithoutNotifyUserInput
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
@@ -23622,6 +25747,7 @@ export namespace Prisma {
     createdBy?: UserUpdateOneRequiredWithoutProjectsNestedInput
     activities?: ProjectActivityUpdateManyWithoutProjectNestedInput
     disbursements?: DisbursementUpdateManyWithoutProjectNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
   }
 
@@ -23665,6 +25791,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     activities?: ProjectActivityUncheckedUpdateManyWithoutProjectNestedInput
     disbursements?: DisbursementUncheckedUpdateManyWithoutProjectNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
@@ -23701,6 +25828,7 @@ export namespace Prisma {
     documents?: DocumentUpdateManyWithoutCreatedByNestedInput
     projectActivities?: ProjectActivityUpdateManyWithoutCreatedByNestedInput
     disbursements?: DisbursementUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutCreatedByNestedInput
     taskNotificationsReceived?: TaskNotificationUpdateManyWithoutNotifyUserNestedInput
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
@@ -23728,6 +25856,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
     projectActivities?: ProjectActivityUncheckedUpdateManyWithoutCreatedByNestedInput
     disbursements?: DisbursementUncheckedUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutCreatedByNestedInput
     taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -23754,6 +25883,7 @@ export namespace Prisma {
     documents?: DocumentCreateNestedManyWithoutCreatedByInput
     projectActivities?: ProjectActivityCreateNestedManyWithoutCreatedByInput
     disbursements?: DisbursementCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutCreatedByInput
     taskNotificationsReceived?: TaskNotificationCreateNestedManyWithoutNotifyUserInput
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
@@ -23781,6 +25911,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedCreateNestedManyWithoutCreatedByInput
     projectActivities?: ProjectActivityUncheckedCreateNestedManyWithoutCreatedByInput
     disbursements?: DisbursementUncheckedCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutCreatedByInput
     taskNotificationsReceived?: TaskNotificationUncheckedCreateNestedManyWithoutNotifyUserInput
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
@@ -23824,6 +25955,7 @@ export namespace Prisma {
     documents?: DocumentUpdateManyWithoutCreatedByNestedInput
     projectActivities?: ProjectActivityUpdateManyWithoutCreatedByNestedInput
     disbursements?: DisbursementUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutCreatedByNestedInput
     taskNotificationsReceived?: TaskNotificationUpdateManyWithoutNotifyUserNestedInput
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
@@ -23851,6 +25983,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
     projectActivities?: ProjectActivityUncheckedUpdateManyWithoutCreatedByNestedInput
     disbursements?: DisbursementUncheckedUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutCreatedByNestedInput
     taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -23945,6 +26078,15 @@ export namespace Prisma {
     date?: Date | string
     referenceNumber?: string | null
     type?: $Enums.DisbursementType | null
+    amount: number
+    createdAt?: Date | string
+  }
+
+  export type VariationOrderCreateManyCreatedByInput = {
+    id?: string
+    projectId: string
+    date?: Date | string
+    sourceOfFund?: $Enums.SourceOfFund | null
     amount: number
     createdAt?: Date | string
   }
@@ -24048,6 +26190,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     activities?: ProjectActivityUpdateManyWithoutProjectNestedInput
     disbursements?: DisbursementUpdateManyWithoutProjectNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
   }
@@ -24091,6 +26234,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     activities?: ProjectActivityUncheckedUpdateManyWithoutProjectNestedInput
     disbursements?: DisbursementUncheckedUpdateManyWithoutProjectNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
   }
@@ -24272,6 +26416,33 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type VariationOrderUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutVariationOrdersNestedInput
+  }
+
+  export type VariationOrderUncheckedUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VariationOrderUncheckedUpdateManyWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type TaskNotificationUpdateWithoutNotifyUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     priority?: EnumNotificationPriorityFieldUpdateOperationsInput | $Enums.NotificationPriority
@@ -24415,6 +26586,15 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type VariationOrderCreateManyProjectInput = {
+    id?: string
+    date?: Date | string
+    sourceOfFund?: $Enums.SourceOfFund | null
+    amount: number
+    createdById: string
+    createdAt?: Date | string
+  }
+
   export type TaskNotificationCreateManyProjectInput = {
     id?: string
     notifyUserId: string
@@ -24482,6 +26662,33 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     referenceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     type?: NullableEnumDisbursementTypeFieldUpdateOperationsInput | $Enums.DisbursementType | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VariationOrderUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutVariationOrdersNestedInput
+  }
+
+  export type VariationOrderUncheckedUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VariationOrderUncheckedUpdateManyWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

@@ -134,6 +134,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   const { data: project, isLoading } = api.project.getById.useQuery({ id: projectId });
   const { data: activities } = api.projectActivity.getByProjectId.useQuery({ projectId });
   const { data: disbursements, refetch: refetchDisbursements } = api.project.getDisbursements.useQuery({ projectId });
+  const { data: variationOrders, refetch: refetchVariationOrders } = api.project.getVariationOrders.useQuery({ projectId });
   const { data: projectFiles, refetch: refetchFiles } = api.projectFile.getByProjectId.useQuery({ projectId });
   const { startUpload } = useUploadThing("projectFileUploader");
   const { data: usersForSelect } = api.user.getForSelect.useQuery();
@@ -185,6 +186,11 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   const [disbRef, setDisbRef] = useState("");
   const [disbType, setDisbType] = useState<"" | "FUEL" | "LABOR" | "MATERIALS">("");
   const [disbErrors, setDisbErrors] = useState<{ amount?: string; ref?: string; type?: string }>({});
+
+  // ─ Variation Order (backup fund) ────────────────────────────────────────
+  const [revisedSourceOfFund, setRevisedSourceOfFund] = useState<SourceOfFundValue | "">("");
+  const [revisedVariation, setRevisedVariation] = useState("");
+  const [variationError, setVariationError] = useState<string | null>(null);
 
   // ─ Task notification ───────────────────────────────────────────────────
   const [notifyUserId, setNotifyUserId] = useState("");
@@ -266,6 +272,19 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
       addActivity.mutate({
         projectId: variables.projectId,
         description: `Recorded disbursement of ₱${formatted}${refPart}${typePart}.`,
+      });
+    },
+  });
+
+  const recordVariationOrder = api.project.createVariationOrder.useMutation({
+    onSuccess: (_data, variables) => {
+      setRevisedVariation(""); setRevisedSourceOfFund(""); setVariationError(null);
+      void refetchVariationOrders();
+      const formatted = variables.amount.toLocaleString("en-PH", { minimumFractionDigits: 2 });
+      const srcPart = variables.sourceOfFund ? ` (${SOURCE_OF_FUND_LABEL[variables.sourceOfFund]})` : "";
+      addActivity.mutate({
+        projectId: variables.projectId,
+        description: `Recorded variation order of ₱${formatted}${srcPart}.`,
       });
     },
   });
@@ -366,6 +385,20 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
     });
   };
 
+  const handleRecordVariationOrder = () => {
+    const amount = parseFloat(revisedVariation);
+    if (!revisedVariation || isNaN(amount) || amount <= 0) {
+      setVariationError("Variation amount must be greater than 0.");
+      return;
+    }
+    setVariationError(null);
+    recordVariationOrder.mutate({
+      projectId,
+      amount,
+      sourceOfFund: revisedSourceOfFund || undefined,
+    });
+  };
+
   const handleSendNotification = () => {
     if (!notifyUserId || !taskDescription.trim()) return;
     sendNotification.mutate({ projectId, notifyUserId, priority: notifyPriority, description: taskDescription.trim() });
@@ -401,8 +434,14 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   }
 
   const statusCfg = STATUS_CONFIG[status] ?? STATUS_CONFIG.ON_GOING!;
+  // Disbursements draw down the Project Cost, so the Primary Fund Balance is the
+  // Project Cost minus everything already disbursed.
   const totalDisb = disbursements?.reduce((s, d) => s + d.amount, 0) ?? 0;
-  const remaining = (project.contractCost ?? 0) - totalDisb;
+  const primaryFundBalance = (project.projectCost ?? 0) - totalDisb;
+  // Variation Order Balance (20% DF) is a backup fund the user records when needed
+  // (e.g. as the Primary Fund nears 0). It's the sum of all recorded variation orders.
+  const variationOrderBalance = variationOrders?.reduce((s, v) => s + v.amount, 0) ?? 0;
+  const totalRemainingBalance = primaryFundBalance + variationOrderBalance;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -737,12 +776,24 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                   </Select>
                 </div>
                 <div className="rounded-lg border border-blue-100 bg-blue-50 px-3 py-3">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-blue-500">Remaining Balance</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-blue-500">Total Remaining Balance</p>
                   <p className="mt-1 text-lg font-extrabold text-blue-700">
-                    ₱ {remaining.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
+                    ₱ {totalRemainingBalance.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
                   </p>
-                  <p className="mt-0.5 text-[10px] text-blue-400">*Calculated based on Total Cost minus Disbursements</p>
                 </div>
+                <div className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Primary Fund Balance (General Fund)</p>
+                  <p className="mt-0.5 text-sm font-bold text-gray-800">
+                    ₱ {primaryFundBalance.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Variation Order Balance (20% DF)</p>
+                  <p className="mt-0.5 text-sm font-bold text-gray-800">
+                    ₱ {variationOrderBalance.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
+                  </p>
+                </div>
+                <p className="text-[10px] text-blue-400">*Calculated based on Total Cost vs Recorded Disbursements + Variation Order</p>
               </div>
 
               {/* Right: disbursements table + record */}
@@ -826,6 +877,80 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                     {disbErrors.type && <p className="text-xs text-red-500">{disbErrors.type}</p>}
                   </div>
                 )}
+
+                {/* Revised Contract Cost History */}
+                <div className="mt-5 border-t border-gray-100 pt-4">
+                  <FieldLabel>Revised Contract Cost History</FieldLabel>
+                  <div className="overflow-hidden rounded-lg border border-gray-200">
+                    <table className="w-full text-xs">
+                      <thead>
+                        <tr className="border-b border-gray-100 bg-gray-50">
+                          <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Date</th>
+                          <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Original Cost</th>
+                          <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Source of Fund</th>
+                          <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Variation Order</th>
+                          <th className="px-3 py-2 text-right text-[10px] font-bold uppercase tracking-wider text-gray-400">Revised Total</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100">
+                        {variationOrders && variationOrders.length > 0 ? (() => {
+                          let running = project.projectCost ?? 0;
+                          return variationOrders.map((v) => {
+                            const original = running;
+                            running += v.amount;
+                            return (
+                              <tr key={v.id} className="hover:bg-gray-50/50">
+                                <td className="px-3 py-2.5 text-gray-600">{fmt(v.date)}</td>
+                                <td className="px-3 py-2.5 text-gray-700">{original.toLocaleString("en-PH", { minimumFractionDigits: 2 })}</td>
+                                <td className="px-3 py-2.5 text-gray-700">{v.sourceOfFund ? SOURCE_OF_FUND_LABEL[v.sourceOfFund] : "—"}</td>
+                                <td className="px-3 py-2.5 text-gray-700">{v.amount.toLocaleString("en-PH", { minimumFractionDigits: 2 })}</td>
+                                <td className="px-3 py-2.5 text-right font-semibold text-gray-900">{running.toLocaleString("en-PH", { minimumFractionDigits: 2 })}</td>
+                              </tr>
+                            );
+                          });
+                        })() : (
+                          <tr><td colSpan={5} className="px-3 py-6 text-center text-gray-400">No variation orders recorded yet.</td></tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Record form — Source of Fund + Variation + Record only */}
+                  <div className="mt-3 flex gap-2">
+                    <div className="w-44 shrink-0">
+                      <Select
+                        value={revisedSourceOfFund}
+                        onChange={(e) => setRevisedSourceOfFund(e.target.value as SourceOfFundValue | "")}
+                      >
+                        <option value="">Source of Fund</option>
+                        {SOURCE_OF_FUND_ORDER.map((k) => (
+                          <option key={k} value={k}>
+                            {SOURCE_OF_FUND_LABEL[k]}
+                          </option>
+                        ))}
+                      </Select>
+                    </div>
+                    <div className="relative flex-1">
+                      <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">₱</span>
+                      <Input
+                        type="number" min={0} placeholder="Variation"
+                        value={revisedVariation}
+                        onChange={(e) => { setRevisedVariation(e.target.value); setVariationError(null); }}
+                        error={!!variationError}
+                        className="pl-7"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleRecordVariationOrder}
+                      disabled={recordVariationOrder.isPending}
+                      className="rounded-lg bg-blue-900 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-blue-800 disabled:opacity-50"
+                    >
+                      {recordVariationOrder.isPending ? "..." : "Record"}
+                    </button>
+                  </div>
+                  {variationError && <p className="mt-1 text-xs text-red-500">{variationError}</p>}
+                </div>
 
               </div>
             </div>

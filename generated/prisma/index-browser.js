@@ -208,6 +208,16 @@ exports.Prisma.DisbursementScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.VariationOrderScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  date: 'date',
+  sourceOfFund: 'sourceOfFund',
+  amount: 'amount',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.TaskNotificationScalarFieldEnum = {
   id: 'id',
   projectId: 'projectId',
@@ -415,6 +425,7 @@ exports.Prisma.ModelName = {
   Project: 'Project',
   ProjectActivity: 'ProjectActivity',
   Disbursement: 'Disbursement',
+  VariationOrder: 'VariationOrder',
   TaskNotification: 'TaskNotification',
   TaskReply: 'TaskReply',
   TaskReplyDocument: 'TaskReplyDocument',
