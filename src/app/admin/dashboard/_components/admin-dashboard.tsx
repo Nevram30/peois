@@ -219,7 +219,7 @@ export function AdminDashboardContent() {
   const [pageSize, setPageSize] = useState(20);
   const statsInput = fiscalYear ? { budgetYear: fiscalYear } : undefined;
   const { data: stats } = api.project.getStats.useQuery(statsInput);
-  const { data: financial } = api.project.getFinancialOverview.useQuery(statsInput);
+  const { data: financial, isLoading: financialLoading } = api.project.getFinancialOverview.useQuery(statsInput);
   const { data: projects, isLoading } = api.project.getAll.useQuery();
   const { data: budgetYears } = api.project.getBudgetYears.useQuery();
 
@@ -556,6 +556,18 @@ export function AdminDashboardContent() {
                 </div>
 
                 {/* Execution Rate */}
+                {financialLoading ? (
+                  <div className="w-full animate-pulse rounded-lg bg-gray-50 px-3 py-2.5">
+                    <div className="mb-2 flex items-center justify-between">
+                      <div className="flex flex-col gap-1.5">
+                        <div className="h-3 w-24 rounded bg-gray-200" />
+                        <div className="h-2 w-36 rounded bg-gray-200" />
+                      </div>
+                      <div className="h-3.5 w-10 rounded bg-gray-200" />
+                    </div>
+                    <div className="h-2.5 w-full rounded-full bg-gray-200" />
+                  </div>
+                ) : (
                 <div className="w-full rounded-lg bg-gray-50 px-3 py-2.5">
                   <div className="mb-1 flex items-center justify-between text-xs">
                     <div className="flex flex-col">
@@ -579,6 +591,7 @@ export function AdminDashboardContent() {
                     />
                   </div>
                 </div>
+                )}
               </div>
 
               {/* Right: Source of Funds Breakdown (grouped by sub-category) */}
@@ -586,7 +599,34 @@ export function AdminDashboardContent() {
                 <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-500">
                   Source of Funds Breakdown
                 </p>
-                {groupedBreakdown.length === 0 ? (
+                {financialLoading ? (
+                  <div className="flex flex-col gap-3">
+                    {Array.from({ length: 4 }).map((_, i) => (
+                      <div key={i} className="animate-pulse rounded-lg border border-gray-100 bg-gray-50/50 p-3">
+                        <div className="mb-2 flex items-center justify-between">
+                          <div className="flex items-center gap-1.5">
+                            <span className="inline-block h-2.5 w-2.5 shrink-0 rounded-full bg-gray-200" />
+                            <span className="h-3 w-28 rounded bg-gray-200" />
+                          </div>
+                          <div className="flex flex-col items-end gap-1">
+                            <span className="h-3 w-20 rounded bg-gray-200" />
+                            <span className="h-2 w-8 rounded bg-gray-200" />
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-1.5 pl-4">
+                          <div className="flex items-center justify-between">
+                            <span className="h-2.5 w-32 rounded bg-gray-200" />
+                            <span className="h-2.5 w-16 rounded bg-gray-200" />
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="h-2.5 w-24 rounded bg-gray-200" />
+                            <span className="h-2.5 w-16 rounded bg-gray-200" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : groupedBreakdown.length === 0 ? (
                   <p className="py-8 text-center text-sm text-gray-400">
                     No fund allocation data found for {financial?.budgetYear ?? new Date().getFullYear()}.
                   </p>

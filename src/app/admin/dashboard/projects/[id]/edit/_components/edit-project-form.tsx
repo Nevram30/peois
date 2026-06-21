@@ -366,7 +366,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
       contractorName: contractorName || undefined,
       projectEngineer: engineers.join(", ") || undefined,
       budgetYear: budgetYear || undefined,
-      subType: (subType as Parameters<typeof updateProject.mutate>[0]["subType"]) ?? null,
+      subType: (subType || null) as Parameters<typeof updateProject.mutate>[0]["subType"],
       dateStarted: dateStarted ? new Date(dateStarted) : null,
       targetCompletionDate: targetCompletion ? new Date(targetCompletion) : null,
       revisedCompletionDate: revisedCompletion ? new Date(revisedCompletion) : null,
@@ -806,9 +806,9 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                     ))}
                   </Select>
                 </div>
-                <div className="rounded-lg border border-blue-100 bg-blue-50 px-3 py-3">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-blue-500">Total Remaining Balance</p>
-                  <p className="mt-1 text-lg font-extrabold text-blue-700">
+                <div className={`rounded-lg border px-3 py-3 ${totalRemainingBalance <= 100000 ? "border-red-100 bg-red-50" : "border-green-100 bg-green-50"}`}>
+                  <p className={`text-[10px] font-bold uppercase tracking-widest ${totalRemainingBalance <= 100000 ? "text-red-500" : "text-green-600"}`}>Total Remaining Balance</p>
+                  <p className={`mt-1 text-lg font-extrabold ${totalRemainingBalance <= 100000 ? "text-red-700" : "text-green-700"}`}>
                     ₱ {totalRemainingBalance.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
                   </p>
                 </div>
