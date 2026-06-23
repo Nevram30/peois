@@ -165,7 +165,6 @@ export const PROJECT_STATUS_ORDER: ProjectStatusValue[] = [
 export const SOURCE_OF_FUND_ORDER: SourceOfFundValue[] = [
   "TWENTY_PERCENT_DEV_FUND",
   "FIVE_PERCENT_CONFIDENTIAL_FUND",
-  "CONFIDENTIAL",
   "SEF",
   "PPOC",
   "LDRRM",
@@ -175,7 +174,4 @@ export const SOURCE_OF_FUND_ORDER: SourceOfFundValue[] = [
   "NCDC",
   "PRDP",
   "MIADP",
-  "AID",
-  "LOAN",
-  "OTHERS",
 ];

@@ -43,7 +43,6 @@ const TIMELINE_ADJ_TYPE_CONFIG: Record<string, { label: string; badge: string }>
   EXTENSION: { label: "Extension", badge: "bg-blue-50 text-blue-700 border-blue-200" },
   SUSPENSION: { label: "Suspension", badge: "bg-red-50 text-red-700 border-red-200" },
   RESUMPTION: { label: "Resumption", badge: "bg-green-50 text-green-700 border-green-200" },
-  REVISION: { label: "Revision", badge: "bg-amber-50 text-amber-700 border-amber-200" },
 };
 
 function fmt(d: Date | string | null | undefined) {
@@ -193,7 +192,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   const [adjStartDate, setAdjStartDate] = useState("");
   const [adjEndDate, setAdjEndDate] = useState("");
   const [adjDays, setAdjDays] = useState("");
-  const [adjType, setAdjType] = useState<"" | "EXTENSION" | "SUSPENSION" | "RESUMPTION" | "REVISION">("");
+  const [adjType, setAdjType] = useState<"" | "EXTENSION" | "SUSPENSION" | "RESUMPTION">("");
   const [adjJustification, setAdjJustification] = useState("");
   const [adjError, setAdjError] = useState<string | null>(null);
 
