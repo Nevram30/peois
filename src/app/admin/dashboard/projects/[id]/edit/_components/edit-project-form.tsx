@@ -472,10 +472,16 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   // Disbursements draw down the Project Cost, so the Primary Fund Balance is the
   // Project Cost minus everything already disbursed.
   const totalDisb = disbursements?.reduce((s, d) => s + d.amount, 0) ?? 0;
-  const primaryFundBalance = (project.projectCost ?? 0) - totalDisb;
   // Variation Order Balance (20% DF) is a backup fund the user records when needed
   // (e.g. as the Primary Fund nears 0). It's the sum of all recorded variation orders.
-  const variationOrderBalance = variationOrders?.reduce((s, v) => s + v.amount, 0) ?? 0;
+  const totalVariationOrder = variationOrders?.reduce((s, v) => s + v.amount, 0) ?? 0;
+  // Disbursements draw down the Project Cost first. Once the Primary Fund is exhausted,
+  // any further disbursements are automatically deducted from the Variation Order so
+  // neither balance goes negative.
+  const rawPrimary = (project.projectCost ?? 0) - totalDisb;
+  const primaryFundBalance = Math.max(0, rawPrimary);
+  const overflow = Math.max(0, -rawPrimary);
+  const variationOrderBalance = Math.max(0, totalVariationOrder - overflow);
   const totalRemainingBalance = primaryFundBalance + variationOrderBalance;
 
   return (
@@ -1071,113 +1077,125 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
             </div>
           </SectionCard>
 
-          {/* ── Workforce Distribution ── */}
-          <SectionCard>
-            <SectionHeader
-              icon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>}
-              title="Workforce Distribution"
-              action={
-                <button type="button" className="rounded-md border border-gray-200 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:bg-gray-50">
-                  Use Updates
-                </button>
-              }
-            />
-            <div className="grid grid-cols-3 divide-x divide-gray-100 px-0">
-              {/* Female */}
-              <div className="px-6 py-5">
-                <FieldLabel>Female Personnel</FieldLabel>
-                <div className="mt-2 flex items-center gap-3">
-                  <button type="button" onClick={() => setNumFemale((n) => Math.max(0, n - 1))} className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:bg-gray-50">
-                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" /></svg>
-                  </button>
-                  <span className="min-w-[2ch] text-center text-2xl font-extrabold text-gray-900">{numFemale}</span>
-                  <button type="button" onClick={() => setNumFemale((n) => n + 1)} className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:bg-gray-50">
-                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-                  </button>
+          {/* ── Workforce Distribution + Project In-Charge & Profile ── */}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
+            {/* Workforce Distribution */}
+            <SectionCard className="lg:col-span-2">
+              <div className="flex items-center justify-between border-b border-gray-100 px-5 py-3.5">
+                <div className="flex items-center gap-2">
+                  <span className="text-blue-500">
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>
+                  </span>
+                  <span className="text-xs font-bold uppercase tracking-widest text-gray-700">Workforce Distribution</span>
                 </div>
+                <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-blue-500">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-75" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-blue-500" />
+                  </span>
+                  Live
+                </span>
               </div>
-              {/* Male */}
-              <div className="px-6 py-5">
-                <FieldLabel>Male Personnel</FieldLabel>
-                <div className="mt-2 flex items-center gap-3">
-                  <button type="button" onClick={() => setNumMale((n) => Math.max(0, n - 1))} className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:bg-gray-50">
-                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" /></svg>
-                  </button>
-                  <span className="min-w-[2ch] text-center text-2xl font-extrabold text-gray-900">{numMale}</span>
-                  <button type="button" onClick={() => setNumMale((n) => n + 1)} className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:bg-gray-50">
-                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-                  </button>
-                </div>
-              </div>
-              {/* Total */}
-              <div className="flex items-center justify-between px-6 py-5">
-                <div>
-                  <FieldLabel>Total Workforce</FieldLabel>
-                  <p className="mt-2 text-2xl font-extrabold text-gray-900">{totalWorkforce}</p>
-                </div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50">
-                  <svg className="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </SectionCard>
-
-          {/* ── Project Responsibility & Scope ── */}
-          <SectionCard>
-            <SectionHeader
-              icon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" /></svg>}
-              title="Project Responsibility & Scope"
-              action={<button type="button" className="text-gray-400 hover:text-gray-600"><EditIcon /></button>}
-            />
-            <div className="grid grid-cols-2 divide-x divide-gray-100">
-              {/* Engineers */}
-              <div className="p-4">
-                <FieldLabel>Engineers in Charge</FieldLabel>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {engineers.map((eng) => (
-                    <span key={eng} className="flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-                      {eng}
-                      <button type="button" onClick={() => removeEngineer(eng)} className="text-blue-400 hover:text-blue-600">
-                        <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                        </svg>
-                      </button>
-                    </span>
-                  ))}
-                  <div className="flex gap-1.5">
-                    <input
-                      ref={engineerRef}
-                      type="text"
-                      value={engineerInput}
-                      onChange={(e) => setEngineerInput(e.target.value)}
-                      onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addEngineer(); } }}
-                      placeholder="Add engineer..."
-                      className="w-32 rounded-full border border-dashed border-gray-300 px-3 py-1 text-xs text-gray-600 placeholder:text-gray-300 focus:border-blue-400 focus:outline-none"
-                    />
-                    <button
-                      type="button" onClick={addEngineer}
-                      className="rounded-full border border-dashed border-gray-300 px-3 py-1 text-xs font-semibold text-gray-500 hover:border-blue-400 hover:text-blue-600"
-                    >
-                      + Add Engineer
+              <div className="grid grid-cols-3 gap-3 p-5">
+                {/* Female */}
+                <div className="rounded-xl border border-gray-200 bg-gray-50 p-3.5">
+                  <div className="flex items-center justify-between">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Female</p>
+                    <span className="text-sm text-pink-400">♀</span>
+                  </div>
+                  <p className="mt-1.5 text-3xl font-extrabold text-gray-900">{numFemale}</p>
+                  <div className="mt-2.5 flex items-center gap-1.5">
+                    <button type="button" onClick={() => setNumFemale((n) => Math.max(0, n - 1))} className="flex h-6 w-6 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 hover:bg-gray-100">
+                      <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" /></svg>
+                    </button>
+                    <button type="button" onClick={() => setNumFemale((n) => n + 1)} className="flex h-6 w-6 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 hover:bg-gray-100">
+                      <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
                     </button>
                   </div>
                 </div>
+                {/* Male */}
+                <div className="rounded-xl border border-gray-200 bg-gray-50 p-3.5">
+                  <div className="flex items-center justify-between">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Male</p>
+                    <span className="text-sm text-blue-400">♂</span>
+                  </div>
+                  <p className="mt-1.5 text-3xl font-extrabold text-gray-900">{numMale}</p>
+                  <div className="mt-2.5 flex items-center gap-1.5">
+                    <button type="button" onClick={() => setNumMale((n) => Math.max(0, n - 1))} className="flex h-6 w-6 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 hover:bg-gray-100">
+                      <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" /></svg>
+                    </button>
+                    <button type="button" onClick={() => setNumMale((n) => n + 1)} className="flex h-6 w-6 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 hover:bg-gray-100">
+                      <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                    </button>
+                  </div>
+                </div>
+                {/* Total */}
+                <div className="rounded-xl border border-blue-200 bg-blue-50 p-3.5">
+                  <div className="flex items-center justify-between">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-blue-500">Total</p>
+                    <svg className="h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+                    </svg>
+                  </div>
+                  <p className="mt-1.5 text-3xl font-extrabold text-blue-700">{totalWorkforce}</p>
+                </div>
               </div>
-              {/* Scope */}
-              <div className="p-4">
-                <FieldLabel>Detailed Scope of Work</FieldLabel>
-                <textarea
-                  rows={5}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Describe the scope of work, deliverables, and methodology..."
-                  className="mt-1 block w-full resize-none rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 placeholder:text-gray-300 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20"
-                />
+            </SectionCard>
+
+            {/* Project In-Charge & Profile */}
+            <SectionCard className="lg:col-span-3">
+              <SectionHeader
+                icon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>}
+                title="Project In-Charge & Profile"
+              />
+              <div className="grid grid-cols-1 gap-5 p-5 lg:grid-cols-2">
+                {/* Engineers */}
+                <div>
+                  <FieldLabel>Engineers In-Charge</FieldLabel>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {engineers.map((eng) => (
+                      <span key={eng} className="flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                        {eng}
+                        <button type="button" onClick={() => removeEngineer(eng)} className="text-blue-400 hover:text-blue-600">
+                          <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </span>
+                    ))}
+                    <div className="flex gap-1.5">
+                      <input
+                        ref={engineerRef}
+                        type="text"
+                        value={engineerInput}
+                        onChange={(e) => setEngineerInput(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addEngineer(); } }}
+                        placeholder="Add engineer..."
+                        className="w-32 rounded-full border border-dashed border-gray-300 px-3 py-1 text-xs text-gray-600 placeholder:text-gray-300 focus:border-blue-400 focus:outline-none"
+                      />
+                      <button
+                        type="button" onClick={addEngineer}
+                        className="rounded-full border border-dashed border-gray-300 px-3 py-1 text-xs font-semibold text-gray-500 hover:border-blue-400 hover:text-blue-600"
+                      >
+                        + Add Engineer
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                {/* Project Profile */}
+                <div>
+                  <FieldLabel>Project Profile</FieldLabel>
+                  <textarea
+                    rows={5}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Describe the scope of work, deliverables, and methodology..."
+                    className="mt-1 block w-full resize-none rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 placeholder:text-gray-300 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20"
+                  />
+                </div>
               </div>
-            </div>
-          </SectionCard>
+            </SectionCard>
+          </div>
 
           {/* ── Project Documentation ── */}
           <SectionCard>

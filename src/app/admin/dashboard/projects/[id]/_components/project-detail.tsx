@@ -133,9 +133,14 @@ export function ProjectDetail({ projectId }: Props) {
     : "—";
 
   // Balances — mirror the edit form's calculations so the view is consistent.
+  // Disbursements draw down the Project Cost first; once the Primary Fund is exhausted,
+  // any excess is automatically deducted from the Variation Order so neither goes negative.
   const totalDisb = (disbursements ?? []).reduce((s, d) => s + d.amount, 0);
-  const primaryFundBalance = (project.projectCost ?? 0) - totalDisb;
-  const variationOrderBalance = (variationOrders ?? []).reduce((s, v) => s + v.amount, 0);
+  const totalVariationOrder = (variationOrders ?? []).reduce((s, v) => s + v.amount, 0);
+  const rawPrimary = (project.projectCost ?? 0) - totalDisb;
+  const primaryFundBalance = Math.max(0, rawPrimary);
+  const overflow = Math.max(0, -rawPrimary);
+  const variationOrderBalance = Math.max(0, totalVariationOrder - overflow);
   const totalRemainingBalance = primaryFundBalance + variationOrderBalance;
 
   const totalDays =
