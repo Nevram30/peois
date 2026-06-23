@@ -5,6 +5,7 @@ import {
   createTRPCRouter,
   protectedProcedure,
   superAdminProcedure,
+  adminProcedure,
 } from "~/server/api/trpc";
 export const userRouter = createTRPCRouter({
   getAll: superAdminProcedure
@@ -74,7 +75,7 @@ export const userRouter = createTRPCRouter({
       return { users, total, page, pageSize };
     }),
 
-  getStats: superAdminProcedure.query(async ({ ctx }) => {
+  getStats: adminProcedure.query(async ({ ctx }) => {
     const [total, active, inactive, pending] = await Promise.all([
       ctx.db.user.count(),
       ctx.db.user.count({ where: { status: "ACTIVE" } }),
