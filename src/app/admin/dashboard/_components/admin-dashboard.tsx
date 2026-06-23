@@ -454,15 +454,88 @@ const STATUS_CONFIG: Record<
     },
 };
 
+// ── Skeletons ──────────────────────────────────────────────────
+function StatCardsSkeleton() {
+    return (
+        <div className="grid grid-cols-7 gap-2 mb-3">
+            {Array.from({ length: 7 }).map((_, i) => (
+                <div key={i} className="bg-white rounded-lg shadow-sm p-3 flex flex-col gap-1 border-t-[3px] border-slate-200 animate-pulse">
+                    <div className="w-6 h-6 rounded-md bg-slate-200 mb-1" />
+                    <div className="h-2.5 w-16 rounded bg-slate-200" />
+                    <div className="h-6 w-10 rounded bg-slate-200 mt-1" />
+                </div>
+            ))}
+        </div>
+    );
+}
+
+function UserCardsSkeleton() {
+    return (
+        <div className="grid grid-cols-4 gap-2 mb-5">
+            {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="bg-white rounded-lg shadow-sm p-3 flex items-center gap-3 border-l-4 border-slate-200 animate-pulse">
+                    <div className="w-9 h-9 rounded-full bg-slate-200 shrink-0" />
+                    <div className="flex flex-col gap-1.5">
+                        <div className="h-2.5 w-16 rounded bg-slate-200" />
+                        <div className="h-5 w-10 rounded bg-slate-200" />
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+function DistrictCardsSkeleton() {
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-5">
+            {Array.from({ length: 2 }).map((_, i) => (
+                <div key={i} className="bg-white rounded-xl overflow-hidden border border-slate-200">
+                    <div className="p-4 animate-pulse">
+                        <div className="h-2.5 w-40 rounded bg-slate-200 mb-3" />
+                        <div className="flex items-center gap-4">
+                            <div className="w-[100px] h-[100px] rounded-full bg-slate-200 shrink-0" />
+                            <div className="grid grid-cols-2 gap-x-3 gap-y-2 flex-1">
+                                {Array.from({ length: 6 }).map((_, j) => (
+                                    <div key={j} className="h-2.5 rounded bg-slate-200" />
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="h-9 bg-slate-200" />
+                </div>
+            ))}
+        </div>
+    );
+}
+
+function FinancialCardSkeleton() {
+    return (
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-200">
+            <div className="p-5 animate-pulse">
+                <div className="h-3 w-56 rounded bg-slate-200 mb-4" />
+                <div className="flex items-start gap-8">
+                    <div className="w-[150px] h-[150px] rounded-full bg-slate-200 shrink-0" />
+                    <div className="flex-1 grid grid-cols-2 gap-x-12 gap-y-3">
+                        {Array.from({ length: 8 }).map((_, i) => (
+                            <div key={i} className="h-3 rounded bg-slate-200" />
+                        ))}
+                    </div>
+                </div>
+            </div>
+            <div className="h-12 bg-slate-200" />
+        </div>
+    );
+}
+
 // ── Main Dashboard ─────────────────────────────────────────────
 export function AdminDashboardContent() {
     const router = useRouter();
 
-    const { data: statsData } = api.project.getStats.useQuery();
-    const { data: userData } = api.user.getStats.useQuery();
-    const { data: projectAllocationData } = api.project.getFinancialOverview.useQuery();
-    const { data: districtData } = api.project.getDistrictData.useQuery();
-    const { data: remainingBalanceData } = api.project.getRemainingBalance.useQuery();
+    const { data: statsData, isLoading: statsLoading } = api.project.getStats.useQuery();
+    const { data: userData, isLoading: userLoading } = api.user.getStats.useQuery();
+    const { data: projectAllocationData, isLoading: allocationLoading } = api.project.getFinancialOverview.useQuery();
+    const { data: districtData, isLoading: districtLoading } = api.project.getDistrictData.useQuery();
+    const { data: remainingBalanceData, isLoading: remainingLoading } = api.project.getRemainingBalance.useQuery();
 
     const TotalAllocation = projectAllocationData
         ? Object.values(projectAllocationData.bySource).reduce((s, v) => s + v, 0)
@@ -516,32 +589,40 @@ export function AdminDashboardContent() {
         <div className="bg-slate-100 min-h-screen p-4 font-sans text-slate-800">
 
             {/* Stat Cards */}
-            <div className="grid grid-cols-7 gap-2 mb-3">
-                {statCards.map((c) => (
-                    <div key={c.label} className={`bg-white rounded-lg shadow-sm p-3 flex flex-col gap-1 border-t-[3px] ${c.borderColor}`}>
-                        <div className={`w-6 h-6 rounded-md ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>
-                            {c.icon}
+            {statsLoading ? (
+                <StatCardsSkeleton />
+            ) : (
+                <div className="grid grid-cols-7 gap-2 mb-3">
+                    {statCards.map((c) => (
+                        <div key={c.label} className={`bg-white rounded-lg shadow-sm p-3 flex flex-col gap-1 border-t-[3px] ${c.borderColor}`}>
+                            <div className={`w-6 h-6 rounded-md ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>
+                                {c.icon}
+                            </div>
+                            <p className="text-[9px] font-bold text-slate-500 leading-tight tracking-wide">{c.label}</p>
+                            <p className="text-2xl font-extrabold text-slate-900 leading-none">{c.value}</p>
                         </div>
-                        <p className="text-[9px] font-bold text-slate-500 leading-tight tracking-wide">{c.label}</p>
-                        <p className="text-2xl font-extrabold text-slate-900 leading-none">{c.value}</p>
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+            )}
 
             {/* User Cards */}
-            <div className="grid grid-cols-4 gap-2 mb-5">
-                {userCards.map((c) => (
-                    <div key={c.label} className={`bg-white rounded-lg shadow-sm p-3 flex items-center gap-3 border-l-4 ${c.border}`}>
-                        <div className={`w-9 h-9 rounded-full ${c.iconBg} flex items-center justify-center shrink-0`}>
-                            <UserIcon type={c.type} color={c.iconColor} />
+            {userLoading ? (
+                <UserCardsSkeleton />
+            ) : (
+                <div className="grid grid-cols-4 gap-2 mb-5">
+                    {userCards.map((c) => (
+                        <div key={c.label} className={`bg-white rounded-lg shadow-sm p-3 flex items-center gap-3 border-l-4 ${c.border}`}>
+                            <div className={`w-9 h-9 rounded-full ${c.iconBg} flex items-center justify-center shrink-0`}>
+                                <UserIcon type={c.type} color={c.iconColor} />
+                            </div>
+                            <div>
+                                <p className="text-[9px] font-bold text-slate-500 tracking-wide leading-tight">{c.label}</p>
+                                <p className="text-[22px] font-extrabold text-slate-900 leading-tight">{c.value}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p className="text-[9px] font-bold text-slate-500 tracking-wide leading-tight">{c.label}</p>
-                            <p className="text-[22px] font-extrabold text-slate-900 leading-tight">{c.value}</p>
-                        </div>
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+            )}
 
             {/* Financial Overview Header */}
             <div className="flex items-start justify-between mb-3">
@@ -560,40 +641,59 @@ export function AdminDashboardContent() {
             </div>
 
             {/* DISTRICT I and DISTRICT II Tracker */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-5">
-                {districtData?.map((d) => (
-                    <DistrictCard
-                        key={d.district}
-                        title={`${d.district.replace('_', ' ')} PROJECT STATUS`}
-                        data={toCardData(d.counts)}
-                    />
-                ))}
-            </div>
+            {districtLoading ? (
+                <DistrictCardsSkeleton />
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-5">
+                    {districtData?.map((d) => (
+                        <DistrictCard
+                            key={d.district}
+                            title={`${d.district.replace('_', ' ')} PROJECT STATUS`}
+                            data={toCardData(d.counts)}
+                        />
+                    ))}
+                </div>
+            )}
 
             {/* Annual Allocation & Source Breakdown */}
-            <AnnualAllocationCard
-                bySource={projectAllocationData?.bySource ?? {}}
-                bySubType={projectAllocationData?.bySubType ?? {}}
-                total={TotalAllocation}
-                budgetYear={projectAllocationData?.budgetYear ?? "2024"}
-            />
+            {allocationLoading ? (
+                <div className="mb-3">
+                    <FinancialCardSkeleton />
+                </div>
+            ) : (
+                <AnnualAllocationCard
+                    bySource={projectAllocationData?.bySource ?? {}}
+                    bySubType={projectAllocationData?.bySubType ?? {}}
+                    total={TotalAllocation}
+                    budgetYear={projectAllocationData?.budgetYear ?? "2024"}
+                />
+            )}
 
             {/* Remaining Balance & Disbursement Summary */}
             <div className="grid grid-cols-1 gap-3">
-                <SourceBreakdownCard
-                    title="Remaining Balance from Annual Allocation"
-                    footerLabel="Grand Total Balance"
-                    bySource={remainingBalanceData?.remaining.bySource ?? {}}
-                    bySubType={remainingBalanceData?.remaining.bySubType ?? {}}
-                    total={remainingBalanceData?.remaining.total ?? 0}
-                />
-                <SourceBreakdownCard
-                    title="Disbursement Summary"
-                    footerLabel="Total Disbursement"
-                    bySource={remainingBalanceData?.disbursed.bySource ?? {}}
-                    bySubType={remainingBalanceData?.disbursed.bySubType ?? {}}
-                    total={remainingBalanceData?.disbursed.total ?? 0}
-                />
+                {remainingLoading ? (
+                    <>
+                        <FinancialCardSkeleton />
+                        <FinancialCardSkeleton />
+                    </>
+                ) : (
+                    <>
+                        <SourceBreakdownCard
+                            title="Remaining Balance from Annual Allocation"
+                            footerLabel="Grand Total Balance"
+                            bySource={remainingBalanceData?.remaining.bySource ?? {}}
+                            bySubType={remainingBalanceData?.remaining.bySubType ?? {}}
+                            total={remainingBalanceData?.remaining.total ?? 0}
+                        />
+                        <SourceBreakdownCard
+                            title="Disbursement Summary"
+                            footerLabel="Total Disbursement"
+                            bySource={remainingBalanceData?.disbursed.bySource ?? {}}
+                            bySubType={remainingBalanceData?.disbursed.bySubType ?? {}}
+                            total={remainingBalanceData?.disbursed.total ?? 0}
+                        />
+                    </>
+                )}
             </div>
 
             {/* Recent Project Updates */}
