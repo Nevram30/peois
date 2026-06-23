@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "~/trpc/react";
-import type { DistrictCardProps, LegendEntry, MiniLegendProps, Segment, StatCard, UserCard, UserIconProps, DonutChartProps } from "./super.admin.types";
+import type { DistrictCardProps, Segment, StatCard, UserCard, UserIconProps, DonutChartProps } from "./super.admin.types";
 import type { DistrictCardItem, ProjectStatus, StatusCounts } from "./super.adminv2.types";
 import { STATUS_COLORS, STATUS_LABELS } from "./super.adminv2.types";
 import { formatPeso } from "~/helper/formatter"
@@ -54,42 +54,6 @@ function DonutChart({ segments, size = 120, thickness = 28, centerLabel }: Donut
         </svg>
     );
 }
-
-const remainingData: LegendEntry[] = [
-    { label: "General Fund", amount: "₱152,900,000.00", color: "#1e3a8a" },
-    { label: "5% Confidential", amount: "₱20,100,000.00", color: "#dc2626" },
-    { label: "20% Dev. Fund", amount: "₱80,500,000.00", color: "#2563eb" },
-    { label: "PRDP (Rural)", amount: "₱12,100,000.00", color: "#0891b2" },
-    { label: "Trust Fund", amount: "₱56,300,000.00", color: "#7c3aed" },
-    { label: "PPOC (Peace)", amount: "₱8,100,000.00", color: "#9333ea" },
-    { label: "LDRRM", amount: "₱20,100,000.00", color: "#059669" },
-    { label: "NCDC", amount: "₱4,000,000.00", color: "#64748b" },
-    { label: "SEF (Education)", amount: "₱16,100,000.00", color: "#d97706" },
-    { label: "MIADP", amount: "₱32,300,000.00", color: "#f97316" },
-];
-
-const remSegments: Segment[] = remainingData.map((d) => ({
-    value: parseFloat(d.amount.replace(/[₱,]/g, "")),
-    color: d.color,
-}));
-
-const disbursementData: LegendEntry[] = [
-    { label: "General Fund", amount: "-347,500,000.00", color: "#1e3a8a" },
-    { label: "5% Confidential", amount: "-45,700,000.00", color: "#dc2626" },
-    { label: "20% Dev. Fund", amount: "-182,900,000.00", color: "#2563eb" },
-    { label: "PRDP (Rural)", amount: "-27,400,000.00", color: "#0891b2" },
-    { label: "Trust Fund", amount: "-128,000,000.00", color: "#7c3aed" },
-    { label: "PPOC (Peace)", amount: "-18,300,000.00", color: "#9333ea" },
-    { label: "LDRRM", amount: "-45,700,000.00", color: "#059669" },
-    { label: "NCDC", amount: "-9,100,000.00", color: "#64748b" },
-    { label: "SEF (Education)", amount: "-36,600,000.00", color: "#d97706" },
-    { label: "MIADP", amount: "-73,200,000.00", color: "#f97316" },
-];
-
-const disSegments: Segment[] = disbursementData.map((d) => ({
-    value: Math.abs(parseFloat(d.amount.replace(/,/g, ""))),
-    color: d.color,
-}));
 
 // ── UserIcon ───────────────────────────────────────────────────
 function UserIcon({ type, color }: UserIconProps) {
@@ -176,28 +140,6 @@ function DistrictCard({ title, data }: DistrictCardProps) {
     );
 }
 
-// ── MiniLegend ─────────────────────────────────────────────────
-function MiniLegend({ data, negative = false }: MiniLegendProps) {
-    return (
-        <div className="grid grid-cols-2 gap-x-2 gap-y-0.75 flex-1">
-            {data.map((d) => (
-                <div key={d.label} className="flex items-center justify-between gap-1">
-                    <div className="flex items-center gap-1 min-w-0">
-                        <span className="w-2 h-2 rounded-full shrink-0" style={{ background: d.color }} />
-                        <span className="text-[10px] text-slate-600 truncate">{d.label}</span>
-                    </div>
-                    <span className={`text-[10px] font-bold shrink-0 ${negative ? "text-red-600" : "text-slate-800"}`}>
-                        {negative ? "-" : ""}₱{" "}
-                        {Math.abs(parseFloat(d.amount.replace(/[₱,-]/g, ""))).toLocaleString("en-US", {
-                            minimumFractionDigits: 2,
-                        })}
-                    </span>
-                </div>
-            ))}
-        </div>
-    );
-}
-
 // ── Annual Allocation & Source Breakdown ───────────────────────
 const SOURCE_COLORS: Record<string, string> = {
     TWENTY_PERCENT_DEV_FUND: "#1e3a8a",
@@ -211,7 +153,7 @@ const SOURCE_COLORS: Record<string, string> = {
     PPOC: "#94a3b8",
     PRDP: "#475569",
     SEF: "#f97316",
-    TRUST_FUND: "#15803d",
+    TRUST_FUND: "#292524",
     AID: "#0891b2",
     LOAN: "#7c3aed",
     OTHERS: "#a8a29e",
@@ -332,6 +274,115 @@ function AnnualAllocationCard({ bySource, bySubType, total, budgetYear }: Annual
     );
 }
 
+// ── Remaining Balance from Annual Allocation ───────────────────
+// Compact source-of-fund legend (matches the dashboard mock): each source of
+// fund shows its remaining balance with a breakdown of its sub-types beneath.
+const REM_SOURCE_LABEL: Record<string, string> = {
+    TWENTY_PERCENT_DEV_FUND: "20% Dev. Fund",
+    FIVE_PERCENT_CONFIDENTIAL_FUND: "5% Conf. Fund",
+    CONFIDENTIAL: "5% Conf. Fund",
+    GENERAL_FUND: "General Fund",
+    LDRRM: "LDRRM",
+    MOOE: "MOOE",
+    MIADP: "MIADP",
+    NCDC: "NCDC",
+    PPOC: "PPOC",
+    PRDP: "PRDP",
+    SEF: "SEF",
+    TRUST_FUND: "Trust Fund",
+    AID: "Aid",
+    LOAN: "Loan",
+    OTHERS: "Others",
+};
+
+type SourceBreakdownCardProps = {
+    title: string;
+    footerLabel: string;
+    bySource: Record<string, number>;
+    bySubType: BySubTypeMap;
+    total: number;
+};
+
+function SourceBreakdownCard({ title, footerLabel, bySource, bySubType, total }: SourceBreakdownCardProps) {
+    const ordered = [...SOURCE_OF_FUND_ORDER, "CONFIDENTIAL", ...Object.keys(bySource)].filter(
+        (src, i, arr) => arr.indexOf(src) === i && (bySource[src] ?? undefined) !== undefined,
+    );
+
+    const entries = ordered.map((src) => {
+        const amount = bySource[src] ?? 0;
+        const subTypes = Object.entries(bySubType)
+            .filter(([key, v]) => v.sourceOfFund === src && !key.startsWith("__NONE__"))
+            .map(([key, v]) => ({
+                label: PROJECT_SUB_TYPE_LABEL[key as ProjectSubTypeValue] ?? key,
+                amount: v.amount,
+            }))
+            .sort((a, b) => b.amount - a.amount);
+        return {
+            src,
+            label: REM_SOURCE_LABEL[src] ?? src,
+            color: SOURCE_COLORS[src] ?? "#94a3b8",
+            amount,
+            subTypes,
+        };
+    });
+
+    const segments: Segment[] = entries
+        .filter((e) => e.amount > 0)
+        .map((e) => ({ value: e.amount, color: e.color }));
+
+    return (
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-200">
+            <div className="p-5">
+                <p className="text-[12px] font-extrabold text-slate-800 tracking-widest uppercase mb-4">
+                    {title}
+                </p>
+
+                <div className="flex items-start gap-5">
+                    <div className="shrink-0 pt-1">
+                        <DonutChart segments={segments} size={120} thickness={60} />
+                    </div>
+
+                    <div className="flex-1 columns-2 gap-6 *:break-inside-avoid">
+                        {entries.map((e) => (
+                            <div key={e.src} className="mb-2.5">
+                                <div className="flex items-center justify-between gap-2">
+                                    <div className="flex items-center gap-2 min-w-0">
+                                        <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: e.color }} />
+                                        <span className="text-[11.5px] font-extrabold text-slate-800 tracking-wide truncate">
+                                            {e.label}
+                                        </span>
+                                    </div>
+                                    <span className="text-[12px] font-bold text-slate-800 tabular-nums shrink-0">
+                                        {formatToPHPMillions(e.amount)}
+                                    </span>
+                                </div>
+
+                                {e.subTypes.length > 0 && (
+                                    <div className="mt-1 ml-1 border-l border-slate-200 pl-3 flex flex-col gap-0.5">
+                                        {e.subTypes.map((s) => (
+                                            <div key={s.label} className="flex items-center justify-between gap-2">
+                                                <span className="text-[10.5px] text-slate-500 truncate">{s.label}</span>
+                                                <span className="text-[10.5px] text-slate-500 tabular-nums shrink-0">
+                                                    {formatToPHPMillions(s.amount)}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            <div className="bg-[#1e3a8a] text-white px-6 py-3.5 flex justify-between items-center text-[12px] font-bold tracking-widest uppercase">
+                <span>{footerLabel}</span>
+                <span className="tabular-nums">{formatPeso(total)}</span>
+            </div>
+        </div>
+    );
+}
+
 // ── Main Dashboard ─────────────────────────────────────────────
 const PEOISDashboard = () => {
 
@@ -339,11 +390,13 @@ const PEOISDashboard = () => {
     const { data: userData } = api.user.getStats.useQuery();
     const { data: projectAllocationData } = api.project.getFinancialOverview.useQuery();
     const { data: districtData } = api.project.getDistrictData.useQuery();
+    const { data: remainingBalanceData } = api.project.getRemainingBalance.useQuery();
 
     console.log("Stats:", statsData);
     console.log("User Stats:", userData);
     console.log("Project Allocation:", projectAllocationData);
     console.log("District Data:", districtData);
+    console.log("Remaining Balance:", remainingBalanceData);
     const TotalAllocation = projectAllocationData
         ? Object.values(projectAllocationData.bySource).reduce((s, v) => s + v, 0)
         : 0;
@@ -431,39 +484,22 @@ const PEOISDashboard = () => {
                 budgetYear={projectAllocationData?.budgetYear ?? "2024"}
             />
 
-            {/* Remaining Balance & Disbursement */}
-            <div className="grid grid-cols-2 gap-3">
-                <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                    <div className="p-4">
-                        <p className="text-[11px] font-extrabold text-slate-800 tracking-widest mb-3">
-                            REMAINING BALANCE FROM ANNUAL ALLOCATION
-                        </p>
-                        <div className="flex items-center gap-3">
-                            <DonutChart segments={remSegments} size={82} thickness={20} />
-                            <MiniLegend data={remainingData} />
-                        </div>
-                    </div>
-                    <div className="bg-[#1e3a8a] text-white px-4 py-2.5 flex justify-between items-center text-[11px] font-bold tracking-widest">
-                        <span>GRAND TOTAL REMAINING BALANCE</span>
-                        <span>₱ 402,500,000.00</span>
-                    </div>
-                </div>
-
-                <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                    <div className="p-4">
-                        <p className="text-[11px] font-extrabold text-slate-800 tracking-widest mb-3">
-                            DISBURSEMENT SUMMARY
-                        </p>
-                        <div className="flex items-center gap-3">
-                            <DonutChart segments={disSegments} size={82} thickness={20} />
-                            <MiniLegend data={disbursementData} negative />
-                        </div>
-                    </div>
-                    <div className="bg-[#1e3a8a] text-white px-4 py-2.5 flex justify-between items-center text-[11px] font-bold tracking-widest">
-                        <span>TOTAL DISBURSEMENT</span>
-                        <span>₱ 914,400,000.00</span>
-                    </div>
-                </div>
+            {/* Remaining Balance & Disbursement Summary */}
+            <div className="grid grid-cols-1 gap-3">
+                <SourceBreakdownCard
+                    title="Remaining Balance from Annual Allocation"
+                    footerLabel="Grand Total Balance"
+                    bySource={remainingBalanceData?.remaining.bySource ?? {}}
+                    bySubType={remainingBalanceData?.remaining.bySubType ?? {}}
+                    total={remainingBalanceData?.remaining.total ?? 0}
+                />
+                <SourceBreakdownCard
+                    title="Disbursement Summary"
+                    footerLabel="Total Disbursement"
+                    bySource={remainingBalanceData?.disbursed.bySource ?? {}}
+                    bySubType={remainingBalanceData?.disbursed.bySubType ?? {}}
+                    total={remainingBalanceData?.disbursed.total ?? 0}
+                />
             </div>
 
         </div>

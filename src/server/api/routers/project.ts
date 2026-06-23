@@ -543,4 +543,77 @@ export const projectRouter = createTRPCRouter({
 
 
     }),
+
+  // Remaining balance from annual allocation, grouped by source of fund and
+  // sub-type. Remaining = project allocation (projectCost) minus the total
+  // amount already disbursed for that project.
+  getRemainingBalance: protectedProcedure
+    .input(z.object({ budgetYear: z.string().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      const currentYear = new Date().getFullYear().toString();
+      const where = input?.budgetYear ? { budgetYear: input.budgetYear } : {};
+
+      const projects = await ctx.db.project.findMany({
+        where,
+        select: {
+          sourceOfFund: true,
+          subType: true,
+          projectCost: true,
+          disbursements: { select: { amount: true } },
+        },
+      });
+
+      type SubTypeMap = Record<string, { amount: number; sourceOfFund: string }>;
+
+      const remainingBySource: Record<string, number> = {};
+      const remainingBySubType: SubTypeMap = {};
+      const disbursedBySource: Record<string, number> = {};
+      const disbursedBySubType: SubTypeMap = {};
+
+      let totalAllocation = 0;
+      let totalDisbursed = 0;
+
+      const addToSubType = (
+        map: SubTypeMap,
+        subKey: string,
+        sourceOfFund: string,
+        amount: number,
+      ) => {
+        const existing = map[subKey];
+        if (existing) existing.amount += amount;
+        else map[subKey] = { amount, sourceOfFund };
+      };
+
+      for (const p of projects) {
+        if (p.projectCost <= 0) continue;
+
+        const disbursed = p.disbursements.reduce((s, d) => s + d.amount, 0);
+        const remaining = p.projectCost - disbursed;
+        const subKey = p.subType ?? `__NONE__:${p.sourceOfFund}`;
+
+        totalAllocation += p.projectCost;
+        totalDisbursed += disbursed;
+
+        remainingBySource[p.sourceOfFund] = (remainingBySource[p.sourceOfFund] ?? 0) + remaining;
+        addToSubType(remainingBySubType, subKey, p.sourceOfFund, remaining);
+
+        disbursedBySource[p.sourceOfFund] = (disbursedBySource[p.sourceOfFund] ?? 0) + disbursed;
+        addToSubType(disbursedBySubType, subKey, p.sourceOfFund, disbursed);
+      }
+
+      return {
+        budgetYear: input?.budgetYear ?? currentYear,
+        totalAllocation,
+        remaining: {
+          total: totalAllocation - totalDisbursed,
+          bySource: remainingBySource,
+          bySubType: remainingBySubType,
+        },
+        disbursed: {
+          total: totalDisbursed,
+          bySource: disbursedBySource,
+          bySubType: disbursedBySubType,
+        },
+      };
+    }),
 });
