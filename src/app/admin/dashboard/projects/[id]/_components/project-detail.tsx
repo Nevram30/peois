@@ -918,7 +918,7 @@ export function ProjectDetail({ projectId }: Props) {
                 />
               </svg>
               <h2 className="text-sm font-bold uppercase tracking-wider text-gray-700">
-                Administrative Update History / Audit Trail
+                Activity Log
               </h2>
             </div>
           </div>

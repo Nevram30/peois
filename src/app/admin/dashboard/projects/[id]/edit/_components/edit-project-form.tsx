@@ -178,6 +178,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   const [isUploadingMedia, setIsUploadingMedia] = useState(false);
   const [pendingFileType, setPendingFileType] = useState<"IMAGE" | "BLUEPRINT" | "REPORT" | "CONTRACT" | "PERMIT" | "OTHER">("OTHER");
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [deleteNotice, setDeleteNotice] = useState<string | null>(null);
 
   // ─ Activity ────────────────────────────────────────────────────────────
   const [comment, setComment] = useState("");
@@ -324,7 +325,15 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   });
 
   const deleteProjectFile = api.projectFile.delete.useMutation({
-    onSuccess: () => void refetchFiles(),
+    onSuccess: (data) => {
+      void refetchFiles();
+      setDeleteNotice(`"${data.fileName}" was deleted.`);
+      addActivity.mutate({
+        projectId: data.projectId,
+        description: `Deleted ${(data.fileType ?? "OTHER").toLowerCase()} document "${data.fileName}".`,
+      });
+    },
+    onError: () => setDeleteNotice(null),
   });
 
   // ─ Handlers ────────────────────────────────────────────────────────────
@@ -1325,6 +1334,13 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                   <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" /></svg>
                   {uploadError}
                   <button type="button" onClick={() => setUploadError(null)} className="ml-auto">✕</button>
+                </div>
+              )}
+              {deleteNotice && (
+                <div className="mb-3 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-xs text-green-700">
+                  <svg className="h-4 w-4 shrink-0 text-green-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+                  {deleteNotice}
+                  <button type="button" onClick={() => setDeleteNotice(null)} className="ml-auto text-green-400 hover:text-green-600">✕</button>
                 </div>
               )}
               <table className="w-full text-xs">
