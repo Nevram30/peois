@@ -222,9 +222,6 @@ function AnnualAllocationCard({ bySource, bySubType, total, budgetYear }: Annual
                     <p className="text-[12px] font-extrabold text-slate-800 tracking-widest uppercase">
                         Annual Allocation &amp; Source Breakdown
                     </p>
-                    <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 rounded px-2 py-0.5">
-                        FY {budgetYear}
-                    </span>
                 </div>
 
                 <div className="flex items-start gap-8">
