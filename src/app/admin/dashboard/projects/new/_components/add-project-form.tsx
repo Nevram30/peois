@@ -29,6 +29,13 @@ const inputClass =
 const labelClass =
   "mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-gray-500";
 const cardClass = "rounded-xl border border-gray-200 bg-white shadow-sm";
+const errorRingClass =
+  "border-red-400 focus:border-red-500 focus:ring-red-500/20";
+
+function FieldError({ show }: { show: boolean }) {
+  if (!show) return null;
+  return <p className="mt-1 text-xs text-red-500">This field is required</p>;
+}
 
 type ProjectFileType = "IMAGE" | "BLUEPRINT" | "REPORT" | "CONTRACT" | "PERMIT" | "OTHER";
 
@@ -196,6 +203,9 @@ export function AddProjectForm() {
   const [isUploadingDoc, setIsUploadingDoc] = useState(false);
   const docInputRef = useRef<HTMLInputElement>(null);
 
+  // ── Validation ───────────────────────────────────────────────────────
+  const [showErrors, setShowErrors] = useState(false);
+
   const { startUpload: startImageUpload, isUploading: isUploadingImage } =
     useUploadThing("imageUploader", {
       onClientUploadComplete: (res) => {
@@ -336,7 +346,29 @@ export function AddProjectForm() {
     },
   });
 
+  // Required fields for a full submission (not draft). Each maps to the
+  // "This field is required" message shown beneath the input.
+  const fieldErrors = useMemo(
+    () => ({
+      title: !title.trim(),
+      modeOfImplementation: !modeOfImplementation,
+      contractorName:
+        modeOfImplementation === "BY_CONTRACT" && !contractorName.trim(),
+      district: !district,
+      sourceOfFund: !sourceOfFund,
+    }),
+    [title, modeOfImplementation, contractorName, district, sourceOfFund],
+  );
+
+  const hasErrors = Object.values(fieldErrors).some(Boolean);
+
   const handleSubmit = (isDraft: boolean) => {
+    // Drafts only require a title; a full submission requires every starred
+    // field. Block submission and surface inline errors when invalid.
+    if (!isDraft && hasErrors) {
+      setShowErrors(true);
+      return;
+    }
     createProject.mutate({
       title,
       subType: subType ? (subType as ProjectSubTypeValue) : null,
@@ -371,14 +403,11 @@ export function AddProjectForm() {
     });
   };
 
-  const canSubmit =
-    !!title &&
-    !!modeOfImplementation &&
-    !!district &&
-    !!sourceOfFund &&
-    !createProject.isPending &&
-    !isUploadingImage &&
-    !isUploadingDoc;
+  // The submit button stays enabled even when required fields are empty so
+  // that clicking it reveals the inline "This field is required" messages.
+  // Validation itself is enforced in handleSubmit / fieldErrors.
+  const isBusy =
+    createProject.isPending || isUploadingImage || isUploadingDoc;
 
   return (
     <div className="min-h-screen bg-gray-50 px-6 py-8">
@@ -465,8 +494,9 @@ export function AddProjectForm() {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="Enter project title"
-                    className={inputClass}
+                    className={`${inputClass} ${showErrors && fieldErrors.title ? errorRingClass : ""}`}
                   />
+                  <FieldError show={showErrors && fieldErrors.title} />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
@@ -533,12 +563,13 @@ export function AddProjectForm() {
                         setModeOfImplementation(e.target.value);
                         if (e.target.value !== "BY_CONTRACT") setContractorName("");
                       }}
-                      className={inputClass}
+                      className={`${inputClass} ${showErrors && fieldErrors.modeOfImplementation ? errorRingClass : ""}`}
                     >
                       <option value="">Select Mode</option>
                       <option value="BY_ADMINISTRATION">By Administration</option>
                       <option value="BY_CONTRACT">By Contract</option>
                     </select>
+                    <FieldError show={showErrors && fieldErrors.modeOfImplementation} />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
@@ -550,8 +581,9 @@ export function AddProjectForm() {
                         value={contractorName}
                         onChange={(e) => setContractorName(e.target.value)}
                         placeholder="Enter contractor name"
-                        className={inputClass}
+                        className={`${inputClass} ${showErrors && fieldErrors.contractorName ? errorRingClass : ""}`}
                       />
+                      <FieldError show={showErrors && fieldErrors.contractorName} />
                     </div>
                   ) : (
                     <div />
@@ -593,12 +625,13 @@ export function AddProjectForm() {
                     setPurok("");
                     setSitio("");
                   }}
-                  className={inputClass}
+                  className={`${inputClass} ${showErrors && fieldErrors.district ? errorRingClass : ""}`}
                 >
                   <option value="">Select District</option>
                   <option value="DISTRICT_I">District 1</option>
                   <option value="DISTRICT_II">District 2</option>
                 </select>
+                <FieldError show={showErrors && fieldErrors.district} />
               </div>
               <div>
                 <label className={labelClass}>Municipality / City</label>
@@ -694,13 +727,14 @@ export function AddProjectForm() {
                     const allowed = next ? SOURCE_TO_SUB_TYPES[next] : [];
                     if (!allowed.includes(subType as ProjectSubTypeValue)) setSubType("");
                   }}
-                  className={inputClass}
+                  className={`${inputClass} ${showErrors && fieldErrors.sourceOfFund ? errorRingClass : ""}`}
                 >
                   <option value="">Select Source</option>
                   {SOURCE_OF_FUND_ORDER.map((k) => (
                     <option key={k} value={k}>{SOURCE_OF_FUND_LABEL[k]}</option>
                   ))}
                 </select>
+                <FieldError show={showErrors && fieldErrors.sourceOfFund} />
               </div>
               <div>
                 <label className={labelClass}>Fund Category</label>
@@ -1031,7 +1065,7 @@ export function AddProjectForm() {
             <button
               type="button"
               onClick={() => handleSubmit(true)}
-              disabled={createProject.isPending || isUploadingImage || isUploadingDoc || !title}
+              disabled={isBusy || !title}
               className="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Save as Draft
@@ -1039,7 +1073,7 @@ export function AddProjectForm() {
             <button
               type="button"
               onClick={() => handleSubmit(false)}
-              disabled={!canSubmit}
+              disabled={isBusy}
               className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {createProject.isPending
