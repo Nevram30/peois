@@ -45,6 +45,13 @@ const DISTRICT_LABEL: Record<string, string> = {
   DISTRICT_II: "District 2",
 };
 
+const ADJUSTMENT_TYPE_PILL: Record<string, string> = {
+  EXTENSION: "bg-blue-50 text-blue-600 border border-blue-200",
+  SUSPENSION: "bg-red-50 text-red-600 border border-red-200",
+  RESUMPTION: "bg-green-50 text-green-600 border border-green-200",
+  REVISION: "bg-amber-50 text-amber-600 border border-amber-200",
+};
+
 function fmt(d: Date | string | null | undefined) {
   if (!d) return "—";
   return new Date(d).toLocaleDateString("en-PH", {
@@ -93,6 +100,7 @@ export function ProjectDetail({ projectId }: Props) {
   const { data: activities } = api.projectActivity.getByProjectId.useQuery({ projectId });
   const { data: disbursements } = api.project.getDisbursements.useQuery({ projectId });
   const { data: variationOrders } = api.project.getVariationOrders.useQuery({ projectId });
+  const { data: timelineAdjustments } = api.project.getTimelineAdjustments.useQuery({ projectId });
   const { data: files } = api.projectFile.getByProjectId.useQuery({ projectId });
 
   if (isLoading) {
@@ -585,6 +593,54 @@ export function ProjectDetail({ projectId }: Props) {
               <div className="mt-1.5 w-full rounded-lg border border-blue-200 bg-blue-50 px-3.5 py-2.5 text-sm font-semibold text-blue-700">
                 {totalDays} Days
               </div>
+            </div>
+          </div>
+
+          {/* Timeline Adjustment History */}
+          <div className="mt-6">
+            <p className={`${fieldLabel} mb-2`}>Timeline Adjustment History</p>
+            <div className="overflow-hidden rounded-lg border border-gray-200">
+              <table className="w-full text-sm">
+                <thead className="bg-gray-50">
+                  <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                    <th className="px-4 py-3">Start Date</th>
+                    <th className="px-4 py-3">End Date</th>
+                    <th className="px-4 py-3">Duration</th>
+                    <th className="px-4 py-3">Adjustment Type</th>
+                    <th className="px-4 py-3">Justification Record</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {timelineAdjustments && timelineAdjustments.length > 0 ? (
+                    timelineAdjustments.map((t) => (
+                      <tr key={t.id} className="text-gray-700">
+                        <td className="px-4 py-3 text-gray-600">{fmt(t.startDate)}</td>
+                        <td className="px-4 py-3 text-gray-600">{fmt(t.endDate)}</td>
+                        <td className="px-4 py-3 font-semibold text-gray-800">{t.duration} Days</td>
+                        <td className="px-4 py-3">
+                          <span
+                            className={`inline-flex rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${ADJUSTMENT_TYPE_PILL[t.type] ?? "bg-gray-50 text-gray-600 border border-gray-200"}`}
+                          >
+                            {t.type}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 italic text-gray-600">
+                          {t.justification ?? "—"}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={5}
+                        className="px-4 py-8 text-center text-sm text-gray-400"
+                      >
+                        No timeline adjustments recorded yet.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         </section>
