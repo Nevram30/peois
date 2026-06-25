@@ -353,39 +353,118 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
     }
   };
 
+  // Compare the current form state against the project as last loaded and return
+  // the human-readable names of the cards the user actually changed, so each one
+  // can be logged individually in the audit trail.
+  const getChangedSections = () => {
+    if (!project) return [] as string[];
+    const sections: string[] = [];
+
+    const originalEngineers = project.projectEngineer
+      ? project.projectEngineer.split(",").map((s) => s.trim()).filter(Boolean).join(", ")
+      : "";
+
+    if (
+      completion !== project.completionPercentage ||
+      status !== project.status ||
+      contractorName !== (project.contractorName ?? "") ||
+      modeOfImplementation !== project.modeOfImplementation
+    ) {
+      sections.push("Project Identity & Status");
+    }
+
+    if (
+      locDistrict !== (project.district ?? project.locationImplementation ?? "") ||
+      cityMunicipality !== (project.cityMunicipality ?? "") ||
+      barangay !== (project.barangay ?? "") ||
+      purok !== (project.purok ?? "") ||
+      sitio !== (project.sitio ?? "")
+    ) {
+      sections.push("Project Location");
+    }
+
+    if (
+      sourceOfFund !== project.sourceOfFund ||
+      subType !== (project.subType ?? "") ||
+      budgetYear !== (project.budgetYear ?? "")
+    ) {
+      sections.push("Funding & Disbursement Tracking");
+    }
+
+    if (
+      dateStarted !== toInputDate(project.dateStarted) ||
+      targetCompletion !== toInputDate(project.targetCompletionDate) ||
+      revisedCompletion !== toInputDate(project.revisedCompletionDate)
+    ) {
+      sections.push("Project Timeline");
+    }
+
+    if (numFemale !== (project.numFemale ?? 0) || numMale !== (project.numMale ?? 0)) {
+      sections.push("Workforce Distribution");
+    }
+
+    if (engineers.join(", ") !== originalEngineers || description !== (project.description ?? "")) {
+      sections.push("Project In-Charge & Profile");
+    }
+
+    if (
+      mediaUrl !== (project.imageUrl ?? "") ||
+      mediaName !== (project.documentName ?? "")
+    ) {
+      sections.push("Project Documentation");
+    }
+
+    return sections;
+  };
+
   const handleSaveChanges = () => {
     if (!project) return;
-    updateProject.mutate({
-      id: projectId,
-      title: project.title,
-      modeOfImplementation: modeOfImplementation as "BY_ADMINISTRATION" | "BY_CONTRACT",
-      locationImplementation: (locDistrict as "DISTRICT_I" | "DISTRICT_II") || project.locationImplementation,
-      sourceOfFund: (sourceOfFund || project.sourceOfFund) as Parameters<typeof updateProject.mutate>[0]["sourceOfFund"],
-      contractCost: project.contractCost,
-      contractorName: contractorName || undefined,
-      projectEngineer: engineers.join(", ") || undefined,
-      budgetYear: budgetYear || undefined,
-      subType: (subType || null) as Parameters<typeof updateProject.mutate>[0]["subType"],
-      dateStarted: dateStarted ? new Date(dateStarted) : null,
-      targetCompletionDate: targetCompletion ? new Date(targetCompletion) : null,
-      revisedCompletionDate: revisedCompletion ? new Date(revisedCompletion) : null,
-      numFemale,
-      numMale,
-      numManDays: project.numManDays ?? 0,
-      daysSuspended: project.daysSuspended ?? 0,
-      daysExtended: project.daysExtended ?? 0,
-      district: (locDistrict as "DISTRICT_I" | "DISTRICT_II") || null,
-      cityMunicipality: cityMunicipality || undefined,
-      barangay: barangay || undefined,
-      purok: purok || undefined,
-      sitio: sitio || undefined,
-      description: description || undefined,
-      status: status as ProjectStatusValue,
-      completionPercentage: completion,
-      imageUrl: mediaUrl || undefined,
-      documentUrl: mediaUrl || undefined,
-      documentName: mediaName || undefined,
-    });
+    const changedSections = getChangedSections();
+    updateProject.mutate(
+      {
+        id: projectId,
+        title: project.title,
+        modeOfImplementation: modeOfImplementation as "BY_ADMINISTRATION" | "BY_CONTRACT",
+        locationImplementation: (locDistrict as "DISTRICT_I" | "DISTRICT_II") || project.locationImplementation,
+        sourceOfFund: (sourceOfFund || project.sourceOfFund) as Parameters<typeof updateProject.mutate>[0]["sourceOfFund"],
+        contractCost: project.contractCost,
+        contractorName: contractorName || undefined,
+        projectEngineer: engineers.join(", ") || undefined,
+        budgetYear: budgetYear || undefined,
+        subType: (subType || null) as Parameters<typeof updateProject.mutate>[0]["subType"],
+        dateStarted: dateStarted ? new Date(dateStarted) : null,
+        targetCompletionDate: targetCompletion ? new Date(targetCompletion) : null,
+        revisedCompletionDate: revisedCompletion ? new Date(revisedCompletion) : null,
+        numFemale,
+        numMale,
+        numManDays: project.numManDays ?? 0,
+        daysSuspended: project.daysSuspended ?? 0,
+        daysExtended: project.daysExtended ?? 0,
+        district: (locDistrict as "DISTRICT_I" | "DISTRICT_II") || null,
+        cityMunicipality: cityMunicipality || undefined,
+        barangay: barangay || undefined,
+        purok: purok || undefined,
+        sitio: sitio || undefined,
+        description: description || undefined,
+        status: status as ProjectStatusValue,
+        completionPercentage: completion,
+        imageUrl: mediaUrl || undefined,
+        documentUrl: mediaUrl || undefined,
+        documentName: mediaName || undefined,
+      },
+      {
+        onSuccess: () => {
+          // Log one audit-trail entry per card the user changed. createdById is the
+          // current session user — i.e. the user who made this update.
+          for (const section of changedSections) {
+            addActivity.mutate({
+              projectId,
+              description: `Updated ${section}.`,
+            });
+          }
+        },
+      },
+    );
   };
 
   const handleRecordDisbursement = () => {
