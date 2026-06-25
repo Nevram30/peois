@@ -6,18 +6,22 @@ export const formatPeso = (value: number | undefined) => {
     }).format(value ?? 0);
 };
 
-// Convert to billions (divide by 1,000,000,000)
-// Format to 2 decimal places
-export const formatToPHPBillions = (value: number): string => {
-    const inBillions = value / 1_000_000_000;
-    const formattedNumber = inBillions.toFixed(2);
-
-    return `₱${formattedNumber}B`;
+// Adaptive: shows the actual peso amount below 1M, then scales to
+// millions (₱920.0M) and billions (₱1.20B) as the value grows.
+export const formatToPHPBillions = (value: number | undefined): string => {
+    const v = value ?? 0;
+    const abs = Math.abs(v);
+    if (abs >= 1_000_000_000) return `₱${(v / 1_000_000_000).toFixed(2)}B`;
+    if (abs >= 1_000_000) return `₱${(v / 1_000_000).toFixed(1)}M`;
+    return formatPeso(v);
 };
 
-// Convert to millions (divide by 1,000,000)
-// Format to 1 decimal place e.g. "₱ 920.0M"
+// Adaptive: shows the actual peso amount below 1M, then scales to
+// millions (₱920.0M) and billions (₱1.20B) as the value grows.
 export const formatToPHPMillions = (value: number | undefined): string => {
-    const inMillions = (value ?? 0) / 1_000_000;
-    return `₱ ${inMillions.toFixed(1)}M`;
+    const v = value ?? 0;
+    const abs = Math.abs(v);
+    if (abs >= 1_000_000_000) return `₱${(v / 1_000_000_000).toFixed(2)}B`;
+    if (abs >= 1_000_000) return `₱ ${(v / 1_000_000).toFixed(1)}M`;
+    return formatPeso(v);
 };
