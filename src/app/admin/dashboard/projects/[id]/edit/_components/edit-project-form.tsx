@@ -189,8 +189,6 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   const [disbErrors, setDisbErrors] = useState<{ amount?: string; ref?: string; type?: string }>({});
 
   // ─ Timeline Adjustment ──────────────────────────────────────────────────
-  const [adjStartDate, setAdjStartDate] = useState("");
-  const [adjEndDate, setAdjEndDate] = useState("");
   const [adjDays, setAdjDays] = useState("");
   const [adjType, setAdjType] = useState<"" | "EXTENSION" | "SUSPENSION" | "RESUMPTION">("");
   const [adjJustification, setAdjJustification] = useState("");
@@ -299,7 +297,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
 
   const recordTimelineAdjustment = api.project.createTimelineAdjustment.useMutation({
     onSuccess: (_data, variables) => {
-      setAdjStartDate(""); setAdjEndDate(""); setAdjDays(""); setAdjType(""); setAdjJustification(""); setAdjError(null);
+      setAdjDays(""); setAdjType(""); setAdjJustification(""); setAdjError(null);
       void refetchTimelineAdjustments();
       addActivity.mutate({
         projectId: variables.projectId,
@@ -498,15 +496,15 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   };
 
   const handleRecordTimelineAdjustment = () => {
-    if (!adjStartDate || !adjEndDate) { setAdjError("Start date and end date are required."); return; }
+    if (!dateStarted || !targetCompletion) { setAdjError("Start date and end date are required."); return; }
     if (!adjType) { setAdjError("Adjustment type is required."); return; }
     const days = parseInt(adjDays, 10);
     if (!adjDays || isNaN(days) || days < 0) { setAdjError("Days must be 0 or greater."); return; }
     setAdjError(null);
     recordTimelineAdjustment.mutate({
       projectId,
-      startDate: new Date(adjStartDate),
-      endDate: new Date(adjEndDate),
+      startDate: new Date(dateStarted),
+      endDate: new Date(targetCompletion),
       duration: days,
       type: adjType,
       justification: adjJustification.trim() || undefined,
@@ -1116,11 +1114,11 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
               <div className="mt-3 flex items-end gap-2">
                 <div className="w-40 shrink-0">
                   <FieldLabel>Date Started</FieldLabel>
-                  <Input type="date" value={adjStartDate} onChange={(e) => { setAdjStartDate(e.target.value); setAdjError(null); }} error={!!adjError && !adjStartDate} />
+                  <Input type="date" value={dateStarted} onChange={(e) => { setDateStarted(e.target.value); setAdjError(null); }} error={!!adjError && !dateStarted} />
                 </div>
                 <div className="w-40 shrink-0">
                   <FieldLabel>End Date</FieldLabel>
-                  <Input type="date" value={adjEndDate} onChange={(e) => { setAdjEndDate(e.target.value); setAdjError(null); }} error={!!adjError && !adjEndDate} />
+                  <Input type="date" value={targetCompletion} onChange={(e) => { setTargetCompletion(e.target.value); setAdjError(null); }} error={!!adjError && !targetCompletion} />
                 </div>
                 <div className="w-24 shrink-0">
                   <FieldLabel>Days</FieldLabel>
