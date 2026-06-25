@@ -142,6 +142,7 @@ model User {
   designation               String?
   division                  String?
   contactNumber             String?
+  birthday                  DateTime?
   sex                       Sex?
   status                    UserStatus           @default(PENDING)
   emailVerified             DateTime?

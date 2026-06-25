@@ -117,6 +117,7 @@ function AddUserModal({
   const [middleName, setMiddleName] = useState("");
   const [lastName, setLastName] = useState("");
   const [extension, setExtension] = useState("");
+  const [birthday, setBirthday] = useState("");
   const [sex, setSex] = useState<"MALE" | "FEMALE" | "">("");
   const [designation, setDesignation] = useState("");
   const [division, setDivision] = useState("");
@@ -167,6 +168,7 @@ function AddUserModal({
     setMiddleName("");
     setLastName("");
     setExtension("");
+    setBirthday("");
     setSex("");
     setDesignation("");
     setDivision("");
@@ -245,6 +247,7 @@ function AddUserModal({
       middleName: trimmedMiddleName || undefined,
       lastName: trimmedLastName,
       extension: trimmedExtension || undefined,
+      birthday: birthday || undefined,
       employeeId: trimmedEmployeeId,
       sex,
       designation,
@@ -421,7 +424,7 @@ function AddUserModal({
               </div>
             </div>
 
-            <div className="mt-3 grid grid-cols-[140px_1fr] gap-3">
+            <div className="mt-3 grid grid-cols-[140px_1fr_1fr] gap-3">
               <div>
                 <label className={labelClass}>Extension</label>
                 <input
@@ -430,6 +433,15 @@ function AddUserModal({
                   onChange={(e) => setExtension(e.target.value)}
                   className={inputClass}
                   placeholder="e.g. Jr., III"
+                />
+              </div>
+              <div>
+                <label className={labelClass}>Birthday</label>
+                <input
+                  type="date"
+                  value={birthday}
+                  onChange={(e) => setBirthday(e.target.value)}
+                  className={inputClass}
                 />
               </div>
               <div>
