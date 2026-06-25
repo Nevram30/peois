@@ -1,5 +1,14 @@
 // ── types ───────────────────────────────────────────────────────
-export type ProjectStatus = 'COMPLETED' | 'FOR_IMP' | 'RE_ALIGNED' | 'ON_GOING' | 'SUSPENDED' | 'OTHERS';
+// Keys MUST match the Prisma `ProjectStatus` enum, because `getDistrictData`
+// returns counts keyed by the raw enum value (e.g. FOR_IMPLEMENTATION).
+export type ProjectStatus =
+  | 'COMPLETED'
+  | 'FOR_IMPLEMENTATION'
+  | 'RE_ALIGNMENT'
+  | 'ON_GOING'
+  | 'NOT_YET_STARTED'
+  | 'SUSPENDED'
+  | 'OTHERS';
 export type StatusCounts = Partial<Record<ProjectStatus, number>>;
 
 export type DistrictData = {
@@ -20,19 +29,21 @@ export type DistrictCardProps = {
 
 // ── constants ───────────────────────────────────────────────────
 export const STATUS_COLORS: Record<ProjectStatus, string> = {
-  COMPLETED:  '#22c55e',
-  FOR_IMP:    '#f59e0b',
-  RE_ALIGNED: '#8b5cf6',
-  ON_GOING:   '#3b82f6',
-  SUSPENDED:  '#ef4444',
-  OTHERS:     '#94a3b8',
+  COMPLETED:          '#22c55e',
+  FOR_IMPLEMENTATION: '#f59e0b',
+  RE_ALIGNMENT:       '#8b5cf6',
+  ON_GOING:           '#3b82f6',
+  NOT_YET_STARTED:    '#0ea5e9',
+  SUSPENDED:          '#ef4444',
+  OTHERS:             '#94a3b8',
 };
 
 export const STATUS_LABELS: Record<ProjectStatus, string> = {
-  COMPLETED:  'COMPLETED',
-  FOR_IMP:    'FOR IMP.',
-  RE_ALIGNED: 'RE-ALIGNED',
-  ON_GOING:   'ON-GOING',
-  SUSPENDED:  'SUSPENDED',
-  OTHERS:     'OTHERS',
+  COMPLETED:          'COMPLETED',
+  FOR_IMPLEMENTATION: 'FOR IMPLEMENTATION',
+  RE_ALIGNMENT:       'RE-ALIGNED',
+  ON_GOING:           'ON-GOING',
+  NOT_YET_STARTED:    'NOT STARTED',
+  SUSPENDED:          'SUSPENDED',
+  OTHERS:             'OTHERS',
 };

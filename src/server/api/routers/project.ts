@@ -468,7 +468,7 @@ export const projectRouter = createTRPCRouter({
         districts.map(async (district) => {
           const counts = await ctx.db.project.groupBy({
             by: ["status"],
-            where: { district },
+            where: { locationImplementation: district },
             _count: { status: true },
           });
 
