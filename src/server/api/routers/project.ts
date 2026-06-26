@@ -502,6 +502,7 @@ export const projectRouter = createTRPCRouter({
           subType: true,
           projectCost: true,
           completionPercentage: true,
+          variationOrders: { select: { amount: true, sourceOfFund: true } },
         },
       });
 
@@ -529,6 +530,15 @@ export const projectRouter = createTRPCRouter({
               sourceOfFund: p.sourceOfFund,
             };
           }
+        }
+
+        // Variation orders add to the annual allocation under the source of fund
+        // they are charged against (falling back to the project's own source).
+        for (const vo of p.variationOrders) {
+          if (vo.amount <= 0) continue;
+          const voSource = vo.sourceOfFund ?? p.sourceOfFund;
+          bySource[voSource] = (bySource[voSource] ?? 0) + vo.amount;
+          totalAllocation += vo.amount;
         }
       }
 
@@ -564,6 +574,7 @@ export const projectRouter = createTRPCRouter({
           subType: true,
           projectCost: true,
           disbursements: { select: { amount: true } },
+          variationOrders: { select: { amount: true, sourceOfFund: true } },
         },
       });
 
@@ -589,6 +600,16 @@ export const projectRouter = createTRPCRouter({
       };
 
       for (const p of projects) {
+        // Variation orders increase the allocation — and therefore the remaining
+        // balance — for the source of fund they are charged against. They are not
+        // disbursements, so they only raise the available balance.
+        for (const vo of p.variationOrders) {
+          if (vo.amount <= 0) continue;
+          const voSource = vo.sourceOfFund ?? p.sourceOfFund;
+          totalAllocation += vo.amount;
+          remainingBySource[voSource] = (remainingBySource[voSource] ?? 0) + vo.amount;
+        }
+
         if (p.projectCost <= 0) continue;
 
         const disbursed = p.disbursements.reduce((s, d) => s + d.amount, 0);
