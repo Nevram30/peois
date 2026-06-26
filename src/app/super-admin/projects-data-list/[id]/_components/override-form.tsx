@@ -101,11 +101,10 @@ function TextInput({
       placeholder={placeholder}
       disabled={disabled}
       required={required}
-      className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-        disabled
+      className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${disabled
           ? "border-gray-100 bg-gray-50 text-gray-400"
           : "border-gray-200 bg-white text-gray-800"
-      }`}
+        }`}
     />
   );
 }
@@ -266,9 +265,9 @@ export function OverrideForm({ projectId }: { projectId: string }) {
   const totalDays =
     form.dateStarted && form.targetCompletionDate
       ? Math.ceil(
-          (new Date(form.targetCompletionDate).getTime() - new Date(form.dateStarted).getTime()) /
-            (1000 * 60 * 60 * 24),
-        )
+        (new Date(form.targetCompletionDate).getTime() - new Date(form.dateStarted).getTime()) /
+        (1000 * 60 * 60 * 24),
+      )
       : (project?.duration ?? 0);
 
   const disbursements = disbursementsData ?? [];
@@ -742,7 +741,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
               />
             </div>
             <div>
-              <FieldLabel>Total Days</FieldLabel>
+              <FieldLabel>Duration</FieldLabel>
               <input
                 type="text"
                 value={totalDays ? `${totalDays} Days` : "—"}

@@ -95,8 +95,8 @@ function Input(props: React.InputHTMLAttributes<HTMLInputElement> & { error?: bo
     <input
       {...rest}
       className={`block w-full rounded-lg border px-3 py-2 text-sm text-gray-800 placeholder:text-gray-300 focus:outline-none focus:ring-2 ${error
-          ? "border-red-300 focus:border-red-400 focus:ring-red-400/20"
-          : "border-gray-200 focus:border-blue-400 focus:ring-blue-400/20"
+        ? "border-red-300 focus:border-red-400 focus:ring-red-400/20"
+        : "border-gray-200 focus:border-blue-400 focus:ring-blue-400/20"
         } ${className}`}
     />
   );
@@ -1130,7 +1130,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                   <Input type="date" value={targetCompletion} onChange={(e) => { setTargetCompletion(e.target.value); setAdjError(null); }} error={!!adjError && !targetCompletion} />
                 </div>
                 <div className="w-24 shrink-0">
-                  <FieldLabel>Days</FieldLabel>
+                  <FieldLabel>Duration</FieldLabel>
                   <Input type="number" min={0} placeholder="0" value={adjDays} onChange={(e) => { setAdjDays(e.target.value); setAdjError(null); }} error={!!adjError && !adjDays} />
                 </div>
                 <div className="w-40 shrink-0">

@@ -326,7 +326,7 @@ export function AddProjectForm() {
     setPendingFiles((prev) => prev.map((f) => (f.id === id ? { ...f, fileType } : f)));
 
   const createProjectFile = api.projectFile.create.useMutation();
-  
+
   const createProject = api.project.create.useMutation({
     onSuccess: async (project) => {
       // Persist each uploaded document as a ProjectFile record.
@@ -833,7 +833,7 @@ export function AddProjectForm() {
               />
             </div>
             <div>
-              <label className={labelClass}>Total Days</label>
+              <label className={labelClass}>Duration</label>
               <input
                 type="text"
                 readOnly

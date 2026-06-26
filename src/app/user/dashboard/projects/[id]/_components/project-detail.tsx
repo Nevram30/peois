@@ -496,7 +496,7 @@ export function UserProjectDetail({ projectId }: Props) {
               </div>
             </div>
             <div>
-              <label className={fieldLabel}>Total Days</label>
+              <label className={fieldLabel}>Duration</label>
               <div className="mt-1.5 w-full rounded-lg border border-blue-200 bg-blue-50 px-3.5 py-2.5 text-sm font-semibold text-blue-700">
                 {totalDays} Days
               </div>

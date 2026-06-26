@@ -583,13 +583,7 @@ export function ProjectDetail({ projectId }: Props) {
               <div className={fieldBox}>{fmtInput(project.targetCompletionDate) || "—"}</div>
             </div>
             <div>
-              <label className={fieldLabel}>Revised Target Completion</label>
-              <div className={`${fieldBox} ${project.revisedCompletionDate ? "" : "text-gray-400"}`}>
-                {fmtInput(project.revisedCompletionDate) || "mm/dd/yyyy"}
-              </div>
-            </div>
-            <div>
-              <label className={fieldLabel}>Total Days</label>
+              <label className={fieldLabel}>Duration</label>
               <div className="mt-1.5 w-full rounded-lg border border-blue-200 bg-blue-50 px-3.5 py-2.5 text-sm font-semibold text-blue-700">
                 {totalDays} Days
               </div>
