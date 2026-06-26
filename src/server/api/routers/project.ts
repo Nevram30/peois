@@ -461,14 +461,18 @@ export const projectRouter = createTRPCRouter({
 
   //get district 1 and district 2 status like how many ongoing, completed, etc. in each district
   getDistrictData: protectedProcedure
-    .query(async ({ ctx }) => {
+    .input(z.object({ budgetYear: z.string().optional() }).optional())
+    .query(async ({ ctx, input }) => {
       const districts = ["DISTRICT_I", "DISTRICT_II"] as const;
 
       const data = await Promise.all(
         districts.map(async (district) => {
           const counts = await ctx.db.project.groupBy({
             by: ["status"],
-            where: { locationImplementation: district },
+            where: {
+              locationImplementation: district,
+              ...(input?.budgetYear ? { budgetYear: input.budgetYear } : {}),
+            },
             _count: { status: true },
           });
 

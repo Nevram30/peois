@@ -96,7 +96,7 @@ export function UserProjectsList() {
       ? STATUS_TITLES.today
       : statusFilter
         ? (STATUS_TITLES[statusFilter] ?? "Projects")
-        : "Projects Overview";
+        : "All Projects";
 
   return (
     <div className="space-y-6 px-6 py-8">
@@ -461,8 +461,8 @@ export function UserProjectsList() {
                         key={item}
                         onClick={() => setPage(item)}
                         className={`flex h-8 w-8 items-center justify-center rounded border text-sm font-medium transition ${page === item
-                            ? "border-blue-500 text-blue-600"
-                            : "border-gray-300 text-gray-600 hover:bg-gray-50"
+                          ? "border-blue-500 text-blue-600"
+                          : "border-gray-300 text-gray-600 hover:bg-gray-50"
                           }`}
                       >
                         {item}

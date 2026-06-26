@@ -146,7 +146,7 @@ export function ProjectsList() {
       ? STATUS_TITLES.today
       : statusFilter
         ? (STATUS_TITLES[statusFilter] ?? "Projects")
-        : "Projects Overview";
+        : "All Projects";
 
   return (
     <div className="space-y-6 px-6 py-8">

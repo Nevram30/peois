@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api } from "~/trpc/react";
-import type { DistrictCardProps, Segment, StatCard, UserCard, UserIconProps, DonutChartProps } from "~/app/super-admin/dashboardv2/super.admin.types";
+import type { DistrictCardProps, Segment, StatCard, DonutChartProps } from "~/app/super-admin/dashboardv2/super.admin.types";
 import type { DistrictCardItem, ProjectStatus, StatusCounts } from "~/app/super-admin/dashboardv2/super.adminv2.types";
 import { STATUS_COLORS, STATUS_LABELS } from "~/app/super-admin/dashboardv2/super.adminv2.types";
 import { formatPeso } from "~/helper/formatter";
@@ -53,42 +53,6 @@ function DonutChart({ segments, size = 120, thickness = 28, centerLabel }: Donut
                     </text>
                 </>
             )}
-        </svg>
-    );
-}
-
-// ── UserIcon ───────────────────────────────────────────────────
-function UserIcon({ type, color }: UserIconProps) {
-    if (type === "group")
-        return (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-        );
-    if (type === "slash")
-        return (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-                <line x1="4" y1="4" x2="20" y2="20" />
-            </svg>
-        );
-    if (type === "plus")
-        return (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-                <line x1="19" y1="8" x2="19" y2="14" />
-                <line x1="16" y1="11" x2="22" y2="11" />
-            </svg>
-        );
-    return (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-            <circle cx="12" cy="7" r="4" />
         </svg>
     );
 }
@@ -466,22 +430,6 @@ function StatCardsSkeleton() {
     );
 }
 
-function UserCardsSkeleton() {
-    return (
-        <div className="grid grid-cols-4 gap-2 mb-5">
-            {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="bg-white rounded-lg shadow-sm p-3 flex items-center gap-3 border-l-4 border-slate-200 animate-pulse">
-                    <div className="w-9 h-9 rounded-full bg-slate-200 shrink-0" />
-                    <div className="flex flex-col gap-1.5">
-                        <div className="h-2.5 w-16 rounded bg-slate-200" />
-                        <div className="h-5 w-10 rounded bg-slate-200" />
-                    </div>
-                </div>
-            ))}
-        </div>
-    );
-}
-
 function DistrictCardsSkeleton() {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-5">
@@ -524,35 +472,70 @@ function FinancialCardSkeleton() {
     );
 }
 
+// ── Year Filter (header button) ────────────────────────────────
+// Styled to match the dashboard's dark "YEAR" header button, but acts as a
+// fiscal-year selector that drives the year-aware cards.
+function YearFilter({
+    value,
+    onChange,
+    years,
+}: {
+    value: string;
+    onChange: (value: string) => void;
+    years: string[];
+}) {
+    return (
+        <div className="relative">
+            <select
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                className="appearance-none cursor-pointer bg-[#1e3a8a] text-white text-[11px] font-bold rounded-md pl-5 pr-8 py-1.5 hover:bg-blue-900 transition-colors focus:outline-none"
+            >
+                <option value="">ALL YEARS</option>
+                {years.map((y) => (
+                    <option key={y} value={y}>
+                        FY {y}
+                    </option>
+                ))}
+            </select>
+            <svg
+                className="pointer-events-none absolute right-2.5 top-1/2 h-3 w-3 -translate-y-1/2"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                strokeWidth="2.5"
+            >
+                <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+        </div>
+    );
+}
+
 // ── Main Dashboard ─────────────────────────────────────────────
 export function AdminDashboardContent() {
     const router = useRouter();
 
-    const { data: statsData, isLoading: statsLoading } = api.project.getStats.useQuery();
-    const { data: userData, isLoading: userLoading } = api.user.getStats.useQuery();
-    const { data: projectAllocationData, isLoading: allocationLoading } = api.project.getFinancialOverview.useQuery();
-    const { data: districtData, isLoading: districtLoading } = api.project.getDistrictData.useQuery();
-    const { data: remainingBalanceData, isLoading: remainingLoading } = api.project.getRemainingBalance.useQuery();
+    // Fiscal year filter shared by the dashboard cards (driven by the header YEAR buttons).
+    const [dashboardYear, setDashboardYear] = useState("");
+    const yearInput = dashboardYear ? { budgetYear: dashboardYear } : undefined;
+
+    const { data: statsData, isLoading: statsLoading } = api.project.getStats.useQuery(yearInput);
+    const { data: projectAllocationData, isLoading: allocationLoading } = api.project.getFinancialOverview.useQuery(yearInput);
+    const { data: districtData, isLoading: districtLoading } = api.project.getDistrictData.useQuery(yearInput);
+    const { data: remainingBalanceData, isLoading: remainingLoading } = api.project.getRemainingBalance.useQuery(yearInput);
 
     const TotalAllocation = projectAllocationData
         ? Object.values(projectAllocationData.bySource).reduce((s, v) => s + v, 0)
         : 0;
 
     const statCards: StatCard[] = [
-        { label: "BUDGET YEAR", value: "2024", borderColor: "border-blue-600", iconBg: "bg-blue-100", iconColor: "text-blue-600", icon: "📅" },
+        { label: "BUDGET YEAR", value: dashboardYear || "All", borderColor: "border-blue-600", iconBg: "bg-blue-100", iconColor: "text-blue-600", icon: "📅" },
         { label: "COMPLETED PROJECTS", value: statsData?.completed ?? "0", borderColor: "border-green-600", iconBg: "bg-green-100", iconColor: "text-green-600", icon: "✅" },
         { label: "ON-GOING PROJECTS", value: statsData?.ongoing ?? "0", borderColor: "border-blue-500", iconBg: "bg-blue-100", iconColor: "text-blue-500", icon: "▷" },
         { label: "FOR IMPLEMENTATION", value: statsData?.forImplementation ?? "0", borderColor: "border-amber-500", iconBg: "bg-amber-100", iconColor: "text-amber-500", icon: "⚠" },
         { label: "SUSPENDED PROJECTS", value: statsData?.suspended ?? "0", borderColor: "border-red-600", iconBg: "bg-red-100", iconColor: "text-red-600", icon: "⊗" },
         { label: "RE-ALIGNED PROJECTS", value: statsData?.reAlignment ?? "0", borderColor: "border-red-500", iconBg: "bg-red-100", iconColor: "text-red-500", icon: "↔" },
         { label: "OTHERS", value: statsData?.others ?? "0", borderColor: "border-slate-400", iconBg: "bg-slate-100", iconColor: "text-slate-500", icon: "⋯" },
-    ];
-
-    const userCards: UserCard[] = [
-        { label: "TOTAL USERS", value: userData?.total ?? "0", border: "border-l-blue-600", iconBg: "bg-blue-100", iconColor: "#2563eb", type: "group" },
-        { label: "ACTIVE USERS", value: userData?.active ?? "0", border: "border-l-green-600", iconBg: "bg-green-100", iconColor: "#16a34a", type: "single" },
-        { label: "INACTIVE USERS", value: userData?.inactive ?? "0", border: "border-l-slate-400", iconBg: "bg-slate-100", iconColor: "#64748b", type: "slash" },
-        { label: "PENDING APPROVAL", value: userData?.pending ?? "0", border: "border-l-amber-500", iconBg: "bg-amber-100", iconColor: "#d97706", type: "plus" },
     ];
 
     // ── Recent Project Updates table state ──────────────────────
@@ -584,6 +567,14 @@ export function AdminDashboardContent() {
 
     return (
         <div className="bg-slate-100 min-h-screen p-4 font-sans text-slate-800">
+            {/* Project Status Overview Header */}
+            <div className="flex items-start justify-between mb-3">
+                <div>
+                    <p className="text-[15px] font-extrabold text-blue-900 tracking-wide">PROJECT STATUS OVERVIEW</p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Project Status Information</p>
+                </div>
+                <YearFilter value={dashboardYear} onChange={setDashboardYear} years={budgetYears ?? []} />
+            </div>
 
             {/* Stat Cards */}
             {statsLoading ? (
@@ -602,41 +593,6 @@ export function AdminDashboardContent() {
                 </div>
             )}
 
-            {/* User Cards */}
-            {userLoading ? (
-                <UserCardsSkeleton />
-            ) : (
-                <div className="grid grid-cols-4 gap-2 mb-5">
-                    {userCards.map((c) => (
-                        <div key={c.label} className={`bg-white rounded-lg shadow-sm p-3 flex items-center gap-3 border-l-4 ${c.border}`}>
-                            <div className={`w-9 h-9 rounded-full ${c.iconBg} flex items-center justify-center shrink-0`}>
-                                <UserIcon type={c.type} color={c.iconColor} />
-                            </div>
-                            <div>
-                                <p className="text-[9px] font-bold text-slate-500 tracking-wide leading-tight">{c.label}</p>
-                                <p className="text-[22px] font-extrabold text-slate-900 leading-tight">{c.value}</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
-
-            {/* Financial Overview Header */}
-            <div className="flex items-start justify-between mb-3">
-                <div>
-                    <p className="text-[15px] font-extrabold text-blue-900 tracking-wide">FINANCIAL OVERVIEW</p>
-                    <p className="text-[10px] text-slate-500 mt-0.5">Aggregated project funding sources and allocations</p>
-                </div>
-                <button className="bg-[#1e3a8a] text-white text-[11px] font-bold px-4 py-1.5 rounded-md flex items-center gap-2 hover:bg-blue-900 transition-colors">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                        <polyline points="7 10 12 15 17 10" />
-                        <line x1="12" y1="15" x2="12" y2="3" />
-                    </svg>
-                    YEAR
-                </button>
-            </div>
-
             {/* DISTRICT I and DISTRICT II Tracker */}
             {districtLoading ? (
                 <DistrictCardsSkeleton />
@@ -651,6 +607,15 @@ export function AdminDashboardContent() {
                     ))}
                 </div>
             )}
+
+            {/* Financial Overview Header */}
+            <div className="flex items-start justify-between mb-3">
+                <div>
+                    <p className="text-[15px] font-extrabold text-blue-900 tracking-wide">FINANCIAL ALLOCATION OVERVIEW</p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Aggregated project funding sources and allocations</p>
+                </div>
+                <YearFilter value={dashboardYear} onChange={setDashboardYear} years={budgetYears ?? []} />
+            </div>
 
             {/* Annual Allocation & Source Breakdown */}
             {allocationLoading ? (
@@ -1005,11 +970,10 @@ export function AdminDashboardContent() {
                                 <button
                                     key={p}
                                     onClick={() => setPage(p)}
-                                    className={`flex h-8 w-8 items-center justify-center rounded-lg border text-sm font-medium transition ${
-                                        p === page
-                                            ? "border-blue-500 bg-white text-blue-600 ring-1 ring-blue-500"
-                                            : "border-gray-200 text-gray-600 hover:bg-gray-50"
-                                    }`}
+                                    className={`flex h-8 w-8 items-center justify-center rounded-lg border text-sm font-medium transition ${p === page
+                                        ? "border-blue-500 bg-white text-blue-600 ring-1 ring-blue-500"
+                                        : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                                        }`}
                                 >
                                     {p}
                                 </button>

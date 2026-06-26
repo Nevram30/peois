@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { api } from "~/trpc/react";
 import type { DistrictCardProps, Segment, StatCard, UserCard, UserIconProps, DonutChartProps } from "./super.admin.types";
 import type { DistrictCardItem, ProjectStatus, StatusCounts } from "./super.adminv2.types";
@@ -380,26 +381,76 @@ function SourceBreakdownCard({ title, footerLabel, bySource, bySubType, total }:
     );
 }
 
+// ── Year Filter (header button) ────────────────────────────────
+// Styled to match the dashboard's dark "YEAR" header button, but acts as a
+// fiscal-year selector that drives the year-aware cards.
+function YearFilter({
+    value,
+    onChange,
+    years,
+}: {
+    value: string;
+    onChange: (value: string) => void;
+    years: string[];
+}) {
+    return (
+        <div className="relative">
+            <svg
+                className="pointer-events-none absolute left-3 top-1/2 h-3 w-3 -translate-y-1/2"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                strokeWidth="2.5"
+            >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            <select
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                className="appearance-none cursor-pointer bg-[#1e3a8a] text-white text-[11px] font-bold rounded-md pl-8 pr-8 py-1.5 hover:bg-blue-900 transition-colors focus:outline-none"
+            >
+                <option value="">ALL YEARS</option>
+                {years.map((y) => (
+                    <option key={y} value={y}>
+                        FY {y}
+                    </option>
+                ))}
+            </select>
+            <svg
+                className="pointer-events-none absolute right-2.5 top-1/2 h-3 w-3 -translate-y-1/2"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                strokeWidth="2.5"
+            >
+                <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+        </div>
+    );
+}
+
 // ── Main Dashboard ─────────────────────────────────────────────
 const PEOISDashboard = () => {
 
-    const { data: statsData } = api.project.getStats.useQuery();
-    const { data: userData } = api.user.getStats.useQuery();
-    const { data: projectAllocationData } = api.project.getFinancialOverview.useQuery();
-    const { data: districtData } = api.project.getDistrictData.useQuery();
-    const { data: remainingBalanceData } = api.project.getRemainingBalance.useQuery();
+    // Fiscal year filter shared by the dashboard cards (driven by the header YEAR button).
+    const [dashboardYear, setDashboardYear] = useState("");
+    const yearInput = dashboardYear ? { budgetYear: dashboardYear } : undefined;
 
-    console.log("Stats:", statsData);
-    console.log("User Stats:", userData);
-    console.log("Project Allocation:", projectAllocationData);
-    console.log("District Data:", districtData);
-    console.log("Remaining Balance:", remainingBalanceData);
+    const { data: statsData } = api.project.getStats.useQuery(yearInput);
+    const { data: userData } = api.user.getStats.useQuery();
+    const { data: projectAllocationData } = api.project.getFinancialOverview.useQuery(yearInput);
+    const { data: districtData } = api.project.getDistrictData.useQuery(yearInput);
+    const { data: remainingBalanceData } = api.project.getRemainingBalance.useQuery(yearInput);
+    const { data: budgetYears } = api.project.getBudgetYears.useQuery();
+
     const TotalAllocation = projectAllocationData
         ? Object.values(projectAllocationData.bySource).reduce((s, v) => s + v, 0)
         : 0;
 
     const statCards: StatCard[] = [
-        { label: "BUDGET YEAR", value: "2024", borderColor: "border-blue-600", iconBg: "bg-blue-100", iconColor: "text-blue-600", icon: "📅" },
+        { label: "BUDGET YEAR", value: dashboardYear || "All", borderColor: "border-blue-600", iconBg: "bg-blue-100", iconColor: "text-blue-600", icon: "📅" },
         { label: "COMPLETED PROJECTS", value: statsData?.completed ?? "0", borderColor: "border-green-600", iconBg: "bg-green-100", iconColor: "text-green-600", icon: "✅" },
         { label: "ON-GOING PROJECTS", value: statsData?.ongoing ?? "0", borderColor: "border-blue-500", iconBg: "bg-blue-100", iconColor: "text-blue-500", icon: "▷" },
         { label: "FOR IMPLEMENTATION", value: statsData?.forImplementation ?? "0", borderColor: "border-amber-500", iconBg: "bg-amber-100", iconColor: "text-amber-500", icon: "⚠" },
@@ -418,17 +469,20 @@ const PEOISDashboard = () => {
     return (
         <div className="bg-slate-100 min-h-screen p-4 font-sans text-slate-800">
 
-            {/* Stat Cards */}
-            <div className="grid grid-cols-7 gap-2 mb-3">
-                {statCards.map((c) => (
-                    <div key={c.label} className={`bg-white rounded-lg shadow-sm p-3 flex flex-col gap-1 border-t-[3px] ${c.borderColor}`}>
-                        <div className={`w-6 h-6 rounded-md ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>
-                            {c.icon}
-                        </div>
-                        <p className="text-[9px] font-bold text-slate-500 leading-tight tracking-wide">{c.label}</p>
-                        <p className="text-2xl font-extrabold text-slate-900 leading-none">{c.value}</p>
-                    </div>
-                ))}
+            {/* Users Status Overview Header */}
+            <div className="flex items-start justify-between mb-3">
+                <div>
+                    <p className="text-[15px] font-extrabold text-blue-900 tracking-wide">USERS STATUS OVERVIEW</p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">User activity and engagement metrics</p>
+                </div>
+                <button className="bg-[#1e3a8a] text-white text-[11px] font-bold px-4 py-1.5 rounded-md flex items-center gap-2 hover:bg-blue-900 transition-colors">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    YEAR
+                </button>
             </div>
 
             {/* User Cards */}
@@ -446,20 +500,26 @@ const PEOISDashboard = () => {
                 ))}
             </div>
 
-            {/* Financial Overview Header */}
+            {/* Project Status Overview Header */}
             <div className="flex items-start justify-between mb-3">
                 <div>
-                    <p className="text-[15px] font-extrabold text-blue-900 tracking-wide">FINANCIAL OVERVIEW</p>
-                    <p className="text-[10px] text-slate-500 mt-0.5">Aggregated project funding sources and allocations</p>
+                    <p className="text-[15px] font-extrabold text-blue-900 tracking-wide">PROJECT STATUS OVERVIEW</p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Project Status Information</p>
                 </div>
-                <button className="bg-[#1e3a8a] text-white text-[11px] font-bold px-4 py-1.5 rounded-md flex items-center gap-2 hover:bg-blue-900 transition-colors">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                        <polyline points="7 10 12 15 17 10" />
-                        <line x1="12" y1="15" x2="12" y2="3" />
-                    </svg>
-                    YEAR
-                </button>
+                <YearFilter value={dashboardYear} onChange={setDashboardYear} years={budgetYears ?? []} />
+            </div>
+
+            {/* Stat Cards */}
+            <div className="grid grid-cols-7 gap-2 mb-3">
+                {statCards.map((c) => (
+                    <div key={c.label} className={`bg-white rounded-lg shadow-sm p-3 flex flex-col gap-1 border-t-[3px] ${c.borderColor}`}>
+                        <div className={`w-6 h-6 rounded-md ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>
+                            {c.icon}
+                        </div>
+                        <p className="text-[9px] font-bold text-slate-500 leading-tight tracking-wide">{c.label}</p>
+                        <p className="text-2xl font-extrabold text-slate-900 leading-none">{c.value}</p>
+                    </div>
+                ))}
             </div>
 
             {/* DISTRICT I and DISTRICT II Tracker */}
@@ -471,6 +531,15 @@ const PEOISDashboard = () => {
                         data={toCardData(d.counts)}
                     />
                 ))}
+            </div>
+
+            {/* Financial Overview Header */}
+            <div className="flex items-start justify-between mb-3">
+                <div>
+                    <p className="text-[15px] font-extrabold text-blue-900 tracking-wide">FINANCIAL OVERVIEW</p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Aggregated project funding sources and allocations</p>
+                </div>
+                <YearFilter value={dashboardYear} onChange={setDashboardYear} years={budgetYears ?? []} />
             </div>
 
             {/* Annual Allocation & Source Breakdown */}
