@@ -61,6 +61,7 @@ export const userRouter = createTRPCRouter({
             division: true,
             contactNumber: true,
             sex: true,
+            birthday: true,
             status: true,
             image: true,
             createdAt: true,

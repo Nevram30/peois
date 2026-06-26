@@ -1301,6 +1301,7 @@ export function UserManagementContent() {
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Designation</th>
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Division</th>
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Sex</th>
+                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Birthday</th>
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Status</th>
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Date Added</th>
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Actions</th>
@@ -1309,7 +1310,7 @@ export function UserManagementContent() {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={9} className="px-4 py-12 text-center text-gray-500">
+                  <td colSpan={10} className="px-4 py-12 text-center text-gray-500">
                     <div className="flex flex-col items-center gap-2">
                       <svg className="h-6 w-6 animate-spin text-blue-600" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
@@ -1321,7 +1322,7 @@ export function UserManagementContent() {
                 </tr>
               ) : users.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="px-4 py-12 text-center text-gray-500">No users found.</td>
+                  <td colSpan={10} className="px-4 py-12 text-center text-gray-500">No users found.</td>
                 </tr>
               ) : (
                 users.map((u) => {
@@ -1365,6 +1366,9 @@ export function UserManagementContent() {
                       <td className="px-4 py-3 text-gray-600">{u.designation ?? "—"}</td>
                       <td className="px-4 py-3 text-gray-600">{u.division ?? "—"}</td>
                       <td className="px-4 py-3 text-gray-600">{u.sex ? (u.sex === "MALE" ? "Male" : "Female") : "—"}</td>
+                      <td className="px-4 py-3 text-gray-600">
+                        {u.birthday ? new Date(u.birthday).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }) : "—"}
+                      </td>
                       <td className="px-4 py-3">
                         <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${statusStyle.bg} ${statusStyle.text}`}>
                           <span className={`h-1.5 w-1.5 rounded-full ${statusStyle.dot}`} />
