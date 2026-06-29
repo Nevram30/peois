@@ -24,11 +24,18 @@ export const projectActivityRouter = createTRPCRouter({
     });
   }),
 
-  /** Count of activity entries created in the last 24 hours (for the nav badge). */
-  recentCount: protectedProcedure.query(async ({ ctx }) => {
-    const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    return ctx.db.projectActivity.count({ where: { createdAt: { gte: since } } });
-  }),
+  /**
+   * Count of activity entries created since the given timestamp (for the nav
+   * badge). Defaults to the last 24 hours when no timestamp is provided.
+   */
+  recentCount: protectedProcedure
+    .input(z.object({ since: z.string().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      const since = input?.since
+        ? new Date(input.since)
+        : new Date(Date.now() - 24 * 60 * 60 * 1000);
+      return ctx.db.projectActivity.count({ where: { createdAt: { gte: since } } });
+    }),
 
   create: protectedProcedure
     .input(

@@ -94,14 +94,40 @@ export function NavHeader({ user, userId }: { user: { name?: string | null; emai
   const [notifOpen, setNotifOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
+  const utils = api.useUtils();
+
   const { data: pendingAccessCount } = api.projectAccessRequest.pendingCount.useQuery(undefined, {
     refetchInterval: 30_000,
     refetchOnWindowFocus: true,
   });
-  const { data: recentActivityCount } = api.projectActivity.recentCount.useQuery(undefined, {
-    refetchInterval: 30_000,
-    refetchOnWindowFocus: true,
-  });
+
+  // Activity-log badge: count entries newer than the last time this admin
+  // opened the tab (persisted in localStorage), so it clears on visit.
+  const [activitySince, setActivitySince] = useState<string | null>(null);
+  const isOnActivityLog = pathname.startsWith("/super-admin/project-activity-log");
+
+  useEffect(() => {
+    const stored = localStorage.getItem("activityLogLastSeen");
+    setActivitySince(stored ?? new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
+  }, []);
+
+  useEffect(() => {
+    if (isOnActivityLog) {
+      const now = new Date().toISOString();
+      localStorage.setItem("activityLogLastSeen", now);
+      setActivitySince(now);
+      void utils.projectActivity.recentCount.invalidate();
+    }
+  }, [isOnActivityLog, utils]);
+
+  const { data: recentActivityCount } = api.projectActivity.recentCount.useQuery(
+    { since: activitySince ?? undefined },
+    {
+      enabled: activitySince !== null,
+      refetchInterval: 30_000,
+      refetchOnWindowFocus: true,
+    },
+  );
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
