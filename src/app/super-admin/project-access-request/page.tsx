@@ -39,6 +39,18 @@ const ACTION_PILL: Record<string, string> = {
   DOWNLOAD: "bg-indigo-50 text-indigo-700",
 };
 
+const ROLE_PILL: Record<string, string> = {
+  SUPER_ADMIN: "bg-purple-50 text-purple-700",
+  ADMIN: "bg-blue-50 text-blue-700",
+  USER: "bg-gray-100 text-gray-600",
+};
+
+const ROLE_LABEL: Record<string, string> = {
+  SUPER_ADMIN: "Super Admin",
+  ADMIN: "Admin",
+  USER: "User",
+};
+
 export default function ProjectAccessRequestPage() {
   const searchParams = useSearchParams();
   const userId = searchParams.get("id");
@@ -60,6 +72,14 @@ export default function ProjectAccessRequestPage() {
   const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 25;
+
+  const [noteModal, setNoteModal] = useState<{
+    note: string;
+    fileName: string;
+    projectTitle: string;
+    requesterName: string;
+    role: string;
+  } | null>(null);
 
   const counts = useMemo(() => {
     const c = { total: 0, PENDING: 0, APPROVED: 0, DENIED: 0 };
@@ -196,6 +216,8 @@ export default function ProjectAccessRequestPage() {
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Document</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Action</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Requested By</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Role</th>
+              <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-gray-500">Notes</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Status</th>
               <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">Decision</th>
             </tr>
@@ -203,7 +225,7 @@ export default function ProjectAccessRequestPage() {
           <tbody className="divide-y divide-gray-50">
             {isLoading ? (
               <tr>
-                <td colSpan={7} className="py-16 text-center text-sm text-gray-400">
+                <td colSpan={9} className="py-16 text-center text-sm text-gray-400">
                   <div className="flex flex-col items-center gap-2">
                     <svg className="h-8 w-8 animate-spin text-blue-400" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
@@ -215,7 +237,7 @@ export default function ProjectAccessRequestPage() {
               </tr>
             ) : filtered.length === 0 ? (
               <tr>
-                <td colSpan={7} className="py-16 text-center text-sm text-gray-400">
+                <td colSpan={9} className="py-16 text-center text-sm text-gray-400">
                   No access requests found.
                 </td>
               </tr>
@@ -237,11 +259,6 @@ export default function ProjectAccessRequestPage() {
                     <td className="max-w-xs px-4 py-3">
                       <p className="line-clamp-1 text-gray-700">{r.projectFile.fileName}</p>
                       <p className="text-[10px] uppercase tracking-wider text-gray-400">{r.projectFile.fileType}</p>
-                      {r.note && (
-                        <p className="mt-1 line-clamp-2 text-[11px] italic text-gray-500" title={r.note}>
-                          “{r.note}”
-                        </p>
-                      )}
                     </td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${ACTION_PILL[r.action] ?? "bg-gray-100 text-gray-600"}`}>
@@ -272,6 +289,37 @@ export default function ProjectAccessRequestPage() {
                           </p>
                         </div>
                       </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className={`inline-flex rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${ROLE_PILL[r.requestedBy.role] ?? "bg-gray-100 text-gray-600"}`}>
+                        {ROLE_LABEL[r.requestedBy.role] ?? r.requestedBy.role}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      {r.note ? (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setNoteModal({
+                              note: r.note ?? "",
+                              fileName: r.projectFile.fileName,
+                              projectTitle: r.project.title,
+                              requesterName: r.requestedBy.name ?? r.requestedBy.email ?? "—",
+                              role: ROLE_LABEL[r.requestedBy.role] ?? r.requestedBy.role,
+                            })
+                          }
+                          className="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white p-1.5 text-blue-500 shadow-sm transition hover:bg-blue-50 hover:text-blue-700"
+                          title="View justification"
+                          aria-label="View justification"
+                        >
+                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178Z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                          </svg>
+                        </button>
+                      ) : (
+                        <span className="text-xs text-gray-300">—</span>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${status.bg} ${status.text}`}>
@@ -350,6 +398,63 @@ export default function ProjectAccessRequestPage() {
           </div>
         </div>
       </div>
+
+      {/* Justification / Notes Modal */}
+      {noteModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          onClick={() => setNoteModal(null)}
+        >
+          <div
+            className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-3 border-b border-gray-100 px-6 py-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 4.5H6.75A2.25 2.25 0 0 0 4.5 6.75v10.5a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-4.5M16.862 3.487a1.875 1.875 0 1 1 2.652 2.652L10.582 15.07a4.5 4.5 0 0 1-1.897 1.13l-2.685.806.806-2.685a4.5 4.5 0 0 1 1.13-1.897l9.226-9.226Z" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 className="text-base font-bold text-gray-900">Justification / Business Reason</h2>
+                  <p className="text-xs text-gray-500">{noteModal.requesterName} · {noteModal.role}</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setNoteModal(null)}
+                className="rounded-lg p-1.5 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600"
+                aria-label="Close"
+              >
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="space-y-4 px-6 py-5">
+              <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-gray-500">
+                <p><span className="font-semibold text-gray-700">Project:</span> {noteModal.projectTitle}</p>
+                <p><span className="font-semibold text-gray-700">Document:</span> {noteModal.fileName}</p>
+              </div>
+              <div className="rounded-lg border border-gray-100 bg-gray-50 px-4 py-3 text-sm leading-relaxed text-gray-700">
+                {noteModal.note}
+              </div>
+            </div>
+
+            <div className="flex justify-end border-t border-gray-100 px-6 py-4">
+              <button
+                type="button"
+                onClick={() => setNoteModal(null)}
+                className="rounded-lg bg-[#1e3a4f] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#152a3a]"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
