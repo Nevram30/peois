@@ -8,6 +8,13 @@ import {
   adminProcedure,
 } from "~/server/api/trpc";
 export const userRouter = createTRPCRouter({
+  getMe: protectedProcedure.query(async ({ ctx }) => {
+    return ctx.db.user.findUnique({
+      where: { id: ctx.session.user.id },
+      select: { id: true, name: true, email: true, employeeId: true },
+    });
+  }),
+
   getAll: superAdminProcedure
     .input(
       z

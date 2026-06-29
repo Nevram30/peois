@@ -74,6 +74,11 @@ export type Document = $Result.DefaultSelection<Prisma.$DocumentPayload>
  */
 export type ProjectFile = $Result.DefaultSelection<Prisma.$ProjectFilePayload>
 /**
+ * Model ProjectAccessRequest
+ * 
+ */
+export type ProjectAccessRequest = $Result.DefaultSelection<Prisma.$ProjectAccessRequestPayload>
+/**
  * Model Post
  * 
  */
@@ -247,6 +252,23 @@ export const DocumentStatus: {
 
 export type DocumentStatus = (typeof DocumentStatus)[keyof typeof DocumentStatus]
 
+
+export const AccessRequestAction: {
+  VIEW: 'VIEW',
+  DOWNLOAD: 'DOWNLOAD'
+};
+
+export type AccessRequestAction = (typeof AccessRequestAction)[keyof typeof AccessRequestAction]
+
+
+export const AccessRequestStatus: {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  DENIED: 'DENIED'
+};
+
+export type AccessRequestStatus = (typeof AccessRequestStatus)[keyof typeof AccessRequestStatus]
+
 }
 
 export type UserRole = $Enums.UserRole
@@ -304,6 +326,14 @@ export const TimelineAdjustmentType: typeof $Enums.TimelineAdjustmentType
 export type DocumentStatus = $Enums.DocumentStatus
 
 export const DocumentStatus: typeof $Enums.DocumentStatus
+
+export type AccessRequestAction = $Enums.AccessRequestAction
+
+export const AccessRequestAction: typeof $Enums.AccessRequestAction
+
+export type AccessRequestStatus = $Enums.AccessRequestStatus
+
+export const AccessRequestStatus: typeof $Enums.AccessRequestStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -542,6 +572,16 @@ export class PrismaClient<
     * ```
     */
   get projectFile(): Prisma.ProjectFileDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.projectAccessRequest`: Exposes CRUD operations for the **ProjectAccessRequest** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ProjectAccessRequests
+    * const projectAccessRequests = await prisma.projectAccessRequest.findMany()
+    * ```
+    */
+  get projectAccessRequest(): Prisma.ProjectAccessRequestDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.post`: Exposes CRUD operations for the **Post** model.
@@ -1005,6 +1045,7 @@ export namespace Prisma {
     TaskReplyDocument: 'TaskReplyDocument',
     Document: 'Document',
     ProjectFile: 'ProjectFile',
+    ProjectAccessRequest: 'ProjectAccessRequest',
     Post: 'Post'
   };
 
@@ -1024,7 +1065,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "userSession" | "project" | "projectActivity" | "disbursement" | "variationOrder" | "timelineAdjustment" | "taskNotification" | "taskReply" | "taskReplyDocument" | "document" | "projectFile" | "post"
+      modelProps: "user" | "userSession" | "project" | "projectActivity" | "disbursement" | "variationOrder" | "timelineAdjustment" | "taskNotification" | "taskReply" | "taskReplyDocument" | "document" | "projectFile" | "projectAccessRequest" | "post"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1916,6 +1957,80 @@ export namespace Prisma {
           }
         }
       }
+      ProjectAccessRequest: {
+        payload: Prisma.$ProjectAccessRequestPayload<ExtArgs>
+        fields: Prisma.ProjectAccessRequestFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ProjectAccessRequestFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectAccessRequestPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ProjectAccessRequestFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectAccessRequestPayload>
+          }
+          findFirst: {
+            args: Prisma.ProjectAccessRequestFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectAccessRequestPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ProjectAccessRequestFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectAccessRequestPayload>
+          }
+          findMany: {
+            args: Prisma.ProjectAccessRequestFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectAccessRequestPayload>[]
+          }
+          create: {
+            args: Prisma.ProjectAccessRequestCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectAccessRequestPayload>
+          }
+          createMany: {
+            args: Prisma.ProjectAccessRequestCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ProjectAccessRequestCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectAccessRequestPayload>[]
+          }
+          delete: {
+            args: Prisma.ProjectAccessRequestDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectAccessRequestPayload>
+          }
+          update: {
+            args: Prisma.ProjectAccessRequestUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectAccessRequestPayload>
+          }
+          deleteMany: {
+            args: Prisma.ProjectAccessRequestDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ProjectAccessRequestUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ProjectAccessRequestUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectAccessRequestPayload>[]
+          }
+          upsert: {
+            args: Prisma.ProjectAccessRequestUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectAccessRequestPayload>
+          }
+          aggregate: {
+            args: Prisma.ProjectAccessRequestAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateProjectAccessRequest>
+          }
+          groupBy: {
+            args: Prisma.ProjectAccessRequestGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ProjectAccessRequestGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ProjectAccessRequestCountArgs<ExtArgs>
+            result: $Utils.Optional<ProjectAccessRequestCountAggregateOutputType> | number
+          }
+        }
+      }
       Post: {
         payload: Prisma.$PostPayload<ExtArgs>
         fields: Prisma.PostFieldRefs
@@ -2098,6 +2213,7 @@ export namespace Prisma {
     taskReplyDocument?: TaskReplyDocumentOmit
     document?: DocumentOmit
     projectFile?: ProjectFileOmit
+    projectAccessRequest?: ProjectAccessRequestOmit
     post?: PostOmit
   }
 
@@ -2191,6 +2307,8 @@ export namespace Prisma {
     taskReplies: number
     projectFiles: number
     timelineAdjustments: number
+    accessRequestsMade: number
+    accessRequestsReviewed: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2206,6 +2324,8 @@ export namespace Prisma {
     taskReplies?: boolean | UserCountOutputTypeCountTaskRepliesArgs
     projectFiles?: boolean | UserCountOutputTypeCountProjectFilesArgs
     timelineAdjustments?: boolean | UserCountOutputTypeCountTimelineAdjustmentsArgs
+    accessRequestsMade?: boolean | UserCountOutputTypeCountAccessRequestsMadeArgs
+    accessRequestsReviewed?: boolean | UserCountOutputTypeCountAccessRequestsReviewedArgs
   }
 
   // Custom InputTypes
@@ -2303,6 +2423,20 @@ export namespace Prisma {
     where?: TimelineAdjustmentWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountAccessRequestsMadeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectAccessRequestWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountAccessRequestsReviewedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectAccessRequestWhereInput
+  }
+
 
   /**
    * Count Type ProjectCountOutputType
@@ -2315,6 +2449,7 @@ export namespace Prisma {
     taskNotifications: number
     files: number
     timelineAdjustments: number
+    accessRequests: number
   }
 
   export type ProjectCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2324,6 +2459,7 @@ export namespace Prisma {
     taskNotifications?: boolean | ProjectCountOutputTypeCountTaskNotificationsArgs
     files?: boolean | ProjectCountOutputTypeCountFilesArgs
     timelineAdjustments?: boolean | ProjectCountOutputTypeCountTimelineAdjustmentsArgs
+    accessRequests?: boolean | ProjectCountOutputTypeCountAccessRequestsArgs
   }
 
   // Custom InputTypes
@@ -2377,6 +2513,13 @@ export namespace Prisma {
    */
   export type ProjectCountOutputTypeCountTimelineAdjustmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TimelineAdjustmentWhereInput
+  }
+
+  /**
+   * ProjectCountOutputType without action
+   */
+  export type ProjectCountOutputTypeCountAccessRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectAccessRequestWhereInput
   }
 
 
@@ -2439,6 +2582,37 @@ export namespace Prisma {
    */
   export type TaskReplyCountOutputTypeCountDocumentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TaskReplyDocumentWhereInput
+  }
+
+
+  /**
+   * Count Type ProjectFileCountOutputType
+   */
+
+  export type ProjectFileCountOutputType = {
+    accessRequests: number
+  }
+
+  export type ProjectFileCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    accessRequests?: boolean | ProjectFileCountOutputTypeCountAccessRequestsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ProjectFileCountOutputType without action
+   */
+  export type ProjectFileCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectFileCountOutputType
+     */
+    select?: ProjectFileCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ProjectFileCountOutputType without action
+   */
+  export type ProjectFileCountOutputTypeCountAccessRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectAccessRequestWhereInput
   }
 
 
@@ -2710,6 +2884,8 @@ export namespace Prisma {
     taskReplies?: boolean | User$taskRepliesArgs<ExtArgs>
     projectFiles?: boolean | User$projectFilesArgs<ExtArgs>
     timelineAdjustments?: boolean | User$timelineAdjustmentsArgs<ExtArgs>
+    accessRequestsMade?: boolean | User$accessRequestsMadeArgs<ExtArgs>
+    accessRequestsReviewed?: boolean | User$accessRequestsReviewedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2784,6 +2960,8 @@ export namespace Prisma {
     taskReplies?: boolean | User$taskRepliesArgs<ExtArgs>
     projectFiles?: boolean | User$projectFilesArgs<ExtArgs>
     timelineAdjustments?: boolean | User$timelineAdjustmentsArgs<ExtArgs>
+    accessRequestsMade?: boolean | User$accessRequestsMadeArgs<ExtArgs>
+    accessRequestsReviewed?: boolean | User$accessRequestsReviewedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2804,6 +2982,8 @@ export namespace Prisma {
       taskReplies: Prisma.$TaskReplyPayload<ExtArgs>[]
       projectFiles: Prisma.$ProjectFilePayload<ExtArgs>[]
       timelineAdjustments: Prisma.$TimelineAdjustmentPayload<ExtArgs>[]
+      accessRequestsMade: Prisma.$ProjectAccessRequestPayload<ExtArgs>[]
+      accessRequestsReviewed: Prisma.$ProjectAccessRequestPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3228,6 +3408,8 @@ export namespace Prisma {
     taskReplies<T extends User$taskRepliesArgs<ExtArgs> = {}>(args?: Subset<T, User$taskRepliesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskReplyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     projectFiles<T extends User$projectFilesArgs<ExtArgs> = {}>(args?: Subset<T, User$projectFilesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectFilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     timelineAdjustments<T extends User$timelineAdjustmentsArgs<ExtArgs> = {}>(args?: Subset<T, User$timelineAdjustmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TimelineAdjustmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    accessRequestsMade<T extends User$accessRequestsMadeArgs<ExtArgs> = {}>(args?: Subset<T, User$accessRequestsMadeArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    accessRequestsReviewed<T extends User$accessRequestsReviewedArgs<ExtArgs> = {}>(args?: Subset<T, User$accessRequestsReviewedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3946,6 +4128,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TimelineAdjustmentScalarFieldEnum | TimelineAdjustmentScalarFieldEnum[]
+  }
+
+  /**
+   * User.accessRequestsMade
+   */
+  export type User$accessRequestsMadeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectAccessRequest
+     */
+    select?: ProjectAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectAccessRequest
+     */
+    omit?: ProjectAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectAccessRequestInclude<ExtArgs> | null
+    where?: ProjectAccessRequestWhereInput
+    orderBy?: ProjectAccessRequestOrderByWithRelationInput | ProjectAccessRequestOrderByWithRelationInput[]
+    cursor?: ProjectAccessRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProjectAccessRequestScalarFieldEnum | ProjectAccessRequestScalarFieldEnum[]
+  }
+
+  /**
+   * User.accessRequestsReviewed
+   */
+  export type User$accessRequestsReviewedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectAccessRequest
+     */
+    select?: ProjectAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectAccessRequest
+     */
+    omit?: ProjectAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectAccessRequestInclude<ExtArgs> | null
+    where?: ProjectAccessRequestWhereInput
+    orderBy?: ProjectAccessRequestOrderByWithRelationInput | ProjectAccessRequestOrderByWithRelationInput[]
+    cursor?: ProjectAccessRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProjectAccessRequestScalarFieldEnum | ProjectAccessRequestScalarFieldEnum[]
   }
 
   /**
@@ -5548,6 +5778,7 @@ export namespace Prisma {
     taskNotifications?: boolean | Project$taskNotificationsArgs<ExtArgs>
     files?: boolean | Project$filesArgs<ExtArgs>
     timelineAdjustments?: boolean | Project$timelineAdjustmentsArgs<ExtArgs>
+    accessRequests?: boolean | Project$accessRequestsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["project"]>
 
@@ -5682,6 +5913,7 @@ export namespace Prisma {
     taskNotifications?: boolean | Project$taskNotificationsArgs<ExtArgs>
     files?: boolean | Project$filesArgs<ExtArgs>
     timelineAdjustments?: boolean | Project$timelineAdjustmentsArgs<ExtArgs>
+    accessRequests?: boolean | Project$accessRequestsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProjectIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5701,6 +5933,7 @@ export namespace Prisma {
       taskNotifications: Prisma.$TaskNotificationPayload<ExtArgs>[]
       files: Prisma.$ProjectFilePayload<ExtArgs>[]
       timelineAdjustments: Prisma.$TimelineAdjustmentPayload<ExtArgs>[]
+      accessRequests: Prisma.$ProjectAccessRequestPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6141,6 +6374,7 @@ export namespace Prisma {
     taskNotifications<T extends Project$taskNotificationsArgs<ExtArgs> = {}>(args?: Subset<T, Project$taskNotificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskNotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     files<T extends Project$filesArgs<ExtArgs> = {}>(args?: Subset<T, Project$filesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectFilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     timelineAdjustments<T extends Project$timelineAdjustmentsArgs<ExtArgs> = {}>(args?: Subset<T, Project$timelineAdjustmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TimelineAdjustmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    accessRequests<T extends Project$accessRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Project$accessRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6744,6 +6978,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TimelineAdjustmentScalarFieldEnum | TimelineAdjustmentScalarFieldEnum[]
+  }
+
+  /**
+   * Project.accessRequests
+   */
+  export type Project$accessRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectAccessRequest
+     */
+    select?: ProjectAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectAccessRequest
+     */
+    omit?: ProjectAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectAccessRequestInclude<ExtArgs> | null
+    where?: ProjectAccessRequestWhereInput
+    orderBy?: ProjectAccessRequestOrderByWithRelationInput | ProjectAccessRequestOrderByWithRelationInput[]
+    cursor?: ProjectAccessRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProjectAccessRequestScalarFieldEnum | ProjectAccessRequestScalarFieldEnum[]
   }
 
   /**
@@ -16120,6 +16378,8 @@ export namespace Prisma {
     createdAt?: boolean
     project?: boolean | ProjectDefaultArgs<ExtArgs>
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    accessRequests?: boolean | ProjectFile$accessRequestsArgs<ExtArgs>
+    _count?: boolean | ProjectFileCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["projectFile"]>
 
   export type ProjectFileSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -16163,6 +16423,8 @@ export namespace Prisma {
   export type ProjectFileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    accessRequests?: boolean | ProjectFile$accessRequestsArgs<ExtArgs>
+    _count?: boolean | ProjectFileCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProjectFileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
@@ -16178,6 +16440,7 @@ export namespace Prisma {
     objects: {
       project: Prisma.$ProjectPayload<ExtArgs>
       createdBy: Prisma.$UserPayload<ExtArgs>
+      accessRequests: Prisma.$ProjectAccessRequestPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -16584,6 +16847,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    accessRequests<T extends ProjectFile$accessRequestsArgs<ExtArgs> = {}>(args?: Subset<T, ProjectFile$accessRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -17017,6 +17281,30 @@ export namespace Prisma {
   }
 
   /**
+   * ProjectFile.accessRequests
+   */
+  export type ProjectFile$accessRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectAccessRequest
+     */
+    select?: ProjectAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectAccessRequest
+     */
+    omit?: ProjectAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectAccessRequestInclude<ExtArgs> | null
+    where?: ProjectAccessRequestWhereInput
+    orderBy?: ProjectAccessRequestOrderByWithRelationInput | ProjectAccessRequestOrderByWithRelationInput[]
+    cursor?: ProjectAccessRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProjectAccessRequestScalarFieldEnum | ProjectAccessRequestScalarFieldEnum[]
+  }
+
+  /**
    * ProjectFile without action
    */
   export type ProjectFileDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -17032,6 +17320,1185 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: ProjectFileInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ProjectAccessRequest
+   */
+
+  export type AggregateProjectAccessRequest = {
+    _count: ProjectAccessRequestCountAggregateOutputType | null
+    _min: ProjectAccessRequestMinAggregateOutputType | null
+    _max: ProjectAccessRequestMaxAggregateOutputType | null
+  }
+
+  export type ProjectAccessRequestMinAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    projectFileId: string | null
+    action: $Enums.AccessRequestAction | null
+    status: $Enums.AccessRequestStatus | null
+    note: string | null
+    requestedById: string | null
+    reviewedById: string | null
+    reviewedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ProjectAccessRequestMaxAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    projectFileId: string | null
+    action: $Enums.AccessRequestAction | null
+    status: $Enums.AccessRequestStatus | null
+    note: string | null
+    requestedById: string | null
+    reviewedById: string | null
+    reviewedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ProjectAccessRequestCountAggregateOutputType = {
+    id: number
+    projectId: number
+    projectFileId: number
+    action: number
+    status: number
+    note: number
+    requestedById: number
+    reviewedById: number
+    reviewedAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ProjectAccessRequestMinAggregateInputType = {
+    id?: true
+    projectId?: true
+    projectFileId?: true
+    action?: true
+    status?: true
+    note?: true
+    requestedById?: true
+    reviewedById?: true
+    reviewedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ProjectAccessRequestMaxAggregateInputType = {
+    id?: true
+    projectId?: true
+    projectFileId?: true
+    action?: true
+    status?: true
+    note?: true
+    requestedById?: true
+    reviewedById?: true
+    reviewedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ProjectAccessRequestCountAggregateInputType = {
+    id?: true
+    projectId?: true
+    projectFileId?: true
+    action?: true
+    status?: true
+    note?: true
+    requestedById?: true
+    reviewedById?: true
+    reviewedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ProjectAccessRequestAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProjectAccessRequest to aggregate.
+     */
+    where?: ProjectAccessRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectAccessRequests to fetch.
+     */
+    orderBy?: ProjectAccessRequestOrderByWithRelationInput | ProjectAccessRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ProjectAccessRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectAccessRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectAccessRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ProjectAccessRequests
+    **/
+    _count?: true | ProjectAccessRequestCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ProjectAccessRequestMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ProjectAccessRequestMaxAggregateInputType
+  }
+
+  export type GetProjectAccessRequestAggregateType<T extends ProjectAccessRequestAggregateArgs> = {
+        [P in keyof T & keyof AggregateProjectAccessRequest]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateProjectAccessRequest[P]>
+      : GetScalarType<T[P], AggregateProjectAccessRequest[P]>
+  }
+
+
+
+
+  export type ProjectAccessRequestGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectAccessRequestWhereInput
+    orderBy?: ProjectAccessRequestOrderByWithAggregationInput | ProjectAccessRequestOrderByWithAggregationInput[]
+    by: ProjectAccessRequestScalarFieldEnum[] | ProjectAccessRequestScalarFieldEnum
+    having?: ProjectAccessRequestScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ProjectAccessRequestCountAggregateInputType | true
+    _min?: ProjectAccessRequestMinAggregateInputType
+    _max?: ProjectAccessRequestMaxAggregateInputType
+  }
+
+  export type ProjectAccessRequestGroupByOutputType = {
+    id: string
+    projectId: string
+    projectFileId: string
+    action: $Enums.AccessRequestAction
+    status: $Enums.AccessRequestStatus
+    note: string | null
+    requestedById: string
+    reviewedById: string | null
+    reviewedAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: ProjectAccessRequestCountAggregateOutputType | null
+    _min: ProjectAccessRequestMinAggregateOutputType | null
+    _max: ProjectAccessRequestMaxAggregateOutputType | null
+  }
+
+  type GetProjectAccessRequestGroupByPayload<T extends ProjectAccessRequestGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ProjectAccessRequestGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ProjectAccessRequestGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ProjectAccessRequestGroupByOutputType[P]>
+            : GetScalarType<T[P], ProjectAccessRequestGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ProjectAccessRequestSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    projectFileId?: boolean
+    action?: boolean
+    status?: boolean
+    note?: boolean
+    requestedById?: boolean
+    reviewedById?: boolean
+    reviewedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    projectFile?: boolean | ProjectFileDefaultArgs<ExtArgs>
+    requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+    reviewedBy?: boolean | ProjectAccessRequest$reviewedByArgs<ExtArgs>
+  }, ExtArgs["result"]["projectAccessRequest"]>
+
+  export type ProjectAccessRequestSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    projectFileId?: boolean
+    action?: boolean
+    status?: boolean
+    note?: boolean
+    requestedById?: boolean
+    reviewedById?: boolean
+    reviewedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    projectFile?: boolean | ProjectFileDefaultArgs<ExtArgs>
+    requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+    reviewedBy?: boolean | ProjectAccessRequest$reviewedByArgs<ExtArgs>
+  }, ExtArgs["result"]["projectAccessRequest"]>
+
+  export type ProjectAccessRequestSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    projectFileId?: boolean
+    action?: boolean
+    status?: boolean
+    note?: boolean
+    requestedById?: boolean
+    reviewedById?: boolean
+    reviewedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    projectFile?: boolean | ProjectFileDefaultArgs<ExtArgs>
+    requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+    reviewedBy?: boolean | ProjectAccessRequest$reviewedByArgs<ExtArgs>
+  }, ExtArgs["result"]["projectAccessRequest"]>
+
+  export type ProjectAccessRequestSelectScalar = {
+    id?: boolean
+    projectId?: boolean
+    projectFileId?: boolean
+    action?: boolean
+    status?: boolean
+    note?: boolean
+    requestedById?: boolean
+    reviewedById?: boolean
+    reviewedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ProjectAccessRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "projectFileId" | "action" | "status" | "note" | "requestedById" | "reviewedById" | "reviewedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["projectAccessRequest"]>
+  export type ProjectAccessRequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    projectFile?: boolean | ProjectFileDefaultArgs<ExtArgs>
+    requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+    reviewedBy?: boolean | ProjectAccessRequest$reviewedByArgs<ExtArgs>
+  }
+  export type ProjectAccessRequestIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    projectFile?: boolean | ProjectFileDefaultArgs<ExtArgs>
+    requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+    reviewedBy?: boolean | ProjectAccessRequest$reviewedByArgs<ExtArgs>
+  }
+  export type ProjectAccessRequestIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    projectFile?: boolean | ProjectFileDefaultArgs<ExtArgs>
+    requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+    reviewedBy?: boolean | ProjectAccessRequest$reviewedByArgs<ExtArgs>
+  }
+
+  export type $ProjectAccessRequestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ProjectAccessRequest"
+    objects: {
+      project: Prisma.$ProjectPayload<ExtArgs>
+      projectFile: Prisma.$ProjectFilePayload<ExtArgs>
+      requestedBy: Prisma.$UserPayload<ExtArgs>
+      reviewedBy: Prisma.$UserPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      projectId: string
+      projectFileId: string
+      action: $Enums.AccessRequestAction
+      status: $Enums.AccessRequestStatus
+      note: string | null
+      requestedById: string
+      reviewedById: string | null
+      reviewedAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["projectAccessRequest"]>
+    composites: {}
+  }
+
+  type ProjectAccessRequestGetPayload<S extends boolean | null | undefined | ProjectAccessRequestDefaultArgs> = $Result.GetResult<Prisma.$ProjectAccessRequestPayload, S>
+
+  type ProjectAccessRequestCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ProjectAccessRequestFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ProjectAccessRequestCountAggregateInputType | true
+    }
+
+  export interface ProjectAccessRequestDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ProjectAccessRequest'], meta: { name: 'ProjectAccessRequest' } }
+    /**
+     * Find zero or one ProjectAccessRequest that matches the filter.
+     * @param {ProjectAccessRequestFindUniqueArgs} args - Arguments to find a ProjectAccessRequest
+     * @example
+     * // Get one ProjectAccessRequest
+     * const projectAccessRequest = await prisma.projectAccessRequest.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ProjectAccessRequestFindUniqueArgs>(args: SelectSubset<T, ProjectAccessRequestFindUniqueArgs<ExtArgs>>): Prisma__ProjectAccessRequestClient<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ProjectAccessRequest that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ProjectAccessRequestFindUniqueOrThrowArgs} args - Arguments to find a ProjectAccessRequest
+     * @example
+     * // Get one ProjectAccessRequest
+     * const projectAccessRequest = await prisma.projectAccessRequest.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ProjectAccessRequestFindUniqueOrThrowArgs>(args: SelectSubset<T, ProjectAccessRequestFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ProjectAccessRequestClient<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProjectAccessRequest that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectAccessRequestFindFirstArgs} args - Arguments to find a ProjectAccessRequest
+     * @example
+     * // Get one ProjectAccessRequest
+     * const projectAccessRequest = await prisma.projectAccessRequest.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ProjectAccessRequestFindFirstArgs>(args?: SelectSubset<T, ProjectAccessRequestFindFirstArgs<ExtArgs>>): Prisma__ProjectAccessRequestClient<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProjectAccessRequest that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectAccessRequestFindFirstOrThrowArgs} args - Arguments to find a ProjectAccessRequest
+     * @example
+     * // Get one ProjectAccessRequest
+     * const projectAccessRequest = await prisma.projectAccessRequest.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ProjectAccessRequestFindFirstOrThrowArgs>(args?: SelectSubset<T, ProjectAccessRequestFindFirstOrThrowArgs<ExtArgs>>): Prisma__ProjectAccessRequestClient<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ProjectAccessRequests that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectAccessRequestFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ProjectAccessRequests
+     * const projectAccessRequests = await prisma.projectAccessRequest.findMany()
+     * 
+     * // Get first 10 ProjectAccessRequests
+     * const projectAccessRequests = await prisma.projectAccessRequest.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const projectAccessRequestWithIdOnly = await prisma.projectAccessRequest.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ProjectAccessRequestFindManyArgs>(args?: SelectSubset<T, ProjectAccessRequestFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ProjectAccessRequest.
+     * @param {ProjectAccessRequestCreateArgs} args - Arguments to create a ProjectAccessRequest.
+     * @example
+     * // Create one ProjectAccessRequest
+     * const ProjectAccessRequest = await prisma.projectAccessRequest.create({
+     *   data: {
+     *     // ... data to create a ProjectAccessRequest
+     *   }
+     * })
+     * 
+     */
+    create<T extends ProjectAccessRequestCreateArgs>(args: SelectSubset<T, ProjectAccessRequestCreateArgs<ExtArgs>>): Prisma__ProjectAccessRequestClient<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ProjectAccessRequests.
+     * @param {ProjectAccessRequestCreateManyArgs} args - Arguments to create many ProjectAccessRequests.
+     * @example
+     * // Create many ProjectAccessRequests
+     * const projectAccessRequest = await prisma.projectAccessRequest.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ProjectAccessRequestCreateManyArgs>(args?: SelectSubset<T, ProjectAccessRequestCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ProjectAccessRequests and returns the data saved in the database.
+     * @param {ProjectAccessRequestCreateManyAndReturnArgs} args - Arguments to create many ProjectAccessRequests.
+     * @example
+     * // Create many ProjectAccessRequests
+     * const projectAccessRequest = await prisma.projectAccessRequest.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ProjectAccessRequests and only return the `id`
+     * const projectAccessRequestWithIdOnly = await prisma.projectAccessRequest.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ProjectAccessRequestCreateManyAndReturnArgs>(args?: SelectSubset<T, ProjectAccessRequestCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ProjectAccessRequest.
+     * @param {ProjectAccessRequestDeleteArgs} args - Arguments to delete one ProjectAccessRequest.
+     * @example
+     * // Delete one ProjectAccessRequest
+     * const ProjectAccessRequest = await prisma.projectAccessRequest.delete({
+     *   where: {
+     *     // ... filter to delete one ProjectAccessRequest
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ProjectAccessRequestDeleteArgs>(args: SelectSubset<T, ProjectAccessRequestDeleteArgs<ExtArgs>>): Prisma__ProjectAccessRequestClient<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ProjectAccessRequest.
+     * @param {ProjectAccessRequestUpdateArgs} args - Arguments to update one ProjectAccessRequest.
+     * @example
+     * // Update one ProjectAccessRequest
+     * const projectAccessRequest = await prisma.projectAccessRequest.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ProjectAccessRequestUpdateArgs>(args: SelectSubset<T, ProjectAccessRequestUpdateArgs<ExtArgs>>): Prisma__ProjectAccessRequestClient<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ProjectAccessRequests.
+     * @param {ProjectAccessRequestDeleteManyArgs} args - Arguments to filter ProjectAccessRequests to delete.
+     * @example
+     * // Delete a few ProjectAccessRequests
+     * const { count } = await prisma.projectAccessRequest.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ProjectAccessRequestDeleteManyArgs>(args?: SelectSubset<T, ProjectAccessRequestDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProjectAccessRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectAccessRequestUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ProjectAccessRequests
+     * const projectAccessRequest = await prisma.projectAccessRequest.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ProjectAccessRequestUpdateManyArgs>(args: SelectSubset<T, ProjectAccessRequestUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProjectAccessRequests and returns the data updated in the database.
+     * @param {ProjectAccessRequestUpdateManyAndReturnArgs} args - Arguments to update many ProjectAccessRequests.
+     * @example
+     * // Update many ProjectAccessRequests
+     * const projectAccessRequest = await prisma.projectAccessRequest.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ProjectAccessRequests and only return the `id`
+     * const projectAccessRequestWithIdOnly = await prisma.projectAccessRequest.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ProjectAccessRequestUpdateManyAndReturnArgs>(args: SelectSubset<T, ProjectAccessRequestUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ProjectAccessRequest.
+     * @param {ProjectAccessRequestUpsertArgs} args - Arguments to update or create a ProjectAccessRequest.
+     * @example
+     * // Update or create a ProjectAccessRequest
+     * const projectAccessRequest = await prisma.projectAccessRequest.upsert({
+     *   create: {
+     *     // ... data to create a ProjectAccessRequest
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ProjectAccessRequest we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ProjectAccessRequestUpsertArgs>(args: SelectSubset<T, ProjectAccessRequestUpsertArgs<ExtArgs>>): Prisma__ProjectAccessRequestClient<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ProjectAccessRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectAccessRequestCountArgs} args - Arguments to filter ProjectAccessRequests to count.
+     * @example
+     * // Count the number of ProjectAccessRequests
+     * const count = await prisma.projectAccessRequest.count({
+     *   where: {
+     *     // ... the filter for the ProjectAccessRequests we want to count
+     *   }
+     * })
+    **/
+    count<T extends ProjectAccessRequestCountArgs>(
+      args?: Subset<T, ProjectAccessRequestCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ProjectAccessRequestCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ProjectAccessRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectAccessRequestAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ProjectAccessRequestAggregateArgs>(args: Subset<T, ProjectAccessRequestAggregateArgs>): Prisma.PrismaPromise<GetProjectAccessRequestAggregateType<T>>
+
+    /**
+     * Group by ProjectAccessRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectAccessRequestGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ProjectAccessRequestGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ProjectAccessRequestGroupByArgs['orderBy'] }
+        : { orderBy?: ProjectAccessRequestGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ProjectAccessRequestGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetProjectAccessRequestGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ProjectAccessRequest model
+   */
+  readonly fields: ProjectAccessRequestFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ProjectAccessRequest.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ProjectAccessRequestClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    projectFile<T extends ProjectFileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectFileDefaultArgs<ExtArgs>>): Prisma__ProjectFileClient<$Result.GetResult<Prisma.$ProjectFilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    requestedBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    reviewedBy<T extends ProjectAccessRequest$reviewedByArgs<ExtArgs> = {}>(args?: Subset<T, ProjectAccessRequest$reviewedByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ProjectAccessRequest model
+   */
+  interface ProjectAccessRequestFieldRefs {
+    readonly id: FieldRef<"ProjectAccessRequest", 'String'>
+    readonly projectId: FieldRef<"ProjectAccessRequest", 'String'>
+    readonly projectFileId: FieldRef<"ProjectAccessRequest", 'String'>
+    readonly action: FieldRef<"ProjectAccessRequest", 'AccessRequestAction'>
+    readonly status: FieldRef<"ProjectAccessRequest", 'AccessRequestStatus'>
+    readonly note: FieldRef<"ProjectAccessRequest", 'String'>
+    readonly requestedById: FieldRef<"ProjectAccessRequest", 'String'>
+    readonly reviewedById: FieldRef<"ProjectAccessRequest", 'String'>
+    readonly reviewedAt: FieldRef<"ProjectAccessRequest", 'DateTime'>
+    readonly createdAt: FieldRef<"ProjectAccessRequest", 'DateTime'>
+    readonly updatedAt: FieldRef<"ProjectAccessRequest", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ProjectAccessRequest findUnique
+   */
+  export type ProjectAccessRequestFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectAccessRequest
+     */
+    select?: ProjectAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectAccessRequest
+     */
+    omit?: ProjectAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectAccessRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectAccessRequest to fetch.
+     */
+    where: ProjectAccessRequestWhereUniqueInput
+  }
+
+  /**
+   * ProjectAccessRequest findUniqueOrThrow
+   */
+  export type ProjectAccessRequestFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectAccessRequest
+     */
+    select?: ProjectAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectAccessRequest
+     */
+    omit?: ProjectAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectAccessRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectAccessRequest to fetch.
+     */
+    where: ProjectAccessRequestWhereUniqueInput
+  }
+
+  /**
+   * ProjectAccessRequest findFirst
+   */
+  export type ProjectAccessRequestFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectAccessRequest
+     */
+    select?: ProjectAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectAccessRequest
+     */
+    omit?: ProjectAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectAccessRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectAccessRequest to fetch.
+     */
+    where?: ProjectAccessRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectAccessRequests to fetch.
+     */
+    orderBy?: ProjectAccessRequestOrderByWithRelationInput | ProjectAccessRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProjectAccessRequests.
+     */
+    cursor?: ProjectAccessRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectAccessRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectAccessRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProjectAccessRequests.
+     */
+    distinct?: ProjectAccessRequestScalarFieldEnum | ProjectAccessRequestScalarFieldEnum[]
+  }
+
+  /**
+   * ProjectAccessRequest findFirstOrThrow
+   */
+  export type ProjectAccessRequestFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectAccessRequest
+     */
+    select?: ProjectAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectAccessRequest
+     */
+    omit?: ProjectAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectAccessRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectAccessRequest to fetch.
+     */
+    where?: ProjectAccessRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectAccessRequests to fetch.
+     */
+    orderBy?: ProjectAccessRequestOrderByWithRelationInput | ProjectAccessRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProjectAccessRequests.
+     */
+    cursor?: ProjectAccessRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectAccessRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectAccessRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProjectAccessRequests.
+     */
+    distinct?: ProjectAccessRequestScalarFieldEnum | ProjectAccessRequestScalarFieldEnum[]
+  }
+
+  /**
+   * ProjectAccessRequest findMany
+   */
+  export type ProjectAccessRequestFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectAccessRequest
+     */
+    select?: ProjectAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectAccessRequest
+     */
+    omit?: ProjectAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectAccessRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectAccessRequests to fetch.
+     */
+    where?: ProjectAccessRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectAccessRequests to fetch.
+     */
+    orderBy?: ProjectAccessRequestOrderByWithRelationInput | ProjectAccessRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ProjectAccessRequests.
+     */
+    cursor?: ProjectAccessRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectAccessRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectAccessRequests.
+     */
+    skip?: number
+    distinct?: ProjectAccessRequestScalarFieldEnum | ProjectAccessRequestScalarFieldEnum[]
+  }
+
+  /**
+   * ProjectAccessRequest create
+   */
+  export type ProjectAccessRequestCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectAccessRequest
+     */
+    select?: ProjectAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectAccessRequest
+     */
+    omit?: ProjectAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectAccessRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ProjectAccessRequest.
+     */
+    data: XOR<ProjectAccessRequestCreateInput, ProjectAccessRequestUncheckedCreateInput>
+  }
+
+  /**
+   * ProjectAccessRequest createMany
+   */
+  export type ProjectAccessRequestCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ProjectAccessRequests.
+     */
+    data: ProjectAccessRequestCreateManyInput | ProjectAccessRequestCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ProjectAccessRequest createManyAndReturn
+   */
+  export type ProjectAccessRequestCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectAccessRequest
+     */
+    select?: ProjectAccessRequestSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectAccessRequest
+     */
+    omit?: ProjectAccessRequestOmit<ExtArgs> | null
+    /**
+     * The data used to create many ProjectAccessRequests.
+     */
+    data: ProjectAccessRequestCreateManyInput | ProjectAccessRequestCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectAccessRequestIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProjectAccessRequest update
+   */
+  export type ProjectAccessRequestUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectAccessRequest
+     */
+    select?: ProjectAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectAccessRequest
+     */
+    omit?: ProjectAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectAccessRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ProjectAccessRequest.
+     */
+    data: XOR<ProjectAccessRequestUpdateInput, ProjectAccessRequestUncheckedUpdateInput>
+    /**
+     * Choose, which ProjectAccessRequest to update.
+     */
+    where: ProjectAccessRequestWhereUniqueInput
+  }
+
+  /**
+   * ProjectAccessRequest updateMany
+   */
+  export type ProjectAccessRequestUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ProjectAccessRequests.
+     */
+    data: XOR<ProjectAccessRequestUpdateManyMutationInput, ProjectAccessRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which ProjectAccessRequests to update
+     */
+    where?: ProjectAccessRequestWhereInput
+    /**
+     * Limit how many ProjectAccessRequests to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProjectAccessRequest updateManyAndReturn
+   */
+  export type ProjectAccessRequestUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectAccessRequest
+     */
+    select?: ProjectAccessRequestSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectAccessRequest
+     */
+    omit?: ProjectAccessRequestOmit<ExtArgs> | null
+    /**
+     * The data used to update ProjectAccessRequests.
+     */
+    data: XOR<ProjectAccessRequestUpdateManyMutationInput, ProjectAccessRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which ProjectAccessRequests to update
+     */
+    where?: ProjectAccessRequestWhereInput
+    /**
+     * Limit how many ProjectAccessRequests to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectAccessRequestIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProjectAccessRequest upsert
+   */
+  export type ProjectAccessRequestUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectAccessRequest
+     */
+    select?: ProjectAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectAccessRequest
+     */
+    omit?: ProjectAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectAccessRequestInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ProjectAccessRequest to update in case it exists.
+     */
+    where: ProjectAccessRequestWhereUniqueInput
+    /**
+     * In case the ProjectAccessRequest found by the `where` argument doesn't exist, create a new ProjectAccessRequest with this data.
+     */
+    create: XOR<ProjectAccessRequestCreateInput, ProjectAccessRequestUncheckedCreateInput>
+    /**
+     * In case the ProjectAccessRequest was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ProjectAccessRequestUpdateInput, ProjectAccessRequestUncheckedUpdateInput>
+  }
+
+  /**
+   * ProjectAccessRequest delete
+   */
+  export type ProjectAccessRequestDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectAccessRequest
+     */
+    select?: ProjectAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectAccessRequest
+     */
+    omit?: ProjectAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectAccessRequestInclude<ExtArgs> | null
+    /**
+     * Filter which ProjectAccessRequest to delete.
+     */
+    where: ProjectAccessRequestWhereUniqueInput
+  }
+
+  /**
+   * ProjectAccessRequest deleteMany
+   */
+  export type ProjectAccessRequestDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProjectAccessRequests to delete
+     */
+    where?: ProjectAccessRequestWhereInput
+    /**
+     * Limit how many ProjectAccessRequests to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProjectAccessRequest.reviewedBy
+   */
+  export type ProjectAccessRequest$reviewedByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * ProjectAccessRequest without action
+   */
+  export type ProjectAccessRequestDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectAccessRequest
+     */
+    select?: ProjectAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectAccessRequest
+     */
+    omit?: ProjectAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectAccessRequestInclude<ExtArgs> | null
   }
 
 
@@ -18350,6 +19817,23 @@ export namespace Prisma {
   export type ProjectFileScalarFieldEnum = (typeof ProjectFileScalarFieldEnum)[keyof typeof ProjectFileScalarFieldEnum]
 
 
+  export const ProjectAccessRequestScalarFieldEnum: {
+    id: 'id',
+    projectId: 'projectId',
+    projectFileId: 'projectFileId',
+    action: 'action',
+    status: 'status',
+    note: 'note',
+    requestedById: 'requestedById',
+    reviewedById: 'reviewedById',
+    reviewedAt: 'reviewedAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ProjectAccessRequestScalarFieldEnum = (typeof ProjectAccessRequestScalarFieldEnum)[keyof typeof ProjectAccessRequestScalarFieldEnum]
+
+
   export const PostScalarFieldEnum: {
     id: 'id',
     name: 'name',
@@ -18647,6 +20131,34 @@ export namespace Prisma {
    */
   export type ListEnumProjectFileTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProjectFileType[]'>
     
+
+
+  /**
+   * Reference to a field of type 'AccessRequestAction'
+   */
+  export type EnumAccessRequestActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccessRequestAction'>
+    
+
+
+  /**
+   * Reference to a field of type 'AccessRequestAction[]'
+   */
+  export type ListEnumAccessRequestActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccessRequestAction[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'AccessRequestStatus'
+   */
+  export type EnumAccessRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccessRequestStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'AccessRequestStatus[]'
+   */
+  export type ListEnumAccessRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccessRequestStatus[]'>
+    
   /**
    * Deep Input Types
    */
@@ -18684,6 +20196,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyListRelationFilter
     projectFiles?: ProjectFileListRelationFilter
     timelineAdjustments?: TimelineAdjustmentListRelationFilter
+    accessRequestsMade?: ProjectAccessRequestListRelationFilter
+    accessRequestsReviewed?: ProjectAccessRequestListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -18715,6 +20229,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyOrderByRelationAggregateInput
     projectFiles?: ProjectFileOrderByRelationAggregateInput
     timelineAdjustments?: TimelineAdjustmentOrderByRelationAggregateInput
+    accessRequestsMade?: ProjectAccessRequestOrderByRelationAggregateInput
+    accessRequestsReviewed?: ProjectAccessRequestOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -18749,6 +20265,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyListRelationFilter
     projectFiles?: ProjectFileListRelationFilter
     timelineAdjustments?: TimelineAdjustmentListRelationFilter
+    accessRequestsMade?: ProjectAccessRequestListRelationFilter
+    accessRequestsReviewed?: ProjectAccessRequestListRelationFilter
   }, "id" | "email" | "employeeId">
 
   export type UserOrderByWithAggregationInput = {
@@ -18908,6 +20426,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationListRelationFilter
     files?: ProjectFileListRelationFilter
     timelineAdjustments?: TimelineAdjustmentListRelationFilter
+    accessRequests?: ProjectAccessRequestListRelationFilter
   }
 
   export type ProjectOrderByWithRelationInput = {
@@ -18955,6 +20474,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationOrderByRelationAggregateInput
     files?: ProjectFileOrderByRelationAggregateInput
     timelineAdjustments?: TimelineAdjustmentOrderByRelationAggregateInput
+    accessRequests?: ProjectAccessRequestOrderByRelationAggregateInput
   }
 
   export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -19005,6 +20525,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationListRelationFilter
     files?: ProjectFileListRelationFilter
     timelineAdjustments?: TimelineAdjustmentListRelationFilter
+    accessRequests?: ProjectAccessRequestListRelationFilter
   }, "id" | "projectCode">
 
   export type ProjectOrderByWithAggregationInput = {
@@ -19731,6 +21252,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"ProjectFile"> | Date | string
     project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+    accessRequests?: ProjectAccessRequestListRelationFilter
   }
 
   export type ProjectFileOrderByWithRelationInput = {
@@ -19744,6 +21266,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     project?: ProjectOrderByWithRelationInput
     createdBy?: UserOrderByWithRelationInput
+    accessRequests?: ProjectAccessRequestOrderByRelationAggregateInput
   }
 
   export type ProjectFileWhereUniqueInput = Prisma.AtLeast<{
@@ -19760,6 +21283,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"ProjectFile"> | Date | string
     project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+    accessRequests?: ProjectAccessRequestListRelationFilter
   }, "id">
 
   export type ProjectFileOrderByWithAggregationInput = {
@@ -19790,6 +21314,100 @@ export namespace Prisma {
     fileSize?: IntNullableWithAggregatesFilter<"ProjectFile"> | number | null
     createdById?: StringWithAggregatesFilter<"ProjectFile"> | string
     createdAt?: DateTimeWithAggregatesFilter<"ProjectFile"> | Date | string
+  }
+
+  export type ProjectAccessRequestWhereInput = {
+    AND?: ProjectAccessRequestWhereInput | ProjectAccessRequestWhereInput[]
+    OR?: ProjectAccessRequestWhereInput[]
+    NOT?: ProjectAccessRequestWhereInput | ProjectAccessRequestWhereInput[]
+    id?: StringFilter<"ProjectAccessRequest"> | string
+    projectId?: StringFilter<"ProjectAccessRequest"> | string
+    projectFileId?: StringFilter<"ProjectAccessRequest"> | string
+    action?: EnumAccessRequestActionFilter<"ProjectAccessRequest"> | $Enums.AccessRequestAction
+    status?: EnumAccessRequestStatusFilter<"ProjectAccessRequest"> | $Enums.AccessRequestStatus
+    note?: StringNullableFilter<"ProjectAccessRequest"> | string | null
+    requestedById?: StringFilter<"ProjectAccessRequest"> | string
+    reviewedById?: StringNullableFilter<"ProjectAccessRequest"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"ProjectAccessRequest"> | Date | string | null
+    createdAt?: DateTimeFilter<"ProjectAccessRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"ProjectAccessRequest"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    projectFile?: XOR<ProjectFileScalarRelationFilter, ProjectFileWhereInput>
+    requestedBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+    reviewedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }
+
+  export type ProjectAccessRequestOrderByWithRelationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    projectFileId?: SortOrder
+    action?: SortOrder
+    status?: SortOrder
+    note?: SortOrderInput | SortOrder
+    requestedById?: SortOrder
+    reviewedById?: SortOrderInput | SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    project?: ProjectOrderByWithRelationInput
+    projectFile?: ProjectFileOrderByWithRelationInput
+    requestedBy?: UserOrderByWithRelationInput
+    reviewedBy?: UserOrderByWithRelationInput
+  }
+
+  export type ProjectAccessRequestWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ProjectAccessRequestWhereInput | ProjectAccessRequestWhereInput[]
+    OR?: ProjectAccessRequestWhereInput[]
+    NOT?: ProjectAccessRequestWhereInput | ProjectAccessRequestWhereInput[]
+    projectId?: StringFilter<"ProjectAccessRequest"> | string
+    projectFileId?: StringFilter<"ProjectAccessRequest"> | string
+    action?: EnumAccessRequestActionFilter<"ProjectAccessRequest"> | $Enums.AccessRequestAction
+    status?: EnumAccessRequestStatusFilter<"ProjectAccessRequest"> | $Enums.AccessRequestStatus
+    note?: StringNullableFilter<"ProjectAccessRequest"> | string | null
+    requestedById?: StringFilter<"ProjectAccessRequest"> | string
+    reviewedById?: StringNullableFilter<"ProjectAccessRequest"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"ProjectAccessRequest"> | Date | string | null
+    createdAt?: DateTimeFilter<"ProjectAccessRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"ProjectAccessRequest"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    projectFile?: XOR<ProjectFileScalarRelationFilter, ProjectFileWhereInput>
+    requestedBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+    reviewedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }, "id">
+
+  export type ProjectAccessRequestOrderByWithAggregationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    projectFileId?: SortOrder
+    action?: SortOrder
+    status?: SortOrder
+    note?: SortOrderInput | SortOrder
+    requestedById?: SortOrder
+    reviewedById?: SortOrderInput | SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ProjectAccessRequestCountOrderByAggregateInput
+    _max?: ProjectAccessRequestMaxOrderByAggregateInput
+    _min?: ProjectAccessRequestMinOrderByAggregateInput
+  }
+
+  export type ProjectAccessRequestScalarWhereWithAggregatesInput = {
+    AND?: ProjectAccessRequestScalarWhereWithAggregatesInput | ProjectAccessRequestScalarWhereWithAggregatesInput[]
+    OR?: ProjectAccessRequestScalarWhereWithAggregatesInput[]
+    NOT?: ProjectAccessRequestScalarWhereWithAggregatesInput | ProjectAccessRequestScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ProjectAccessRequest"> | string
+    projectId?: StringWithAggregatesFilter<"ProjectAccessRequest"> | string
+    projectFileId?: StringWithAggregatesFilter<"ProjectAccessRequest"> | string
+    action?: EnumAccessRequestActionWithAggregatesFilter<"ProjectAccessRequest"> | $Enums.AccessRequestAction
+    status?: EnumAccessRequestStatusWithAggregatesFilter<"ProjectAccessRequest"> | $Enums.AccessRequestStatus
+    note?: StringNullableWithAggregatesFilter<"ProjectAccessRequest"> | string | null
+    requestedById?: StringWithAggregatesFilter<"ProjectAccessRequest"> | string
+    reviewedById?: StringNullableWithAggregatesFilter<"ProjectAccessRequest"> | string | null
+    reviewedAt?: DateTimeNullableWithAggregatesFilter<"ProjectAccessRequest"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"ProjectAccessRequest"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ProjectAccessRequest"> | Date | string
   }
 
   export type PostWhereInput = {
@@ -19878,6 +21496,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -19909,6 +21529,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUpdateInput = {
@@ -19940,6 +21562,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -19971,6 +21595,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -20143,6 +21769,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
     files?: ProjectFileCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
+    accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateInput = {
@@ -20189,6 +21816,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
+    accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUpdateInput = {
@@ -20235,6 +21863,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
+    accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateInput = {
@@ -20281,6 +21910,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
+    accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateManyInput = {
@@ -21055,6 +22685,7 @@ export namespace Prisma {
     createdAt?: Date | string
     project: ProjectCreateNestedOneWithoutFilesInput
     createdBy: UserCreateNestedOneWithoutProjectFilesInput
+    accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectFileInput
   }
 
   export type ProjectFileUncheckedCreateInput = {
@@ -21066,6 +22697,7 @@ export namespace Prisma {
     fileSize?: number | null
     createdById: string
     createdAt?: Date | string
+    accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectFileInput
   }
 
   export type ProjectFileUpdateInput = {
@@ -21077,6 +22709,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutFilesNestedInput
     createdBy?: UserUpdateOneRequiredWithoutProjectFilesNestedInput
+    accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectFileNestedInput
   }
 
   export type ProjectFileUncheckedUpdateInput = {
@@ -21088,6 +22721,7 @@ export namespace Prisma {
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectFileNestedInput
   }
 
   export type ProjectFileCreateManyInput = {
@@ -21119,6 +22753,100 @@ export namespace Prisma {
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectAccessRequestCreateInput = {
+    id?: string
+    action: $Enums.AccessRequestAction
+    status?: $Enums.AccessRequestStatus
+    note?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutAccessRequestsInput
+    projectFile: ProjectFileCreateNestedOneWithoutAccessRequestsInput
+    requestedBy: UserCreateNestedOneWithoutAccessRequestsMadeInput
+    reviewedBy?: UserCreateNestedOneWithoutAccessRequestsReviewedInput
+  }
+
+  export type ProjectAccessRequestUncheckedCreateInput = {
+    id?: string
+    projectId: string
+    projectFileId: string
+    action: $Enums.AccessRequestAction
+    status?: $Enums.AccessRequestStatus
+    note?: string | null
+    requestedById: string
+    reviewedById?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectAccessRequestUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumAccessRequestActionFieldUpdateOperationsInput | $Enums.AccessRequestAction
+    status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutAccessRequestsNestedInput
+    projectFile?: ProjectFileUpdateOneRequiredWithoutAccessRequestsNestedInput
+    requestedBy?: UserUpdateOneRequiredWithoutAccessRequestsMadeNestedInput
+    reviewedBy?: UserUpdateOneWithoutAccessRequestsReviewedNestedInput
+  }
+
+  export type ProjectAccessRequestUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    projectFileId?: StringFieldUpdateOperationsInput | string
+    action?: EnumAccessRequestActionFieldUpdateOperationsInput | $Enums.AccessRequestAction
+    status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedById?: StringFieldUpdateOperationsInput | string
+    reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectAccessRequestCreateManyInput = {
+    id?: string
+    projectId: string
+    projectFileId: string
+    action: $Enums.AccessRequestAction
+    status?: $Enums.AccessRequestStatus
+    note?: string | null
+    requestedById: string
+    reviewedById?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectAccessRequestUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumAccessRequestActionFieldUpdateOperationsInput | $Enums.AccessRequestAction
+    status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectAccessRequestUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    projectFileId?: StringFieldUpdateOperationsInput | string
+    action?: EnumAccessRequestActionFieldUpdateOperationsInput | $Enums.AccessRequestAction
+    status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedById?: StringFieldUpdateOperationsInput | string
+    reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PostCreateInput = {
@@ -21312,6 +23040,12 @@ export namespace Prisma {
     none?: TimelineAdjustmentWhereInput
   }
 
+  export type ProjectAccessRequestListRelationFilter = {
+    every?: ProjectAccessRequestWhereInput
+    some?: ProjectAccessRequestWhereInput
+    none?: ProjectAccessRequestWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -21358,6 +23092,10 @@ export namespace Prisma {
   }
 
   export type TimelineAdjustmentOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ProjectAccessRequestOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -22422,6 +24160,92 @@ export namespace Prisma {
     _max?: NestedEnumProjectFileTypeFilter<$PrismaModel>
   }
 
+  export type EnumAccessRequestActionFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccessRequestAction | EnumAccessRequestActionFieldRefInput<$PrismaModel>
+    in?: $Enums.AccessRequestAction[] | ListEnumAccessRequestActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccessRequestAction[] | ListEnumAccessRequestActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccessRequestActionFilter<$PrismaModel> | $Enums.AccessRequestAction
+  }
+
+  export type EnumAccessRequestStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccessRequestStatus | EnumAccessRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.AccessRequestStatus[] | ListEnumAccessRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccessRequestStatus[] | ListEnumAccessRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccessRequestStatusFilter<$PrismaModel> | $Enums.AccessRequestStatus
+  }
+
+  export type ProjectFileScalarRelationFilter = {
+    is?: ProjectFileWhereInput
+    isNot?: ProjectFileWhereInput
+  }
+
+  export type UserNullableScalarRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
+  }
+
+  export type ProjectAccessRequestCountOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    projectFileId?: SortOrder
+    action?: SortOrder
+    status?: SortOrder
+    note?: SortOrder
+    requestedById?: SortOrder
+    reviewedById?: SortOrder
+    reviewedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProjectAccessRequestMaxOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    projectFileId?: SortOrder
+    action?: SortOrder
+    status?: SortOrder
+    note?: SortOrder
+    requestedById?: SortOrder
+    reviewedById?: SortOrder
+    reviewedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProjectAccessRequestMinOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    projectFileId?: SortOrder
+    action?: SortOrder
+    status?: SortOrder
+    note?: SortOrder
+    requestedById?: SortOrder
+    reviewedById?: SortOrder
+    reviewedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumAccessRequestActionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccessRequestAction | EnumAccessRequestActionFieldRefInput<$PrismaModel>
+    in?: $Enums.AccessRequestAction[] | ListEnumAccessRequestActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccessRequestAction[] | ListEnumAccessRequestActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccessRequestActionWithAggregatesFilter<$PrismaModel> | $Enums.AccessRequestAction
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAccessRequestActionFilter<$PrismaModel>
+    _max?: NestedEnumAccessRequestActionFilter<$PrismaModel>
+  }
+
+  export type EnumAccessRequestStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccessRequestStatus | EnumAccessRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.AccessRequestStatus[] | ListEnumAccessRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccessRequestStatus[] | ListEnumAccessRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccessRequestStatusWithAggregatesFilter<$PrismaModel> | $Enums.AccessRequestStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAccessRequestStatusFilter<$PrismaModel>
+    _max?: NestedEnumAccessRequestStatusFilter<$PrismaModel>
+  }
+
   export type PostCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
@@ -22538,6 +24362,20 @@ export namespace Prisma {
     connect?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
   }
 
+  export type ProjectAccessRequestCreateNestedManyWithoutRequestedByInput = {
+    create?: XOR<ProjectAccessRequestCreateWithoutRequestedByInput, ProjectAccessRequestUncheckedCreateWithoutRequestedByInput> | ProjectAccessRequestCreateWithoutRequestedByInput[] | ProjectAccessRequestUncheckedCreateWithoutRequestedByInput[]
+    connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutRequestedByInput | ProjectAccessRequestCreateOrConnectWithoutRequestedByInput[]
+    createMany?: ProjectAccessRequestCreateManyRequestedByInputEnvelope
+    connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+  }
+
+  export type ProjectAccessRequestCreateNestedManyWithoutReviewedByInput = {
+    create?: XOR<ProjectAccessRequestCreateWithoutReviewedByInput, ProjectAccessRequestUncheckedCreateWithoutReviewedByInput> | ProjectAccessRequestCreateWithoutReviewedByInput[] | ProjectAccessRequestUncheckedCreateWithoutReviewedByInput[]
+    connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutReviewedByInput | ProjectAccessRequestCreateOrConnectWithoutReviewedByInput[]
+    createMany?: ProjectAccessRequestCreateManyReviewedByInputEnvelope
+    connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+  }
+
   export type PostUncheckedCreateNestedManyWithoutCreatedByInput = {
     create?: XOR<PostCreateWithoutCreatedByInput, PostUncheckedCreateWithoutCreatedByInput> | PostCreateWithoutCreatedByInput[] | PostUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: PostCreateOrConnectWithoutCreatedByInput | PostCreateOrConnectWithoutCreatedByInput[]
@@ -22620,6 +24458,20 @@ export namespace Prisma {
     connectOrCreate?: TimelineAdjustmentCreateOrConnectWithoutCreatedByInput | TimelineAdjustmentCreateOrConnectWithoutCreatedByInput[]
     createMany?: TimelineAdjustmentCreateManyCreatedByInputEnvelope
     connect?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
+  }
+
+  export type ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput = {
+    create?: XOR<ProjectAccessRequestCreateWithoutRequestedByInput, ProjectAccessRequestUncheckedCreateWithoutRequestedByInput> | ProjectAccessRequestCreateWithoutRequestedByInput[] | ProjectAccessRequestUncheckedCreateWithoutRequestedByInput[]
+    connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutRequestedByInput | ProjectAccessRequestCreateOrConnectWithoutRequestedByInput[]
+    createMany?: ProjectAccessRequestCreateManyRequestedByInputEnvelope
+    connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+  }
+
+  export type ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput = {
+    create?: XOR<ProjectAccessRequestCreateWithoutReviewedByInput, ProjectAccessRequestUncheckedCreateWithoutReviewedByInput> | ProjectAccessRequestCreateWithoutReviewedByInput[] | ProjectAccessRequestUncheckedCreateWithoutReviewedByInput[]
+    connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutReviewedByInput | ProjectAccessRequestCreateOrConnectWithoutReviewedByInput[]
+    createMany?: ProjectAccessRequestCreateManyReviewedByInputEnvelope
+    connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -22818,6 +24670,34 @@ export namespace Prisma {
     deleteMany?: TimelineAdjustmentScalarWhereInput | TimelineAdjustmentScalarWhereInput[]
   }
 
+  export type ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput = {
+    create?: XOR<ProjectAccessRequestCreateWithoutRequestedByInput, ProjectAccessRequestUncheckedCreateWithoutRequestedByInput> | ProjectAccessRequestCreateWithoutRequestedByInput[] | ProjectAccessRequestUncheckedCreateWithoutRequestedByInput[]
+    connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutRequestedByInput | ProjectAccessRequestCreateOrConnectWithoutRequestedByInput[]
+    upsert?: ProjectAccessRequestUpsertWithWhereUniqueWithoutRequestedByInput | ProjectAccessRequestUpsertWithWhereUniqueWithoutRequestedByInput[]
+    createMany?: ProjectAccessRequestCreateManyRequestedByInputEnvelope
+    set?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    disconnect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    delete?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    update?: ProjectAccessRequestUpdateWithWhereUniqueWithoutRequestedByInput | ProjectAccessRequestUpdateWithWhereUniqueWithoutRequestedByInput[]
+    updateMany?: ProjectAccessRequestUpdateManyWithWhereWithoutRequestedByInput | ProjectAccessRequestUpdateManyWithWhereWithoutRequestedByInput[]
+    deleteMany?: ProjectAccessRequestScalarWhereInput | ProjectAccessRequestScalarWhereInput[]
+  }
+
+  export type ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput = {
+    create?: XOR<ProjectAccessRequestCreateWithoutReviewedByInput, ProjectAccessRequestUncheckedCreateWithoutReviewedByInput> | ProjectAccessRequestCreateWithoutReviewedByInput[] | ProjectAccessRequestUncheckedCreateWithoutReviewedByInput[]
+    connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutReviewedByInput | ProjectAccessRequestCreateOrConnectWithoutReviewedByInput[]
+    upsert?: ProjectAccessRequestUpsertWithWhereUniqueWithoutReviewedByInput | ProjectAccessRequestUpsertWithWhereUniqueWithoutReviewedByInput[]
+    createMany?: ProjectAccessRequestCreateManyReviewedByInputEnvelope
+    set?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    disconnect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    delete?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    update?: ProjectAccessRequestUpdateWithWhereUniqueWithoutReviewedByInput | ProjectAccessRequestUpdateWithWhereUniqueWithoutReviewedByInput[]
+    updateMany?: ProjectAccessRequestUpdateManyWithWhereWithoutReviewedByInput | ProjectAccessRequestUpdateManyWithWhereWithoutReviewedByInput[]
+    deleteMany?: ProjectAccessRequestScalarWhereInput | ProjectAccessRequestScalarWhereInput[]
+  }
+
   export type PostUncheckedUpdateManyWithoutCreatedByNestedInput = {
     create?: XOR<PostCreateWithoutCreatedByInput, PostUncheckedCreateWithoutCreatedByInput> | PostCreateWithoutCreatedByInput[] | PostUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: PostCreateOrConnectWithoutCreatedByInput | PostCreateOrConnectWithoutCreatedByInput[]
@@ -22986,6 +24866,34 @@ export namespace Prisma {
     deleteMany?: TimelineAdjustmentScalarWhereInput | TimelineAdjustmentScalarWhereInput[]
   }
 
+  export type ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput = {
+    create?: XOR<ProjectAccessRequestCreateWithoutRequestedByInput, ProjectAccessRequestUncheckedCreateWithoutRequestedByInput> | ProjectAccessRequestCreateWithoutRequestedByInput[] | ProjectAccessRequestUncheckedCreateWithoutRequestedByInput[]
+    connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutRequestedByInput | ProjectAccessRequestCreateOrConnectWithoutRequestedByInput[]
+    upsert?: ProjectAccessRequestUpsertWithWhereUniqueWithoutRequestedByInput | ProjectAccessRequestUpsertWithWhereUniqueWithoutRequestedByInput[]
+    createMany?: ProjectAccessRequestCreateManyRequestedByInputEnvelope
+    set?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    disconnect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    delete?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    update?: ProjectAccessRequestUpdateWithWhereUniqueWithoutRequestedByInput | ProjectAccessRequestUpdateWithWhereUniqueWithoutRequestedByInput[]
+    updateMany?: ProjectAccessRequestUpdateManyWithWhereWithoutRequestedByInput | ProjectAccessRequestUpdateManyWithWhereWithoutRequestedByInput[]
+    deleteMany?: ProjectAccessRequestScalarWhereInput | ProjectAccessRequestScalarWhereInput[]
+  }
+
+  export type ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput = {
+    create?: XOR<ProjectAccessRequestCreateWithoutReviewedByInput, ProjectAccessRequestUncheckedCreateWithoutReviewedByInput> | ProjectAccessRequestCreateWithoutReviewedByInput[] | ProjectAccessRequestUncheckedCreateWithoutReviewedByInput[]
+    connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutReviewedByInput | ProjectAccessRequestCreateOrConnectWithoutReviewedByInput[]
+    upsert?: ProjectAccessRequestUpsertWithWhereUniqueWithoutReviewedByInput | ProjectAccessRequestUpsertWithWhereUniqueWithoutReviewedByInput[]
+    createMany?: ProjectAccessRequestCreateManyReviewedByInputEnvelope
+    set?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    disconnect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    delete?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    update?: ProjectAccessRequestUpdateWithWhereUniqueWithoutReviewedByInput | ProjectAccessRequestUpdateWithWhereUniqueWithoutReviewedByInput[]
+    updateMany?: ProjectAccessRequestUpdateManyWithWhereWithoutReviewedByInput | ProjectAccessRequestUpdateManyWithWhereWithoutReviewedByInput[]
+    deleteMany?: ProjectAccessRequestScalarWhereInput | ProjectAccessRequestScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutSessionsInput = {
     create?: XOR<UserCreateWithoutSessionsInput, UserUncheckedCreateWithoutSessionsInput>
     connectOrCreate?: UserCreateOrConnectWithoutSessionsInput
@@ -23048,6 +24956,13 @@ export namespace Prisma {
     connect?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
   }
 
+  export type ProjectAccessRequestCreateNestedManyWithoutProjectInput = {
+    create?: XOR<ProjectAccessRequestCreateWithoutProjectInput, ProjectAccessRequestUncheckedCreateWithoutProjectInput> | ProjectAccessRequestCreateWithoutProjectInput[] | ProjectAccessRequestUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutProjectInput | ProjectAccessRequestCreateOrConnectWithoutProjectInput[]
+    createMany?: ProjectAccessRequestCreateManyProjectInputEnvelope
+    connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+  }
+
   export type ProjectActivityUncheckedCreateNestedManyWithoutProjectInput = {
     create?: XOR<ProjectActivityCreateWithoutProjectInput, ProjectActivityUncheckedCreateWithoutProjectInput> | ProjectActivityCreateWithoutProjectInput[] | ProjectActivityUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: ProjectActivityCreateOrConnectWithoutProjectInput | ProjectActivityCreateOrConnectWithoutProjectInput[]
@@ -23088,6 +25003,13 @@ export namespace Prisma {
     connectOrCreate?: TimelineAdjustmentCreateOrConnectWithoutProjectInput | TimelineAdjustmentCreateOrConnectWithoutProjectInput[]
     createMany?: TimelineAdjustmentCreateManyProjectInputEnvelope
     connect?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
+  }
+
+  export type ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput = {
+    create?: XOR<ProjectAccessRequestCreateWithoutProjectInput, ProjectAccessRequestUncheckedCreateWithoutProjectInput> | ProjectAccessRequestCreateWithoutProjectInput[] | ProjectAccessRequestUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutProjectInput | ProjectAccessRequestCreateOrConnectWithoutProjectInput[]
+    createMany?: ProjectAccessRequestCreateManyProjectInputEnvelope
+    connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
   }
 
   export type NullableEnumProjectSubTypeFieldUpdateOperationsInput = {
@@ -23222,6 +25144,20 @@ export namespace Prisma {
     deleteMany?: TimelineAdjustmentScalarWhereInput | TimelineAdjustmentScalarWhereInput[]
   }
 
+  export type ProjectAccessRequestUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<ProjectAccessRequestCreateWithoutProjectInput, ProjectAccessRequestUncheckedCreateWithoutProjectInput> | ProjectAccessRequestCreateWithoutProjectInput[] | ProjectAccessRequestUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutProjectInput | ProjectAccessRequestCreateOrConnectWithoutProjectInput[]
+    upsert?: ProjectAccessRequestUpsertWithWhereUniqueWithoutProjectInput | ProjectAccessRequestUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: ProjectAccessRequestCreateManyProjectInputEnvelope
+    set?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    disconnect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    delete?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    update?: ProjectAccessRequestUpdateWithWhereUniqueWithoutProjectInput | ProjectAccessRequestUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: ProjectAccessRequestUpdateManyWithWhereWithoutProjectInput | ProjectAccessRequestUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: ProjectAccessRequestScalarWhereInput | ProjectAccessRequestScalarWhereInput[]
+  }
+
   export type ProjectActivityUncheckedUpdateManyWithoutProjectNestedInput = {
     create?: XOR<ProjectActivityCreateWithoutProjectInput, ProjectActivityUncheckedCreateWithoutProjectInput> | ProjectActivityCreateWithoutProjectInput[] | ProjectActivityUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: ProjectActivityCreateOrConnectWithoutProjectInput | ProjectActivityCreateOrConnectWithoutProjectInput[]
@@ -23304,6 +25240,20 @@ export namespace Prisma {
     update?: TimelineAdjustmentUpdateWithWhereUniqueWithoutProjectInput | TimelineAdjustmentUpdateWithWhereUniqueWithoutProjectInput[]
     updateMany?: TimelineAdjustmentUpdateManyWithWhereWithoutProjectInput | TimelineAdjustmentUpdateManyWithWhereWithoutProjectInput[]
     deleteMany?: TimelineAdjustmentScalarWhereInput | TimelineAdjustmentScalarWhereInput[]
+  }
+
+  export type ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<ProjectAccessRequestCreateWithoutProjectInput, ProjectAccessRequestUncheckedCreateWithoutProjectInput> | ProjectAccessRequestCreateWithoutProjectInput[] | ProjectAccessRequestUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutProjectInput | ProjectAccessRequestCreateOrConnectWithoutProjectInput[]
+    upsert?: ProjectAccessRequestUpsertWithWhereUniqueWithoutProjectInput | ProjectAccessRequestUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: ProjectAccessRequestCreateManyProjectInputEnvelope
+    set?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    disconnect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    delete?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    update?: ProjectAccessRequestUpdateWithWhereUniqueWithoutProjectInput | ProjectAccessRequestUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: ProjectAccessRequestUpdateManyWithWhereWithoutProjectInput | ProjectAccessRequestUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: ProjectAccessRequestScalarWhereInput | ProjectAccessRequestScalarWhereInput[]
   }
 
   export type ProjectCreateNestedOneWithoutActivitiesInput = {
@@ -23656,6 +25606,20 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type ProjectAccessRequestCreateNestedManyWithoutProjectFileInput = {
+    create?: XOR<ProjectAccessRequestCreateWithoutProjectFileInput, ProjectAccessRequestUncheckedCreateWithoutProjectFileInput> | ProjectAccessRequestCreateWithoutProjectFileInput[] | ProjectAccessRequestUncheckedCreateWithoutProjectFileInput[]
+    connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutProjectFileInput | ProjectAccessRequestCreateOrConnectWithoutProjectFileInput[]
+    createMany?: ProjectAccessRequestCreateManyProjectFileInputEnvelope
+    connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+  }
+
+  export type ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectFileInput = {
+    create?: XOR<ProjectAccessRequestCreateWithoutProjectFileInput, ProjectAccessRequestUncheckedCreateWithoutProjectFileInput> | ProjectAccessRequestCreateWithoutProjectFileInput[] | ProjectAccessRequestUncheckedCreateWithoutProjectFileInput[]
+    connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutProjectFileInput | ProjectAccessRequestCreateOrConnectWithoutProjectFileInput[]
+    createMany?: ProjectAccessRequestCreateManyProjectFileInputEnvelope
+    connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+  }
+
   export type EnumProjectFileTypeFieldUpdateOperationsInput = {
     set?: $Enums.ProjectFileType
   }
@@ -23674,6 +25638,100 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutProjectFilesInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutProjectFilesInput, UserUpdateWithoutProjectFilesInput>, UserUncheckedUpdateWithoutProjectFilesInput>
+  }
+
+  export type ProjectAccessRequestUpdateManyWithoutProjectFileNestedInput = {
+    create?: XOR<ProjectAccessRequestCreateWithoutProjectFileInput, ProjectAccessRequestUncheckedCreateWithoutProjectFileInput> | ProjectAccessRequestCreateWithoutProjectFileInput[] | ProjectAccessRequestUncheckedCreateWithoutProjectFileInput[]
+    connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutProjectFileInput | ProjectAccessRequestCreateOrConnectWithoutProjectFileInput[]
+    upsert?: ProjectAccessRequestUpsertWithWhereUniqueWithoutProjectFileInput | ProjectAccessRequestUpsertWithWhereUniqueWithoutProjectFileInput[]
+    createMany?: ProjectAccessRequestCreateManyProjectFileInputEnvelope
+    set?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    disconnect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    delete?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    update?: ProjectAccessRequestUpdateWithWhereUniqueWithoutProjectFileInput | ProjectAccessRequestUpdateWithWhereUniqueWithoutProjectFileInput[]
+    updateMany?: ProjectAccessRequestUpdateManyWithWhereWithoutProjectFileInput | ProjectAccessRequestUpdateManyWithWhereWithoutProjectFileInput[]
+    deleteMany?: ProjectAccessRequestScalarWhereInput | ProjectAccessRequestScalarWhereInput[]
+  }
+
+  export type ProjectAccessRequestUncheckedUpdateManyWithoutProjectFileNestedInput = {
+    create?: XOR<ProjectAccessRequestCreateWithoutProjectFileInput, ProjectAccessRequestUncheckedCreateWithoutProjectFileInput> | ProjectAccessRequestCreateWithoutProjectFileInput[] | ProjectAccessRequestUncheckedCreateWithoutProjectFileInput[]
+    connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutProjectFileInput | ProjectAccessRequestCreateOrConnectWithoutProjectFileInput[]
+    upsert?: ProjectAccessRequestUpsertWithWhereUniqueWithoutProjectFileInput | ProjectAccessRequestUpsertWithWhereUniqueWithoutProjectFileInput[]
+    createMany?: ProjectAccessRequestCreateManyProjectFileInputEnvelope
+    set?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    disconnect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    delete?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    update?: ProjectAccessRequestUpdateWithWhereUniqueWithoutProjectFileInput | ProjectAccessRequestUpdateWithWhereUniqueWithoutProjectFileInput[]
+    updateMany?: ProjectAccessRequestUpdateManyWithWhereWithoutProjectFileInput | ProjectAccessRequestUpdateManyWithWhereWithoutProjectFileInput[]
+    deleteMany?: ProjectAccessRequestScalarWhereInput | ProjectAccessRequestScalarWhereInput[]
+  }
+
+  export type ProjectCreateNestedOneWithoutAccessRequestsInput = {
+    create?: XOR<ProjectCreateWithoutAccessRequestsInput, ProjectUncheckedCreateWithoutAccessRequestsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutAccessRequestsInput
+    connect?: ProjectWhereUniqueInput
+  }
+
+  export type ProjectFileCreateNestedOneWithoutAccessRequestsInput = {
+    create?: XOR<ProjectFileCreateWithoutAccessRequestsInput, ProjectFileUncheckedCreateWithoutAccessRequestsInput>
+    connectOrCreate?: ProjectFileCreateOrConnectWithoutAccessRequestsInput
+    connect?: ProjectFileWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutAccessRequestsMadeInput = {
+    create?: XOR<UserCreateWithoutAccessRequestsMadeInput, UserUncheckedCreateWithoutAccessRequestsMadeInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAccessRequestsMadeInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutAccessRequestsReviewedInput = {
+    create?: XOR<UserCreateWithoutAccessRequestsReviewedInput, UserUncheckedCreateWithoutAccessRequestsReviewedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAccessRequestsReviewedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumAccessRequestActionFieldUpdateOperationsInput = {
+    set?: $Enums.AccessRequestAction
+  }
+
+  export type EnumAccessRequestStatusFieldUpdateOperationsInput = {
+    set?: $Enums.AccessRequestStatus
+  }
+
+  export type ProjectUpdateOneRequiredWithoutAccessRequestsNestedInput = {
+    create?: XOR<ProjectCreateWithoutAccessRequestsInput, ProjectUncheckedCreateWithoutAccessRequestsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutAccessRequestsInput
+    upsert?: ProjectUpsertWithoutAccessRequestsInput
+    connect?: ProjectWhereUniqueInput
+    update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutAccessRequestsInput, ProjectUpdateWithoutAccessRequestsInput>, ProjectUncheckedUpdateWithoutAccessRequestsInput>
+  }
+
+  export type ProjectFileUpdateOneRequiredWithoutAccessRequestsNestedInput = {
+    create?: XOR<ProjectFileCreateWithoutAccessRequestsInput, ProjectFileUncheckedCreateWithoutAccessRequestsInput>
+    connectOrCreate?: ProjectFileCreateOrConnectWithoutAccessRequestsInput
+    upsert?: ProjectFileUpsertWithoutAccessRequestsInput
+    connect?: ProjectFileWhereUniqueInput
+    update?: XOR<XOR<ProjectFileUpdateToOneWithWhereWithoutAccessRequestsInput, ProjectFileUpdateWithoutAccessRequestsInput>, ProjectFileUncheckedUpdateWithoutAccessRequestsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutAccessRequestsMadeNestedInput = {
+    create?: XOR<UserCreateWithoutAccessRequestsMadeInput, UserUncheckedCreateWithoutAccessRequestsMadeInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAccessRequestsMadeInput
+    upsert?: UserUpsertWithoutAccessRequestsMadeInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAccessRequestsMadeInput, UserUpdateWithoutAccessRequestsMadeInput>, UserUncheckedUpdateWithoutAccessRequestsMadeInput>
+  }
+
+  export type UserUpdateOneWithoutAccessRequestsReviewedNestedInput = {
+    create?: XOR<UserCreateWithoutAccessRequestsReviewedInput, UserUncheckedCreateWithoutAccessRequestsReviewedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAccessRequestsReviewedInput
+    upsert?: UserUpsertWithoutAccessRequestsReviewedInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAccessRequestsReviewedInput, UserUpdateWithoutAccessRequestsReviewedInput>, UserUncheckedUpdateWithoutAccessRequestsReviewedInput>
   }
 
   export type UserCreateNestedOneWithoutPostsInput = {
@@ -24195,6 +26253,40 @@ export namespace Prisma {
     _max?: NestedEnumProjectFileTypeFilter<$PrismaModel>
   }
 
+  export type NestedEnumAccessRequestActionFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccessRequestAction | EnumAccessRequestActionFieldRefInput<$PrismaModel>
+    in?: $Enums.AccessRequestAction[] | ListEnumAccessRequestActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccessRequestAction[] | ListEnumAccessRequestActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccessRequestActionFilter<$PrismaModel> | $Enums.AccessRequestAction
+  }
+
+  export type NestedEnumAccessRequestStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccessRequestStatus | EnumAccessRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.AccessRequestStatus[] | ListEnumAccessRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccessRequestStatus[] | ListEnumAccessRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccessRequestStatusFilter<$PrismaModel> | $Enums.AccessRequestStatus
+  }
+
+  export type NestedEnumAccessRequestActionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccessRequestAction | EnumAccessRequestActionFieldRefInput<$PrismaModel>
+    in?: $Enums.AccessRequestAction[] | ListEnumAccessRequestActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccessRequestAction[] | ListEnumAccessRequestActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccessRequestActionWithAggregatesFilter<$PrismaModel> | $Enums.AccessRequestAction
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAccessRequestActionFilter<$PrismaModel>
+    _max?: NestedEnumAccessRequestActionFilter<$PrismaModel>
+  }
+
+  export type NestedEnumAccessRequestStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccessRequestStatus | EnumAccessRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.AccessRequestStatus[] | ListEnumAccessRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccessRequestStatus[] | ListEnumAccessRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccessRequestStatusWithAggregatesFilter<$PrismaModel> | $Enums.AccessRequestStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAccessRequestStatusFilter<$PrismaModel>
+    _max?: NestedEnumAccessRequestStatusFilter<$PrismaModel>
+  }
+
   export type PostCreateWithoutCreatedByInput = {
     name: string
     createdAt?: Date | string
@@ -24261,6 +26353,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
     files?: ProjectFileCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
+    accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutCreatedByInput = {
@@ -24306,6 +26399,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
+    accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutCreatedByInput = {
@@ -24582,6 +26676,7 @@ export namespace Prisma {
     fileSize?: number | null
     createdAt?: Date | string
     project: ProjectCreateNestedOneWithoutFilesInput
+    accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectFileInput
   }
 
   export type ProjectFileUncheckedCreateWithoutCreatedByInput = {
@@ -24592,6 +26687,7 @@ export namespace Prisma {
     fileType?: $Enums.ProjectFileType
     fileSize?: number | null
     createdAt?: Date | string
+    accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectFileInput
   }
 
   export type ProjectFileCreateOrConnectWithoutCreatedByInput = {
@@ -24633,6 +26729,78 @@ export namespace Prisma {
 
   export type TimelineAdjustmentCreateManyCreatedByInputEnvelope = {
     data: TimelineAdjustmentCreateManyCreatedByInput | TimelineAdjustmentCreateManyCreatedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProjectAccessRequestCreateWithoutRequestedByInput = {
+    id?: string
+    action: $Enums.AccessRequestAction
+    status?: $Enums.AccessRequestStatus
+    note?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutAccessRequestsInput
+    projectFile: ProjectFileCreateNestedOneWithoutAccessRequestsInput
+    reviewedBy?: UserCreateNestedOneWithoutAccessRequestsReviewedInput
+  }
+
+  export type ProjectAccessRequestUncheckedCreateWithoutRequestedByInput = {
+    id?: string
+    projectId: string
+    projectFileId: string
+    action: $Enums.AccessRequestAction
+    status?: $Enums.AccessRequestStatus
+    note?: string | null
+    reviewedById?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectAccessRequestCreateOrConnectWithoutRequestedByInput = {
+    where: ProjectAccessRequestWhereUniqueInput
+    create: XOR<ProjectAccessRequestCreateWithoutRequestedByInput, ProjectAccessRequestUncheckedCreateWithoutRequestedByInput>
+  }
+
+  export type ProjectAccessRequestCreateManyRequestedByInputEnvelope = {
+    data: ProjectAccessRequestCreateManyRequestedByInput | ProjectAccessRequestCreateManyRequestedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProjectAccessRequestCreateWithoutReviewedByInput = {
+    id?: string
+    action: $Enums.AccessRequestAction
+    status?: $Enums.AccessRequestStatus
+    note?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutAccessRequestsInput
+    projectFile: ProjectFileCreateNestedOneWithoutAccessRequestsInput
+    requestedBy: UserCreateNestedOneWithoutAccessRequestsMadeInput
+  }
+
+  export type ProjectAccessRequestUncheckedCreateWithoutReviewedByInput = {
+    id?: string
+    projectId: string
+    projectFileId: string
+    action: $Enums.AccessRequestAction
+    status?: $Enums.AccessRequestStatus
+    note?: string | null
+    requestedById: string
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectAccessRequestCreateOrConnectWithoutReviewedByInput = {
+    where: ProjectAccessRequestWhereUniqueInput
+    create: XOR<ProjectAccessRequestCreateWithoutReviewedByInput, ProjectAccessRequestUncheckedCreateWithoutReviewedByInput>
+  }
+
+  export type ProjectAccessRequestCreateManyReviewedByInputEnvelope = {
+    data: ProjectAccessRequestCreateManyReviewedByInput | ProjectAccessRequestCreateManyReviewedByInput[]
     skipDuplicates?: boolean
   }
 
@@ -25013,6 +27181,55 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"TimelineAdjustment"> | Date | string
   }
 
+  export type ProjectAccessRequestUpsertWithWhereUniqueWithoutRequestedByInput = {
+    where: ProjectAccessRequestWhereUniqueInput
+    update: XOR<ProjectAccessRequestUpdateWithoutRequestedByInput, ProjectAccessRequestUncheckedUpdateWithoutRequestedByInput>
+    create: XOR<ProjectAccessRequestCreateWithoutRequestedByInput, ProjectAccessRequestUncheckedCreateWithoutRequestedByInput>
+  }
+
+  export type ProjectAccessRequestUpdateWithWhereUniqueWithoutRequestedByInput = {
+    where: ProjectAccessRequestWhereUniqueInput
+    data: XOR<ProjectAccessRequestUpdateWithoutRequestedByInput, ProjectAccessRequestUncheckedUpdateWithoutRequestedByInput>
+  }
+
+  export type ProjectAccessRequestUpdateManyWithWhereWithoutRequestedByInput = {
+    where: ProjectAccessRequestScalarWhereInput
+    data: XOR<ProjectAccessRequestUpdateManyMutationInput, ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByInput>
+  }
+
+  export type ProjectAccessRequestScalarWhereInput = {
+    AND?: ProjectAccessRequestScalarWhereInput | ProjectAccessRequestScalarWhereInput[]
+    OR?: ProjectAccessRequestScalarWhereInput[]
+    NOT?: ProjectAccessRequestScalarWhereInput | ProjectAccessRequestScalarWhereInput[]
+    id?: StringFilter<"ProjectAccessRequest"> | string
+    projectId?: StringFilter<"ProjectAccessRequest"> | string
+    projectFileId?: StringFilter<"ProjectAccessRequest"> | string
+    action?: EnumAccessRequestActionFilter<"ProjectAccessRequest"> | $Enums.AccessRequestAction
+    status?: EnumAccessRequestStatusFilter<"ProjectAccessRequest"> | $Enums.AccessRequestStatus
+    note?: StringNullableFilter<"ProjectAccessRequest"> | string | null
+    requestedById?: StringFilter<"ProjectAccessRequest"> | string
+    reviewedById?: StringNullableFilter<"ProjectAccessRequest"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"ProjectAccessRequest"> | Date | string | null
+    createdAt?: DateTimeFilter<"ProjectAccessRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"ProjectAccessRequest"> | Date | string
+  }
+
+  export type ProjectAccessRequestUpsertWithWhereUniqueWithoutReviewedByInput = {
+    where: ProjectAccessRequestWhereUniqueInput
+    update: XOR<ProjectAccessRequestUpdateWithoutReviewedByInput, ProjectAccessRequestUncheckedUpdateWithoutReviewedByInput>
+    create: XOR<ProjectAccessRequestCreateWithoutReviewedByInput, ProjectAccessRequestUncheckedCreateWithoutReviewedByInput>
+  }
+
+  export type ProjectAccessRequestUpdateWithWhereUniqueWithoutReviewedByInput = {
+    where: ProjectAccessRequestWhereUniqueInput
+    data: XOR<ProjectAccessRequestUpdateWithoutReviewedByInput, ProjectAccessRequestUncheckedUpdateWithoutReviewedByInput>
+  }
+
+  export type ProjectAccessRequestUpdateManyWithWhereWithoutReviewedByInput = {
+    where: ProjectAccessRequestScalarWhereInput
+    data: XOR<ProjectAccessRequestUpdateManyMutationInput, ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByInput>
+  }
+
   export type UserCreateWithoutSessionsInput = {
     id?: string
     name?: string | null
@@ -25041,6 +27258,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -25071,6 +27290,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -25117,6 +27338,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -25147,6 +27370,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserCreateWithoutProjectsInput = {
@@ -25177,6 +27402,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutProjectsInput = {
@@ -25207,6 +27434,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutProjectsInput = {
@@ -25338,6 +27567,7 @@ export namespace Prisma {
     fileSize?: number | null
     createdAt?: Date | string
     createdBy: UserCreateNestedOneWithoutProjectFilesInput
+    accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectFileInput
   }
 
   export type ProjectFileUncheckedCreateWithoutProjectInput = {
@@ -25348,6 +27578,7 @@ export namespace Prisma {
     fileSize?: number | null
     createdById: string
     createdAt?: Date | string
+    accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectFileInput
   }
 
   export type ProjectFileCreateOrConnectWithoutProjectInput = {
@@ -25392,6 +27623,42 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ProjectAccessRequestCreateWithoutProjectInput = {
+    id?: string
+    action: $Enums.AccessRequestAction
+    status?: $Enums.AccessRequestStatus
+    note?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    projectFile: ProjectFileCreateNestedOneWithoutAccessRequestsInput
+    requestedBy: UserCreateNestedOneWithoutAccessRequestsMadeInput
+    reviewedBy?: UserCreateNestedOneWithoutAccessRequestsReviewedInput
+  }
+
+  export type ProjectAccessRequestUncheckedCreateWithoutProjectInput = {
+    id?: string
+    projectFileId: string
+    action: $Enums.AccessRequestAction
+    status?: $Enums.AccessRequestStatus
+    note?: string | null
+    requestedById: string
+    reviewedById?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectAccessRequestCreateOrConnectWithoutProjectInput = {
+    where: ProjectAccessRequestWhereUniqueInput
+    create: XOR<ProjectAccessRequestCreateWithoutProjectInput, ProjectAccessRequestUncheckedCreateWithoutProjectInput>
+  }
+
+  export type ProjectAccessRequestCreateManyProjectInputEnvelope = {
+    data: ProjectAccessRequestCreateManyProjectInput | ProjectAccessRequestCreateManyProjectInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutProjectsInput = {
     update: XOR<UserUpdateWithoutProjectsInput, UserUncheckedUpdateWithoutProjectsInput>
     create: XOR<UserCreateWithoutProjectsInput, UserUncheckedCreateWithoutProjectsInput>
@@ -25431,6 +27698,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectsInput = {
@@ -25461,6 +27730,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type ProjectActivityUpsertWithWhereUniqueWithoutProjectInput = {
@@ -25559,6 +27830,22 @@ export namespace Prisma {
     data: XOR<TimelineAdjustmentUpdateManyMutationInput, TimelineAdjustmentUncheckedUpdateManyWithoutProjectInput>
   }
 
+  export type ProjectAccessRequestUpsertWithWhereUniqueWithoutProjectInput = {
+    where: ProjectAccessRequestWhereUniqueInput
+    update: XOR<ProjectAccessRequestUpdateWithoutProjectInput, ProjectAccessRequestUncheckedUpdateWithoutProjectInput>
+    create: XOR<ProjectAccessRequestCreateWithoutProjectInput, ProjectAccessRequestUncheckedCreateWithoutProjectInput>
+  }
+
+  export type ProjectAccessRequestUpdateWithWhereUniqueWithoutProjectInput = {
+    where: ProjectAccessRequestWhereUniqueInput
+    data: XOR<ProjectAccessRequestUpdateWithoutProjectInput, ProjectAccessRequestUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type ProjectAccessRequestUpdateManyWithWhereWithoutProjectInput = {
+    where: ProjectAccessRequestScalarWhereInput
+    data: XOR<ProjectAccessRequestUpdateManyMutationInput, ProjectAccessRequestUncheckedUpdateManyWithoutProjectInput>
+  }
+
   export type ProjectCreateWithoutActivitiesInput = {
     id?: string
     projectCode: string
@@ -25602,6 +27889,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
     files?: ProjectFileCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
+    accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutActivitiesInput = {
@@ -25647,6 +27935,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
+    accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutActivitiesInput = {
@@ -25682,6 +27971,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutProjectActivitiesInput = {
@@ -25712,6 +28003,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutProjectActivitiesInput = {
@@ -25773,6 +28066,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
+    accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutActivitiesInput = {
@@ -25818,6 +28112,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
+    accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutProjectActivitiesInput = {
@@ -25859,6 +28154,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectActivitiesInput = {
@@ -25889,6 +28186,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type ProjectCreateWithoutDisbursementsInput = {
@@ -25934,6 +28233,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
     files?: ProjectFileCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
+    accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutDisbursementsInput = {
@@ -25979,6 +28279,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
+    accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutDisbursementsInput = {
@@ -26014,6 +28315,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutDisbursementsInput = {
@@ -26044,6 +28347,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutDisbursementsInput = {
@@ -26105,6 +28410,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
+    accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutDisbursementsInput = {
@@ -26150,6 +28456,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
+    accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutDisbursementsInput = {
@@ -26191,6 +28498,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDisbursementsInput = {
@@ -26221,6 +28530,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type ProjectCreateWithoutVariationOrdersInput = {
@@ -26266,6 +28577,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
     files?: ProjectFileCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
+    accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutVariationOrdersInput = {
@@ -26311,6 +28623,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
+    accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutVariationOrdersInput = {
@@ -26346,6 +28659,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutVariationOrdersInput = {
@@ -26376,6 +28691,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutVariationOrdersInput = {
@@ -26437,6 +28754,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
+    accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutVariationOrdersInput = {
@@ -26482,6 +28800,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
+    accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutVariationOrdersInput = {
@@ -26523,6 +28842,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutVariationOrdersInput = {
@@ -26553,6 +28874,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type ProjectCreateWithoutTimelineAdjustmentsInput = {
@@ -26598,6 +28921,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
     files?: ProjectFileCreateNestedManyWithoutProjectInput
+    accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutTimelineAdjustmentsInput = {
@@ -26643,6 +28967,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
+    accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutTimelineAdjustmentsInput = {
@@ -26678,6 +29003,8 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutTimelineAdjustmentsInput = {
@@ -26708,6 +29035,8 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutTimelineAdjustmentsInput = {
@@ -26769,6 +29098,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
+    accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutTimelineAdjustmentsInput = {
@@ -26814,6 +29144,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderUncheckedUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
+    accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutTimelineAdjustmentsInput = {
@@ -26855,6 +29186,8 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTimelineAdjustmentsInput = {
@@ -26885,6 +29218,8 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type ProjectCreateWithoutTaskNotificationsInput = {
@@ -26930,6 +29265,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderCreateNestedManyWithoutProjectInput
     files?: ProjectFileCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
+    accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutTaskNotificationsInput = {
@@ -26975,6 +29311,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutProjectInput
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
+    accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutTaskNotificationsInput = {
@@ -27010,6 +29347,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutTaskNotificationsReceivedInput = {
@@ -27040,6 +29379,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutTaskNotificationsReceivedInput = {
@@ -27075,6 +29416,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutTaskNotificationsCreatedInput = {
@@ -27105,6 +29448,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutTaskNotificationsCreatedInput = {
@@ -27194,6 +29539,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
+    accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutTaskNotificationsInput = {
@@ -27239,6 +29585,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderUncheckedUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
+    accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutTaskNotificationsReceivedInput = {
@@ -27280,6 +29627,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTaskNotificationsReceivedInput = {
@@ -27310,6 +29659,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUpsertWithoutTaskNotificationsCreatedInput = {
@@ -27351,6 +29702,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTaskNotificationsCreatedInput = {
@@ -27381,6 +29734,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type TaskReplyUpsertWithWhereUniqueWithoutTaskNotificationInput = {
@@ -27456,6 +29811,8 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutTaskRepliesInput = {
@@ -27486,6 +29843,8 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutTaskRepliesInput = {
@@ -27595,6 +29954,8 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTaskRepliesInput = {
@@ -27625,6 +29986,8 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type TaskReplyDocumentUpsertWithWhereUniqueWithoutReplyInput = {
@@ -27736,6 +30099,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutDocumentsInput = {
@@ -27766,6 +30131,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutDocumentsInput = {
@@ -27812,6 +30179,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDocumentsInput = {
@@ -27842,6 +30211,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type ProjectCreateWithoutFilesInput = {
@@ -27887,6 +30258,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
+    accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutFilesInput = {
@@ -27932,6 +30304,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutProjectInput
     taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
+    accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutFilesInput = {
@@ -27967,6 +30340,8 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutProjectFilesInput = {
@@ -27997,11 +30372,49 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutProjectFilesInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutProjectFilesInput, UserUncheckedCreateWithoutProjectFilesInput>
+  }
+
+  export type ProjectAccessRequestCreateWithoutProjectFileInput = {
+    id?: string
+    action: $Enums.AccessRequestAction
+    status?: $Enums.AccessRequestStatus
+    note?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutAccessRequestsInput
+    requestedBy: UserCreateNestedOneWithoutAccessRequestsMadeInput
+    reviewedBy?: UserCreateNestedOneWithoutAccessRequestsReviewedInput
+  }
+
+  export type ProjectAccessRequestUncheckedCreateWithoutProjectFileInput = {
+    id?: string
+    projectId: string
+    action: $Enums.AccessRequestAction
+    status?: $Enums.AccessRequestStatus
+    note?: string | null
+    requestedById: string
+    reviewedById?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectAccessRequestCreateOrConnectWithoutProjectFileInput = {
+    where: ProjectAccessRequestWhereUniqueInput
+    create: XOR<ProjectAccessRequestCreateWithoutProjectFileInput, ProjectAccessRequestUncheckedCreateWithoutProjectFileInput>
+  }
+
+  export type ProjectAccessRequestCreateManyProjectFileInputEnvelope = {
+    data: ProjectAccessRequestCreateManyProjectFileInput | ProjectAccessRequestCreateManyProjectFileInput[]
+    skipDuplicates?: boolean
   }
 
   export type ProjectUpsertWithoutFilesInput = {
@@ -28058,6 +30471,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
+    accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutFilesInput = {
@@ -28103,6 +30517,7 @@ export namespace Prisma {
     variationOrders?: VariationOrderUncheckedUpdateManyWithoutProjectNestedInput
     taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
+    accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutProjectFilesInput = {
@@ -28144,6 +30559,8 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectFilesInput = {
@@ -28174,6 +30591,572 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+  }
+
+  export type ProjectAccessRequestUpsertWithWhereUniqueWithoutProjectFileInput = {
+    where: ProjectAccessRequestWhereUniqueInput
+    update: XOR<ProjectAccessRequestUpdateWithoutProjectFileInput, ProjectAccessRequestUncheckedUpdateWithoutProjectFileInput>
+    create: XOR<ProjectAccessRequestCreateWithoutProjectFileInput, ProjectAccessRequestUncheckedCreateWithoutProjectFileInput>
+  }
+
+  export type ProjectAccessRequestUpdateWithWhereUniqueWithoutProjectFileInput = {
+    where: ProjectAccessRequestWhereUniqueInput
+    data: XOR<ProjectAccessRequestUpdateWithoutProjectFileInput, ProjectAccessRequestUncheckedUpdateWithoutProjectFileInput>
+  }
+
+  export type ProjectAccessRequestUpdateManyWithWhereWithoutProjectFileInput = {
+    where: ProjectAccessRequestScalarWhereInput
+    data: XOR<ProjectAccessRequestUpdateManyMutationInput, ProjectAccessRequestUncheckedUpdateManyWithoutProjectFileInput>
+  }
+
+  export type ProjectCreateWithoutAccessRequestsInput = {
+    id?: string
+    projectCode: string
+    title: string
+    subType?: $Enums.ProjectSubType | null
+    modeOfImplementation: $Enums.ModeOfImplementation
+    locationImplementation: $Enums.District
+    sourceOfFund: $Enums.SourceOfFund
+    projectCost?: number
+    contractCost?: number
+    contractorName?: string | null
+    projectEngineer?: string | null
+    budgetYear?: string | null
+    dateStarted?: Date | string | null
+    targetCompletionDate?: Date | string | null
+    duration?: number
+    revisedCompletionDate?: Date | string | null
+    dateCompleted?: Date | string | null
+    daysSuspended?: number
+    daysExtended?: number
+    numFemale?: number
+    numMale?: number
+    numPersons?: number
+    numManDays?: number
+    district?: $Enums.District | null
+    cityMunicipality?: string | null
+    barangay?: string | null
+    purok?: string | null
+    sitio?: string | null
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    completionPercentage?: number
+    imageUrl?: string | null
+    documentUrl?: string | null
+    documentName?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: UserCreateNestedOneWithoutProjectsInput
+    activities?: ProjectActivityCreateNestedManyWithoutProjectInput
+    disbursements?: DisbursementCreateNestedManyWithoutProjectInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutProjectInput
+    taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
+    files?: ProjectFileCreateNestedManyWithoutProjectInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectUncheckedCreateWithoutAccessRequestsInput = {
+    id?: string
+    projectCode: string
+    title: string
+    subType?: $Enums.ProjectSubType | null
+    modeOfImplementation: $Enums.ModeOfImplementation
+    locationImplementation: $Enums.District
+    sourceOfFund: $Enums.SourceOfFund
+    projectCost?: number
+    contractCost?: number
+    contractorName?: string | null
+    projectEngineer?: string | null
+    budgetYear?: string | null
+    dateStarted?: Date | string | null
+    targetCompletionDate?: Date | string | null
+    duration?: number
+    revisedCompletionDate?: Date | string | null
+    dateCompleted?: Date | string | null
+    daysSuspended?: number
+    daysExtended?: number
+    numFemale?: number
+    numMale?: number
+    numPersons?: number
+    numManDays?: number
+    district?: $Enums.District | null
+    cityMunicipality?: string | null
+    barangay?: string | null
+    purok?: string | null
+    sitio?: string | null
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    completionPercentage?: number
+    imageUrl?: string | null
+    documentUrl?: string | null
+    documentName?: string | null
+    createdById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    activities?: ProjectActivityUncheckedCreateNestedManyWithoutProjectInput
+    disbursements?: DisbursementUncheckedCreateNestedManyWithoutProjectInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutProjectInput
+    taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
+    files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectCreateOrConnectWithoutAccessRequestsInput = {
+    where: ProjectWhereUniqueInput
+    create: XOR<ProjectCreateWithoutAccessRequestsInput, ProjectUncheckedCreateWithoutAccessRequestsInput>
+  }
+
+  export type ProjectFileCreateWithoutAccessRequestsInput = {
+    id?: string
+    fileName: string
+    fileUrl: string
+    fileType?: $Enums.ProjectFileType
+    fileSize?: number | null
+    createdAt?: Date | string
+    project: ProjectCreateNestedOneWithoutFilesInput
+    createdBy: UserCreateNestedOneWithoutProjectFilesInput
+  }
+
+  export type ProjectFileUncheckedCreateWithoutAccessRequestsInput = {
+    id?: string
+    projectId: string
+    fileName: string
+    fileUrl: string
+    fileType?: $Enums.ProjectFileType
+    fileSize?: number | null
+    createdById: string
+    createdAt?: Date | string
+  }
+
+  export type ProjectFileCreateOrConnectWithoutAccessRequestsInput = {
+    where: ProjectFileWhereUniqueInput
+    create: XOR<ProjectFileCreateWithoutAccessRequestsInput, ProjectFileUncheckedCreateWithoutAccessRequestsInput>
+  }
+
+  export type UserCreateWithoutAccessRequestsMadeInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password: string
+    role?: $Enums.UserRole
+    employeeId?: string | null
+    designation?: string | null
+    division?: string | null
+    contactNumber?: string | null
+    birthday?: Date | string | null
+    sex?: $Enums.Sex | null
+    status?: $Enums.UserStatus
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    posts?: PostCreateNestedManyWithoutCreatedByInput
+    projects?: ProjectCreateNestedManyWithoutCreatedByInput
+    sessions?: UserSessionCreateNestedManyWithoutUserInput
+    documents?: DocumentCreateNestedManyWithoutCreatedByInput
+    projectActivities?: ProjectActivityCreateNestedManyWithoutCreatedByInput
+    disbursements?: DisbursementCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutCreatedByInput
+    taskNotificationsReceived?: TaskNotificationCreateNestedManyWithoutNotifyUserInput
+    taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
+    taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
+    projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+  }
+
+  export type UserUncheckedCreateWithoutAccessRequestsMadeInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password: string
+    role?: $Enums.UserRole
+    employeeId?: string | null
+    designation?: string | null
+    division?: string | null
+    contactNumber?: string | null
+    birthday?: Date | string | null
+    sex?: $Enums.Sex | null
+    status?: $Enums.UserStatus
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
+    projects?: ProjectUncheckedCreateNestedManyWithoutCreatedByInput
+    sessions?: UserSessionUncheckedCreateNestedManyWithoutUserInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutCreatedByInput
+    projectActivities?: ProjectActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    disbursements?: DisbursementUncheckedCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutCreatedByInput
+    taskNotificationsReceived?: TaskNotificationUncheckedCreateNestedManyWithoutNotifyUserInput
+    taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
+    taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
+    projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+  }
+
+  export type UserCreateOrConnectWithoutAccessRequestsMadeInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutAccessRequestsMadeInput, UserUncheckedCreateWithoutAccessRequestsMadeInput>
+  }
+
+  export type UserCreateWithoutAccessRequestsReviewedInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password: string
+    role?: $Enums.UserRole
+    employeeId?: string | null
+    designation?: string | null
+    division?: string | null
+    contactNumber?: string | null
+    birthday?: Date | string | null
+    sex?: $Enums.Sex | null
+    status?: $Enums.UserStatus
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    posts?: PostCreateNestedManyWithoutCreatedByInput
+    projects?: ProjectCreateNestedManyWithoutCreatedByInput
+    sessions?: UserSessionCreateNestedManyWithoutUserInput
+    documents?: DocumentCreateNestedManyWithoutCreatedByInput
+    projectActivities?: ProjectActivityCreateNestedManyWithoutCreatedByInput
+    disbursements?: DisbursementCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutCreatedByInput
+    taskNotificationsReceived?: TaskNotificationCreateNestedManyWithoutNotifyUserInput
+    taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
+    taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
+    projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
+  }
+
+  export type UserUncheckedCreateWithoutAccessRequestsReviewedInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password: string
+    role?: $Enums.UserRole
+    employeeId?: string | null
+    designation?: string | null
+    division?: string | null
+    contactNumber?: string | null
+    birthday?: Date | string | null
+    sex?: $Enums.Sex | null
+    status?: $Enums.UserStatus
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
+    projects?: ProjectUncheckedCreateNestedManyWithoutCreatedByInput
+    sessions?: UserSessionUncheckedCreateNestedManyWithoutUserInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutCreatedByInput
+    projectActivities?: ProjectActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    disbursements?: DisbursementUncheckedCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutCreatedByInput
+    taskNotificationsReceived?: TaskNotificationUncheckedCreateNestedManyWithoutNotifyUserInput
+    taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
+    taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
+    projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  }
+
+  export type UserCreateOrConnectWithoutAccessRequestsReviewedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutAccessRequestsReviewedInput, UserUncheckedCreateWithoutAccessRequestsReviewedInput>
+  }
+
+  export type ProjectUpsertWithoutAccessRequestsInput = {
+    update: XOR<ProjectUpdateWithoutAccessRequestsInput, ProjectUncheckedUpdateWithoutAccessRequestsInput>
+    create: XOR<ProjectCreateWithoutAccessRequestsInput, ProjectUncheckedCreateWithoutAccessRequestsInput>
+    where?: ProjectWhereInput
+  }
+
+  export type ProjectUpdateToOneWithWhereWithoutAccessRequestsInput = {
+    where?: ProjectWhereInput
+    data: XOR<ProjectUpdateWithoutAccessRequestsInput, ProjectUncheckedUpdateWithoutAccessRequestsInput>
+  }
+
+  export type ProjectUpdateWithoutAccessRequestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectCode?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
+    locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
+    sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
+    projectCost?: FloatFieldUpdateOperationsInput | number
+    contractCost?: FloatFieldUpdateOperationsInput | number
+    contractorName?: NullableStringFieldUpdateOperationsInput | string | null
+    projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
+    budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duration?: IntFieldUpdateOperationsInput | number
+    revisedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCompleted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    daysSuspended?: IntFieldUpdateOperationsInput | number
+    daysExtended?: IntFieldUpdateOperationsInput | number
+    numFemale?: IntFieldUpdateOperationsInput | number
+    numMale?: IntFieldUpdateOperationsInput | number
+    numPersons?: IntFieldUpdateOperationsInput | number
+    numManDays?: IntFieldUpdateOperationsInput | number
+    district?: NullableEnumDistrictFieldUpdateOperationsInput | $Enums.District | null
+    cityMunicipality?: NullableStringFieldUpdateOperationsInput | string | null
+    barangay?: NullableStringFieldUpdateOperationsInput | string | null
+    purok?: NullableStringFieldUpdateOperationsInput | string | null
+    sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    completionPercentage?: IntFieldUpdateOperationsInput | number
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    documentName?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutProjectsNestedInput
+    activities?: ProjectActivityUpdateManyWithoutProjectNestedInput
+    disbursements?: DisbursementUpdateManyWithoutProjectNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutProjectNestedInput
+    taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
+    files?: ProjectFileUpdateManyWithoutProjectNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
+  }
+
+  export type ProjectUncheckedUpdateWithoutAccessRequestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectCode?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
+    locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
+    sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
+    projectCost?: FloatFieldUpdateOperationsInput | number
+    contractCost?: FloatFieldUpdateOperationsInput | number
+    contractorName?: NullableStringFieldUpdateOperationsInput | string | null
+    projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
+    budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duration?: IntFieldUpdateOperationsInput | number
+    revisedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCompleted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    daysSuspended?: IntFieldUpdateOperationsInput | number
+    daysExtended?: IntFieldUpdateOperationsInput | number
+    numFemale?: IntFieldUpdateOperationsInput | number
+    numMale?: IntFieldUpdateOperationsInput | number
+    numPersons?: IntFieldUpdateOperationsInput | number
+    numManDays?: IntFieldUpdateOperationsInput | number
+    district?: NullableEnumDistrictFieldUpdateOperationsInput | $Enums.District | null
+    cityMunicipality?: NullableStringFieldUpdateOperationsInput | string | null
+    barangay?: NullableStringFieldUpdateOperationsInput | string | null
+    purok?: NullableStringFieldUpdateOperationsInput | string | null
+    sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    completionPercentage?: IntFieldUpdateOperationsInput | number
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    documentName?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    activities?: ProjectActivityUncheckedUpdateManyWithoutProjectNestedInput
+    disbursements?: DisbursementUncheckedUpdateManyWithoutProjectNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutProjectNestedInput
+    taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
+    files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
+  }
+
+  export type ProjectFileUpsertWithoutAccessRequestsInput = {
+    update: XOR<ProjectFileUpdateWithoutAccessRequestsInput, ProjectFileUncheckedUpdateWithoutAccessRequestsInput>
+    create: XOR<ProjectFileCreateWithoutAccessRequestsInput, ProjectFileUncheckedCreateWithoutAccessRequestsInput>
+    where?: ProjectFileWhereInput
+  }
+
+  export type ProjectFileUpdateToOneWithWhereWithoutAccessRequestsInput = {
+    where?: ProjectFileWhereInput
+    data: XOR<ProjectFileUpdateWithoutAccessRequestsInput, ProjectFileUncheckedUpdateWithoutAccessRequestsInput>
+  }
+
+  export type ProjectFileUpdateWithoutAccessRequestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileType?: EnumProjectFileTypeFieldUpdateOperationsInput | $Enums.ProjectFileType
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutFilesNestedInput
+    createdBy?: UserUpdateOneRequiredWithoutProjectFilesNestedInput
+  }
+
+  export type ProjectFileUncheckedUpdateWithoutAccessRequestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileType?: EnumProjectFileTypeFieldUpdateOperationsInput | $Enums.ProjectFileType
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserUpsertWithoutAccessRequestsMadeInput = {
+    update: XOR<UserUpdateWithoutAccessRequestsMadeInput, UserUncheckedUpdateWithoutAccessRequestsMadeInput>
+    create: XOR<UserCreateWithoutAccessRequestsMadeInput, UserUncheckedCreateWithoutAccessRequestsMadeInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutAccessRequestsMadeInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutAccessRequestsMadeInput, UserUncheckedUpdateWithoutAccessRequestsMadeInput>
+  }
+
+  export type UserUpdateWithoutAccessRequestsMadeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    designation?: NullableStringFieldUpdateOperationsInput | string | null
+    division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    posts?: PostUpdateManyWithoutCreatedByNestedInput
+    projects?: ProjectUpdateManyWithoutCreatedByNestedInput
+    sessions?: UserSessionUpdateManyWithoutUserNestedInput
+    documents?: DocumentUpdateManyWithoutCreatedByNestedInput
+    projectActivities?: ProjectActivityUpdateManyWithoutCreatedByNestedInput
+    disbursements?: DisbursementUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutCreatedByNestedInput
+    taskNotificationsReceived?: TaskNotificationUpdateManyWithoutNotifyUserNestedInput
+    taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
+    taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
+    projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutAccessRequestsMadeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    designation?: NullableStringFieldUpdateOperationsInput | string | null
+    division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
+    projects?: ProjectUncheckedUpdateManyWithoutCreatedByNestedInput
+    sessions?: UserSessionUncheckedUpdateManyWithoutUserNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectActivities?: ProjectActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    disbursements?: DisbursementUncheckedUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+    taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
+    taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
+    taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+  }
+
+  export type UserUpsertWithoutAccessRequestsReviewedInput = {
+    update: XOR<UserUpdateWithoutAccessRequestsReviewedInput, UserUncheckedUpdateWithoutAccessRequestsReviewedInput>
+    create: XOR<UserCreateWithoutAccessRequestsReviewedInput, UserUncheckedCreateWithoutAccessRequestsReviewedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutAccessRequestsReviewedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutAccessRequestsReviewedInput, UserUncheckedUpdateWithoutAccessRequestsReviewedInput>
+  }
+
+  export type UserUpdateWithoutAccessRequestsReviewedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    designation?: NullableStringFieldUpdateOperationsInput | string | null
+    division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    posts?: PostUpdateManyWithoutCreatedByNestedInput
+    projects?: ProjectUpdateManyWithoutCreatedByNestedInput
+    sessions?: UserSessionUpdateManyWithoutUserNestedInput
+    documents?: DocumentUpdateManyWithoutCreatedByNestedInput
+    projectActivities?: ProjectActivityUpdateManyWithoutCreatedByNestedInput
+    disbursements?: DisbursementUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutCreatedByNestedInput
+    taskNotificationsReceived?: TaskNotificationUpdateManyWithoutNotifyUserNestedInput
+    taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
+    taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
+    projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutAccessRequestsReviewedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    designation?: NullableStringFieldUpdateOperationsInput | string | null
+    division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
+    projects?: ProjectUncheckedUpdateManyWithoutCreatedByNestedInput
+    sessions?: UserSessionUncheckedUpdateManyWithoutUserNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectActivities?: ProjectActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    disbursements?: DisbursementUncheckedUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+    taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
+    taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
+    taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
   }
 
   export type UserCreateWithoutPostsInput = {
@@ -28204,6 +31187,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutPostsInput = {
@@ -28234,6 +31219,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutPostsInput = {
@@ -28280,6 +31267,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPostsInput = {
@@ -28310,6 +31299,8 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type PostCreateManyCreatedByInput = {
@@ -28464,6 +31455,32 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type ProjectAccessRequestCreateManyRequestedByInput = {
+    id?: string
+    projectId: string
+    projectFileId: string
+    action: $Enums.AccessRequestAction
+    status?: $Enums.AccessRequestStatus
+    note?: string | null
+    reviewedById?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectAccessRequestCreateManyReviewedByInput = {
+    id?: string
+    projectId: string
+    projectFileId: string
+    action: $Enums.AccessRequestAction
+    status?: $Enums.AccessRequestStatus
+    note?: string | null
+    requestedById: string
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type PostUpdateWithoutCreatedByInput = {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28527,6 +31544,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
+    accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutCreatedByInput = {
@@ -28572,6 +31590,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
+    accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateManyWithoutCreatedByInput = {
@@ -28882,6 +31901,7 @@ export namespace Prisma {
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutFilesNestedInput
+    accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectFileNestedInput
   }
 
   export type ProjectFileUncheckedUpdateWithoutCreatedByInput = {
@@ -28892,6 +31912,7 @@ export namespace Prisma {
     fileType?: EnumProjectFileTypeFieldUpdateOperationsInput | $Enums.ProjectFileType
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectFileNestedInput
   }
 
   export type ProjectFileUncheckedUpdateManyWithoutCreatedByInput = {
@@ -28935,6 +31956,84 @@ export namespace Prisma {
     type?: EnumTimelineAdjustmentTypeFieldUpdateOperationsInput | $Enums.TimelineAdjustmentType
     justification?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectAccessRequestUpdateWithoutRequestedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumAccessRequestActionFieldUpdateOperationsInput | $Enums.AccessRequestAction
+    status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutAccessRequestsNestedInput
+    projectFile?: ProjectFileUpdateOneRequiredWithoutAccessRequestsNestedInput
+    reviewedBy?: UserUpdateOneWithoutAccessRequestsReviewedNestedInput
+  }
+
+  export type ProjectAccessRequestUncheckedUpdateWithoutRequestedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    projectFileId?: StringFieldUpdateOperationsInput | string
+    action?: EnumAccessRequestActionFieldUpdateOperationsInput | $Enums.AccessRequestAction
+    status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    projectFileId?: StringFieldUpdateOperationsInput | string
+    action?: EnumAccessRequestActionFieldUpdateOperationsInput | $Enums.AccessRequestAction
+    status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectAccessRequestUpdateWithoutReviewedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumAccessRequestActionFieldUpdateOperationsInput | $Enums.AccessRequestAction
+    status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutAccessRequestsNestedInput
+    projectFile?: ProjectFileUpdateOneRequiredWithoutAccessRequestsNestedInput
+    requestedBy?: UserUpdateOneRequiredWithoutAccessRequestsMadeNestedInput
+  }
+
+  export type ProjectAccessRequestUncheckedUpdateWithoutReviewedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    projectFileId?: StringFieldUpdateOperationsInput | string
+    action?: EnumAccessRequestActionFieldUpdateOperationsInput | $Enums.AccessRequestAction
+    status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedById?: StringFieldUpdateOperationsInput | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    projectFileId?: StringFieldUpdateOperationsInput | string
+    action?: EnumAccessRequestActionFieldUpdateOperationsInput | $Enums.AccessRequestAction
+    status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedById?: StringFieldUpdateOperationsInput | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ProjectActivityCreateManyProjectInput = {
@@ -28993,6 +32092,19 @@ export namespace Prisma {
     justification?: string | null
     createdById: string
     createdAt?: Date | string
+  }
+
+  export type ProjectAccessRequestCreateManyProjectInput = {
+    id?: string
+    projectFileId: string
+    action: $Enums.AccessRequestAction
+    status?: $Enums.AccessRequestStatus
+    note?: string | null
+    requestedById: string
+    reviewedById?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type ProjectActivityUpdateWithoutProjectInput = {
@@ -29116,6 +32228,7 @@ export namespace Prisma {
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneRequiredWithoutProjectFilesNestedInput
+    accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectFileNestedInput
   }
 
   export type ProjectFileUncheckedUpdateWithoutProjectInput = {
@@ -29126,6 +32239,7 @@ export namespace Prisma {
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectFileNestedInput
   }
 
   export type ProjectFileUncheckedUpdateManyWithoutProjectInput = {
@@ -29169,6 +32283,45 @@ export namespace Prisma {
     justification?: NullableStringFieldUpdateOperationsInput | string | null
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectAccessRequestUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumAccessRequestActionFieldUpdateOperationsInput | $Enums.AccessRequestAction
+    status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    projectFile?: ProjectFileUpdateOneRequiredWithoutAccessRequestsNestedInput
+    requestedBy?: UserUpdateOneRequiredWithoutAccessRequestsMadeNestedInput
+    reviewedBy?: UserUpdateOneWithoutAccessRequestsReviewedNestedInput
+  }
+
+  export type ProjectAccessRequestUncheckedUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectFileId?: StringFieldUpdateOperationsInput | string
+    action?: EnumAccessRequestActionFieldUpdateOperationsInput | $Enums.AccessRequestAction
+    status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedById?: StringFieldUpdateOperationsInput | string
+    reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectAccessRequestUncheckedUpdateManyWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectFileId?: StringFieldUpdateOperationsInput | string
+    action?: EnumAccessRequestActionFieldUpdateOperationsInput | $Enums.AccessRequestAction
+    status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedById?: StringFieldUpdateOperationsInput | string
+    reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TaskReplyCreateManyTaskNotificationInput = {
@@ -29239,6 +32392,58 @@ export namespace Prisma {
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     fileType?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectAccessRequestCreateManyProjectFileInput = {
+    id?: string
+    projectId: string
+    action: $Enums.AccessRequestAction
+    status?: $Enums.AccessRequestStatus
+    note?: string | null
+    requestedById: string
+    reviewedById?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectAccessRequestUpdateWithoutProjectFileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumAccessRequestActionFieldUpdateOperationsInput | $Enums.AccessRequestAction
+    status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutAccessRequestsNestedInput
+    requestedBy?: UserUpdateOneRequiredWithoutAccessRequestsMadeNestedInput
+    reviewedBy?: UserUpdateOneWithoutAccessRequestsReviewedNestedInput
+  }
+
+  export type ProjectAccessRequestUncheckedUpdateWithoutProjectFileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    action?: EnumAccessRequestActionFieldUpdateOperationsInput | $Enums.AccessRequestAction
+    status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedById?: StringFieldUpdateOperationsInput | string
+    reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectAccessRequestUncheckedUpdateManyWithoutProjectFileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    action?: EnumAccessRequestActionFieldUpdateOperationsInput | $Enums.AccessRequestAction
+    status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedById?: StringFieldUpdateOperationsInput | string
+    reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

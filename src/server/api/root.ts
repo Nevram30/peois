@@ -1,6 +1,7 @@
 import { documentRouter } from "~/server/api/routers/document";
 import { postRouter } from "~/server/api/routers/post";
 import { projectRouter } from "~/server/api/routers/project";
+import { projectAccessRequestRouter } from "~/server/api/routers/projectAccessRequest";
 import { projectActivityRouter } from "~/server/api/routers/projectActivity";
 import { projectFileRouter } from "~/server/api/routers/projectFile";
 import { taskNotificationRouter } from "~/server/api/routers/taskNotification";
@@ -11,6 +12,7 @@ export const appRouter = createTRPCRouter({
   document: documentRouter,
   post: postRouter,
   project: projectRouter,
+  projectAccessRequest: projectAccessRequestRouter,
   projectActivity: projectActivityRouter,
   projectFile: projectFileRouter,
   taskNotification: taskNotificationRouter,

@@ -294,6 +294,20 @@ exports.Prisma.ProjectFileScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.ProjectAccessRequestScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  projectFileId: 'projectFileId',
+  action: 'action',
+  status: 'status',
+  note: 'note',
+  requestedById: 'requestedById',
+  reviewedById: 'reviewedById',
+  reviewedAt: 'reviewedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.PostScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -439,6 +453,17 @@ exports.ProjectFileType = exports.$Enums.ProjectFileType = {
   OTHER: 'OTHER'
 };
 
+exports.AccessRequestAction = exports.$Enums.AccessRequestAction = {
+  VIEW: 'VIEW',
+  DOWNLOAD: 'DOWNLOAD'
+};
+
+exports.AccessRequestStatus = exports.$Enums.AccessRequestStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  DENIED: 'DENIED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   UserSession: 'UserSession',
@@ -452,6 +477,7 @@ exports.Prisma.ModelName = {
   TaskReplyDocument: 'TaskReplyDocument',
   Document: 'Document',
   ProjectFile: 'ProjectFile',
+  ProjectAccessRequest: 'ProjectAccessRequest',
   Post: 'Post'
 };
 
