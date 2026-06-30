@@ -508,8 +508,12 @@ export const projectRouter = createTRPCRouter({
 
       const bySource: Record<string, number> = {};
       const bySubType: Record<string, { amount: number; sourceOfFund: string }> = {};
+      // Portion of each source's allocation that comes from variation orders, kept
+      // separate from the base project fund so the dashboard can show the split.
+      const variationBySource: Record<string, number> = {};
 
       let totalAllocation = 0;
+      let totalVariation = 0;
       let progressSum = 0;
 
       for (const p of projects) {
@@ -538,7 +542,9 @@ export const projectRouter = createTRPCRouter({
           if (vo.amount <= 0) continue;
           const voSource = vo.sourceOfFund ?? p.sourceOfFund;
           bySource[voSource] = (bySource[voSource] ?? 0) + vo.amount;
+          variationBySource[voSource] = (variationBySource[voSource] ?? 0) + vo.amount;
           totalAllocation += vo.amount;
+          totalVariation += vo.amount;
         }
       }
 
@@ -550,8 +556,10 @@ export const projectRouter = createTRPCRouter({
       return {
         budgetYear: input?.budgetYear ?? currentYear,
         totalAllocation,
+        totalVariation,
         bySource,
         bySubType,
+        variationBySource,
         executionRate: Math.round(executionRate * 10) / 10,
       };
 

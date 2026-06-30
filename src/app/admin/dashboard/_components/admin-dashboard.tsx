@@ -148,11 +148,12 @@ type BySubTypeMap = Record<string, { amount: number; sourceOfFund: string }>;
 type AnnualAllocationCardProps = {
     bySource: Record<string, number>;
     bySubType: BySubTypeMap;
+    variationBySource: Record<string, number>;
     total: number;
     budgetYear: string;
 };
 
-function AnnualAllocationCard({ bySource, bySubType, total, budgetYear }: AnnualAllocationCardProps) {
+function AnnualAllocationCard({ bySource, bySubType, variationBySource, total, budgetYear }: AnnualAllocationCardProps) {
     // Order known sources first, then append any unmapped sources that have allocations.
     const ordered = [...SOURCE_OF_FUND_ORDER, "CONFIDENTIAL", ...Object.keys(bySource)].filter(
         (src, i, arr) => arr.indexOf(src) === i && (bySource[src] ?? 0) > 0,
@@ -160,6 +161,8 @@ function AnnualAllocationCard({ bySource, bySubType, total, budgetYear }: Annual
 
     const entries = ordered.map((src) => {
         const amount = bySource[src] ?? 0;
+        // Portion of this source's allocation that comes from variation orders.
+        const variationFund = variationBySource[src] ?? 0;
         const subTypes = Object.entries(bySubType)
             .filter(([key, v]) => v.sourceOfFund === src && !key.startsWith("__NONE__"))
             .map(([key, v]) => ({
@@ -172,6 +175,7 @@ function AnnualAllocationCard({ bySource, bySubType, total, budgetYear }: Annual
             label: SOURCE_SHORT_LABEL[src] ?? src,
             color: SOURCE_COLORS[src] ?? "#94a3b8",
             amount,
+            variationFund,
             pct: total > 0 ? Math.round((amount / total) * 100) : 0,
             subTypes,
         };
@@ -211,18 +215,32 @@ function AnnualAllocationCard({ bySource, bySubType, total, budgetYear }: Annual
                                     </div>
                                 </div>
 
-                                {e.subTypes.length > 0 && (
-                                    <div className="mt-1 ml-1 border-l border-slate-200 pl-3 flex flex-col gap-0.5">
-                                        {e.subTypes.map((s) => (
-                                            <div key={s.label} className="flex items-center justify-between gap-2">
-                                                <span className="text-[10.5px] text-slate-500 truncate">{s.label}</span>
-                                                <span className="text-[10.5px] text-slate-500 tabular-nums shrink-0">
-                                                    {formatToPHPMillions(s.amount)}
+                                <div className="mt-1 ml-1 border-l border-slate-200 pl-3 flex flex-col gap-0.5">
+                                    {/* Project sub-type breakdown */}
+                                    {e.subTypes.map((s) => (
+                                        <div key={s.label} className="flex items-center justify-between gap-2">
+                                            <span className="text-[10.5px] text-slate-500 truncate">{s.label}</span>
+                                            <span className="text-[10.5px] text-slate-500 tabular-nums shrink-0">
+                                                {formatToPHPMillions(s.amount)}
+                                            </span>
+                                        </div>
+                                    ))}
+
+                                    {/* Variation Fund (sum of variation orders for this source) */}
+                                    {e.variationFund > 0 && (
+                                        <>
+                                            <div className="flex items-center justify-between gap-2">
+                                                <span className="text-[10.5px] font-semibold text-amber-600 truncate">Variation Fund</span>
+                                                <span className="text-[10.5px] font-semibold text-amber-600 tabular-nums shrink-0">
+                                                    {formatToPHPMillions(e.variationFund)}
                                                 </span>
                                             </div>
-                                        ))}
-                                    </div>
-                                )}
+                                            <div className="pl-2">
+                                                <span className="text-[10.5px] text-slate-500 truncate">{e.label}</span>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -626,6 +644,7 @@ export function AdminDashboardContent() {
                 <AnnualAllocationCard
                     bySource={projectAllocationData?.bySource ?? {}}
                     bySubType={projectAllocationData?.bySubType ?? {}}
+                    variationBySource={projectAllocationData?.variationBySource ?? {}}
                     total={TotalAllocation}
                     budgetYear={projectAllocationData?.budgetYear ?? "2024"}
                 />
