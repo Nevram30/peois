@@ -19,8 +19,6 @@ import {
 import {
   getMunicipalitiesByDistrict,
   getBarangaysByMunicipality,
-  getPuroksByBarangay,
-  getSitiosByBarangay,
 } from "~/lib/davao-del-norte-locations";
 
 // ─── Shared styles ────────────────────────────────────────────────────────
@@ -241,14 +239,6 @@ export function AddProjectForm() {
   const availableBarangays = useMemo(
     () => getBarangaysByMunicipality(cityMunicipality),
     [cityMunicipality],
-  );
-  const availablePuroks = useMemo(
-    () => getPuroksByBarangay(cityMunicipality, barangay),
-    [cityMunicipality, barangay],
-  );
-  const availableSitios = useMemo(
-    () => getSitiosByBarangay(cityMunicipality, barangay),
-    [cityMunicipality, barangay],
   );
   const availableSubTypes = sourceOfFund ? SOURCE_TO_SUB_TYPES[sourceOfFund] : [];
 
@@ -675,35 +665,23 @@ export function AddProjectForm() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className={labelClass}>Purok</label>
-                  <select
+                  <input
+                    type="text"
                     value={purok}
                     onChange={(e) => setPurok(e.target.value)}
-                    disabled={!barangay}
-                    className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
-                  >
-                    <option value="">
-                      {barangay ? "Select Purok" : "Select Barangay"}
-                    </option>
-                    {availablePuroks.map((p) => (
-                      <option key={p} value={p}>{p}</option>
-                    ))}
-                  </select>
+                    placeholder="Enter Purok"
+                    className={inputClass}
+                  />
                 </div>
                 <div>
                   <label className={labelClass}>Sitio</label>
-                  <select
+                  <input
+                    type="text"
                     value={sitio}
                     onChange={(e) => setSitio(e.target.value)}
-                    disabled={!barangay}
-                    className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
-                  >
-                    <option value="">
-                      {barangay ? "Select Sitio" : "Select Barangay"}
-                    </option>
-                    {availableSitios.map((s) => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
+                    placeholder="Enter Sitio"
+                    className={inputClass}
+                  />
                 </div>
               </div>
             </div>
