@@ -478,6 +478,8 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
     const errors: { amount?: string; ref?: string; type?: string } = {};
     const amount = parseFloat(disbAmount);
     if (!disbAmount || isNaN(amount) || amount <= 0) errors.amount = "Amount must be greater than 0.";
+    else if (amount > totalRemainingBalance)
+      errors.amount = `Insufficient balance. Amount exceeds the total remaining balance of ₱${totalRemainingBalance.toLocaleString("en-PH", { minimumFractionDigits: 2 })}.`;
     if (!disbRef.trim()) errors.ref = "Reference number is required.";
     if (!disbType) errors.type = "Type is required.";
     if (Object.keys(errors).length > 0) { setDisbErrors(errors); return; }

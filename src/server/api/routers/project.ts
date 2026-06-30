@@ -587,6 +587,7 @@ export const projectRouter = createTRPCRouter({
 
       let totalAllocation = 0;
       let totalDisbursed = 0;
+      let totalRemaining = 0;
 
       const addToSubType = (
         map: SubTypeMap,
@@ -600,37 +601,53 @@ export const projectRouter = createTRPCRouter({
       };
 
       for (const p of projects) {
-        // Variation orders increase the allocation — and therefore the remaining
-        // balance — for the source of fund they are charged against. They are not
-        // disbursements, so they only raise the available balance.
+        const disbursed = p.disbursements.reduce((s, d) => s + d.amount, 0);
+        const subKey = p.subType ?? `__NONE__:${p.sourceOfFund}`;
+
+        // Disbursements draw down the project cost (primary fund) first; any
+        // excess overflows onto the variation orders. Neither balance is allowed
+        // to go below zero, mirroring the project edit/detail views — so a fully
+        // (or over-) disbursed project shows a remaining balance of 0, not a
+        // negative number.
+        let overflow = 0;
+        if (p.projectCost > 0) {
+          const rawPrimary = p.projectCost - disbursed;
+          const primaryRemaining = Math.max(0, rawPrimary);
+          overflow = Math.max(0, -rawPrimary);
+
+          totalAllocation += p.projectCost;
+          totalDisbursed += disbursed;
+          totalRemaining += primaryRemaining;
+
+          remainingBySource[p.sourceOfFund] = (remainingBySource[p.sourceOfFund] ?? 0) + primaryRemaining;
+          addToSubType(remainingBySubType, subKey, p.sourceOfFund, primaryRemaining);
+
+          disbursedBySource[p.sourceOfFund] = (disbursedBySource[p.sourceOfFund] ?? 0) + disbursed;
+          addToSubType(disbursedBySubType, subKey, p.sourceOfFund, disbursed);
+        }
+
+        // Variation orders raise the available balance for the source of fund
+        // they are charged against, but the overflow from over-disbursing the
+        // project cost eats into them first so the remaining balance never goes
+        // negative.
         for (const vo of p.variationOrders) {
           if (vo.amount <= 0) continue;
           const voSource = vo.sourceOfFund ?? p.sourceOfFund;
+          const consumed = Math.min(overflow, vo.amount);
+          overflow -= consumed;
+          const voRemaining = vo.amount - consumed;
+
           totalAllocation += vo.amount;
-          remainingBySource[voSource] = (remainingBySource[voSource] ?? 0) + vo.amount;
+          totalRemaining += voRemaining;
+          remainingBySource[voSource] = (remainingBySource[voSource] ?? 0) + voRemaining;
         }
-
-        if (p.projectCost <= 0) continue;
-
-        const disbursed = p.disbursements.reduce((s, d) => s + d.amount, 0);
-        const remaining = p.projectCost - disbursed;
-        const subKey = p.subType ?? `__NONE__:${p.sourceOfFund}`;
-
-        totalAllocation += p.projectCost;
-        totalDisbursed += disbursed;
-
-        remainingBySource[p.sourceOfFund] = (remainingBySource[p.sourceOfFund] ?? 0) + remaining;
-        addToSubType(remainingBySubType, subKey, p.sourceOfFund, remaining);
-
-        disbursedBySource[p.sourceOfFund] = (disbursedBySource[p.sourceOfFund] ?? 0) + disbursed;
-        addToSubType(disbursedBySubType, subKey, p.sourceOfFund, disbursed);
       }
 
       return {
         budgetYear: input?.budgetYear ?? currentYear,
         totalAllocation,
         remaining: {
-          total: totalAllocation - totalDisbursed,
+          total: totalRemaining,
           bySource: remainingBySource,
           bySubType: remainingBySubType,
         },
