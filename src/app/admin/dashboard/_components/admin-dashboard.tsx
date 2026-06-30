@@ -229,14 +229,12 @@ function AnnualAllocationCard({ bySource, bySubType, variationBySource, total, b
                                     {/* Variation Fund (sum of variation orders for this source) */}
                                     {e.variationFund > 0 && (
                                         <>
-                                            <div className="flex items-center justify-between gap-2">
-                                                <span className="text-[10.5px] font-semibold text-amber-600 truncate">Variation Fund</span>
-                                                <span className="text-[10.5px] font-semibold text-amber-600 tabular-nums shrink-0">
+                                            <span className="text-[10.5px] font-semibold text-amber-600 truncate">Variation Fund</span>
+                                            <div className="flex items-center justify-between gap-2 pl-2">
+                                                <span className="text-[10.5px] text-slate-500 truncate">{e.label}</span>
+                                                <span className="text-[10.5px] text-slate-500 tabular-nums shrink-0">
                                                     {formatToPHPMillions(e.variationFund)}
                                                 </span>
-                                            </div>
-                                            <div className="pl-2">
-                                                <span className="text-[10.5px] text-slate-500 truncate">{e.label}</span>
                                             </div>
                                         </>
                                     )}
