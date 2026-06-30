@@ -221,13 +221,13 @@ export function ProjectDetail({ projectId }: Props) {
 
             <div className="flex flex-col gap-5 sm:flex-row">
               {/* Image */}
-              <div className="relative h-40 w-full shrink-0 overflow-hidden rounded-xl border border-gray-200 bg-linear-to-br from-slate-700 to-slate-900 sm:h-44 sm:w-44">
+              <div className="relative h-56 w-full shrink-0 self-stretch overflow-hidden rounded-xl border border-gray-200 bg-linear-to-br from-slate-700 to-slate-900 sm:h-auto sm:w-72">
                 {project.imageUrl ? (
                   <Image
                     src={project.imageUrl}
                     alt={project.title}
                     fill
-                    className="object-cover"
+                    className="object-contain"
                   />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center text-gray-400">
@@ -301,10 +301,6 @@ export function ProjectDetail({ projectId }: Props) {
                   <div>
                     <label className={fieldLabel}>Contractor Name</label>
                     <div className={fieldBox}>{project.contractorName ?? "—"}</div>
-                  </div>
-                  <div>
-                    <label className={fieldLabel}>Contract Cost</label>
-                    <div className={fieldBox}>{peso(project.contractCost)}</div>
                   </div>
                 </div>
 
