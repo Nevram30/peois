@@ -62,6 +62,15 @@ const navItems = [
       </svg>
     ),
   },
+  {
+    label: "Project Access Request",
+    href: "/admin/dashboard/project-access-request",
+    icon: (
+      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+      </svg>
+    ),
+  },
 ];
 
 export function AdminShell({
@@ -84,6 +93,10 @@ export function AdminShell({
   const displayName = me?.name ?? user.name;
   const displayEmail = me?.email ?? user.email;
   const { data: adminNotifs } = api.taskNotification.getAdminNotifications.useQuery();
+  const { data: pendingAccessCount } = api.projectAccessRequest.pendingCount.useQuery(undefined, {
+    refetchInterval: 30_000,
+    refetchOnWindowFocus: true,
+  });
   const [readReplyIds, setReadReplyIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -297,20 +310,29 @@ export function AdminShell({
 
       {/* Navigation Tabs */} 
       <nav className="flex items-center gap-1 bg-white px-6 border-b-2 border-[#1e3a4f] mt-3">
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-t-md transition ${
-              isActive(item.href)
-                ? "bg-gray-50 text-black border-2 border-t-black border-l-black border-r-black border-b-0 -mb-0.5 relative"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
-            }`}
-          >
-            {item.icon}
-            {item.label}
-          </Link>
-        ))}
+        {navItems.map((item) => {
+          const badgeCount =
+            item.href === "/admin/dashboard/project-access-request" ? (pendingAccessCount ?? 0) : 0;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-t-md transition ${
+                isActive(item.href)
+                  ? "bg-gray-50 text-black border-2 border-t-black border-l-black border-r-black border-b-0 -mb-0.5 relative"
+                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+              }`}
+            >
+              {item.icon}
+              {item.label}
+              {badgeCount > 0 && (
+                <span className="ml-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[11px] font-bold leading-none text-white">
+                  {badgeCount > 99 ? "99+" : badgeCount}
+                </span>
+              )}
+            </Link>
+          );
+        })}
       </nav>
       </div>
 

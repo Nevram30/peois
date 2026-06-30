@@ -56,15 +56,6 @@ const NAV_ITEMS = [
       </svg>
     ),
   },
-  {
-    href: "/super-admin/project-access-request",
-    label: "Project Access Request",
-    icon: (
-      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
-      </svg>
-    ),
-  },
   // Temporarily hidden — Project Monitoring & User Monitoring tabs
   // {
   //   href: "/super-admin/project-monitoring",
@@ -95,11 +86,6 @@ export function NavHeader({ user, userId }: { user: { name?: string | null; emai
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
   const utils = api.useUtils();
-
-  const { data: pendingAccessCount } = api.projectAccessRequest.pendingCount.useQuery(undefined, {
-    refetchInterval: 30_000,
-    refetchOnWindowFocus: true,
-  });
 
   // Activity-log badge: count entries newer than the last time this admin
   // opened the tab (persisted in localStorage), so it clears on visit.
@@ -246,11 +232,7 @@ export function NavHeader({ user, userId }: { user: { name?: string | null; emai
                 ? pathname === "/super-admin/dashboard"
                 : pathname.startsWith(item.href);
             const badgeCount =
-              item.href === "/super-admin/project-access-request"
-                ? (pendingAccessCount ?? 0)
-                : item.href === "/super-admin/project-activity-log"
-                  ? (recentActivityCount ?? 0)
-                  : 0;
+              item.href === "/super-admin/project-activity-log" ? (recentActivityCount ?? 0) : 0;
             return (
               <Link
                 key={item.href}

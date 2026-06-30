@@ -1,8 +1,8 @@
 import { z } from "zod";
 import {
+  adminProcedure,
   createTRPCRouter,
   protectedProcedure,
-  superAdminProcedure,
 } from "~/server/api/trpc";
 
 const actionEnum = z.enum(["VIEW", "DOWNLOAD"]);
@@ -88,8 +88,8 @@ export const projectAccessRequestRouter = createTRPCRouter({
       });
     }),
 
-  /** Super-admin: full list of access requests across all projects. */
-  list: superAdminProcedure.query(async ({ ctx }) => {
+  /** Admin: full list of access requests across all projects. */
+  list: adminProcedure.query(async ({ ctx }) => {
     return ctx.db.projectAccessRequest.findMany({
       include: {
         project: { select: { id: true, title: true, projectCode: true } },
@@ -101,13 +101,13 @@ export const projectAccessRequestRouter = createTRPCRouter({
     });
   }),
 
-  /** Super-admin: count of pending requests (for the nav badge). */
-  pendingCount: superAdminProcedure.query(async ({ ctx }) => {
+  /** Admin: count of pending requests (for the nav badge). */
+  pendingCount: adminProcedure.query(async ({ ctx }) => {
     return ctx.db.projectAccessRequest.count({ where: { status: "PENDING" } });
   }),
 
-  /** Super-admin: approve or deny a request. */
-  decide: superAdminProcedure
+  /** Admin: approve or deny a request. */
+  decide: adminProcedure
     .input(
       z.object({
         id: z.string(),

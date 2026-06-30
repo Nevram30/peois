@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRef, useState, useEffect, useMemo } from "react";
 import { api } from "~/trpc/react";
 import { useUploadThing } from "~/lib/uploadthing";
-import { DocumentAccessActions } from "~/app/_components/document-access-actions";
 import {
   SOURCE_OF_FUND_LABEL,
   SOURCE_OF_FUND_ORDER,
@@ -140,7 +139,6 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   const { data: projectFiles, refetch: refetchFiles } = api.projectFile.getByProjectId.useQuery({ projectId });
   const { startUpload } = useUploadThing("projectFileUploader");
   const { data: usersForSelect } = api.user.getForSelect.useQuery();
-  const { data: me } = api.user.getMe.useQuery();
 
   // ─ Identity & Status ───────────────────────────────────────────────────
   const [completion, setCompletion] = useState(0);
@@ -1389,16 +1387,12 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                         <td className="px-3 py-3 text-gray-500">{f.createdBy.name ?? f.createdBy.email}</td>
                         <td className="px-3 py-3">
                           <div className="flex items-center justify-center gap-2">
-                            <DocumentAccessActions
-                              projectId={projectId}
-                              fileId={f.id}
-                              fileName={f.fileName}
-                              fileUrl={f.fileUrl}
-                              size="sm"
-                              projectTitle={project?.title ?? ""}
-                              requesterName={me?.name ?? ""}
-                              requesterEmployeeId={me?.employeeId ?? ""}
-                            />
+                            <a href={f.fileUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-500" title="View">
+                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178Z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
+                            </a>
+                            <a href={f.fileUrl} download={f.fileName} className="text-gray-400 hover:text-blue-500" title="Download">
+                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+                            </a>
                             <button
                               type="button"
                               onClick={() => { if (confirm(`Delete "${f.fileName}"?`)) deleteProjectFile.mutate({ id: f.id }); }}

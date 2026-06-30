@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { api } from "~/trpc/react";
 
 function formatDateTime(d: Date | string): string {
@@ -52,8 +51,6 @@ const ROLE_LABEL: Record<string, string> = {
 };
 
 export default function ProjectAccessRequestPage() {
-  const searchParams = useSearchParams();
-  const userId = searchParams.get("id");
   const utils = api.useUtils();
 
   const { data: requests, isLoading } = api.projectAccessRequest.list.useQuery(undefined, {
@@ -117,7 +114,7 @@ export default function ProjectAccessRequestPage() {
   const isDeciding = (id: string) => decide.isPending && decide.variables?.id === id;
 
   return (
-    <>
+    <div className="px-6 py-8">
       {/* Header */}
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-5 py-3 shadow-sm">
         <div className="flex items-center gap-2.5">
@@ -128,7 +125,7 @@ export default function ProjectAccessRequestPage() {
           </div>
           <div>
             <p className="text-sm font-semibold text-gray-900">Project Access Request</p>
-            <p className="text-xs text-gray-500">Approve or deny admin requests to view and download project documents.</p>
+            <p className="text-xs text-gray-500">Approve or deny requests to view and download project documents.</p>
           </div>
         </div>
         <button
@@ -249,7 +246,7 @@ export default function ProjectAccessRequestPage() {
                     <td className="whitespace-nowrap px-4 py-3 text-gray-600">{formatDateTime(r.createdAt)}</td>
                     <td className="max-w-xs px-4 py-3">
                       <Link
-                        href={`/super-admin/projects-data-list/${r.project.id}?id=${userId ?? ""}`}
+                        href={`/admin/dashboard/projects/${r.project.id}`}
                         className="line-clamp-1 font-medium text-gray-900 hover:text-blue-600"
                       >
                         {r.project.title}
@@ -455,6 +452,6 @@ export default function ProjectAccessRequestPage() {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

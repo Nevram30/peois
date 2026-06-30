@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "~/trpc/react";
 import {
@@ -189,37 +189,47 @@ export function OverrideForm({ projectId }: { projectId: string }) {
   const [notifDesc, setNotifDesc] = useState("");
   const [notifSuccess, setNotifSuccess] = useState(false);
 
-  useEffect(() => {
-    if (project) {
-      setForm({
-        title: project.title,
-        projectCost: project.projectCost,
-        modeOfImplementation: project.modeOfImplementation,
-        locationImplementation: project.locationImplementation,
-        status: project.status,
-        sourceOfFund: project.sourceOfFund,
-        subType: project.subType ?? "",
-        budgetYear: project.budgetYear ?? "",
-        contractCost: project.contractCost,
-        contractorName: project.contractorName ?? "",
-        projectEngineer: project.projectEngineer ?? "",
-        dateStarted: formatDate(project.dateStarted),
-        targetCompletionDate: formatDate(project.targetCompletionDate),
-        revisedCompletionDate: formatDate(project.revisedCompletionDate),
-        numFemale: project.numFemale,
-        numMale: project.numMale,
-        numManDays: project.numManDays,
-        district: project.district ?? "",
-        cityMunicipality: project.cityMunicipality ?? "",
-        barangay: project.barangay ?? "",
-        purok: project.purok ?? "",
-        sitio: project.sitio ?? "",
-        description: project.description ?? "",
-      });
-      setProjectCostDisplay(formatCurrency(project.projectCost));
-      setContractCostDisplay(formatCurrency(project.contractCost));
-    }
+  // Re-applies the saved project values to the form, discarding any edits.
+  const resetForm = useCallback(() => {
+    if (!project) return;
+    setForm({
+      title: project.title,
+      projectCost: project.projectCost,
+      modeOfImplementation: project.modeOfImplementation,
+      locationImplementation: project.locationImplementation,
+      status: project.status,
+      sourceOfFund: project.sourceOfFund,
+      subType: project.subType ?? "",
+      budgetYear: project.budgetYear ?? "",
+      contractCost: project.contractCost,
+      contractorName: project.contractorName ?? "",
+      projectEngineer: project.projectEngineer ?? "",
+      dateStarted: formatDate(project.dateStarted),
+      targetCompletionDate: formatDate(project.targetCompletionDate),
+      revisedCompletionDate: formatDate(project.revisedCompletionDate),
+      numFemale: project.numFemale,
+      numMale: project.numMale,
+      numManDays: project.numManDays,
+      district: project.district ?? "",
+      cityMunicipality: project.cityMunicipality ?? "",
+      barangay: project.barangay ?? "",
+      purok: project.purok ?? "",
+      sitio: project.sitio ?? "",
+      description: project.description ?? "",
+    });
+    setProjectCostDisplay(formatCurrency(project.projectCost));
+    setContractCostDisplay(formatCurrency(project.contractCost));
+    setReason("");
   }, [project]);
+
+  useEffect(() => {
+    resetForm();
+  }, [resetForm]);
+
+  function handleCancel() {
+    resetForm();
+    router.push(`/super-admin/projects-data-list?id=${userId}`);
+  }
 
   function set<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -670,35 +680,6 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                 </button>
               </div>
 
-              {/* Commit bar inside funding */}
-              <div className="mt-4 flex items-center justify-between border-t border-gray-100 pt-4">
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (project) {
-                      setForm((prev) => ({
-                        ...prev,
-                        subType: project.subType ?? "",
-                        budgetYear: project.budgetYear ?? "",
-                        sourceOfFund: project.sourceOfFund,
-                      }));
-                    }
-                  }}
-                  className="text-sm text-gray-500 hover:text-gray-700"
-                >
-                  Cancel Changes
-                </button>
-                <button
-                  type="submit"
-                  disabled={override.isPending || !reason.trim()}
-                  className="flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow transition hover:bg-blue-700 disabled:opacity-50"
-                >
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                  </svg>
-                  Commit &amp; Save Changes
-                </button>
-              </div>
             </div>
           </div>
         </SectionCard>
@@ -945,53 +926,41 @@ export function OverrideForm({ projectId }: { projectId: string }) {
           </div>
         </SectionCard>
 
-        {/* REASON & COMMIT */}
-        <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-800 bg-gray-900 px-6 py-5 shadow-2xl after:absolute after:left-0 after:right-0 after:top-full after:h-screen after:bg-gray-900 after:content-['']">
-          <div className="flex items-start gap-4">
-            <div className="flex-1">
-              <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-300">
-                Reason for Override <span className="text-red-400">*</span>
-              </label>
-              <textarea
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
-                rows={2}
-                placeholder="Detailed explanation for these changes..."
-                className="w-full rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-gray-100 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-            <div className="flex flex-col items-end gap-2 pt-5">
-              <button
-                type="submit"
-                disabled={override.isPending || !reason.trim()}
-                className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-blue-700 disabled:opacity-50"
-              >
-                {override.isPending ? (
-                  <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
-                ) : (
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                  </svg>
-                )}
-                Commit All Changes
-              </button>
-              <p className="text-xs text-gray-500">Permanent — recorded in audit trail.</p>
-            </div>
+        {/* ADMINISTRATIVE AUTHORIZATION */}
+        <div className="rounded-xl bg-gray-900 px-6 py-5 shadow-sm">
+          <div className="mb-3 flex items-center gap-2">
+            <svg className="h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 4.556-3.04 8.4-7.2 9.6a.75.75 0 0 1-.6 0C9.04 20.4 6 16.556 6 12V6.741a.75.75 0 0 1 .53-.717A11.21 11.21 0 0 0 12 3.74a11.21 11.21 0 0 0 5.47 2.284.75.75 0 0 1 .53.717V12Z" />
+            </svg>
+            <span className="text-xs font-semibold uppercase tracking-wide text-gray-200">Administrative Authorization</span>
           </div>
+          <label className="mb-1.5 block text-[10px] font-semibold uppercase tracking-wide text-gray-400">
+            Reason for Comprehensive Update <span className="text-red-400">*</span>
+          </label>
+          <textarea
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            rows={2}
+            placeholder="State legal or administrative basis for manual data changes..."
+            className="w-full rounded-lg border border-gray-600 bg-gray-800 px-3 py-2.5 text-sm text-gray-100 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+          <p className="mt-2 flex items-center gap-1.5 text-[11px] text-gray-400">
+            <svg className="h-3.5 w-3.5 shrink-0 text-amber-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+            </svg>
+            <span><span className="font-semibold text-gray-300">Mandatory:</span> These changes will be signed and logged in the immutable system audit trail.</span>
+          </p>
         </div>
 
-        {/* OVERRIDE HISTORY AUDIT TRAIL */}
+        {/* ADMINISTRATIVE UPDATE HISTORY AUDIT TRAIL */}
         <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
           <div className="border-b border-gray-100 px-6 py-4">
             <div className="flex items-center gap-2">
               <svg className="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
               </svg>
-              <h3 className="text-sm font-semibold text-gray-800">Override History Audit Trail</h3>
+              <h3 className="text-sm font-semibold text-gray-800">Administrative Update History Audit Trail</h3>
             </div>
           </div>
           <div className="overflow-x-auto">
@@ -1000,15 +969,16 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                 <tr className="border-b border-gray-100 bg-gray-50">
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Timestamp</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Administrator</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Reason for Change</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Audit Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Source of Fund</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Justification Record</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Auth Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {overrideActivities.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="py-10 text-center text-sm text-gray-400">
-                      No override history yet.
+                    <td colSpan={5} className="py-10 text-center text-sm text-gray-400">
+                      No administrative update history yet.
                     </td>
                   </tr>
                 ) : (
@@ -1032,11 +1002,17 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                             </span>
                           </div>
                         </td>
+                        <td className="px-4 py-3 text-sm text-gray-600">
+                          {SOURCE_OF_FUND_LABEL[project.sourceOfFund] ?? project.sourceOfFund}
+                        </td>
                         <td className="max-w-xs px-4 py-3 text-sm text-gray-600">
-                          <span className="line-clamp-2">{reasonText}</span>
+                          <span className="line-clamp-2 italic">{reasonText}</span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-xs font-semibold text-green-600">VERIFIED</span>
+                          <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-green-600">
+                            <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                            Verified
+                          </span>
                         </td>
                       </tr>
                     );
@@ -1050,6 +1026,37 @@ export function OverrideForm({ projectId }: { projectId: string }) {
               Showing 1 to {overrideActivities.length} of {overrideActivities.length} results
             </div>
           )}
+        </div>
+
+        {/* FIXED ACTION BAR */}
+        <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white px-6 py-4 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
+          <div className="flex items-center justify-end gap-3">
+            <button
+              type="button"
+              onClick={handleCancel}
+              disabled={override.isPending}
+              className="rounded-lg border border-gray-300 px-6 py-2.5 text-sm font-semibold uppercase tracking-wide text-gray-600 transition hover:bg-gray-50 disabled:opacity-50"
+            >
+              Cancel Changes
+            </button>
+            <button
+              type="submit"
+              disabled={override.isPending || !reason.trim()}
+              className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold uppercase tracking-wide text-white shadow transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {override.isPending ? (
+                <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+              ) : (
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+              )}
+              {override.isPending ? "Saving…" : "Commit & Save Updates"}
+            </button>
+          </div>
         </div>
       </form>
     </>
