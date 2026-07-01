@@ -146,9 +146,9 @@ export function AdminShell({
       <div className="sticky top-0 z-40 bg-gray-50">
       {/* Top Header */}
       <header className="bg-white text-gray-900 border-b border-gray-200 shadow-sm">
-        <div className="flex items-center justify-between px-6 py-3">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg overflow-hidden bg-gray-100">
+        <div className="flex items-center justify-between gap-2 px-3 py-3 sm:px-6">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg overflow-hidden bg-gray-100 sm:h-10 sm:w-10">
               <Image
                 src="/image/logo.jpeg"
                 alt="PEO Logo"
@@ -157,22 +157,22 @@ export function AdminShell({
                 className="object-contain"
               />
             </div>
-            <div>
-              <h1 className="text-lg font-semibold leading-tight">
+            <div className="min-w-0">
+              <h1 className="truncate text-sm font-semibold leading-tight sm:text-lg">
                 PEO - Project Management Information System
               </h1>
-              <p className="text-xs text-gray-500">
+              <p className="hidden truncate text-xs text-gray-500 sm:block">
                 Provincial Government of Davao del Norte
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-4">
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setDropdownOpen((v) => !v)}
-                className="flex items-center gap-3 rounded-lg px-2 py-1 transition hover:bg-gray-100"
+                className="flex items-center gap-3 rounded-lg px-1 py-1 transition hover:bg-gray-100 sm:px-2"
               >
-                <div className="text-right">
+                <div className="hidden text-right sm:block">
                   <p className="text-sm font-medium leading-tight">
                     {displayName ?? displayEmail}
                   </p>
@@ -308,8 +308,8 @@ export function AdminShell({
         </div>
       </header>
 
-      {/* Navigation Tabs */} 
-      <nav className="flex items-center gap-1 bg-white px-6 border-b-2 border-[#1e3a4f] mt-3">
+      {/* Navigation Tabs */}
+      <nav className="flex items-center gap-1 overflow-x-auto whitespace-nowrap bg-white px-3 border-b-2 border-[#1e3a4f] mt-3 sm:px-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {navItems.map((item) => {
           const badgeCount =
             item.href === "/admin/dashboard/project-access-request" ? (pendingAccessCount ?? 0) : 0;
@@ -317,7 +317,7 @@ export function AdminShell({
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-t-md transition ${
+              className={`flex shrink-0 items-center gap-2 px-3 py-2.5 text-sm font-medium rounded-t-md transition sm:px-4 ${
                 isActive(item.href)
                   ? "bg-gray-50 text-black border-2 border-t-black border-l-black border-r-black border-b-0 -mb-0.5 relative"
                   : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"

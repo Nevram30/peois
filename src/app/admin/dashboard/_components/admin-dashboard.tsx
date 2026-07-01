@@ -185,19 +185,19 @@ function AnnualAllocationCard({ bySource, bySubType, variationBySource, total, b
 
     return (
         <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-3 border border-slate-200">
-            <div className="p-5">
+            <div className="p-4 sm:p-5">
                 <div className="flex items-center justify-between mb-4">
                     <p className="text-[12px] font-extrabold text-slate-800 tracking-widest uppercase">
                         Annual Allocation &amp; Source Breakdown
                     </p>
                 </div>
 
-                <div className="flex items-start gap-8">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-8">
                     <div className="shrink-0 pt-2">
                         <DonutChart segments={segments} size={150} thickness={34} centerLabel={formatToPHPBillions(total)} />
                     </div>
 
-                    <div className="flex-1 columns-2 gap-12 *:break-inside-avoid">
+                    <div className="w-full flex-1 columns-1 sm:columns-2 gap-6 sm:gap-12 *:break-inside-avoid">
                         {entries.map((e) => (
                             <div key={e.src} className="mb-2.5">
                                 <div className="flex items-center justify-between gap-2">
@@ -311,17 +311,17 @@ function SourceBreakdownCard({ title, footerLabel, bySource, bySubType, total }:
 
     return (
         <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-200">
-            <div className="p-5">
+            <div className="p-4 sm:p-5">
                 <p className="text-[12px] font-extrabold text-slate-800 tracking-widest uppercase mb-4">
                     {title}
                 </p>
 
-                <div className="flex items-start gap-5">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5">
                     <div className="shrink-0 pt-1">
                         <DonutChart segments={segments} size={120} thickness={60} />
                     </div>
 
-                    <div className="flex-1 columns-2 gap-6 *:break-inside-avoid">
+                    <div className="w-full flex-1 columns-1 sm:columns-2 gap-6 *:break-inside-avoid">
                         {entries.map((e) => (
                             <div key={e.src} className="mb-2.5">
                                 <div className="flex items-center justify-between gap-2">
@@ -434,7 +434,7 @@ const STATUS_CONFIG: Record<
 // ── Skeletons ──────────────────────────────────────────────────
 function StatCardsSkeleton() {
     return (
-        <div className="grid grid-cols-7 gap-2 mb-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2 mb-3">
             {Array.from({ length: 7 }).map((_, i) => (
                 <div key={i} className="bg-white rounded-lg shadow-sm p-3 flex flex-col gap-1 border-t-[3px] border-slate-200 animate-pulse">
                     <div className="w-6 h-6 rounded-md bg-slate-200 mb-1" />
@@ -474,9 +474,9 @@ function FinancialCardSkeleton() {
         <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-200">
             <div className="p-5 animate-pulse">
                 <div className="h-3 w-56 rounded bg-slate-200 mb-4" />
-                <div className="flex items-start gap-8">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-8">
                     <div className="w-[150px] h-[150px] rounded-full bg-slate-200 shrink-0" />
-                    <div className="flex-1 grid grid-cols-2 gap-x-12 gap-y-3">
+                    <div className="w-full flex-1 grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-3">
                         {Array.from({ length: 8 }).map((_, i) => (
                             <div key={i} className="h-3 rounded bg-slate-200" />
                         ))}
@@ -596,7 +596,7 @@ export function AdminDashboardContent() {
             {statsLoading ? (
                 <StatCardsSkeleton />
             ) : (
-                <div className="grid grid-cols-7 gap-2 mb-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2 mb-3">
                     {statCards.map((c) => (
                         <div key={c.label} className={`bg-white rounded-lg shadow-sm p-3 flex flex-col gap-1 border-t-[3px] ${c.borderColor}`}>
                             <div className={`w-6 h-6 rounded-md ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>
@@ -677,14 +677,14 @@ export function AdminDashboardContent() {
 
             {/* Recent Project Updates */}
             <div className="mt-5 rounded-2xl border border-gray-100 bg-white shadow-sm">
-                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-6 py-5">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-4 py-4 sm:px-6 sm:py-5">
                     <h2 className="text-md font-semibold text-gray-900">
                         Recent Project Updates
                     </h2>
 
                     {/* Search + Fiscal Year Filter */}
-                    <div className="flex items-center gap-2">
-                        <div className="relative w-72">
+                    <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+                        <div className="relative w-full sm:w-72">
                             <svg
                                 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
                                 fill="none"
@@ -709,7 +709,7 @@ export function AdminDashboardContent() {
                                 className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-700 shadow-sm placeholder:text-gray-400 focus:border-[#1e3a4f] focus:outline-none focus:ring-2 focus:ring-[#1e3a4f]/20"
                             />
                         </div>
-                        <div className="relative">
+                        <div className="relative w-full sm:w-auto">
                             <svg
                                 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
                                 fill="none"
@@ -729,7 +729,7 @@ export function AdminDashboardContent() {
                                     setFiscalYear(e.target.value);
                                     setPage(1);
                                 }}
-                                className="appearance-none rounded-xl border border-gray-200 bg-white py-2.5 pl-9 pr-9 text-sm text-gray-700 shadow-sm focus:border-[#1e3a4f] focus:outline-none focus:ring-2 focus:ring-[#1e3a4f]/20"
+                                className="w-full appearance-none rounded-xl border border-gray-200 bg-white py-2.5 pl-9 pr-9 text-sm text-gray-700 shadow-sm focus:border-[#1e3a4f] focus:outline-none focus:ring-2 focus:ring-[#1e3a4f]/20"
                             >
                                 <option value="">All Fiscal Years</option>
                                 {budgetYears?.map((y) => (
@@ -959,7 +959,7 @@ export function AdminDashboardContent() {
 
                 {/* Pagination Footer */}
                 {!isLoading && totalFiltered > 0 && (
-                    <div className="flex items-center justify-between border-t border-gray-100 px-6 py-4">
+                    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 px-4 py-4 sm:px-6">
                         <div className="flex items-center gap-2 text-sm text-gray-500">
                             <span>Rows per page:</span>
                             <select
@@ -975,7 +975,7 @@ export function AdminDashboardContent() {
                                 ))}
                             </select>
                         </div>
-                        <div className="flex items-center gap-1">
+                        <div className="flex flex-wrap items-center gap-1">
                             <button
                                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                                 disabled={page === 1}
