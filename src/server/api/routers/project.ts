@@ -257,6 +257,7 @@ export const projectRouter = createTRPCRouter({
         amount: z.number().min(0),
         referenceNumber: z.string().optional(),
         type: z.enum(["FUEL", "LABOR", "MATERIALS"]).optional(),
+        percentage: z.number().min(0).optional(),
         date: z.date().optional(),
       }),
     )
@@ -290,11 +291,18 @@ export const projectRouter = createTRPCRouter({
             trackingNumber,
             referenceNumber: input.referenceNumber,
             type: input.type,
+            percentage: input.percentage,
             date: input.date ?? new Date(),
             createdById: ctx.session.user.id,
           },
         });
       });
+    }),
+
+  deleteDisbursement: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.disbursement.delete({ where: { id: input.id } });
     }),
 
   getDisbursements: protectedProcedure
@@ -325,6 +333,12 @@ export const projectRouter = createTRPCRouter({
           createdById: ctx.session.user.id,
         },
       });
+    }),
+
+  deleteVariationOrder: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.variationOrder.delete({ where: { id: input.id } });
     }),
 
   getVariationOrders: protectedProcedure
@@ -359,6 +373,12 @@ export const projectRouter = createTRPCRouter({
           createdById: ctx.session.user.id,
         },
       });
+    }),
+
+  deleteTimelineAdjustment: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.timelineAdjustment.delete({ where: { id: input.id } });
     }),
 
   getTimelineAdjustments: protectedProcedure

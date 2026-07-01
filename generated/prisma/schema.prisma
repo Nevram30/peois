@@ -265,6 +265,7 @@ model Disbursement {
   trackingNumber  String?           @unique
   referenceNumber String?
   type            DisbursementType?
+  percentage      Float?
   amount          Float
   createdBy       User              @relation(fields: [createdById], references: [id])
   createdById     String
