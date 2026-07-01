@@ -446,11 +446,15 @@ export function ProjectDetail({ projectId }: Props) {
             <div className="space-y-5 lg:col-span-2">
               <div>
                 <p className={fieldLabel}>Recent Disbursements</p>
-                <div className="mt-1.5 overflow-hidden rounded-lg border border-gray-200">
-                  <table className="w-full text-sm">
-                    <thead className="bg-gray-50">
-                      <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                <div
+                  className="mt-1.5 overflow-y-auto rounded-lg border border-gray-200"
+                  style={{ maxHeight: "268px" }}
+                >
+                  <table className="w-full border-separate border-spacing-0 text-sm">
+                    <thead className="sticky top-0 z-10 bg-gray-50">
+                      <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 [&>th]:border-b [&>th]:border-gray-200">
                         <th className="px-4 py-3">Date</th>
+                        <th className="px-4 py-3">Tracking #</th>
                         <th className="px-4 py-3">Reference / Check #</th>
                         <th className="px-4 py-3">Type</th>
                         <th className="px-4 py-3 text-right">Amount (₱)</th>
@@ -461,6 +465,9 @@ export function ProjectDetail({ projectId }: Props) {
                         disbursements.map((d) => (
                           <tr key={d.id} className="text-gray-700">
                             <td className="px-4 py-3 text-gray-500">{fmt(d.date)}</td>
+                            <td className="px-4 py-3 font-mono text-xs font-semibold text-blue-900">
+                              {d.trackingNumber ?? "—"}
+                            </td>
                             <td className="px-4 py-3 font-mono text-xs">
                               {d.referenceNumber ?? "—"}
                             </td>
@@ -477,7 +484,7 @@ export function ProjectDetail({ projectId }: Props) {
                       ) : (
                         <tr>
                           <td
-                            colSpan={4}
+                            colSpan={5}
                             className="px-4 py-8 text-center text-sm text-gray-400"
                           >
                             No disbursements recorded yet.

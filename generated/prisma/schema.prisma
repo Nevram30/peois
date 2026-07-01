@@ -262,6 +262,7 @@ model Disbursement {
   projectId       String
   project         Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
   date            DateTime          @default(now())
+  trackingNumber  String?           @unique
   referenceNumber String?
   type            DisbursementType?
   amount          Float

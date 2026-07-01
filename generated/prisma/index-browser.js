@@ -202,6 +202,7 @@ exports.Prisma.DisbursementScalarFieldEnum = {
   id: 'id',
   projectId: 'projectId',
   date: 'date',
+  trackingNumber: 'trackingNumber',
   referenceNumber: 'referenceNumber',
   type: 'type',
   amount: 'amount',

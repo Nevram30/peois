@@ -270,15 +270,16 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   });
 
   const recordDisbursement = api.project.createDisbursement.useMutation({
-    onSuccess: (_data, variables) => {
+    onSuccess: (data, variables) => {
       setDisbAmount(""); setDisbRef(""); setDisbType(""); setDisbErrors({});
       void refetchDisbursements();
       const formatted = variables.amount.toLocaleString("en-PH", { minimumFractionDigits: 2 });
       const refPart = variables.referenceNumber ? ` (Ref: ${variables.referenceNumber})` : "";
       const typePart = variables.type ? ` [${variables.type}]` : "";
+      const trackPart = data.trackingNumber ? ` [${data.trackingNumber}]` : "";
       addActivity.mutate({
         projectId: variables.projectId,
-        description: `Recorded disbursement of ₱${formatted}${refPart}${typePart}.`,
+        description: `Recorded disbursement of ₱${formatted}${refPart}${typePart}${trackPart}.`,
       });
     },
   });
@@ -923,11 +924,15 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
               {/* Right: disbursements table + record */}
               <div className="col-span-3 flex flex-col p-4">
                 <FieldLabel>Recent Disbursements</FieldLabel>
-                <div className="flex-1 overflow-hidden rounded-lg border border-gray-200">
-                  <table className="w-full text-xs">
-                    <thead>
-                      <tr className="border-b border-gray-100 bg-gray-50">
+                <div
+                  className="flex-1 overflow-y-auto rounded-lg border border-gray-200"
+                  style={{ maxHeight: "212px" }}
+                >
+                  <table className="w-full border-separate border-spacing-0 text-xs">
+                    <thead className="sticky top-0 z-10 bg-gray-50">
+                      <tr className="[&>th]:border-b [&>th]:border-gray-100">
                         <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Date</th>
+                        <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Tracking #</th>
                         <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Reference / Check #</th>
                         <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Type</th>
                         <th className="px-3 py-2 text-right text-[10px] font-bold uppercase tracking-wider text-gray-400">Amount (₱)</th>
@@ -937,6 +942,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                       {disbursements && disbursements.length > 0 ? disbursements.map((d) => (
                         <tr key={d.id} className="hover:bg-gray-50/50">
                           <td className="px-3 py-2.5 text-gray-600">{fmt(d.date)}</td>
+                          <td className="px-3 py-2.5 font-mono font-semibold text-blue-900">{d.trackingNumber ?? "—"}</td>
                           <td className="px-3 py-2.5 font-mono text-gray-700">{d.referenceNumber ?? "—"}</td>
                           <td className="px-3 py-2.5 text-gray-700">
                             {d.type ? d.type.charAt(0) + d.type.slice(1).toLowerCase() : "—"}
@@ -946,7 +952,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                           </td>
                         </tr>
                       )) : (
-                        <tr><td colSpan={4} className="px-3 py-6 text-center text-gray-400">No disbursements recorded yet.</td></tr>
+                        <tr><td colSpan={5} className="px-3 py-6 text-center text-gray-400">No disbursements recorded yet.</td></tr>
                       )}
                     </tbody>
                   </table>
@@ -1005,10 +1011,13 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                 {/* Revised Contract Cost History */}
                 <div className="mt-5 border-t border-gray-100 pt-4">
                   <FieldLabel>Revised Contract Cost History</FieldLabel>
-                  <div className="overflow-hidden rounded-lg border border-gray-200">
-                    <table className="w-full text-xs">
-                      <thead>
-                        <tr className="border-b border-gray-100 bg-gray-50">
+                  <div
+                    className="overflow-y-auto rounded-lg border border-gray-200"
+                    style={{ maxHeight: "212px" }}
+                  >
+                    <table className="w-full border-separate border-spacing-0 text-xs">
+                      <thead className="sticky top-0 z-10 bg-gray-50">
+                        <tr className="[&>th]:border-b [&>th]:border-gray-100">
                           <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Date</th>
                           <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Original Cost</th>
                           <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Source of Fund</th>
@@ -1089,10 +1098,13 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
             />
             <div className="p-4">
               <FieldLabel>Timeline Adjustment History</FieldLabel>
-              <div className="overflow-hidden rounded-lg border border-gray-200">
-                <table className="w-full text-xs">
-                  <thead>
-                    <tr className="border-b border-gray-100 bg-gray-50">
+              <div
+                className="overflow-y-auto rounded-lg border border-gray-200"
+                style={{ maxHeight: "392px" }}
+              >
+                <table className="w-full border-separate border-spacing-0 text-xs">
+                  <thead className="sticky top-0 z-10 bg-gray-50">
+                    <tr className="[&>th]:border-b [&>th]:border-gray-100">
                       <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Start Date</th>
                       <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">End Date</th>
                       <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Duration</th>
