@@ -258,13 +258,13 @@ export function NavHeader({ user, userId }: { user: { name?: string | null; emai
       {logoutModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
               <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
               </svg>
             </div>
-            <h2 className="text-lg font-semibold text-gray-900">Sign out</h2>
-            <p className="mt-1 text-sm text-gray-500">Are you sure you want to sign out of your account?</p>
+            <h2 className="text-center text-lg font-semibold text-gray-900">Sign out</h2>
+            <p className="mt-1 text-center text-sm text-gray-500">Are you sure you want to sign out of your account?</p>
             <div className="mt-6 flex gap-3">
               <button
                 onClick={() => setLogoutModalOpen(false)}
