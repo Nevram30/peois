@@ -7,6 +7,7 @@ import {
   PROJECT_STATUS_LABEL,
   PROJECT_SUB_TYPE_LABEL,
   SOURCE_OF_FUND_LABEL,
+  DISBURSEMENT_TYPE_LABEL,
   type ProjectStatusValue,
   type ProjectSubTypeValue,
   type SourceOfFundValue,
@@ -454,7 +455,6 @@ export function ProjectDetail({ projectId }: Props) {
                     <thead className="sticky top-0 z-10 bg-gray-50">
                       <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 [&>th]:border-b [&>th]:border-gray-200">
                         <th className="px-4 py-3">Date</th>
-                        <th className="px-4 py-3">Tracking #</th>
                         <th className="px-4 py-3">Reference / Check #</th>
                         <th className="px-4 py-3">Type</th>
                         <th className="px-4 py-3 text-right">Amount (₱)</th>
@@ -465,14 +465,11 @@ export function ProjectDetail({ projectId }: Props) {
                         disbursements.map((d) => (
                           <tr key={d.id} className="text-gray-700">
                             <td className="px-4 py-3 text-gray-500">{fmt(d.date)}</td>
-                            <td className="px-4 py-3 font-mono text-xs font-semibold text-blue-900">
-                              {d.trackingNumber ?? "—"}
-                            </td>
                             <td className="px-4 py-3 font-mono text-xs">
                               {d.referenceNumber ?? "—"}
                             </td>
                             <td className="px-4 py-3 text-gray-500">
-                              {d.type ? d.type.charAt(0) + d.type.slice(1).toLowerCase() : "—"}
+                              {d.type ? DISBURSEMENT_TYPE_LABEL[d.type] : "—"}
                             </td>
                             <td className="px-4 py-3 text-right font-semibold">
                               {d.amount.toLocaleString("en-PH", {
@@ -484,7 +481,7 @@ export function ProjectDetail({ projectId }: Props) {
                       ) : (
                         <tr>
                           <td
-                            colSpan={5}
+                            colSpan={4}
                             className="px-4 py-8 text-center text-sm text-gray-400"
                           >
                             No disbursements recorded yet.

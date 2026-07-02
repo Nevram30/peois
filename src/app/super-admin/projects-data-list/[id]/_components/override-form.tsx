@@ -10,9 +10,12 @@ import {
   SOURCE_TO_SUB_TYPES,
   PROJECT_STATUS_LABEL,
   PROJECT_STATUS_ORDER,
+  DISBURSEMENT_TYPE_LABEL,
+  MODE_TO_DISBURSEMENT_TYPES,
   type SourceOfFundValue,
   type ProjectSubTypeValue,
   type ProjectStatusValue,
+  type DisbursementTypeValue,
 } from "~/lib/fund-constants";
 
 const STATUS_STYLES: Record<string, string> = {
@@ -281,7 +284,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
   // Disbursement inputs
   const [newDisbAmt, setNewDisbAmt] = useState("");
   const [newDisbRef, setNewDisbRef] = useState("");
-  const [newDisbType, setNewDisbType] = useState<"" | "FUEL" | "LABOR" | "MATERIALS">("");
+  const [newDisbType, setNewDisbType] = useState<"" | DisbursementTypeValue>("");
   const [newDisbPct, setNewDisbPct] = useState("");
 
   // Revised contract cost / variation order inputs
@@ -580,7 +583,15 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                     <FieldLabel required>Implementation Mode</FieldLabel>
                     <select
                       value={form.modeOfImplementation}
-                      onChange={(e) => set("modeOfImplementation", e.target.value as typeof form.modeOfImplementation)}
+                      onChange={(e) => {
+                        const mode = e.target.value as typeof form.modeOfImplementation;
+                        set("modeOfImplementation", mode);
+                        // The disbursement type options depend on the mode, so
+                        // drop a selection that is no longer valid.
+                        if (newDisbType && !MODE_TO_DISBURSEMENT_TYPES[mode].includes(newDisbType)) {
+                          setNewDisbType("");
+                        }
+                      }}
                       className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="BY_CONTRACT">By Contract</option>
@@ -810,7 +821,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                               {primaryFundLabel}
                             </td>
                             <td className="px-3 py-2 text-xs text-gray-600">
-                              {d.type ? d.type.charAt(0) + d.type.slice(1).toLowerCase() : "—"}
+                              {d.type ? DISBURSEMENT_TYPE_LABEL[d.type] : "—"}
                             </td>
                             <td className="px-3 py-2 text-xs font-medium text-gray-700">
                               {d.percentage != null ? `${d.percentage}%` : "—"}
@@ -863,9 +874,11 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                     className="w-28 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Type</option>
-                    <option value="LABOR">Labor</option>
-                    <option value="MATERIALS">Materials</option>
-                    <option value="FUEL">Fuel</option>
+                    {MODE_TO_DISBURSEMENT_TYPES[
+                      form.modeOfImplementation === "BY_ADMINISTRATION" ? "BY_ADMINISTRATION" : "BY_CONTRACT"
+                    ].map((t) => (
+                      <option key={t} value={t}>{DISBURSEMENT_TYPE_LABEL[t]}</option>
+                    ))}
                   </select>
                   <div className="flex w-20 items-center rounded-lg border border-gray-200 bg-white focus-within:ring-2 focus-within:ring-blue-500">
                     <input

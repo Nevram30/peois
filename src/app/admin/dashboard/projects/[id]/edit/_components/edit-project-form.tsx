@@ -12,14 +12,15 @@ import {
   SOURCE_TO_SUB_TYPES,
   PROJECT_STATUS_LABEL,
   PROJECT_STATUS_ORDER,
+  DISBURSEMENT_TYPE_LABEL,
+  MODE_TO_DISBURSEMENT_TYPES,
   type SourceOfFundValue,
   type ProjectStatusValue,
+  type DisbursementTypeValue,
 } from "~/lib/fund-constants";
 import {
   getMunicipalitiesByDistrict,
   getBarangaysByMunicipality,
-  getPuroksByBarangay,
-  getSitiosByBarangay,
 } from "~/lib/davao-del-norte-locations";
 
 const STATUS_CONFIG: Record<string, { label: string; badge: string; dot: string }> = {
@@ -186,7 +187,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   // ─ Disbursement ────────────────────────────────────────────────────────
   const [disbAmount, setDisbAmount] = useState("");
   const [disbRef, setDisbRef] = useState("");
-  const [disbType, setDisbType] = useState<"" | "FUEL" | "LABOR" | "MATERIALS">("");
+  const [disbType, setDisbType] = useState<"" | DisbursementTypeValue>("");
   const [disbErrors, setDisbErrors] = useState<{ amount?: string; ref?: string; type?: string }>({});
 
   // ─ Timeline Adjustment ──────────────────────────────────────────────────
@@ -245,15 +246,6 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
     () => getBarangaysByMunicipality(cityMunicipality),
     [cityMunicipality],
   );
-  const availablePuroks = useMemo(
-    () => getPuroksByBarangay(cityMunicipality, barangay),
-    [cityMunicipality, barangay],
-  );
-  const availableSitios = useMemo(
-    () => getSitiosByBarangay(cityMunicipality, barangay),
-    [cityMunicipality, barangay],
-  );
-
   // ─ Mutations ───────────────────────────────────────────────────────────
   const updateProject = api.project.update.useMutation({
     onSuccess: () => {
@@ -270,16 +262,15 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
   });
 
   const recordDisbursement = api.project.createDisbursement.useMutation({
-    onSuccess: (data, variables) => {
+    onSuccess: (_data, variables) => {
       setDisbAmount(""); setDisbRef(""); setDisbType(""); setDisbErrors({});
       void refetchDisbursements();
       const formatted = variables.amount.toLocaleString("en-PH", { minimumFractionDigits: 2 });
       const refPart = variables.referenceNumber ? ` (Ref: ${variables.referenceNumber})` : "";
-      const typePart = variables.type ? ` [${variables.type}]` : "";
-      const trackPart = data.trackingNumber ? ` [${data.trackingNumber}]` : "";
+      const typePart = variables.type ? ` [${DISBURSEMENT_TYPE_LABEL[variables.type]}]` : "";
       addActivity.mutate({
         projectId: variables.projectId,
-        description: `Recorded disbursement of ₱${formatted}${refPart}${typePart}${trackPart}.`,
+        description: `Recorded disbursement of ₱${formatted}${refPart}${typePart}.`,
       });
     },
   });
@@ -372,31 +363,33 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
       ? project.projectEngineer.split(",").map((s) => s.trim()).filter(Boolean).join(", ")
       : "";
 
-    if (
-      completion !== project.completionPercentage ||
-      status !== project.status ||
-      contractorName !== (project.contractorName ?? "") ||
-      modeOfImplementation !== project.modeOfImplementation
-    ) {
-      sections.push("Project Identity & Status");
+    // For Project Identity & Status, name the specific fields that changed so
+    // the audit trail shows what was updated, not just the card.
+    const identityFields: string[] = [];
+    if (status !== project.status) identityFields.push("Current Status");
+    if (modeOfImplementation !== project.modeOfImplementation) identityFields.push("Implementation Mode");
+    if (contractorName !== (project.contractorName ?? "")) identityFields.push("Contractor Name");
+    if (completion !== project.completionPercentage) identityFields.push("Project Progress");
+    if (identityFields.length > 0) {
+      sections.push(`Project Identity & Status (${identityFields.join(", ")})`);
     }
 
-    if (
-      locDistrict !== (project.district ?? project.locationImplementation ?? "") ||
-      cityMunicipality !== (project.cityMunicipality ?? "") ||
-      barangay !== (project.barangay ?? "") ||
-      purok !== (project.purok ?? "") ||
-      sitio !== (project.sitio ?? "")
-    ) {
-      sections.push("Project Location");
+    const locationFields: string[] = [];
+    if (locDistrict !== (project.district ?? project.locationImplementation ?? "")) locationFields.push("District");
+    if (cityMunicipality !== (project.cityMunicipality ?? "")) locationFields.push("Municipality / City");
+    if (barangay !== (project.barangay ?? "")) locationFields.push("Barangay");
+    if (purok !== (project.purok ?? "")) locationFields.push("Purok");
+    if (sitio !== (project.sitio ?? "")) locationFields.push("Sitio");
+    if (locationFields.length > 0) {
+      sections.push(`Project Location (${locationFields.join(", ")})`);
     }
 
-    if (
-      sourceOfFund !== project.sourceOfFund ||
-      subType !== (project.subType ?? "") ||
-      budgetYear !== (project.budgetYear ?? "")
-    ) {
-      sections.push("Funding & Disbursement Tracking");
+    const fundingFields: string[] = [];
+    if (sourceOfFund !== project.sourceOfFund) fundingFields.push("Source of Fund");
+    if (subType !== (project.subType ?? "")) fundingFields.push("Sub-Category");
+    if (budgetYear !== (project.budgetYear ?? "")) fundingFields.push("Budget Year");
+    if (fundingFields.length > 0) {
+      sections.push(`Funding & Disbursement Tracking (${fundingFields.join(", ")})`);
     }
 
     if (
@@ -407,12 +400,18 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
       sections.push("Project Timeline");
     }
 
-    if (numFemale !== (project.numFemale ?? 0) || numMale !== (project.numMale ?? 0)) {
-      sections.push("Workforce Distribution");
+    const workforceFields: string[] = [];
+    if (numFemale !== (project.numFemale ?? 0)) workforceFields.push("Female");
+    if (numMale !== (project.numMale ?? 0)) workforceFields.push("Male");
+    if (workforceFields.length > 0) {
+      sections.push(`Workforce Distribution (${workforceFields.join(", ")})`);
     }
 
-    if (engineers.join(", ") !== originalEngineers || description !== (project.description ?? "")) {
-      sections.push("Project In-Charge & Profile");
+    const inChargeFields: string[] = [];
+    if (engineers.join(", ") !== originalEngineers) inChargeFields.push("Engineers In-Charge");
+    if (description !== (project.description ?? "")) inChargeFields.push("Project Profile");
+    if (inChargeFields.length > 0) {
+      sections.push(`Project In-Charge & Profile (${inChargeFields.join(", ")})`);
     }
 
     if (
@@ -489,7 +488,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
       projectId,
       amount,
       referenceNumber: disbRef.trim(),
-      type: disbType as "FUEL" | "LABOR" | "MATERIALS",
+      type: disbType as DisbursementTypeValue,
     });
   };
 
@@ -685,7 +684,18 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <FieldLabel>Implementation Mode</FieldLabel>
-                      <Select value={modeOfImplementation} onChange={(e) => setModeOfImplementation(e.target.value)}>
+                      <Select
+                        value={modeOfImplementation}
+                        onChange={(e) => {
+                          setModeOfImplementation(e.target.value);
+                          // The disbursement type options depend on the mode, so
+                          // drop a selection that is no longer valid.
+                          const types = MODE_TO_DISBURSEMENT_TYPES[
+                            e.target.value === "BY_ADMINISTRATION" ? "BY_ADMINISTRATION" : "BY_CONTRACT"
+                          ];
+                          if (disbType && !types.includes(disbType)) setDisbType("");
+                        }}
+                      >
                         <option value="BY_ADMINISTRATION">By Administration</option>
                         <option value="BY_CONTRACT">By Contract</option>
                       </Select>
@@ -807,33 +817,19 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <FieldLabel>Purok</FieldLabel>
-                    <Select
+                    <Input
                       value={purok}
                       onChange={(e) => setPurok(e.target.value)}
-                      disabled={!barangay}
-                    >
-                      <option value="">
-                        {barangay ? "Select purok..." : "Select barangay first"}
-                      </option>
-                      {availablePuroks.map((p) => (
-                        <option key={p} value={p}>{p}</option>
-                      ))}
-                    </Select>
+                      placeholder="Enter Purok"
+                    />
                   </div>
                   <div>
                     <FieldLabel>Sitio</FieldLabel>
-                    <Select
+                    <Input
                       value={sitio}
                       onChange={(e) => setSitio(e.target.value)}
-                      disabled={!barangay}
-                    >
-                      <option value="">
-                        {barangay ? "Select sitio..." : "Select barangay first"}
-                      </option>
-                      {availableSitios.map((s) => (
-                        <option key={s} value={s}>{s}</option>
-                      ))}
-                    </Select>
+                      placeholder="Enter Sitio"
+                    />
                   </div>
                 </div>
               </div>
@@ -932,7 +928,6 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                     <thead className="sticky top-0 z-10 bg-gray-50">
                       <tr className="[&>th]:border-b [&>th]:border-gray-100">
                         <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Date</th>
-                        <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Tracking #</th>
                         <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Reference / Check #</th>
                         <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Type</th>
                         <th className="px-3 py-2 text-right text-[10px] font-bold uppercase tracking-wider text-gray-400">Amount (₱)</th>
@@ -942,17 +937,16 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                       {disbursements && disbursements.length > 0 ? disbursements.map((d) => (
                         <tr key={d.id} className="hover:bg-gray-50/50">
                           <td className="px-3 py-2.5 text-gray-600">{fmt(d.date)}</td>
-                          <td className="px-3 py-2.5 font-mono font-semibold text-blue-900">{d.trackingNumber ?? "—"}</td>
                           <td className="px-3 py-2.5 font-mono text-gray-700">{d.referenceNumber ?? "—"}</td>
                           <td className="px-3 py-2.5 text-gray-700">
-                            {d.type ? d.type.charAt(0) + d.type.slice(1).toLowerCase() : "—"}
+                            {d.type ? DISBURSEMENT_TYPE_LABEL[d.type] : "—"}
                           </td>
                           <td className="px-3 py-2.5 text-right font-semibold text-gray-900">
                             {d.amount.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
                           </td>
                         </tr>
                       )) : (
-                        <tr><td colSpan={5} className="px-3 py-6 text-center text-gray-400">No disbursements recorded yet.</td></tr>
+                        <tr><td colSpan={4} className="px-3 py-6 text-center text-gray-400">No disbursements recorded yet.</td></tr>
                       )}
                     </tbody>
                   </table>
@@ -981,15 +975,17 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                     <Select
                       value={disbType}
                       onChange={(e) => {
-                        setDisbType(e.target.value as "" | "FUEL" | "LABOR" | "MATERIALS");
+                        setDisbType(e.target.value as "" | DisbursementTypeValue);
                         setDisbErrors((p) => ({ ...p, type: undefined }));
                       }}
                       className={disbErrors.type ? "border-red-300" : ""}
                     >
                       <option value="">Type *</option>
-                      <option value="FUEL">Fuel</option>
-                      <option value="LABOR">Labor</option>
-                      <option value="MATERIALS">Materials</option>
+                      {MODE_TO_DISBURSEMENT_TYPES[
+                        modeOfImplementation === "BY_ADMINISTRATION" ? "BY_ADMINISTRATION" : "BY_CONTRACT"
+                      ].map((t) => (
+                        <option key={t} value={t}>{DISBURSEMENT_TYPE_LABEL[t]}</option>
+                      ))}
                     </Select>
                   </div>
                   <button

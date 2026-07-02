@@ -202,7 +202,6 @@ exports.Prisma.DisbursementScalarFieldEnum = {
   id: 'id',
   projectId: 'projectId',
   date: 'date',
-  trackingNumber: 'trackingNumber',
   referenceNumber: 'referenceNumber',
   type: 'type',
   percentage: 'percentage',
@@ -415,9 +414,18 @@ exports.ProjectStatus = exports.$Enums.ProjectStatus = {
 };
 
 exports.DisbursementType = exports.$Enums.DisbursementType = {
-  FUEL: 'FUEL',
+  BILL_OF_LADING: 'BILL_OF_LADING',
+  CONTINGENCIES: 'CONTINGENCIES',
+  EQUIPMENT_MAINTENANCE: 'EQUIPMENT_MAINTENANCE',
+  EQUIPMENT_POL: 'EQUIPMENT_POL',
+  EQUIPMENT_RENTAL: 'EQUIPMENT_RENTAL',
+  FERRY_LADING: 'FERRY_LADING',
   LABOR: 'LABOR',
-  MATERIALS: 'MATERIALS'
+  MATERIALS: 'MATERIALS',
+  MOBILIZATION_DEMOBILIZATION: 'MOBILIZATION_DEMOBILIZATION',
+  BILLING_ACCOMPLISHMENT: 'BILLING_ACCOMPLISHMENT',
+  MOBILIZATION_15_PERCENT: 'MOBILIZATION_15_PERCENT',
+  FUEL: 'FUEL'
 };
 
 exports.TimelineAdjustmentType = exports.$Enums.TimelineAdjustmentType = {

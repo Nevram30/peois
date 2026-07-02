@@ -113,9 +113,21 @@ enum ProjectFileType {
 }
 
 enum DisbursementType {
-    FUEL
+    // By Administration
+    BILL_OF_LADING
+    CONTINGENCIES
+    EQUIPMENT_MAINTENANCE
+    EQUIPMENT_POL
+    EQUIPMENT_RENTAL
+    FERRY_LADING
     LABOR
     MATERIALS
+    MOBILIZATION_DEMOBILIZATION
+    // By Contract
+    BILLING_ACCOMPLISHMENT
+    MOBILIZATION_15_PERCENT
+    // Legacy value kept for existing records; not selectable in the UI.
+    FUEL
 }
 
 enum TimelineAdjustmentType {
@@ -262,7 +274,6 @@ model Disbursement {
     projectId       String
     project         Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
     date            DateTime          @default(now())
-    trackingNumber  String?           @unique
     referenceNumber String?
     type            DisbursementType?
     percentage      Float?

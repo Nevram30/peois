@@ -130,6 +130,57 @@ export const SOURCE_TO_SUB_TYPES: Record<SourceOfFundValue, ProjectSubTypeValue[
   CONFIDENTIAL: [],
 };
 
+export const DISBURSEMENT_TYPE_VALUES = [
+  "BILL_OF_LADING",
+  "CONTINGENCIES",
+  "EQUIPMENT_MAINTENANCE",
+  "EQUIPMENT_POL",
+  "EQUIPMENT_RENTAL",
+  "FERRY_LADING",
+  "LABOR",
+  "MATERIALS",
+  "MOBILIZATION_DEMOBILIZATION",
+  "BILLING_ACCOMPLISHMENT",
+  "MOBILIZATION_15_PERCENT",
+  // Legacy value kept for existing records; not selectable in the UI.
+  "FUEL",
+] as const;
+
+export type DisbursementTypeValue = (typeof DISBURSEMENT_TYPE_VALUES)[number];
+
+export const DISBURSEMENT_TYPE_LABEL: Record<DisbursementTypeValue, string> = {
+  BILL_OF_LADING: "Bill of Lading",
+  CONTINGENCIES: "Contingencies",
+  EQUIPMENT_MAINTENANCE: "Equipment Maintenance",
+  EQUIPMENT_POL: "Equipment POL",
+  EQUIPMENT_RENTAL: "Equipment Rental",
+  FERRY_LADING: "Ferry Lading",
+  LABOR: "Labor",
+  MATERIALS: "Materials",
+  MOBILIZATION_DEMOBILIZATION: "Mobilization / Demobilization",
+  BILLING_ACCOMPLISHMENT: "Billing (Accomplishment)",
+  MOBILIZATION_15_PERCENT: "15% Mobilization",
+  FUEL: "Fuel",
+};
+
+export const MODE_TO_DISBURSEMENT_TYPES: Record<
+  "BY_ADMINISTRATION" | "BY_CONTRACT",
+  DisbursementTypeValue[]
+> = {
+  BY_ADMINISTRATION: [
+    "BILL_OF_LADING",
+    "CONTINGENCIES",
+    "EQUIPMENT_MAINTENANCE",
+    "EQUIPMENT_POL",
+    "EQUIPMENT_RENTAL",
+    "FERRY_LADING",
+    "LABOR",
+    "MATERIALS",
+    "MOBILIZATION_DEMOBILIZATION",
+  ],
+  BY_CONTRACT: ["BILLING_ACCOMPLISHMENT", "MOBILIZATION_15_PERCENT"],
+};
+
 export const PROJECT_STATUS_VALUES = [
   "NOT_YET_STARTED",
   "ON_GOING",

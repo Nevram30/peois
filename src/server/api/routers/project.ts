@@ -4,6 +4,7 @@ import {
   SOURCE_OF_FUND_VALUES,
   PROJECT_SUB_TYPE_VALUES,
   PROJECT_STATUS_VALUES,
+  DISBURSEMENT_TYPE_VALUES,
 } from "~/lib/fund-constants";
 
 export const projectRouter = createTRPCRouter({
@@ -256,46 +257,22 @@ export const projectRouter = createTRPCRouter({
         projectId: z.string(),
         amount: z.number().min(0),
         referenceNumber: z.string().optional(),
-        type: z.enum(["FUEL", "LABOR", "MATERIALS"]).optional(),
+        type: z.enum(DISBURSEMENT_TYPE_VALUES).optional(),
         percentage: z.number().min(0).optional(),
         date: z.date().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.$transaction(async (tx) => {
-        // Derive the budget year for the tracking number from the project's
-        // budget year, falling back to the current year.
-        const project = await tx.project.findUnique({
-          where: { id: input.projectId },
-          select: { budgetYear: true },
-        });
-        const yearMatch = project?.budgetYear?.match(/\d{4}/)?.[0];
-        const year = yearMatch ?? String(new Date().getFullYear());
-        const prefix = `POE-${year}-`;
-
-        // Find the highest existing sequence for this budget year and increment.
-        const last = await tx.disbursement.findFirst({
-          where: { trackingNumber: { startsWith: prefix } },
-          orderBy: { trackingNumber: "desc" },
-          select: { trackingNumber: true },
-        });
-        const lastSeq = last?.trackingNumber
-          ? parseInt(last.trackingNumber.slice(prefix.length), 10)
-          : 0;
-        const trackingNumber = `${prefix}${String(lastSeq + 1).padStart(5, "0")}`;
-
-        return tx.disbursement.create({
-          data: {
-            projectId: input.projectId,
-            amount: input.amount,
-            trackingNumber,
-            referenceNumber: input.referenceNumber,
-            type: input.type,
-            percentage: input.percentage,
-            date: input.date ?? new Date(),
-            createdById: ctx.session.user.id,
-          },
-        });
+      return ctx.db.disbursement.create({
+        data: {
+          projectId: input.projectId,
+          amount: input.amount,
+          referenceNumber: input.referenceNumber,
+          type: input.type,
+          percentage: input.percentage,
+          date: input.date ?? new Date(),
+          createdById: ctx.session.user.id,
+        },
       });
     }),
 
