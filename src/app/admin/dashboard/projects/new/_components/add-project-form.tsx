@@ -73,6 +73,28 @@ function fmtDate(d: Date) {
   return d.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
 }
 
+// ─── Timeline adjustments (queued locally, saved after project create) ────
+type TimelineAdjType = "EXTENSION" | "SUSPENSION" | "RESUMPTION";
+
+const TIMELINE_ADJ_TYPE_CONFIG: Record<TimelineAdjType, { label: string; badge: string }> = {
+  EXTENSION: { label: "Extension", badge: "bg-blue-50 text-blue-700 border-blue-200" },
+  SUSPENSION: { label: "Suspension", badge: "bg-red-50 text-red-700 border-red-200" },
+  RESUMPTION: { label: "Resumption", badge: "bg-green-50 text-green-700 border-green-200" },
+};
+
+type PendingAdjustment = {
+  id: string;
+  startDate: string;
+  endDate: string;
+  duration: number;
+  type: TimelineAdjType;
+  justification: string;
+};
+
+function fmtInputDate(d: string) {
+  return new Date(d).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" });
+}
+
 function fileTypeBadge(fileType: ProjectFileType, fileName: string) {
   if (fileType === "IMAGE") return "IMAGE";
   if (fileName.toLowerCase().endsWith(".pdf")) return "PDF DOCUMENT";
@@ -178,10 +200,14 @@ export function AddProjectForm() {
   // ── Project Timeline ─────────────────────────────────────────────────
   const [dateStarted, setDateStarted] = useState("");
   const [targetCompletionDate, setTargetCompletionDate] = useState("");
+  const [adjType, setAdjType] = useState<TimelineAdjType | "">("");
+  const [adjJustification, setAdjJustification] = useState("");
+  const [adjError, setAdjError] = useState<string | null>(null);
+  const [pendingAdjustments, setPendingAdjustments] = useState<PendingAdjustment[]>([]);
 
   // ── Workforce Distribution ───────────────────────────────────────────
-  const [numFemale, setNumFemale] = useState("0");
-  const [numMale, setNumMale] = useState("0");
+  const [numFemale, setNumFemale] = useState(0);
+  const [numMale, setNumMale] = useState(0);
 
   // ── Responsibility & Scope ───────────────────────────────────────────
   const [engineers, setEngineers] = useState<string[]>([]);
@@ -226,10 +252,7 @@ export function AddProjectForm() {
     return Math.max(0, Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)));
   }, [dateStarted, targetCompletionDate]);
 
-  const totalWorkforce = useMemo(
-    () => (parseInt(numFemale) || 0) + (parseInt(numMale) || 0),
-    [numFemale, numMale],
-  );
+  const totalWorkforce = numFemale + numMale;
 
   const availableMunicipalities = useMemo(
     () => getMunicipalitiesByDistrict(district as "DISTRICT_I" | "DISTRICT_II" | ""),
@@ -314,13 +337,43 @@ export function AddProjectForm() {
   const changeFileType = (id: string, fileType: ProjectFileType) =>
     setPendingFiles((prev) => prev.map((f) => (f.id === id ? { ...f, fileType } : f)));
 
+  const handleRecordAdjustment = () => {
+    if (!dateStarted || !targetCompletionDate) {
+      setAdjError("Start and end dates are required.");
+      return;
+    }
+    if (!adjType) {
+      setAdjError("Adjustment type is required.");
+      return;
+    }
+    setPendingAdjustments((prev) => [
+      ...prev,
+      {
+        id: `${Date.now()}-${Math.random()}`,
+        startDate: dateStarted,
+        endDate: targetCompletionDate,
+        duration,
+        type: adjType,
+        justification: adjJustification.trim(),
+      },
+    ]);
+    setAdjType("");
+    setAdjJustification("");
+    setAdjError(null);
+  };
+
+  const removeAdjustment = (id: string) =>
+    setPendingAdjustments((prev) => prev.filter((a) => a.id !== id));
+
   const createProjectFile = api.projectFile.create.useMutation();
+  const createTimelineAdjustment = api.project.createTimelineAdjustment.useMutation();
 
   const createProject = api.project.create.useMutation({
     onSuccess: async (project) => {
-      // Persist each uploaded document as a ProjectFile record.
-      await Promise.all(
-        pendingFiles.map((f) =>
+      // Persist each uploaded document as a ProjectFile record, and each
+      // queued timeline adjustment against the newly created project.
+      await Promise.all([
+        ...pendingFiles.map((f) =>
           createProjectFile.mutateAsync({
             projectId: project.id,
             fileName: f.fileName,
@@ -329,7 +382,17 @@ export function AddProjectForm() {
             fileSize: f.fileSize,
           }),
         ),
-      );
+        ...pendingAdjustments.map((a) =>
+          createTimelineAdjustment.mutateAsync({
+            projectId: project.id,
+            startDate: new Date(a.startDate),
+            endDate: new Date(a.endDate),
+            duration: a.duration,
+            type: a.type,
+            justification: a.justification || undefined,
+          }),
+        ),
+      ]);
       await utils.project.getAll.invalidate();
       router.push("/admin/dashboard/projects");
     },
@@ -377,8 +440,8 @@ export function AddProjectForm() {
       dateCompleted: null,
       daysSuspended: 0,
       daysExtended: 0,
-      numFemale: parseInt(numFemale) || 0,
-      numMale: parseInt(numMale) || 0,
+      numFemale,
+      numMale,
       numManDays: 0,
       district: district ? (district as "DISTRICT_I" | "DISTRICT_II") : null,
       cityMunicipality: cityMunicipality || undefined,
@@ -781,126 +844,230 @@ export function AddProjectForm() {
         {/* ── Project Timeline ──────────────────────────────────────── */}
         <section className={cardClass}>
           <SectionHeader icon={CalendarIcon} title="Project Timeline" />
-          <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-3">
-            <div>
-              <label className={labelClass}>Start Date</label>
-              <input
-                type="date"
-                value={dateStarted}
-                onChange={(e) => setDateStarted(e.target.value)}
-                className={inputClass}
-              />
+          <div className="p-5">
+            <label className={labelClass}>Timeline Adjustment History</label>
+            <div className="overflow-y-auto rounded-lg border border-gray-200" style={{ maxHeight: "392px" }}>
+              <table className="w-full border-separate border-spacing-0 text-xs">
+                <thead className="sticky top-0 z-10 bg-gray-50">
+                  <tr className="[&>th]:border-b [&>th]:border-gray-100">
+                    <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Start Date</th>
+                    <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">End Date</th>
+                    <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Duration</th>
+                    <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Adjustment Type</th>
+                    <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Justification Record</th>
+                    <th className="px-3 py-2" />
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {pendingAdjustments.length > 0 ? pendingAdjustments.map((a) => {
+                    const cfg = TIMELINE_ADJ_TYPE_CONFIG[a.type];
+                    return (
+                      <tr key={a.id} className="hover:bg-gray-50/50">
+                        <td className="px-3 py-2.5 text-gray-600">{fmtInputDate(a.startDate)}</td>
+                        <td className="px-3 py-2.5 text-gray-600">{fmtInputDate(a.endDate)}</td>
+                        <td className="px-3 py-2.5 font-semibold text-gray-800">{a.duration} Days</td>
+                        <td className="px-3 py-2.5">
+                          <span className={`inline-flex rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${cfg.badge}`}>{cfg.label}</span>
+                        </td>
+                        <td className="px-3 py-2.5 italic text-gray-600">{a.justification || "—"}</td>
+                        <td className="px-3 py-2.5 text-right">
+                          <button
+                            type="button"
+                            onClick={() => removeAdjustment(a.id)}
+                            className="text-gray-300 hover:text-red-500"
+                            aria-label="Remove adjustment"
+                          >
+                            ×
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  }) : (
+                    <tr><td colSpan={6} className="px-3 py-6 text-center text-gray-400">No timeline adjustments recorded yet.</td></tr>
+                  )}
+                </tbody>
+              </table>
             </div>
-            <div>
-              <label className={labelClass}>End Date</label>
-              <input
-                type="date"
-                value={targetCompletionDate}
-                onChange={(e) => setTargetCompletionDate(e.target.value)}
-                className={inputClass}
-              />
-            </div>
-            <div>
-              <label className={labelClass}>Duration</label>
-              <input
-                type="text"
-                readOnly
-                value={`${duration} Days`}
-                className={`${inputClass} cursor-not-allowed bg-gray-50 text-gray-600`}
-              />
-            </div>
-          </div>
-        </section>
 
-        {/* ── Workforce Distribution ────────────────────────────────── */}
-        <section className={cardClass}>
-          <SectionHeader icon={PeopleIcon} title="Workforce Distribution" />
-          <div className="grid grid-cols-1 divide-y divide-gray-100 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-            <div className="flex items-center justify-between p-5">
-              <div>
-                <p className={labelClass}>Female Personnel</p>
+            {/* Record row — no Revised Target Completion here; that field only exists on the update page */}
+            <div className="mt-3 flex flex-wrap items-end gap-2">
+              <div className="w-40 shrink-0">
+                <label className={labelClass}>Start Date</label>
                 <input
-                  type="number"
-                  min="0"
-                  value={numFemale}
-                  onChange={(e) => setNumFemale(e.target.value)}
-                  className="mt-1 w-20 rounded-md border border-gray-200 px-2 py-1 text-2xl font-extrabold text-gray-900 focus:border-blue-500 focus:outline-none"
+                  type="date"
+                  value={dateStarted}
+                  onChange={(e) => { setDateStarted(e.target.value); setAdjError(null); }}
+                  className={`${inputClass} ${adjError && !dateStarted ? errorRingClass : ""}`}
                 />
               </div>
-              <span className="text-gray-300">♀</span>
-            </div>
-            <div className="flex items-center justify-between p-5">
-              <div>
-                <p className={labelClass}>Male Personnel</p>
+              <div className="w-40 shrink-0">
+                <label className={labelClass}>End Date</label>
                 <input
-                  type="number"
-                  min="0"
-                  value={numMale}
-                  onChange={(e) => setNumMale(e.target.value)}
-                  className="mt-1 w-20 rounded-md border border-gray-200 px-2 py-1 text-2xl font-extrabold text-gray-900 focus:border-blue-500 focus:outline-none"
+                  type="date"
+                  value={targetCompletionDate}
+                  onChange={(e) => { setTargetCompletionDate(e.target.value); setAdjError(null); }}
+                  className={`${inputClass} ${adjError && !targetCompletionDate ? errorRingClass : ""}`}
                 />
               </div>
-              <span className="text-gray-300">♂</span>
-            </div>
-            <div className="flex items-center justify-between p-5">
-              <div>
-                <p className={labelClass}>Total Workforce</p>
-                <p className="mt-1 text-2xl font-extrabold text-gray-900">{totalWorkforce}</p>
+              <div className="w-24 shrink-0">
+                <label className={labelClass}>Duration</label>
+                <input
+                  type="text"
+                  readOnly
+                  value={duration || ""}
+                  placeholder="0"
+                  className={`${inputClass} cursor-not-allowed bg-gray-50 text-gray-600`}
+                />
               </div>
-              <span className="text-gray-300">👥</span>
-            </div>
-          </div>
-        </section>
-
-        {/* ── Project Responsibility & Scope ────────────────────────── */}
-        <section className={cardClass}>
-          <SectionHeader icon={PersonCheckIcon} title="Project Responsibility & Scope" />
-          <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2">
-            <div>
-              <label className={labelClass}>Engineers In-Charge</label>
-              <div
-                className="flex min-h-[42px] flex-wrap items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20"
-                onClick={() => document.getElementById("engineer-input")?.focus()}
+              <div className="w-40 shrink-0">
+                <label className={labelClass}>Type</label>
+                <select
+                  value={adjType}
+                  onChange={(e) => { setAdjType(e.target.value as TimelineAdjType | ""); setAdjError(null); }}
+                  className={`${inputClass} ${adjError && !adjType ? errorRingClass : ""}`}
+                >
+                  <option value="">Type</option>
+                  {(Object.keys(TIMELINE_ADJ_TYPE_CONFIG) as TimelineAdjType[]).map((t) => (
+                    <option key={t} value={t}>{TIMELINE_ADJ_TYPE_CONFIG[t].label}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="min-w-50 flex-1">
+                <label className={labelClass}>Justification / Basis</label>
+                <input
+                  type="text"
+                  placeholder="Justification / Basis..."
+                  value={adjJustification}
+                  onChange={(e) => setAdjJustification(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={handleRecordAdjustment}
+                className="rounded-lg bg-blue-900 px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-blue-800"
               >
-                {engineers.map((eng) => (
-                  <span
-                    key={eng}
-                    className="inline-flex items-center gap-1 rounded-md bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700"
-                  >
-                    {eng}
+                Record
+              </button>
+            </div>
+            {adjError && <p className="mt-1 text-xs text-red-500">{adjError}</p>}
+          </div>
+        </section>
+
+        {/* ── Workforce Distribution + Project In-Charge & Profile ──── */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
+          {/* Workforce Distribution */}
+          <section className={`${cardClass} lg:col-span-2`}>
+            <SectionHeader
+              icon={PeopleIcon}
+              title="Workforce Distribution"
+              action={
+                <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-blue-500">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-75" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-blue-500" />
+                  </span>
+                  Live
+                </span>
+              }
+            />
+            <div className="grid grid-cols-3 gap-3 p-5">
+              {/* Female */}
+              <div className="rounded-xl border border-gray-200 bg-gray-50 p-3.5">
+                <div className="flex items-center justify-between">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Female</p>
+                  <span className="text-sm text-pink-400">♀</span>
+                </div>
+                <p className="mt-1.5 text-3xl font-extrabold text-gray-900">{numFemale}</p>
+                <div className="mt-2.5 flex items-center gap-1.5">
+                  <button type="button" onClick={() => setNumFemale((n) => Math.max(0, n - 1))} className="flex h-6 w-6 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 hover:bg-gray-100">
+                    <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" /></svg>
+                  </button>
+                  <button type="button" onClick={() => setNumFemale((n) => n + 1)} className="flex h-6 w-6 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 hover:bg-gray-100">
+                    <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                  </button>
+                </div>
+              </div>
+              {/* Male */}
+              <div className="rounded-xl border border-gray-200 bg-gray-50 p-3.5">
+                <div className="flex items-center justify-between">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Male</p>
+                  <span className="text-sm text-blue-400">♂</span>
+                </div>
+                <p className="mt-1.5 text-3xl font-extrabold text-gray-900">{numMale}</p>
+                <div className="mt-2.5 flex items-center gap-1.5">
+                  <button type="button" onClick={() => setNumMale((n) => Math.max(0, n - 1))} className="flex h-6 w-6 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 hover:bg-gray-100">
+                    <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" /></svg>
+                  </button>
+                  <button type="button" onClick={() => setNumMale((n) => n + 1)} className="flex h-6 w-6 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 hover:bg-gray-100">
+                    <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                  </button>
+                </div>
+              </div>
+              {/* Total */}
+              <div className="rounded-xl border border-blue-200 bg-blue-50 p-3.5">
+                <div className="flex items-center justify-between">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-blue-500">Total</p>
+                  <svg className="h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+                  </svg>
+                </div>
+                <p className="mt-1.5 text-3xl font-extrabold text-blue-700">{totalWorkforce}</p>
+              </div>
+            </div>
+          </section>
+
+          {/* Project In-Charge & Profile */}
+          <section className={`${cardClass} lg:col-span-3`}>
+            <SectionHeader icon={PersonCheckIcon} title="Project In-Charge & Profile" />
+            <div className="grid grid-cols-1 gap-5 p-5 lg:grid-cols-2">
+              {/* Engineers */}
+              <div>
+                <label className={labelClass}>Engineers In-Charge</label>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {engineers.map((eng) => (
+                    <span key={eng} className="flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                      {eng}
+                      <button type="button" onClick={() => removeEngineer(eng)} className="text-blue-400 hover:text-blue-600">
+                        <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </span>
+                  ))}
+                  <div className="flex gap-1.5">
+                    <input
+                      type="text"
+                      value={engineerInput}
+                      onChange={(e) => setEngineerInput(e.target.value)}
+                      onKeyDown={handleEngineerKeyDown}
+                      placeholder="Add engineer..."
+                      className="w-32 rounded-full border border-dashed border-gray-300 px-3 py-1 text-xs text-gray-600 placeholder:text-gray-300 focus:border-blue-400 focus:outline-none"
+                    />
                     <button
                       type="button"
-                      onClick={() => removeEngineer(eng)}
-                      className="ml-0.5 hover:text-blue-900"
+                      onClick={addEngineer}
+                      className="rounded-full border border-dashed border-gray-300 px-3 py-1 text-xs font-semibold text-gray-500 hover:border-blue-400 hover:text-blue-600"
                     >
-                      ×
+                      + Add Engineer
                     </button>
-                  </span>
-                ))}
-                <input
-                  id="engineer-input"
-                  type="text"
-                  value={engineerInput}
-                  onChange={(e) => setEngineerInput(e.target.value)}
-                  onKeyDown={handleEngineerKeyDown}
-                  onBlur={addEngineer}
-                  placeholder={engineers.length === 0 ? "Add engineers..." : ""}
-                  className="min-w-[120px] flex-1 border-none bg-transparent text-sm text-gray-900 placeholder:text-gray-400 outline-none"
+                  </div>
+                </div>
+              </div>
+              {/* Project Profile */}
+              <div>
+                <label className={labelClass}>Project Profile</label>
+                <textarea
+                  rows={5}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Describe the scope of work, deliverables, and methodology..."
+                  className={`${inputClass} resize-none`}
                 />
               </div>
             </div>
-            <div>
-              <label className={labelClass}>Detailed Scope of Work</label>
-              <textarea
-                rows={4}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Enter detailed description of the project scope..."
-                className={inputClass}
-              />
-            </div>
-          </div>
-        </section>
+          </section>
+        </div>
 
         {/* ── Project Documentation ─────────────────────────────────── */}
         <section className={cardClass}>
