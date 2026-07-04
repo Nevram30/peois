@@ -11,6 +11,8 @@ import {
   PROJECT_SUB_TYPE_VALUES,
   PROJECT_STATUS_LABEL,
   PROJECT_STATUS_ORDER,
+  SOURCE_TO_SUB_TYPES,
+  type SourceOfFundValue,
 } from "~/lib/fund-constants";
 
 const STATUS_LABELS: Record<string, { label: string; className: string }> = {
@@ -64,6 +66,10 @@ export function ProjectsList() {
   const [budgetYearFilter, setBudgetYearFilter] = useState("");
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 20;
+
+  const availableSubTypes = sourceOfFundFilter
+    ? SOURCE_TO_SUB_TYPES[sourceOfFundFilter as SourceOfFundValue] ?? []
+    : PROJECT_SUB_TYPE_VALUES;
 
   const { data: projects, isLoading } = api.project.getAll.useQuery();
   const { data: budgetYears } = api.project.getBudgetYears.useQuery();
@@ -221,7 +227,7 @@ export function ProjectsList() {
             <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Source of Fund</p>
             <select
               value={sourceOfFundFilter}
-              onChange={(e) => { setSourceOfFundFilter(e.target.value); setPage(1); }}
+              onChange={(e) => { setSourceOfFundFilter(e.target.value); setSubTypeFilter(""); setPage(1); }}
               className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             >
               <option value="">All Sources</option>
@@ -237,10 +243,15 @@ export function ProjectsList() {
             <select
               value={subTypeFilter}
               onChange={(e) => { setSubTypeFilter(e.target.value); setPage(1); }}
-              className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              disabled={!!sourceOfFundFilter && availableSubTypes.length === 0}
+              className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400"
             >
-              <option value="">All Sub-Categories</option>
-              {PROJECT_SUB_TYPE_VALUES.map((k) => (
+              <option value="">
+                {sourceOfFundFilter && availableSubTypes.length === 0
+                  ? "No Sub-Categories"
+                  : "All Sub-Categories"}
+              </option>
+              {availableSubTypes.map((k) => (
                 <option key={k} value={k}>{PROJECT_SUB_TYPE_LABEL[k]}</option>
               ))}
             </select>
