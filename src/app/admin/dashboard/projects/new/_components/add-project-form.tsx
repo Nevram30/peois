@@ -178,7 +178,6 @@ export function AddProjectForm() {
   // ── Project Timeline ─────────────────────────────────────────────────
   const [dateStarted, setDateStarted] = useState("");
   const [targetCompletionDate, setTargetCompletionDate] = useState("");
-  const [revisedCompletionDate, setRevisedCompletionDate] = useState("");
 
   // ── Workforce Distribution ───────────────────────────────────────────
   const [numFemale, setNumFemale] = useState("0");
@@ -374,7 +373,7 @@ export function AddProjectForm() {
       budgetYear: budgetYear || undefined,
       dateStarted: dateStarted ? new Date(dateStarted) : null,
       targetCompletionDate: targetCompletionDate ? new Date(targetCompletionDate) : null,
-      revisedCompletionDate: revisedCompletionDate ? new Date(revisedCompletionDate) : null,
+      revisedCompletionDate: null,
       dateCompleted: null,
       daysSuspended: 0,
       daysExtended: 0,
@@ -782,9 +781,9 @@ export function AddProjectForm() {
         {/* ── Project Timeline ──────────────────────────────────────── */}
         <section className={cardClass}>
           <SectionHeader icon={CalendarIcon} title="Project Timeline" />
-          <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-3">
             <div>
-              <label className={labelClass}>Date Started</label>
+              <label className={labelClass}>Start Date</label>
               <input
                 type="date"
                 value={dateStarted}
@@ -793,20 +792,11 @@ export function AddProjectForm() {
               />
             </div>
             <div>
-              <label className={labelClass}>Original Target</label>
+              <label className={labelClass}>End Date</label>
               <input
                 type="date"
                 value={targetCompletionDate}
                 onChange={(e) => setTargetCompletionDate(e.target.value)}
-                className={inputClass}
-              />
-            </div>
-            <div>
-              <label className={labelClass}>Revised Target Completion</label>
-              <input
-                type="date"
-                value={revisedCompletionDate}
-                onChange={(e) => setRevisedCompletionDate(e.target.value)}
                 className={inputClass}
               />
             </div>

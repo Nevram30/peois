@@ -1132,12 +1132,16 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
               {/* Record form — with labels */}
               <div className="mt-3 flex items-end gap-2">
                 <div className="w-40 shrink-0">
-                  <FieldLabel>Date Started</FieldLabel>
+                  <FieldLabel>Start Date</FieldLabel>
                   <Input type="date" value={dateStarted} onChange={(e) => { setDateStarted(e.target.value); setAdjError(null); }} error={!!adjError && !dateStarted} />
                 </div>
                 <div className="w-40 shrink-0">
                   <FieldLabel>End Date</FieldLabel>
                   <Input type="date" value={targetCompletion} onChange={(e) => { setTargetCompletion(e.target.value); setAdjError(null); }} error={!!adjError && !targetCompletion} />
+                </div>
+                <div className="w-40 shrink-0">
+                  <FieldLabel>Revised Target Completion</FieldLabel>
+                  <Input type="date" value={revisedCompletion} onChange={(e) => setRevisedCompletion(e.target.value)} />
                 </div>
                 <div className="w-24 shrink-0">
                   <FieldLabel>Duration</FieldLabel>
