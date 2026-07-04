@@ -31,6 +31,9 @@ function getInitials(name?: string | null, email?: string | null): string {
 
 function getActivityTone(description: string): { dot: string; bg: string; text: string; label: string } {
   const lower = description.toLowerCase();
+  if (lower.startsWith("created new project")) {
+    return { dot: "bg-indigo-500", bg: "bg-indigo-50", text: "text-indigo-700", label: "Created" };
+  }
   if (lower.startsWith("[override]")) {
     return { dot: "bg-amber-500", bg: "bg-amber-50", text: "text-amber-700", label: "Override" };
   }
@@ -88,7 +91,7 @@ export default function ProjectActivityLogPage() {
   const paginated = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
   const counts = useMemo(() => {
-    const c = { total: 0, Disbursement: 0, Document: 0, Override: 0, Comment: 0 };
+    const c = { total: 0, Created: 0, Disbursement: 0, Document: 0, Override: 0, Comment: 0 };
     for (const a of activities ?? []) {
       c.total += 1;
       const label = getActivityTone(a.description).label as keyof typeof c;
@@ -117,7 +120,7 @@ export default function ProjectActivityLogPage() {
           </div>
           <div>
             <p className="text-sm font-semibold text-gray-900">Project Activity Log</p>
-            <p className="text-xs text-gray-500">Audit trail of disbursements, documents, overrides, and comments across all projects.</p>
+            <p className="text-xs text-gray-500">Audit trail of project creations, disbursements, documents, overrides, and comments across all projects.</p>
           </div>
         </div>
         <button
@@ -132,10 +135,14 @@ export default function ProjectActivityLogPage() {
       </div>
 
       {/* Stat Cards */}
-      <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
+      <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-6">
         <div className="rounded-2xl bg-blue-600 p-4 text-white shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-wider opacity-80">Total Entries</p>
           <p className="mt-1 text-3xl font-extrabold leading-none">{counts.total}</p>
+        </div>
+        <div className="rounded-2xl bg-indigo-500 p-4 text-white shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-wider opacity-80">Created</p>
+          <p className="mt-1 text-3xl font-extrabold leading-none">{counts.Created}</p>
         </div>
         <div className="rounded-2xl bg-emerald-500 p-4 text-white shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-wider opacity-80">Disbursements</p>
@@ -179,6 +186,7 @@ export default function ProjectActivityLogPage() {
               className="appearance-none rounded-lg border border-gray-200 bg-gray-50 py-2 pl-3 pr-8 text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Types</option>
+              <option value="Created">Created</option>
               <option value="Disbursement">Disbursement</option>
               <option value="Document">Document</option>
               <option value="Override">Override</option>

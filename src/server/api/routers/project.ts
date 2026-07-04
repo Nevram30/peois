@@ -79,7 +79,7 @@ export const projectRouter = createTRPCRouter({
 
       const numPersons = input.numFemale + input.numMale;
 
-      return ctx.db.project.create({
+      const project = await ctx.db.project.create({
         data: {
           projectCode: input.projectCode ?? "",
           title: input.title,
@@ -117,6 +117,17 @@ export const projectRouter = createTRPCRouter({
           createdById: ctx.session.user.id,
         },
       });
+
+      // Audit trail: record who created the project in the activity log.
+      await ctx.db.projectActivity.create({
+        data: {
+          projectId: project.id,
+          description: `Created new project "${project.title}"`,
+          createdById: ctx.session.user.id,
+        },
+      });
+
+      return project;
     }),
 
   update: protectedProcedure
