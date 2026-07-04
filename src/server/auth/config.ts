@@ -66,7 +66,7 @@ export const authConfig = {
           const dbSession = await db.userSession.create({
             data: {
               userId: user.id!,
-              expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+              expiresAt: new Date(Date.now() + 5 * 60 * 1000),
             },
           });
           token.sessionId = dbSession.id;

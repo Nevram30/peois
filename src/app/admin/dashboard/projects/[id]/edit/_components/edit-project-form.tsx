@@ -604,7 +604,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
           <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
           </svg>
-          <span className="font-semibold text-gray-700">Edit Project</span>
+          <span className="font-semibold text-gray-700">Update Project</span>
         </nav>
       </div>
 
