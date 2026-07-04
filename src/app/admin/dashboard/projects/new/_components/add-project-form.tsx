@@ -30,9 +30,15 @@ const cardClass = "rounded-xl border border-gray-200 bg-white shadow-sm";
 const errorRingClass =
   "border-red-400 focus:border-red-500 focus:ring-red-500/20";
 
-function FieldError({ show }: { show: boolean }) {
+function FieldError({
+  show,
+  message = "This field is required",
+}: {
+  show: boolean;
+  message?: string;
+}) {
   if (!show) return null;
-  return <p className="mt-1 text-xs text-red-500">This field is required</p>;
+  return <p className="mt-1 text-xs text-red-500">{message}</p>;
 }
 
 type ProjectFileType = "IMAGE" | "BLUEPRINT" | "REPORT" | "CONTRACT" | "PERMIT" | "OTHER";
@@ -398,18 +404,58 @@ export function AddProjectForm() {
     },
   });
 
-  // Required fields for a full submission (not draft). Each maps to the
-  // "This field is required" message shown beneath the input.
+  // Required fields for a full submission (not draft). Every card is
+  // validated except Project Documentation. Each key maps to the error
+  // message shown beneath the input.
   const fieldErrors = useMemo(
     () => ({
       title: !title.trim(),
+      image: !imageUrl,
+      projectCost: !(parseFloat(projectCost.replace(/,/g, "")) > 0),
+      trackingNumber: !trackingNumber.trim(),
       modeOfImplementation: !modeOfImplementation,
       contractorName:
         modeOfImplementation === "BY_CONTRACT" && !contractorName.trim(),
       district: !district,
+      cityMunicipality: !cityMunicipality,
+      barangay: !barangay,
+      purok: !purok.trim(),
+      sitio: !sitio.trim(),
       sourceOfFund: !sourceOfFund,
+      subType: availableSubTypes.length > 0 && !subType,
+      budgetYear: !budgetYear,
+      dateStarted: !dateStarted,
+      targetCompletionDate: !targetCompletionDate,
+      dateOrder:
+        !!dateStarted &&
+        !!targetCompletionDate &&
+        new Date(targetCompletionDate) < new Date(dateStarted),
+      workforce: totalWorkforce < 1,
+      engineers: engineers.length === 0,
+      description: !description.trim(),
     }),
-    [title, modeOfImplementation, contractorName, district, sourceOfFund],
+    [
+      title,
+      imageUrl,
+      projectCost,
+      trackingNumber,
+      modeOfImplementation,
+      contractorName,
+      district,
+      cityMunicipality,
+      barangay,
+      purok,
+      sitio,
+      sourceOfFund,
+      subType,
+      availableSubTypes,
+      budgetYear,
+      dateStarted,
+      targetCompletionDate,
+      totalWorkforce,
+      engineers,
+      description,
+    ],
   );
 
   const hasErrors = Object.values(fieldErrors).some(Boolean);
@@ -535,6 +581,9 @@ export function AddProjectForm() {
                 {imageUploadError && (
                   <p className="mt-1 text-center text-[10px] text-red-500">{imageUploadError}</p>
                 )}
+                {showErrors && fieldErrors.image && (
+                  <p className="mt-1 text-center text-xs text-red-500">Project image is required</p>
+                )}
               </div>
 
               {/* Right: fields */}
@@ -552,7 +601,7 @@ export function AddProjectForm() {
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className={labelClass}>Project Cost</label>
+                    <label className={labelClass}>Project Cost <span className="text-red-500">*</span></label>
                     <div className="relative">
                       <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">₱</span>
                       <input
@@ -562,9 +611,13 @@ export function AddProjectForm() {
                         onChange={(e) => handleCostChange(setProjectCost, e.target.value)}
                         onFocus={() => setProjectCost(projectCost.replace(/,/g, ""))}
                         onBlur={() => handleCostBlur(projectCost, setProjectCost)}
-                        className={`${inputClass} pl-7`}
+                        className={`${inputClass} pl-7 ${showErrors && fieldErrors.projectCost ? errorRingClass : ""}`}
                       />
                     </div>
+                    <FieldError
+                      show={showErrors && fieldErrors.projectCost}
+                      message="Project cost must be greater than 0"
+                    />
                   </div>
                   {/* Contract Cost field hidden from UI per request — kept in code for state/submission logic */}
                   {/* <div>
@@ -597,14 +650,15 @@ export function AddProjectForm() {
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className={labelClass}>Track Number</label>
+                    <label className={labelClass}>Track Number <span className="text-red-500">*</span></label>
                     <input
                       type="text"
                       value={trackingNumber}
                       onChange={(e) => setTrackingNumber(e.target.value)}
                       placeholder="PEO-2025-XXXXX"
-                      className={inputClass}
+                      className={`${inputClass} ${showErrors && fieldErrors.trackingNumber ? errorRingClass : ""}`}
                     />
+                    <FieldError show={showErrors && fieldErrors.trackingNumber} />
                   </div>
                   <div>
                     <label className={labelClass}>Implementation Mode <span className="text-red-500">*</span></label>
@@ -686,7 +740,7 @@ export function AddProjectForm() {
                 <FieldError show={showErrors && fieldErrors.district} />
               </div>
               <div>
-                <label className={labelClass}>Municipality / City</label>
+                <label className={labelClass}>Municipality / City <span className="text-red-500">*</span></label>
                 <select
                   value={cityMunicipality}
                   onChange={(e) => {
@@ -696,16 +750,17 @@ export function AddProjectForm() {
                     setSitio("");
                   }}
                   disabled={!district}
-                  className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
+                  className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400 ${showErrors && fieldErrors.cityMunicipality ? errorRingClass : ""}`}
                 >
                   <option value="">Select Municipality</option>
                   {availableMunicipalities.map((m) => (
                     <option key={m.name} value={m.name}>{m.name}</option>
                   ))}
                 </select>
+                <FieldError show={showErrors && fieldErrors.cityMunicipality} />
               </div>
               <div>
-                <label className={labelClass}>Barangay</label>
+                <label className={labelClass}>Barangay <span className="text-red-500">*</span></label>
                 <select
                   value={barangay}
                   onChange={(e) => {
@@ -714,7 +769,7 @@ export function AddProjectForm() {
                     setSitio("");
                   }}
                   disabled={!cityMunicipality}
-                  className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
+                  className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400 ${showErrors && fieldErrors.barangay ? errorRingClass : ""}`}
                 >
                   <option value="">
                     {cityMunicipality ? "Select Barangay" : "Select Municipality first"}
@@ -723,27 +778,30 @@ export function AddProjectForm() {
                     <option key={bg.name} value={bg.name}>{bg.name}</option>
                   ))}
                 </select>
+                <FieldError show={showErrors && fieldErrors.barangay} />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className={labelClass}>Purok</label>
+                  <label className={labelClass}>Purok <span className="text-red-500">*</span></label>
                   <input
                     type="text"
                     value={purok}
                     onChange={(e) => setPurok(e.target.value)}
                     placeholder="Enter Purok"
-                    className={inputClass}
+                    className={`${inputClass} ${showErrors && fieldErrors.purok ? errorRingClass : ""}`}
                   />
+                  <FieldError show={showErrors && fieldErrors.purok} />
                 </div>
                 <div>
-                  <label className={labelClass}>Sitio</label>
+                  <label className={labelClass}>Sitio <span className="text-red-500">*</span></label>
                   <input
                     type="text"
                     value={sitio}
                     onChange={(e) => setSitio(e.target.value)}
                     placeholder="Enter Sitio"
-                    className={inputClass}
+                    className={`${inputClass} ${showErrors && fieldErrors.sitio ? errorRingClass : ""}`}
                   />
+                  <FieldError show={showErrors && fieldErrors.sitio} />
                 </div>
               </div>
             </div>
@@ -777,12 +835,12 @@ export function AddProjectForm() {
                 <FieldError show={showErrors && fieldErrors.sourceOfFund} />
               </div>
               <div>
-                <label className={labelClass}>Fund Category</label>
+                <label className={labelClass}>Fund Category <span className="text-red-500">*</span></label>
                 <select
                   value={subType}
                   onChange={(e) => setSubType(e.target.value)}
                   disabled={!sourceOfFund || availableSubTypes.length === 0}
-                  className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
+                  className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400 ${showErrors && fieldErrors.subType ? errorRingClass : ""}`}
                 >
                   <option value="">
                     {!sourceOfFund
@@ -795,19 +853,21 @@ export function AddProjectForm() {
                     <option key={k} value={k}>{PROJECT_SUB_TYPE_LABEL[k]}</option>
                   ))}
                 </select>
+                <FieldError show={showErrors && fieldErrors.subType} />
               </div>
               <div>
-                <label className={labelClass}>Budget Year</label>
+                <label className={labelClass}>Budget Year <span className="text-red-500">*</span></label>
                 <select
                   value={budgetYear}
                   onChange={(e) => setBudgetYear(e.target.value)}
-                  className={inputClass}
+                  className={`${inputClass} ${showErrors && fieldErrors.budgetYear ? errorRingClass : ""}`}
                 >
                   <option value="">Select year</option>
                   {Array.from({ length: 10 }, (_, i) => String(new Date().getFullYear() - i)).map((y) => (
                     <option key={y} value={y}>{y}</option>
                   ))}
                 </select>
+                <FieldError show={showErrors && fieldErrors.budgetYear} />
               </div>
             </div>
 
@@ -892,21 +952,27 @@ export function AddProjectForm() {
             {/* Record row — no Revised Target Completion here; that field only exists on the update page */}
             <div className="mt-3 flex flex-wrap items-end gap-2">
               <div className="w-40 shrink-0">
-                <label className={labelClass}>Start Date</label>
+                <label className={labelClass}>Start Date <span className="text-red-500">*</span></label>
                 <input
                   type="date"
                   value={dateStarted}
                   onChange={(e) => { setDateStarted(e.target.value); setAdjError(null); }}
-                  className={`${inputClass} ${adjError && !dateStarted ? errorRingClass : ""}`}
+                  className={`${inputClass} ${(adjError && !dateStarted) || (showErrors && fieldErrors.dateStarted) ? errorRingClass : ""}`}
                 />
+                <FieldError show={showErrors && fieldErrors.dateStarted} />
               </div>
               <div className="w-40 shrink-0">
-                <label className={labelClass}>End Date</label>
+                <label className={labelClass}>End Date <span className="text-red-500">*</span></label>
                 <input
                   type="date"
                   value={targetCompletionDate}
                   onChange={(e) => { setTargetCompletionDate(e.target.value); setAdjError(null); }}
-                  className={`${inputClass} ${adjError && !targetCompletionDate ? errorRingClass : ""}`}
+                  className={`${inputClass} ${(adjError && !targetCompletionDate) || (showErrors && (fieldErrors.targetCompletionDate || fieldErrors.dateOrder)) ? errorRingClass : ""}`}
+                />
+                <FieldError show={showErrors && fieldErrors.targetCompletionDate} />
+                <FieldError
+                  show={showErrors && fieldErrors.dateOrder}
+                  message="End date must be on or after start date"
                 />
               </div>
               <div className="w-24 shrink-0">
@@ -1015,6 +1081,9 @@ export function AddProjectForm() {
                 <p className="mt-1.5 text-3xl font-extrabold text-blue-700">{totalWorkforce}</p>
               </div>
             </div>
+            {showErrors && fieldErrors.workforce && (
+              <p className="px-5 pb-4 text-xs text-red-500">At least one personnel is required</p>
+            )}
           </section>
 
           {/* Project In-Charge & Profile */}
@@ -1023,7 +1092,7 @@ export function AddProjectForm() {
             <div className="grid grid-cols-1 gap-5 p-5 lg:grid-cols-2">
               {/* Engineers */}
               <div>
-                <label className={labelClass}>Engineers In-Charge</label>
+                <label className={labelClass}>Engineers In-Charge <span className="text-red-500">*</span></label>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {engineers.map((eng) => (
                     <span key={eng} className="flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
@@ -1053,17 +1122,22 @@ export function AddProjectForm() {
                     </button>
                   </div>
                 </div>
+                <FieldError
+                  show={showErrors && fieldErrors.engineers}
+                  message="At least one engineer is required"
+                />
               </div>
               {/* Project Profile */}
               <div>
-                <label className={labelClass}>Project Profile</label>
+                <label className={labelClass}>Project Profile <span className="text-red-500">*</span></label>
                 <textarea
                   rows={5}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Describe the scope of work, deliverables, and methodology..."
-                  className={`${inputClass} resize-none`}
+                  className={`${inputClass} resize-none ${showErrors && fieldErrors.description ? errorRingClass : ""}`}
                 />
+                <FieldError show={showErrors && fieldErrors.description} />
               </div>
             </div>
           </section>
@@ -1182,6 +1256,11 @@ export function AddProjectForm() {
         </section>
 
         {/* Error */}
+        {showErrors && hasErrors && (
+          <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+            Please complete all required fields highlighted above before submitting.
+          </div>
+        )}
         {createProject.isError && (
           <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
             {createProject.error.message}
