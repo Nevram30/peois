@@ -53,10 +53,20 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gray-100">
+    <main className="relative flex min-h-screen flex-col items-center justify-center bg-gray-100 md:items-start md:px-16 lg:px-24">
+      {/* Background image with dark overlay */}
+      <Image
+        src="/image/construction_bg.jpg"
+        alt=""
+        fill
+        priority
+        className="object-cover"
+      />
+      <div className="absolute inset-0 bg-black/25" />
+
       {/* Top blue accent bar */}
-      <div className="w-full max-w-md">
-        <div className="h-1.5 w-full rounded-t-2xl bg-blue-500" />
+      <div className="relative z-10 w-full max-w-md">
+        <div className="h-1.5 w-full rounded-t-2xl bg-amber-500" />
         <div className="rounded-b-2xl bg-white px-10 py-10 shadow-md">
           {/* Logo */}
           <div className="mb-6 flex flex-col items-center">
@@ -72,7 +82,7 @@ export default function LoginPage() {
             <h1 className="text-2xl font-bold text-gray-900">
               Provincial Engineers Office
             </h1>
-            <p className="mt-0.5 text-sm font-semibold uppercase text-blue-500">
+            <p className="mt-0.5 text-sm font-semibold uppercase text-amber-600">
               Project Management Information System
             </p>
             <div className="mt-3 h-px w-16 bg-gray-300" />
@@ -204,27 +214,14 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-500 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-amber-500 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-600 focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75"
-                />
-              </svg>
               {loading ? "Signing in..." : "Sign In"}
             </button>
           </form>
 
           {/* Restricted access notice */}
-          <p className="mt-6 text-center text-xs leading-relaxed text-gray-400">
+          <p className="mt-6 text-left text-xs leading-relaxed text-gray-400">
             Restricted Access. This system is for authorized Provincial Engineers
             Office personnel only. Unauthorized access is prohibited and
             monitored.
@@ -233,7 +230,7 @@ export default function LoginPage() {
       </div>
 
       {/* Footer */}
-      <p className="mt-6 text-xs text-gray-400">
+      <p className="relative z-10 mt-6 w-full max-w-md text-center text-xs text-gray-200">
         © 2024 Provincial Government MIS. All rights reserved.
       </p>
     </main>
