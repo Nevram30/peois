@@ -105,20 +105,20 @@ export default function UserMyTaskPage() {
         </div>
 
         {/* Toggle Tabs */}
-        <div className="mb-4 flex gap-1 rounded-xl border border-gray-200 bg-white p-1 shadow-sm">
+        <div className="mb-4 flex gap-2 border-b border-gray-200">
           {tabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold uppercase tracking-wide transition ${
+              className={`-mb-px flex flex-1 items-center justify-center gap-1.5 border-b-[3px] px-3 py-2.5 text-xs uppercase tracking-wide transition ${
                 activeTab === tab.key
-                  ? "bg-[#1e3a4f] text-white shadow"
-                  : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                  ? "border-amber-500 font-semibold text-amber-600"
+                  : "border-transparent font-medium text-gray-600 hover:border-gray-300 hover:text-gray-900"
               }`}
             >
               {tab.label}
               <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${
-                activeTab === tab.key ? "bg-white/20 text-white" : "bg-gray-100 text-gray-500"
+                activeTab === tab.key ? "bg-amber-500/10 text-amber-600" : "bg-gray-100 text-gray-500"
               }`}>{counts[tab.key]}</span>
             </button>
           ))}

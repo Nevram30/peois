@@ -225,7 +225,7 @@ export function NavHeader({ user, userId }: { user: { name?: string | null; emai
         </header>
 
         {/* Navigation Tabs */}
-        <nav className="flex items-center gap-1 px-6 border-b-2 border-black/50 mt-3">
+        <nav className="flex items-center gap-2 px-6 border-b border-gray-200 mt-3">
           {NAV_ITEMS.map((item) => {
             const isActive =
               item.href === "/super-admin/dashboard"
@@ -237,9 +237,9 @@ export function NavHeader({ user, userId }: { user: { name?: string | null; emai
               <Link
                 key={item.href}
                 href={`${item.href}?id=${userId}`}
-                className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-t-md transition ${isActive
-                  ? "bg-gray-50 text-black border-2 border-t-black/50 border-l-black/50 border-r-black/50 border-b-0 -mb-0.5 relative"
-                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                className={`-mb-px flex items-center gap-2 border-b-[3px] px-4 py-2.5 text-sm transition ${isActive
+                  ? "border-amber-500 font-medium text-amber-600"
+                  : "border-transparent font-normal text-gray-600 hover:border-gray-300 hover:text-gray-900"
                   }`}
               >
                 {item.icon}
