@@ -19,7 +19,7 @@ export default auth((req) => {
       const role = token.user?.role as string | undefined;
       if (role === "SUPER_ADMIN") {
         return NextResponse.redirect(
-          new URL("/super-admin/dashboard", req.url),
+          new URL("/super-admin/dashboardv2", req.url),
         );
       } else if (role === "ADMIN") {
         return NextResponse.redirect(new URL("/admin/dashboard", req.url));

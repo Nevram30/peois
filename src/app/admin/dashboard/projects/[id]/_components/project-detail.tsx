@@ -62,15 +62,6 @@ function fmt(d: Date | string | null | undefined) {
   });
 }
 
-function fmtInput(d: Date | string | null | undefined) {
-  if (!d) return "";
-  const date = new Date(d);
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
-  const dd = String(date.getDate()).padStart(2, "0");
-  const yyyy = date.getFullYear();
-  return `${mm}/${dd}/${yyyy}`;
-}
-
 function timeAgo(d: Date | string) {
   const diff = Date.now() - new Date(d).getTime();
   const mins = Math.floor(diff / 60000);
@@ -79,6 +70,18 @@ function timeAgo(d: Date | string) {
   if (hrs < 24) return `${hrs} hour${hrs !== 1 ? "s" : ""} ago`;
   const days = Math.floor(hrs / 24);
   return `${days} day${days !== 1 ? "s" : ""} ago`;
+}
+
+function initials(name?: string | null, email?: string | null) {
+  if (name) {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  }
+  return (email?.[0] ?? "U").toUpperCase();
 }
 
 function peso(n: number | null | undefined) {
@@ -152,22 +155,36 @@ export function ProjectDetail({ projectId }: Props) {
   const variationOrderBalance = Math.max(0, totalVariationOrder - overflow);
   const totalRemainingBalance = primaryFundBalance + variationOrderBalance;
 
-  const totalDays =
-    project.dateStarted && project.targetCompletionDate
-      ? Math.max(
-        0,
-        Math.ceil(
-          (new Date(project.targetCompletionDate).getTime() -
-            new Date(project.dateStarted).getTime()) /
-          (1000 * 60 * 60 * 24),
-        ),
-      )
-      : project.duration;
-
   const engineers = (project.projectEngineer ?? "")
     .split(/[,;]/)
     .map((s) => s.trim())
     .filter(Boolean);
+
+  const handleExportLog = () => {
+    if (!activities || activities.length === 0) return;
+    const headers = [
+      "Timestamp",
+      "Administrator",
+      "Source of Fund",
+      "Justification Record",
+      "Auth Status",
+    ];
+    const rows = activities.map((a) => [
+      new Date(a.createdAt).toLocaleString("en-PH"),
+      `"${(a.createdBy.name ?? a.createdBy.email ?? "").replace(/"/g, '""')}"`,
+      sourceLabel,
+      `"${a.description.replace(/"/g, '""')}"`,
+      "VERIFIED",
+    ]);
+    const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `audit-log-${project.projectCode}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 px-6 py-8">
@@ -573,25 +590,8 @@ export function ProjectDetail({ projectId }: Props) {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div>
-              <label className={fieldLabel}>Date Started</label>
-              <div className={fieldBox}>{fmtInput(project.dateStarted) || "—"}</div>
-            </div>
-            <div>
-              <label className={fieldLabel}>Original Target</label>
-              <div className={fieldBox}>{fmtInput(project.targetCompletionDate) || "—"}</div>
-            </div>
-            <div>
-              <label className={fieldLabel}>Duration</label>
-              <div className="mt-1.5 w-full rounded-lg border border-blue-200 bg-blue-50 px-3.5 py-2.5 text-sm font-semibold text-blue-700">
-                {totalDays} Days
-              </div>
-            </div>
-          </div>
-
           {/* Timeline Adjustment History */}
-          <div className="mt-6">
+          <div>
             <p className={`${fieldLabel} mb-2`}>Timeline Adjustment History</p>
             <div className="overflow-hidden rounded-lg border border-gray-200">
               <table className="w-full text-sm">
@@ -639,10 +639,93 @@ export function ProjectDetail({ projectId }: Props) {
           </div>
         </section>
 
-        {/* ── Workforce Distribution ── */}
-        <section className={card}>
-          <div className={`${sectionTitle} justify-between`}>
-            <div className="flex items-center gap-2">
+        {/* ── Workforce Distribution + Project In-Charge & Profile ── */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {/* Workforce Distribution */}
+          <section className={card}>
+            <div className={`${sectionTitle} justify-between`}>
+              <div className="flex items-center gap-2">
+                <svg
+                  className="h-5 w-5 text-blue-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
+                  />
+                </svg>
+                <h2 className="text-sm font-bold uppercase tracking-wider text-gray-700">
+                  Workforce Distribution
+                </h2>
+              </div>
+              <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-emerald-600">
+                <svg
+                  className="h-3.5 w-3.5 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9.348 14.652a3.75 3.75 0 010-5.304m5.304 0a3.75 3.75 0 010 5.304m-7.425 2.121a6.75 6.75 0 010-9.546m9.546 0a6.75 6.75 0 010 9.546M12 12h.008v.008H12V12z"
+                  />
+                </svg>
+                Live
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3">
+              <div className="rounded-lg border border-gray-200 bg-gray-50/60 p-4">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                  Female
+                </p>
+                <div className="mt-1.5 flex items-end justify-between">
+                  <p className="text-3xl font-bold text-gray-900">{project.numFemale}</p>
+                  <span className="text-lg text-gray-400">♀</span>
+                </div>
+              </div>
+              <div className="rounded-lg border border-gray-200 bg-gray-50/60 p-4">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                  Male
+                </p>
+                <div className="mt-1.5 flex items-end justify-between">
+                  <p className="text-3xl font-bold text-gray-900">{project.numMale}</p>
+                  <span className="text-lg text-gray-400">♂</span>
+                </div>
+              </div>
+              <div className="rounded-lg border-2 border-gray-300 bg-gray-100 p-4">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                  Total
+                </p>
+                <div className="mt-1.5 flex items-end justify-between">
+                  <p className="text-3xl font-bold text-gray-900">{project.numPersons}</p>
+                  <svg
+                    className="h-5 w-5 text-gray-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Project In-Charge & Profile */}
+          <section className={`${card} lg:col-span-2`}>
+            <div className={sectionTitle}>
               <svg
                 className="h-5 w-5 text-blue-600"
                 fill="none"
@@ -653,118 +736,41 @@ export function ProjectDetail({ projectId }: Props) {
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
+                  d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
                 />
               </svg>
               <h2 className="text-sm font-bold uppercase tracking-wider text-gray-700">
-                Workforce Distribution
+                Project In-Charge &amp; Profile
               </h2>
             </div>
-            <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-blue-600">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-blue-500" />
-              </span>
-              Live Updates
-            </div>
-          </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">
-                    Female Personnel
-                  </p>
-                  <p className="mt-2 text-3xl font-bold text-gray-900">{project.numFemale}</p>
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+              <div>
+                <label className={fieldLabel}>Engineers In-Charge</label>
+                <div className="mt-1.5 flex min-h-11 flex-wrap items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2">
+                  {engineers.length > 0 ? (
+                    engineers.map((eng) => (
+                      <span
+                        key={eng}
+                        className="rounded-md border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 shadow-sm"
+                      >
+                        {eng}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-sm text-gray-400">—</span>
+                  )}
                 </div>
-                <span className="text-xl text-pink-400">♀</span>
               </div>
-            </div>
-            <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">
-                    Male Personnel
-                  </p>
-                  <p className="mt-2 text-3xl font-bold text-gray-900">{project.numMale}</p>
+              <div>
+                <label className={fieldLabel}>Project Profile</label>
+                <div className="mt-1.5 min-h-22 w-full whitespace-pre-wrap rounded-lg border border-gray-200 bg-gray-50 px-3.5 py-2.5 text-sm text-gray-700">
+                  {project.description ?? "—"}
                 </div>
-                <span className="text-xl text-blue-400">♂</span>
               </div>
             </div>
-            <div className="rounded-xl border border-blue-200 bg-blue-50 p-5">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-blue-500">
-                    Total Workforce
-                  </p>
-                  <p className="mt-2 text-3xl font-bold text-blue-700">{project.numPersons}</p>
-                </div>
-                <svg
-                  className="h-5 w-5 text-blue-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ── Project In-Charge & Profile ── */}
-        <section className={card}>
-          <div className={sectionTitle}>
-            <svg
-              className="h-5 w-5 text-blue-600"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-              />
-            </svg>
-            <h2 className="text-sm font-bold uppercase tracking-wider text-gray-700">
-              Project In-Charge &amp; Profile
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-            <div>
-              <label className={fieldLabel}>Engineers In-Charge</label>
-              <div className="mt-1.5 flex min-h-11 flex-wrap items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2">
-                {engineers.length > 0 ? (
-                  engineers.map((eng) => (
-                    <span
-                      key={eng}
-                      className="rounded-md border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 shadow-sm"
-                    >
-                      {eng}
-                    </span>
-                  ))
-                ) : (
-                  <span className="text-sm text-gray-400">—</span>
-                )}
-              </div>
-            </div>
-            <div>
-              <label className={fieldLabel}>Project Profile</label>
-              <div className="mt-1.5 min-h-22 w-full whitespace-pre-wrap rounded-lg border border-gray-200 bg-gray-50 px-3.5 py-2.5 text-sm text-gray-700">
-                {project.description ?? "—"}
-              </div>
-            </div>
-          </div>
-        </section>
+          </section>
+        </div>
 
         {/* ── Project Documentation ── */}
         <section className={card}>
@@ -794,6 +800,7 @@ export function ProjectDetail({ projectId }: Props) {
                   <th className="px-4 py-3">File Name</th>
                   <th className="px-4 py-3">Type</th>
                   <th className="px-4 py-3">Upload Date</th>
+                  <th className="px-4 py-3">Uploaded By</th>
                   <th className="px-4 py-3 text-right">Actions</th>
                 </tr>
               </thead>
@@ -803,19 +810,35 @@ export function ProjectDetail({ projectId }: Props) {
                     <tr key={f.id} className="text-gray-700">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2.5">
-                          <svg
-                            className="h-4 w-4 text-blue-500"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={2}
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                            />
-                          </svg>
+                          {f.fileType === "IMAGE" ? (
+                            <svg
+                              className="h-4 w-4 text-blue-500"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={2}
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25z"
+                              />
+                            </svg>
+                          ) : (
+                            <svg
+                              className="h-4 w-4 text-red-500"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={2}
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                              />
+                            </svg>
+                          )}
                           <span className="font-medium">{f.fileName}</span>
                         </div>
                       </td>
@@ -827,6 +850,9 @@ export function ProjectDetail({ projectId }: Props) {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-gray-500">{fmt(f.createdAt)}</td>
+                      <td className="px-4 py-3 text-gray-700">
+                        {f.createdBy.name ?? f.createdBy.email ?? "—"}
+                      </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-3">
                           <a
@@ -882,7 +908,7 @@ export function ProjectDetail({ projectId }: Props) {
                 ) : (
                   <tr>
                     <td
-                      colSpan={4}
+                      colSpan={5}
                       className="px-4 py-8 text-center text-sm text-gray-400"
                     >
                       No documents uploaded yet.
@@ -896,10 +922,18 @@ export function ProjectDetail({ projectId }: Props) {
 
         {/* ── Administrative Update History / Audit Trail ── */}
         <section className={card}>
-          <div className="mb-5 flex items-center justify-between">
-            <div className="flex items-center gap-2">
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-gray-700">
+              Administrative Update History Audit Trail
+            </h2>
+            <button
+              type="button"
+              onClick={handleExportLog}
+              disabled={!activities || activities.length === 0}
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-xs font-bold uppercase tracking-wider text-gray-700 shadow-sm transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
               <svg
-                className="h-5 w-5 text-blue-500"
+                className="h-4 w-4"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={2}
@@ -908,73 +942,64 @@ export function ProjectDetail({ projectId }: Props) {
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                  d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
                 />
               </svg>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-gray-700">
-                Activity Log
-              </h2>
-            </div>
+              Export Log
+            </button>
           </div>
 
           {activities && activities.length > 0 ? (
-            <div className="rounded-xl border border-gray-100 bg-gray-50/50">
-              {/* Header row */}
-              <div className="grid grid-cols-[180px_1fr_180px] border-b border-gray-200 px-5 py-3">
-                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-                  Timestamp
-                </span>
-                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-                  Justification Record
-                </span>
-                <span className="text-right text-xs font-semibold uppercase tracking-wider text-gray-400">
-                  Administrator
-                </span>
-              </div>
-              {/* Scrollable rows */}
+            <div className="overflow-hidden rounded-lg border border-gray-200">
               <div className="max-h-210 overflow-y-auto">
-                {activities.map((a, i) => {
-                  const dotColors = [
-                    "bg-blue-500",
-                    "bg-green-500",
-                    "bg-purple-500",
-                    "bg-gray-300",
-                  ];
-                  const dot = dotColors[i % dotColors.length]!;
-                  return (
-                    <div
-                      key={a.id}
-                      className="grid grid-cols-[180px_1fr_180px] items-center border-b border-gray-100 px-5 py-4 last:border-0"
-                    >
-                      <div className="flex flex-col gap-0.5">
-                        <span className="text-sm text-gray-600">
+                <table className="w-full border-separate border-spacing-0 text-sm">
+                  <thead className="sticky top-0 z-10 bg-gray-50">
+                    <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 [&>th]:border-b [&>th]:border-gray-200">
+                      <th className="px-4 py-3">Timestamp</th>
+                      <th className="px-4 py-3">Administrator</th>
+                      <th className="px-4 py-3">Source of Fund</th>
+                      <th className="px-4 py-3">Justification Record</th>
+                      <th className="px-4 py-3 text-right">Auth Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {activities.map((a) => (
+                      <tr key={a.id} className="text-gray-700">
+                        <td className="px-4 py-3 whitespace-nowrap text-gray-600">
                           {new Date(a.createdAt).toLocaleDateString("en-PH", {
                             month: "short",
                             day: "numeric",
                             year: "numeric",
                           })}
-                        </span>
-                        <span className="text-xs text-gray-400">
+                          {" · "}
                           {new Date(a.createdAt).toLocaleTimeString("en-PH", {
                             hour: "2-digit",
                             minute: "2-digit",
                             second: "2-digit",
                             hour12: false,
                           })}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2.5">
-                        <span className={`h-2 w-2 shrink-0 rounded-full ${dot}`} />
-                        <span className="text-sm italic text-gray-700">{a.description}</span>
-                      </div>
-                      <div className="flex justify-end">
-                        <span className="rounded-lg border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-700 shadow-sm">
-                          {a.createdBy.name ?? a.createdBy.email}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2.5">
+                            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1e3a8a] text-[10px] font-bold text-white">
+                              {initials(a.createdBy.name, a.createdBy.email)}
+                            </span>
+                            <span className="font-semibold text-gray-800">
+                              {a.createdBy.name ?? a.createdBy.email}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-gray-600">{sourceLabel}</td>
+                        <td className="px-4 py-3 italic text-gray-600">{a.description}</td>
+                        <td className="px-4 py-3 text-right">
+                          <span className="inline-flex rounded-md border border-green-200 bg-green-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-green-600">
+                            Verified
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           ) : (

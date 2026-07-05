@@ -183,11 +183,13 @@ type BySubTypeMap = Record<string, { amount: number; sourceOfFund: string }>;
 type AnnualAllocationCardProps = {
     bySource: Record<string, number>;
     bySubType: BySubTypeMap;
+    variationBySource: Record<string, number>;
+    variationProjectsBySource: Record<string, Record<string, number>>;
     total: number;
     budgetYear: string;
 };
 
-function AnnualAllocationCard({ bySource, bySubType, total, budgetYear }: AnnualAllocationCardProps) {
+function AnnualAllocationCard({ bySource, bySubType, variationBySource, variationProjectsBySource, total, budgetYear }: AnnualAllocationCardProps) {
     // Order known sources first, then append any unmapped sources that have allocations.
     const ordered = [...SOURCE_OF_FUND_ORDER, "CONFIDENTIAL", ...Object.keys(bySource)].filter(
         (src, i, arr) => arr.indexOf(src) === i && (bySource[src] ?? 0) > 0,
@@ -195,6 +197,12 @@ function AnnualAllocationCard({ bySource, bySubType, total, budgetYear }: Annual
 
     const entries = ordered.map((src) => {
         const amount = bySource[src] ?? 0;
+        // Portion of this source's allocation that comes from variation orders,
+        // broken down by the tracking number of the project each order belongs to.
+        const variationFund = variationBySource[src] ?? 0;
+        const variationProjects = Object.entries(variationProjectsBySource[src] ?? {})
+            .map(([trackingNumber, voAmount]) => ({ trackingNumber, amount: voAmount }))
+            .sort((a, b) => b.amount - a.amount);
         const subTypes = Object.entries(bySubType)
             .filter(([key, v]) => v.sourceOfFund === src && !key.startsWith("__NONE__"))
             .map(([key, v]) => ({
@@ -207,6 +215,8 @@ function AnnualAllocationCard({ bySource, bySubType, total, budgetYear }: Annual
             label: SOURCE_SHORT_LABEL[src] ?? src,
             color: SOURCE_COLORS[src] ?? "#94a3b8",
             amount,
+            variationFund,
+            variationProjects,
             pct: total > 0 ? Math.round((amount / total) * 100) : 0,
             subTypes,
         };
@@ -246,7 +256,7 @@ function AnnualAllocationCard({ bySource, bySubType, total, budgetYear }: Annual
                                     </div>
                                 </div>
 
-                                {e.subTypes.length > 0 && (
+                                {(e.subTypes.length > 0 || e.variationFund > 0) && (
                                     <div className="mt-1 ml-1 border-l border-slate-200 pl-3 flex flex-col gap-0.5">
                                         {e.subTypes.map((s) => (
                                             <div key={s.label} className="flex items-center justify-between gap-2">
@@ -256,6 +266,21 @@ function AnnualAllocationCard({ bySource, bySubType, total, budgetYear }: Annual
                                                 </span>
                                             </div>
                                         ))}
+
+                                        {/* Variation Fund (variation orders for this source, per project tracking number) */}
+                                        {e.variationFund > 0 && (
+                                            <>
+                                                <span className="text-[10.5px] font-semibold text-amber-600 truncate">Variation Fund</span>
+                                                {e.variationProjects.map((vp) => (
+                                                    <div key={vp.trackingNumber} className="flex items-center justify-between gap-2 pl-2">
+                                                        <span className="text-[10.5px] text-slate-500 truncate">{vp.trackingNumber}</span>
+                                                        <span className="text-[10.5px] text-slate-500 tabular-nums shrink-0">
+                                                            {formatToPHPMillions(vp.amount)}
+                                                        </span>
+                                                    </div>
+                                                ))}
+                                            </>
+                                        )}
                                     </div>
                                 )}
                             </div>
@@ -298,10 +323,11 @@ type SourceBreakdownCardProps = {
     footerLabel: string;
     bySource: Record<string, number>;
     bySubType: BySubTypeMap;
+    variationProjectsBySource?: Record<string, Record<string, number>>;
     total: number;
 };
 
-function SourceBreakdownCard({ title, footerLabel, bySource, bySubType, total }: SourceBreakdownCardProps) {
+function SourceBreakdownCard({ title, footerLabel, bySource, bySubType, variationProjectsBySource, total }: SourceBreakdownCardProps) {
     const ordered = [...SOURCE_OF_FUND_ORDER, "CONFIDENTIAL", ...Object.keys(bySource)].filter(
         (src, i, arr) => arr.indexOf(src) === i && (bySource[src] ?? undefined) !== undefined,
     );
@@ -315,12 +341,17 @@ function SourceBreakdownCard({ title, footerLabel, bySource, bySubType, total }:
                 amount: v.amount,
             }))
             .sort((a, b) => b.amount - a.amount);
+        // Variation-order portion for this source, per project tracking number.
+        const variationProjects = Object.entries(variationProjectsBySource?.[src] ?? {})
+            .map(([trackingNumber, voAmount]) => ({ trackingNumber, amount: voAmount }))
+            .sort((a, b) => b.amount - a.amount);
         return {
             src,
             label: REM_SOURCE_LABEL[src] ?? src,
             color: SOURCE_COLORS[src] ?? "#94a3b8",
             amount,
             subTypes,
+            variationProjects,
         };
     });
 
@@ -355,7 +386,7 @@ function SourceBreakdownCard({ title, footerLabel, bySource, bySubType, total }:
                                     </span>
                                 </div>
 
-                                {e.subTypes.length > 0 && (
+                                {(e.subTypes.length > 0 || e.variationProjects.length > 0) && (
                                     <div className="mt-1 ml-1 border-l border-slate-200 pl-3 flex flex-col gap-0.5">
                                         {e.subTypes.map((s) => (
                                             <div key={s.label} className="flex items-center justify-between gap-2">
@@ -365,6 +396,21 @@ function SourceBreakdownCard({ title, footerLabel, bySource, bySubType, total }:
                                                 </span>
                                             </div>
                                         ))}
+
+                                        {/* Variation-order portion, per project tracking number */}
+                                        {e.variationProjects.length > 0 && (
+                                            <>
+                                                <span className="text-[10.5px] font-semibold text-amber-600 truncate">Variation Order</span>
+                                                {e.variationProjects.map((vp) => (
+                                                    <div key={vp.trackingNumber} className="flex items-center justify-between gap-2 pl-2">
+                                                        <span className="text-[10.5px] text-slate-500 truncate">{vp.trackingNumber}</span>
+                                                        <span className="text-[10.5px] text-slate-500 tabular-nums shrink-0">
+                                                            {formatToPHPMillions(vp.amount)}
+                                                        </span>
+                                                    </div>
+                                                ))}
+                                            </>
+                                        )}
                                     </div>
                                 )}
                             </div>
@@ -546,6 +592,8 @@ const PEOISDashboard = () => {
             <AnnualAllocationCard
                 bySource={projectAllocationData?.bySource ?? {}}
                 bySubType={projectAllocationData?.bySubType ?? {}}
+                variationBySource={projectAllocationData?.variationBySource ?? {}}
+                variationProjectsBySource={projectAllocationData?.variationProjectsBySource ?? {}}
                 total={TotalAllocation}
                 budgetYear={projectAllocationData?.budgetYear ?? "2024"}
             />
@@ -557,6 +605,7 @@ const PEOISDashboard = () => {
                     footerLabel="Grand Total Balance"
                     bySource={remainingBalanceData?.remaining.bySource ?? {}}
                     bySubType={remainingBalanceData?.remaining.bySubType ?? {}}
+                    variationProjectsBySource={remainingBalanceData?.remaining.variationProjectsBySource ?? {}}
                     total={remainingBalanceData?.remaining.total ?? 0}
                 />
                 <SourceBreakdownCard
@@ -564,6 +613,7 @@ const PEOISDashboard = () => {
                     footerLabel="Total Disbursement"
                     bySource={remainingBalanceData?.disbursed.bySource ?? {}}
                     bySubType={remainingBalanceData?.disbursed.bySubType ?? {}}
+                    variationProjectsBySource={remainingBalanceData?.disbursed.variationProjectsBySource ?? {}}
                     total={remainingBalanceData?.disbursed.total ?? 0}
                 />
             </div>

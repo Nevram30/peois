@@ -530,6 +530,7 @@ export const projectRouter = createTRPCRouter({
       const projects = await ctx.db.project.findMany({
         where,
         select: {
+          projectCode: true,
           sourceOfFund: true,
           subType: true,
           projectCost: true,
@@ -543,6 +544,9 @@ export const projectRouter = createTRPCRouter({
       // Portion of each source's allocation that comes from variation orders, kept
       // separate from the base project fund so the dashboard can show the split.
       const variationBySource: Record<string, number> = {};
+      // Same split broken down by project tracking number (projectCode), so the
+      // dashboard can show which projects the variation funds belong to.
+      const variationProjectsBySource: Record<string, Record<string, number>> = {};
 
       let totalAllocation = 0;
       let totalVariation = 0;
@@ -575,6 +579,8 @@ export const projectRouter = createTRPCRouter({
           const voSource = vo.sourceOfFund ?? p.sourceOfFund;
           bySource[voSource] = (bySource[voSource] ?? 0) + vo.amount;
           variationBySource[voSource] = (variationBySource[voSource] ?? 0) + vo.amount;
+          const byProject = (variationProjectsBySource[voSource] ??= {});
+          byProject[p.projectCode] = (byProject[p.projectCode] ?? 0) + vo.amount;
           totalAllocation += vo.amount;
           totalVariation += vo.amount;
         }
@@ -592,6 +598,7 @@ export const projectRouter = createTRPCRouter({
         bySource,
         bySubType,
         variationBySource,
+        variationProjectsBySource,
         executionRate: Math.round(executionRate * 10) / 10,
       };
 
@@ -610,6 +617,7 @@ export const projectRouter = createTRPCRouter({
       const projects = await ctx.db.project.findMany({
         where,
         select: {
+          projectCode: true,
           sourceOfFund: true,
           subType: true,
           projectCost: true,
@@ -624,6 +632,11 @@ export const projectRouter = createTRPCRouter({
       const remainingBySubType: SubTypeMap = {};
       const disbursedBySource: Record<string, number> = {};
       const disbursedBySubType: SubTypeMap = {};
+      // Variation-order portions broken down by the tracking number of the
+      // project each order belongs to, so the dashboard cards can show which
+      // projects the variation-order balances/disbursements come from.
+      const remainingVariationBySource: Record<string, Record<string, number>> = {};
+      const disbursedVariationBySource: Record<string, Record<string, number>> = {};
 
       let totalAllocation = 0;
       let totalDisbursed = 0;
@@ -649,27 +662,35 @@ export const projectRouter = createTRPCRouter({
         // to go below zero, mirroring the project edit/detail views — so a fully
         // (or over-) disbursed project shows a remaining balance of 0, not a
         // negative number.
-        let overflow = 0;
-        if (p.projectCost > 0) {
-          const rawPrimary = p.projectCost - disbursed;
-          const primaryRemaining = Math.max(0, rawPrimary);
-          overflow = Math.max(0, -rawPrimary);
+        const rawPrimary = p.projectCost - disbursed;
+        const primaryRemaining = Math.max(0, rawPrimary);
+        let overflow = Math.max(0, -rawPrimary);
+        // Only the portion covered by the project cost is charged to the
+        // primary source of fund; the overflow is charged to the variation
+        // orders' sources below.
+        const primaryDisbursed = Math.min(disbursed, Math.max(0, p.projectCost));
 
+        if (p.projectCost > 0) {
           totalAllocation += p.projectCost;
-          totalDisbursed += disbursed;
           totalRemaining += primaryRemaining;
 
           remainingBySource[p.sourceOfFund] = (remainingBySource[p.sourceOfFund] ?? 0) + primaryRemaining;
           addToSubType(remainingBySubType, subKey, p.sourceOfFund, primaryRemaining);
+        }
 
-          disbursedBySource[p.sourceOfFund] = (disbursedBySource[p.sourceOfFund] ?? 0) + disbursed;
-          addToSubType(disbursedBySubType, subKey, p.sourceOfFund, disbursed);
+        if (primaryDisbursed > 0) {
+          totalDisbursed += primaryDisbursed;
+          disbursedBySource[p.sourceOfFund] = (disbursedBySource[p.sourceOfFund] ?? 0) + primaryDisbursed;
+          addToSubType(disbursedBySubType, subKey, p.sourceOfFund, primaryDisbursed);
         }
 
         // Variation orders raise the available balance for the source of fund
         // they are charged against, but the overflow from over-disbursing the
         // project cost eats into them first so the remaining balance never goes
-        // negative.
+        // negative. The consumed portion counts as a disbursement against the
+        // variation order's own source of fund, tracked per project tracking
+        // number. The sub-type maps get the same amounts under hidden __NONE__
+        // keys so they stay in sync with the by-source maps.
         for (const vo of p.variationOrders) {
           if (vo.amount <= 0) continue;
           const voSource = vo.sourceOfFund ?? p.sourceOfFund;
@@ -680,6 +701,28 @@ export const projectRouter = createTRPCRouter({
           totalAllocation += vo.amount;
           totalRemaining += voRemaining;
           remainingBySource[voSource] = (remainingBySource[voSource] ?? 0) + voRemaining;
+          addToSubType(remainingBySubType, `__NONE__:${voSource}`, voSource, voRemaining);
+          if (voRemaining > 0) {
+            const byProject = (remainingVariationBySource[voSource] ??= {});
+            byProject[p.projectCode] = (byProject[p.projectCode] ?? 0) + voRemaining;
+          }
+
+          if (consumed > 0) {
+            totalDisbursed += consumed;
+            disbursedBySource[voSource] = (disbursedBySource[voSource] ?? 0) + consumed;
+            addToSubType(disbursedBySubType, `__NONE__:${voSource}`, voSource, consumed);
+            const byProject = (disbursedVariationBySource[voSource] ??= {});
+            byProject[p.projectCode] = (byProject[p.projectCode] ?? 0) + consumed;
+          }
+        }
+
+        // Disbursements beyond the project cost and all variation orders still
+        // count toward the project's own source so the summary matches the
+        // disbursement records.
+        if (overflow > 0) {
+          totalDisbursed += overflow;
+          disbursedBySource[p.sourceOfFund] = (disbursedBySource[p.sourceOfFund] ?? 0) + overflow;
+          addToSubType(disbursedBySubType, subKey, p.sourceOfFund, overflow);
         }
       }
 
@@ -690,11 +733,13 @@ export const projectRouter = createTRPCRouter({
           total: totalRemaining,
           bySource: remainingBySource,
           bySubType: remainingBySubType,
+          variationProjectsBySource: remainingVariationBySource,
         },
         disbursed: {
           total: totalDisbursed,
           bySource: disbursedBySource,
           bySubType: disbursedBySubType,
+          variationProjectsBySource: disbursedVariationBySource,
         },
       };
     }),
