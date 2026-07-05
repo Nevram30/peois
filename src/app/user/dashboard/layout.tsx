@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "~/server/auth";
 import { UserShell } from "./_components/user-shell";
+import { SessionTimeout } from "~/app/_components/session-timeout";
 
 export default async function UserLayout({
   children,
@@ -17,5 +18,10 @@ export default async function UserLayout({
     redirect("/login");
   }
 
-  return <UserShell user={session.user}>{children}</UserShell>;
+  return (
+    <UserShell user={session.user}>
+      <SessionTimeout />
+      {children}
+    </UserShell>
+  );
 }

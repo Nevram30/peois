@@ -5,10 +5,19 @@ import { httpBatchStreamLink, loggerLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
 import { useState } from "react";
+import { signOut } from "next-auth/react";
 import SuperJSON from "superjson";
 
 import { type AppRouter } from "~/server/api/root";
 import { createQueryClient } from "./query-client";
+
+let redirectingToLogin = false;
+const onUnauthorized = () => {
+  // Batched tRPC requests fail together — only redirect once
+  if (redirectingToLogin) return;
+  redirectingToLogin = true;
+  void signOut({ callbackUrl: "/login?expired=1" });
+};
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined;
 const getQueryClient = () => {
@@ -17,7 +26,7 @@ const getQueryClient = () => {
     return createQueryClient();
   }
   // Browser: use singleton pattern to keep the same query client
-  clientQueryClientSingleton ??= createQueryClient();
+  clientQueryClientSingleton ??= createQueryClient({ onUnauthorized });
 
   return clientQueryClientSingleton;
 };

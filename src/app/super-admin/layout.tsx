@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "~/server/auth";
 import { NavHeader } from "./_components/nav-header";
+import { SessionTimeout } from "~/app/_components/session-timeout";
 
 export default async function SuperAdminLayout({
   children,
@@ -19,6 +20,7 @@ export default async function SuperAdminLayout({
 
   return (
     <main className="min-h-screen bg-gray-50">
+      <SessionTimeout />
       <NavHeader user={session.user} userId={session.user.id} />
       <div className="px-6 pb-6 pt-36">
         {children}

@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import { db } from "~/server/db";
 import { type UserRole } from "../../../generated/prisma";
 import { edgeAuthConfig } from "./edge-config";
+import { SESSION_MAX_AGE_MS } from "~/lib/auth-constants";
 
 /**
  * Full auth config — extends the edge config with DB-dependent providers,
@@ -66,7 +67,7 @@ export const authConfig = {
           const dbSession = await db.userSession.create({
             data: {
               userId: user.id!,
-              expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+              expiresAt: new Date(Date.now() + SESSION_MAX_AGE_MS),
             },
           });
           token.sessionId = dbSession.id;

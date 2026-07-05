@@ -1,7 +1,7 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 
 export default function LoginPage() {
@@ -9,11 +9,21 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [sessionExpired, setSessionExpired] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Read via window.location to avoid the useSearchParams Suspense requirement
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("expired") === "1") {
+      setSessionExpired(true);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setSessionExpired(false);
     setLoading(true);
 
     try {
@@ -89,6 +99,12 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
+            {sessionExpired && !error && (
+              <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-center text-sm text-amber-700">
+                Your session expired due to inactivity. Please sign in again.
+              </div>
+            )}
+
             {error && (
               <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-center text-sm text-red-600">
                 {error}

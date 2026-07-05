@@ -1,5 +1,6 @@
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import type { UserRole } from "../../../generated/prisma";
+import { SESSION_MAX_AGE_SECONDS } from "~/lib/auth-constants";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
@@ -26,7 +27,7 @@ declare module "next-auth" {
 export const edgeAuthConfig = {
   session: {
     strategy: "jwt",
-    maxAge: 5 * 60, // 5 minutes of inactivity
+    maxAge: SESSION_MAX_AGE_SECONDS, // 5 minutes of inactivity
   },
   pages: {
     signIn: "/login",

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "~/server/auth";
 import { AdminShell } from "./_components/admin-shell";
+import { SessionTimeout } from "~/app/_components/session-timeout";
 
 export default async function AdminLayout({
   children,
@@ -17,5 +18,10 @@ export default async function AdminLayout({
     redirect("/login");
   }
 
-  return <AdminShell user={session.user}>{children}</AdminShell>;
+  return (
+    <AdminShell user={session.user}>
+      <SessionTimeout />
+      {children}
+    </AdminShell>
+  );
 }
