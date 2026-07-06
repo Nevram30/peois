@@ -184,7 +184,8 @@ export function AddProjectForm() {
   // ── Project Identity & Status ────────────────────────────────────────
   const [title, setTitle] = useState("");
   const [projectCost, setProjectCost] = useState("0.00");
-  const [contractCost, setContractCost] = useState("0.00");
+  // Contract Cost input is hidden from the UI; the value is still submitted.
+  const [contractCost] = useState("0.00");
   const [trackingNumber, setTrackingNumber] = useState("");
   const [modeOfImplementation, setModeOfImplementation] = useState("");
   const [contractorName, setContractorName] = useState("");
@@ -268,7 +269,10 @@ export function AddProjectForm() {
     () => getBarangaysByMunicipality(cityMunicipality),
     [cityMunicipality],
   );
-  const availableSubTypes = sourceOfFund ? SOURCE_TO_SUB_TYPES[sourceOfFund] : [];
+  const availableSubTypes = useMemo(
+    () => (sourceOfFund ? SOURCE_TO_SUB_TYPES[sourceOfFund] : []),
+    [sourceOfFund],
+  );
 
   // ── Handlers ─────────────────────────────────────────────────────────
   const handleCostChange = (

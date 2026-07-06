@@ -15,6 +15,9 @@ const createContext = async (req: NextRequest) => {
   });
 };
 
+// SSE subscription streams must never be cached.
+export const dynamic = "force-dynamic";
+
 const handler = (req: NextRequest) =>
   fetchRequestHandler({
     endpoint: "/api/trpc",

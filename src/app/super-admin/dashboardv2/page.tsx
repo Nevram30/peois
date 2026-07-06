@@ -189,7 +189,7 @@ type AnnualAllocationCardProps = {
     budgetYear: string;
 };
 
-function AnnualAllocationCard({ bySource, bySubType, variationBySource, variationProjectsBySource, total, budgetYear }: AnnualAllocationCardProps) {
+function AnnualAllocationCard({ bySource, bySubType, variationBySource, variationProjectsBySource, total }: AnnualAllocationCardProps) {
     // Order known sources first, then append any unmapped sources that have allocations.
     const ordered = [...SOURCE_OF_FUND_ORDER, "CONFIDENTIAL", ...Object.keys(bySource)].filter(
         (src, i, arr) => arr.indexOf(src) === i && (bySource[src] ?? 0) > 0,

@@ -162,7 +162,7 @@ export default function UserTaskDetailPage() {
               className={`flex items-center gap-2 rounded-lg px-5 py-2.5 text-xs font-bold uppercase tracking-widest transition ${
                 isAcknowledged
                   ? "cursor-default bg-emerald-600 text-white"
-                  : "bg-[#1e3a4f] text-white hover:bg-[#16303f] disabled:opacity-60"
+                  : "cursor-pointer bg-[#1e3a4f] text-white hover:bg-[#16303f] disabled:opacity-60"
               }`}
             >
               {acknowledgeMutation.isPending ? (

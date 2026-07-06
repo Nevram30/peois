@@ -1409,10 +1409,15 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                   <option value="">-- Select user --</option>
                   {(users ?? []).map((u) => (
                     <option key={u.id} value={u.id}>
-                      {u.name ?? u.email}
+                      {`${u.name ?? "Unnamed"} — ${u.email}${u.employeeId ? ` (${u.employeeId})` : ""}`}
                     </option>
                   ))}
                 </select>
+                {users?.length === 0 && (
+                  <p className="mt-1 text-xs text-amber-600">
+                    No active users available — activate users first.
+                  </p>
+                )}
               </div>
               <div>
                 <FieldLabel required>Priority Level</FieldLabel>

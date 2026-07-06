@@ -1,5 +1,7 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { TRPCError } from "@trpc/server";
+import { adminProcedure, createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { notificationEmitter } from "~/server/api/events";
 import {
   SOURCE_OF_FUND_VALUES,
   PROJECT_SUB_TYPE_VALUES,
@@ -378,7 +380,7 @@ export const projectRouter = createTRPCRouter({
       });
     }),
 
-  sendTaskNotification: protectedProcedure
+  sendTaskNotification: adminProcedure
     .input(
       z.object({
         projectId: z.string(),
@@ -388,7 +390,18 @@ export const projectRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.taskNotification.create({
+      const recipient = await ctx.db.user.findUnique({
+        where: { id: input.notifyUserId },
+        select: { role: true, status: true },
+      });
+      if (recipient?.role !== "USER" || recipient.status !== "ACTIVE") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Recipient must be an active user account",
+        });
+      }
+
+      const task = await ctx.db.taskNotification.create({
         data: {
           projectId: input.projectId,
           notifyUserId: input.notifyUserId,
@@ -396,7 +409,20 @@ export const projectRouter = createTRPCRouter({
           description: input.description,
           createdById: ctx.session.user.id,
         },
+        include: { project: { select: { title: true } } },
       });
+
+      notificationEmitter.emit("task.created", {
+        taskId: task.id,
+        projectId: input.projectId,
+        projectTitle: task.project.title,
+        notifyUserId: input.notifyUserId,
+        priority: input.priority,
+        description: input.description,
+        createdByName: ctx.session.user.name ?? null,
+      });
+
+      return task;
     }),
 
   delete: protectedProcedure

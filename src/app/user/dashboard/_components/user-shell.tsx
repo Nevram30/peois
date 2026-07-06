@@ -4,8 +4,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { api } from "~/trpc/react";
+import { LiveToast } from "~/app/_components/live-toast";
 
 interface User {
   id: string;
@@ -99,9 +100,22 @@ export function UserShell({
   const utils = api.useUtils();
   const { data: myTasks } = api.taskNotification.getMyTasks.useQuery();
   const taskCount = myTasks?.filter((t) => !t.acknowledged).length ?? 0;
-  const acknowledgeMutation = api.taskNotification.acknowledge.useMutation({
-    onSuccess: () => {
+  const [liveToast, setLiveToast] = useState<string | null>(null);
+  const dismissToast = useCallback(() => setLiveToast(null), []);
+  api.taskNotification.onTaskCreated.useSubscription(undefined, {
+    onData: (e) => {
       void utils.taskNotification.getMyTasks.invalidate();
+      setLiveToast(
+        `New ${e.priority} task from ${e.createdByName ?? "Admin"}: ${e.description.slice(0, 80)}`,
+      );
+    },
+  });
+  api.taskNotification.onReplyCreated.useSubscription(undefined, {
+    onData: (e) => {
+      void utils.taskNotification.invalidate();
+      setLiveToast(
+        `${e.authorName ?? "Admin"} replied on a task: ${e.message.slice(0, 80)}`,
+      );
     },
   });
 
@@ -256,12 +270,7 @@ export function UserShell({
                           <Link
                             key={task.id}
                             href={`/user/dashboard/my-task/${task.id}`}
-                            onClick={() => {
-                              setNotifOpen(false);
-                              if (!task.acknowledged) {
-                                acknowledgeMutation.mutate({ taskId: task.id });
-                              }
-                            }}
+                            onClick={() => setNotifOpen(false)}
                             className="flex items-start gap-3 border-b border-gray-50 px-4 py-3 transition last:border-0 hover:bg-gray-50"
                           >
                             <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white ${bg}`}>
@@ -362,6 +371,8 @@ export function UserShell({
           </div>
         </div>
       )}
+
+      <LiveToast message={liveToast} onDismiss={dismissToast} />
     </div>
   );
 }

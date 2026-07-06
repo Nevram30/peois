@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api } from "~/trpc/react";
@@ -154,7 +155,7 @@ type AnnualAllocationCardProps = {
     budgetYear: string;
 };
 
-function AnnualAllocationCard({ bySource, bySubType, variationBySource, variationProjectsBySource, total, budgetYear }: AnnualAllocationCardProps) {
+function AnnualAllocationCard({ bySource, bySubType, variationBySource, variationProjectsBySource, total }: AnnualAllocationCardProps) {
     // Order known sources first, then append any unmapped sources that have allocations.
     const ordered = [...SOURCE_OF_FUND_ORDER, "CONFIDENTIAL", ...Object.keys(bySource)].filter(
         (src, i, arr) => arr.indexOf(src) === i && (bySource[src] ?? 0) > 0,
@@ -926,9 +927,11 @@ export function AdminDashboardContent() {
                                                                         className={`group relative flex h-7 w-7 items-center justify-center rounded-full ring-2 ring-white text-white text-[10px] font-bold cursor-default ${colors[i % colors.length]}`}
                                                                     >
                                                                         {u.image ? (
-                                                                            <img
+                                                                            <Image
                                                                                 src={u.image}
                                                                                 alt={u.name ?? u.email}
+                                                                                width={28}
+                                                                                height={28}
                                                                                 className="h-full w-full rounded-full object-cover"
                                                                             />
                                                                         ) : (

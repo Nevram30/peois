@@ -4,8 +4,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { api } from "~/trpc/react";
+import { LiveToast } from "~/app/_components/live-toast";
 
 interface User {
   id: string;
@@ -93,6 +94,27 @@ export function AdminShell({
   const displayName = me?.name ?? user.name;
   const displayEmail = me?.email ?? user.email;
   const { data: adminNotifs } = api.taskNotification.getAdminNotifications.useQuery();
+  const utils = api.useUtils();
+  const [liveToast, setLiveToast] = useState<string | null>(null);
+  const dismissToast = useCallback(() => setLiveToast(null), []);
+  api.taskNotification.onReplyCreated.useSubscription(undefined, {
+    onData: (e) => {
+      void utils.taskNotification.getAdminNotifications.invalidate();
+      void utils.taskNotification.getTasksSentByMe.invalidate();
+      setLiveToast(
+        `${e.authorName ?? "User"} replied on a task: ${e.message.slice(0, 80)}`,
+      );
+    },
+  });
+  api.taskNotification.onTaskAcknowledged.useSubscription(undefined, {
+    onData: (e) => {
+      void utils.taskNotification.getAdminNotifications.invalidate();
+      void utils.taskNotification.getTasksSentByMe.invalidate();
+      setLiveToast(
+        `${e.acknowledgedByName ?? "User"} acknowledged the task: ${e.description.slice(0, 80)}`,
+      );
+    },
+  });
   const { data: pendingAccessCount } = api.projectAccessRequest.pendingCount.useQuery(undefined, {
     refetchInterval: 30_000,
     refetchOnWindowFocus: true,
@@ -121,7 +143,21 @@ export function AdminShell({
     });
   };
 
-  const notifCount = adminNotifs?.replies.filter((r) => !readReplyIds.has(r.id)).length ?? 0;
+  const unreadReplies = adminNotifs?.replies.filter((r) => !readReplyIds.has(r.id)) ?? [];
+  // Acknowledgments share the same read-tracking set, keyed as "ack:<taskId>".
+  const unreadAcks =
+    adminNotifs?.acknowledgments.filter((a) => !readReplyIds.has(`ack:${a.id}`)) ?? [];
+  const notifCount = unreadReplies.length + unreadAcks.length;
+  const notifFeed = [
+    ...unreadReplies.map((r) => ({ kind: "reply" as const, date: r.createdAt, reply: r })),
+    ...unreadAcks.map((a) => ({
+      kind: "ack" as const,
+      date: a.acknowledgedAt ?? new Date(0),
+      ack: a,
+    })),
+  ]
+    .sort((x, y) => new Date(y.date).getTime() - new Date(x.date).getTime())
+    .slice(0, 8);
 
   const isActive = (href: string) => {
     if (href === "/admin/dashboard") return pathname === "/admin/dashboard";
@@ -250,11 +286,46 @@ export function AdminShell({
                             <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
                           </svg>
                         </div>
-                        <p className="text-sm text-gray-500">No replies yet</p>
+                        <p className="text-sm text-gray-500">No notifications yet</p>
                       </div>
                     ) : (
                       <div className="max-h-80 overflow-y-auto">
-                        {adminNotifs?.replies.filter((r) => !readReplyIds.has(r.id)).slice(0, 8).map((reply) => {
+                        {notifFeed.map((item) => {
+                          if (item.kind === "ack") {
+                            const task = item.ack;
+                            const ackUser = task.notifyUser;
+                            const ackName = ackUser.name ?? ackUser.email ?? "User";
+                            return (
+                              <Link
+                                key={`ack:${task.id}`}
+                                href={`/admin/dashboard/my-task/${task.id}`}
+                                onClick={() => {
+                                  setNotifOpen(false);
+                                  markReplyAsRead(`ack:${task.id}`);
+                                }}
+                                className="flex items-start gap-3 border-b border-gray-50 px-4 py-3 transition hover:bg-gray-50 last:border-0"
+                              >
+                                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white">
+                                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                  </svg>
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex items-center justify-between gap-1">
+                                    <p className="truncate text-xs font-semibold text-gray-800">
+                                      {ackName} acknowledged the task
+                                    </p>
+                                    <span className="ml-1 shrink-0 rounded bg-emerald-100 px-1.5 py-0.5 text-[9px] font-bold text-emerald-700">
+                                      Acknowledged
+                                    </span>
+                                  </div>
+                                  <p className="mt-0.5 line-clamp-1 text-[11px] text-gray-400">{task.description}</p>
+                                  <p className="mt-0.5 text-[10px] text-gray-300">{task.project.title}</p>
+                                </div>
+                              </Link>
+                            );
+                          }
+                          const reply = item.reply;
                           const user = reply.createdBy;
                           const userName = user.name ?? user.email ?? "User";
                           const initial = userName.charAt(0).toUpperCase();
@@ -375,6 +446,8 @@ export function AdminShell({
           </div>
         </div>
       )}
+
+      <LiveToast message={liveToast} onDismiss={dismissToast} />
     </div>
   );
 }

@@ -1452,9 +1452,16 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                     <Select value={notifyUserId} onChange={(e) => setNotifyUserId(e.target.value)}>
                       <option value="">Select a user...</option>
                       {usersForSelect?.map((u) => (
-                        <option key={u.id} value={u.id}>{u.name ?? u.email}</option>
+                        <option key={u.id} value={u.id}>
+                          {`${u.name ?? "Unnamed"} — ${u.email}${u.employeeId ? ` (${u.employeeId})` : ""}`}
+                        </option>
                       ))}
                     </Select>
+                    {usersForSelect?.length === 0 && (
+                      <p className="mt-1 text-xs text-amber-600">
+                        No active users available — activate users first.
+                      </p>
+                    )}
                   </div>
 
                   <div>

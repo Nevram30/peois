@@ -94,10 +94,10 @@ export const userRouter = createTRPCRouter({
     return { total, active, inactive, pending };
   }),
 
-  getForSelect: protectedProcedure.query(async ({ ctx }) => {
+  getForSelect: adminProcedure.query(async ({ ctx }) => {
     return ctx.db.user.findMany({
-      where: { status: "ACTIVE" },
-      select: { id: true, name: true, email: true, image: true },
+      where: { role: "USER", status: "ACTIVE" },
+      select: { id: true, name: true, email: true, employeeId: true, image: true },
       orderBy: { name: "asc" },
     });
   }),

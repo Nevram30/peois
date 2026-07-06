@@ -45,6 +45,10 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
  */
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
+  // Keep proxies from idling out long-lived SSE subscription connections.
+  sse: {
+    ping: { enabled: true, intervalMs: 15_000 },
+  },
   errorFormatter({ shape, error }) {
     return {
       ...shape,
