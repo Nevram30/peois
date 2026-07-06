@@ -464,7 +464,7 @@ const STATUS_CONFIG: Record<
 // ── Skeletons ──────────────────────────────────────────────────
 function StatCardsSkeleton() {
     return (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2 mb-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 content-start">
             {Array.from({ length: 7 }).map((_, i) => (
                 <div key={i} className="bg-white rounded-lg shadow-sm p-3 flex flex-col gap-1 border-t-[3px] border-slate-200 animate-pulse">
                     <div className="w-6 h-6 rounded-md bg-slate-200 mb-1" />
@@ -478,7 +478,7 @@ function StatCardsSkeleton() {
 
 function DistrictCardsSkeleton() {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-5">
+        <div className="flex flex-col gap-4">
             {Array.from({ length: 2 }).map((_, i) => (
                 <div key={i} className="bg-white rounded-xl overflow-hidden border border-slate-200">
                     <div className="p-4 animate-pulse">
@@ -581,7 +581,7 @@ export function AdminDashboardContent() {
         { label: "FOR IMPLEMENTATION", value: statsData?.forImplementation ?? "0", borderColor: "border-amber-500", iconBg: "bg-amber-100", iconColor: "text-amber-500", icon: "⚠" },
         { label: "SUSPENDED PROJECTS", value: statsData?.suspended ?? "0", borderColor: "border-red-600", iconBg: "bg-red-100", iconColor: "text-red-600", icon: "⊗" },
         { label: "RE-ALIGNED PROJECTS", value: statsData?.reAlignment ?? "0", borderColor: "border-red-500", iconBg: "bg-red-100", iconColor: "text-red-500", icon: "↔" },
-        { label: "OTHERS", value: statsData?.others ?? "0", borderColor: "border-slate-400", iconBg: "bg-slate-100", iconColor: "text-slate-500", icon: "⋯" },
+        // { label: "OTHERS", value: statsData?.others ?? "0", borderColor: "border-slate-400", iconBg: "bg-slate-100", iconColor: "text-slate-500", icon: "⋯" },
     ];
 
     // ── Recent Project Updates table state ──────────────────────
@@ -622,37 +622,38 @@ export function AdminDashboardContent() {
                 <YearFilter value={dashboardYear} onChange={setDashboardYear} years={budgetYears ?? []} />
             </div>
 
-            {/* Stat Cards */}
-            {statsLoading ? (
-                <StatCardsSkeleton />
-            ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2 mb-3">
-                    {statCards.map((c) => (
-                        <div key={c.label} className={`bg-white rounded-lg shadow-sm p-3 flex flex-col gap-1 border-t-[3px] ${c.borderColor}`}>
-                            <div className={`w-6 h-6 rounded-md ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>
-                                {c.icon}
+            {/* Stat cards (left) + district project status (right) */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pb-5">
+                {statsLoading ? (
+                    <StatCardsSkeleton />
+                ) : (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 content-start">
+                        {statCards.map((c) => (
+                            <div key={c.label} className={`bg-white rounded-lg shadow-sm p-3 flex flex-col gap-1 border-t-[3px] ${c.borderColor}`}>
+                                <div className={`w-6 h-6 rounded-md ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>
+                                    {c.icon}
+                                </div>
+                                <p className="text-[9px] font-bold text-slate-500 leading-tight tracking-wide">{c.label}</p>
+                                <p className="text-2xl font-extrabold text-slate-900 leading-none">{c.value}</p>
                             </div>
-                            <p className="text-[9px] font-bold text-slate-500 leading-tight tracking-wide">{c.label}</p>
-                            <p className="text-2xl font-extrabold text-slate-900 leading-none">{c.value}</p>
-                        </div>
-                    ))}
-                </div>
-            )}
+                        ))}
+                    </div>
+                )}
 
-            {/* DISTRICT I and DISTRICT II Tracker */}
-            {districtLoading ? (
-                <DistrictCardsSkeleton />
-            ) : (
-                <div className={`grid grid-cols-1 ${districtData?.length === 1 ? "" : "md:grid-cols-2"} gap-4 pb-5`}>
-                    {districtData?.map((d) => (
-                        <DistrictCard
-                            key={d.district}
-                            title={`${d.district.replace('_', ' ')} PROJECT STATUS`}
-                            data={toCardData(d.counts)}
-                        />
-                    ))}
-                </div>
-            )}
+                {districtLoading ? (
+                    <DistrictCardsSkeleton />
+                ) : (
+                    <div className="flex flex-col gap-4">
+                        {districtData?.map((d) => (
+                            <DistrictCard
+                                key={d.district}
+                                title={`${d.district.replace('_', ' ')} PROJECT STATUS`}
+                                data={toCardData(d.counts)}
+                            />
+                        ))}
+                    </div>
+                )}
+            </div>
 
             {/* Financial Overview Header */}
             <div className="flex items-start justify-between mb-3">
