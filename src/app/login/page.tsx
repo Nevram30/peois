@@ -72,7 +72,7 @@ export default function LoginPage() {
         priority
         className="object-cover"
       />
-      <div className="absolute inset-0 bg-black/25" />
+      <div className="absolute inset-0 bg-black/10" />
 
       {/* Top blue accent bar */}
       <div className="relative z-10 w-full max-w-md">
