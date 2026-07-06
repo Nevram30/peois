@@ -643,7 +643,7 @@ export function AdminDashboardContent() {
             {districtLoading ? (
                 <DistrictCardsSkeleton />
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-5">
+                <div className={`grid grid-cols-1 ${districtData?.length === 1 ? "" : "md:grid-cols-2"} gap-4 pb-5`}>
                     {districtData?.map((d) => (
                         <DistrictCard
                             key={d.district}

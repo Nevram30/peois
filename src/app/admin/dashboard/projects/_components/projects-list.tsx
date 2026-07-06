@@ -73,6 +73,7 @@ export function ProjectsList() {
 
   const { data: projects, isLoading } = api.project.getAll.useQuery();
   const { data: budgetYears } = api.project.getBudgetYears.useQuery();
+  const { data: districtScope } = api.project.getMyDistrictScope.useQuery();
 
   const filtered = projects?.filter((p) => {
     if (filterToday) {
@@ -312,19 +313,21 @@ export function ProjectsList() {
             </select>
           </div>
 
-          {/* District */}
-          <div className="min-w-0 flex-1">
-            <p className="mb-1.5 truncate text-[10px] font-semibold uppercase tracking-widest text-gray-400">District</p>
-            <select
-              value={districtFilter}
-              onChange={(e) => { setDistrictFilter(e.target.value); setPage(1); }}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-            >
-              <option value="">All Districts</option>
-              <option value="DISTRICT_I">District I</option>
-              <option value="DISTRICT_II">District II</option>
-            </select>
-          </div>
+          {/* District (hidden when the user's division limits them to one district) */}
+          {!districtScope && (
+            <div className="min-w-0 flex-1">
+              <p className="mb-1.5 truncate text-[10px] font-semibold uppercase tracking-widest text-gray-400">District</p>
+              <select
+                value={districtFilter}
+                onChange={(e) => { setDistrictFilter(e.target.value); setPage(1); }}
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              >
+                <option value="">All Districts</option>
+                <option value="DISTRICT_I">District I</option>
+                <option value="DISTRICT_II">District II</option>
+              </select>
+            </div>
+          )}
 
           {/* Status */}
           <div className="min-w-0 flex-1">

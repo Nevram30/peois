@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { api } from "~/trpc/react";
 import { useUploadThing } from "~/lib/uploadthing";
+import { DIVISIONS } from "~/lib/divisions";
 
 type RoleType = "ADMIN" | "USER";
 
@@ -71,15 +72,6 @@ const DESIGNATIONS = [
   "Administrative Aide IV",
   "Administrative Aide V",
   "Administrative Aide VI",
-];
-
-const DIVISIONS = [
-  "SMAD",
-  "PDPM",
-  "EPM",
-  "QACD",
-  "1ST ENGR DIST",
-  "2ND ENGR DIST",
 ];
 
 // ─── Password Strength ────────────────────────────────────────────────────────
@@ -902,7 +894,16 @@ function EditUserModal({
             </div>
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">Division</label>
-              <input type="text" value={division} onChange={(e) => setDivision(e.target.value)} className="block w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none" placeholder="e.g. ADMIN Division" />
+              <select value={division} onChange={(e) => setDivision(e.target.value)} className="block w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
+                <option value="">Select Division</option>
+                {/* Keep a legacy free-text value selectable so it isn't silently blanked */}
+                {division && !DIVISIONS.includes(division) && (
+                  <option value={division}>{division}</option>
+                )}
+                {DIVISIONS.map((d) => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">Sex</label>

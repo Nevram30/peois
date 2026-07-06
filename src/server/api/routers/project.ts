@@ -1,6 +1,12 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { adminProcedure, createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import {
+  adminProcedure,
+  createTRPCRouter,
+  districtScopedProcedure,
+  protectedProcedure,
+} from "~/server/api/trpc";
+import { type District } from "../../../../generated/prisma";
 import { notificationEmitter } from "~/server/api/events";
 import {
   SOURCE_OF_FUND_VALUES,
@@ -9,9 +15,15 @@ import {
   DISBURSEMENT_TYPE_VALUES,
 } from "~/lib/fund-constants";
 
+// Where-clause fragment limiting projects to the caller's district scope
+// (empty for unrestricted users), spread into each query's where.
+const districtWhere = (scope: District | null) =>
+  scope ? { locationImplementation: scope } : {};
+
 export const projectRouter = createTRPCRouter({
-  getAll: protectedProcedure.query(async ({ ctx }) => {
+  getAll: districtScopedProcedure.query(async ({ ctx }) => {
     return ctx.db.project.findMany({
+      where: districtWhere(ctx.districtScope),
       include: {
         createdBy: { select: { id: true, name: true, email: true, image: true } },
         activities: {
@@ -24,11 +36,11 @@ export const projectRouter = createTRPCRouter({
     });
   }),
 
-  getById: protectedProcedure
+  getById: districtScopedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      return ctx.db.project.findUnique({
-        where: { id: input.id },
+      return ctx.db.project.findFirst({
+        where: { id: input.id, ...districtWhere(ctx.districtScope) },
         include: { createdBy: { select: { name: true, email: true } } },
       });
     }),
@@ -431,12 +443,15 @@ export const projectRouter = createTRPCRouter({
       return ctx.db.project.delete({ where: { id: input.id } });
     }),
 
-  getStats: protectedProcedure
+  getStats: districtScopedProcedure
     .input(z.object({ budgetYear: z.string().optional() }).optional())
     .query(async ({ ctx, input }) => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      const where = input?.budgetYear ? { budgetYear: input.budgetYear } : {};
+      const where = {
+        ...districtWhere(ctx.districtScope),
+        ...(input?.budgetYear ? { budgetYear: input.budgetYear } : {}),
+      };
 
       const [
         total,
@@ -475,10 +490,13 @@ export const projectRouter = createTRPCRouter({
       };
     }),
 
-  getOverviewStats: protectedProcedure
+  getOverviewStats: districtScopedProcedure
     .input(z.object({ budgetYear: z.string().optional() }).optional())
     .query(async ({ ctx, input }) => {
-      const where = input?.budgetYear ? { budgetYear: input.budgetYear } : {};
+      const where = {
+        ...districtWhere(ctx.districtScope),
+        ...(input?.budgetYear ? { budgetYear: input.budgetYear } : {}),
+      };
 
       const [completed, ongoing, forImplementation, suspended, realigned, notYetStarted, others] =
         await Promise.all([
@@ -493,15 +511,18 @@ export const projectRouter = createTRPCRouter({
       return { completed, ongoing, forImplementation, suspended, realigned, notYetStarted, others };
     }),
 
-  getBudgetYears: protectedProcedure.query(async ({ ctx }) => {
+  getBudgetYears: districtScopedProcedure.query(async ({ ctx }) => {
     const rows = await ctx.db.project.findMany({
-      where: { budgetYear: { not: null } },
+      where: { budgetYear: { not: null }, ...districtWhere(ctx.districtScope) },
       select: { budgetYear: true },
       distinct: ["budgetYear"],
       orderBy: { budgetYear: "desc" },
     });
     return rows.map((r) => r.budgetYear).filter((y): y is string => Boolean(y));
   }),
+
+  // District the caller's division limits them to, or null if unrestricted.
+  getMyDistrictScope: districtScopedProcedure.query(({ ctx }) => ctx.districtScope),
 
   // getDistrictData: protectedProcedure
   //   .query(async ({ ctx}) => {
@@ -518,10 +539,12 @@ export const projectRouter = createTRPCRouter({
   //   }),
 
   //get district 1 and district 2 status like how many ongoing, completed, etc. in each district
-  getDistrictData: protectedProcedure
+  getDistrictData: districtScopedProcedure
     .input(z.object({ budgetYear: z.string().optional() }).optional())
     .query(async ({ ctx, input }) => {
-      const districts = ["DISTRICT_I", "DISTRICT_II"] as const;
+      const districts: readonly District[] = ctx.districtScope
+        ? [ctx.districtScope]
+        : (["DISTRICT_I", "DISTRICT_II"] as const);
 
       const data = await Promise.all(
         districts.map(async (district) => {
@@ -547,11 +570,14 @@ export const projectRouter = createTRPCRouter({
       return data;
     }),
 
-  getFinancialOverview: protectedProcedure
+  getFinancialOverview: districtScopedProcedure
     .input(z.object({ budgetYear: z.string().optional() }).optional())
     .query(async ({ ctx, input }) => {
       const currentYear = new Date().getFullYear().toString();
-      const where = input?.budgetYear ? { budgetYear: input.budgetYear } : {};
+      const where = {
+        ...districtWhere(ctx.districtScope),
+        ...(input?.budgetYear ? { budgetYear: input.budgetYear } : {}),
+      };
 
       const projects = await ctx.db.project.findMany({
         where,
@@ -634,11 +660,14 @@ export const projectRouter = createTRPCRouter({
   // Remaining balance from annual allocation, grouped by source of fund and
   // sub-type. Remaining = project allocation (projectCost) minus the total
   // amount already disbursed for that project.
-  getRemainingBalance: protectedProcedure
+  getRemainingBalance: districtScopedProcedure
     .input(z.object({ budgetYear: z.string().optional() }).optional())
     .query(async ({ ctx, input }) => {
       const currentYear = new Date().getFullYear().toString();
-      const where = input?.budgetYear ? { budgetYear: input.budgetYear } : {};
+      const where = {
+        ...districtWhere(ctx.districtScope),
+        ...(input?.budgetYear ? { budgetYear: input.budgetYear } : {}),
+      };
 
       const projects = await ctx.db.project.findMany({
         where,

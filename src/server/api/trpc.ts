@@ -13,6 +13,8 @@ import { ZodError } from "zod";
 
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
+import { type District } from "../../../generated/prisma";
+import { divisionToDistrict } from "~/lib/divisions";
 
 /**
  * 1. CONTEXT
@@ -134,6 +136,28 @@ export const protectedProcedure = t.procedure
       },
     });
   });
+
+/**
+ * Protected procedure scoped to the user's engineering district.
+ *
+ * Looks up the caller's division (fresh from the DB, so reassignments apply
+ * without re-login) and exposes `ctx.districtScope`: the District their
+ * project access is limited to, or null for unrestricted divisions
+ * (SMAD/PDPM/EPM/QACD) and SUPER_ADMIN.
+ */
+export const districtScopedProcedure = protectedProcedure.use(
+  async ({ ctx, next }) => {
+    let districtScope: District | null = null;
+    if (ctx.session.user.role !== "SUPER_ADMIN") {
+      const user = await ctx.db.user.findUnique({
+        where: { id: ctx.session.user.id },
+        select: { division: true },
+      });
+      districtScope = divisionToDistrict(user?.division);
+    }
+    return next({ ctx: { districtScope } });
+  },
+);
 
 export const superAdminProcedure = protectedProcedure.use(({ ctx, next }) => {
   if (ctx.session.user.role !== "SUPER_ADMIN") {
