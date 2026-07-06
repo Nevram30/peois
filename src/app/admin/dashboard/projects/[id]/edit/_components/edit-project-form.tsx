@@ -1467,7 +1467,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                   <div>
                     <FieldLabel>Priority Level</FieldLabel>
                     <div className="mt-2 space-y-2">
-                      {(["HIGH", "MEDIUM", "LOW"] as const).map((p) => {
+                      {(["URGENT", "HIGH", "MEDIUM", "LOW"] as const).map((p) => {
                         const cfg = PRIORITY_CONFIG[p];
                         const isActive = notifyPriority === p;
                         return (
@@ -1481,7 +1481,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                             <div>
                               <p className={`text-xs font-bold uppercase tracking-widest ${isActive ? "text-white" : cfg.text}`}>{cfg.label}</p>
                               <p className={`mt-0.5 text-[10px] ${isActive ? "text-white/80" : "text-gray-400"}`}>
-                                {p === "HIGH" ? "Acknowledge & respond within 4 hours" : p === "MEDIUM" ? "Acknowledge & respond within 24 hours" : "Acknowledge & respond within 48 hours"}
+                                {p === "URGENT" ? "Acknowledge & respond immediately" : p === "HIGH" ? "Acknowledge & respond within 4 hours" : p === "MEDIUM" ? "Acknowledge & respond within 24 hours" : "Acknowledge & respond within 48 hours"}
                               </p>
                             </div>
                           </button>
