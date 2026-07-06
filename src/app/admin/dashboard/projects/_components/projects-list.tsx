@@ -175,6 +175,29 @@ export function ProjectsList() {
           <h2 className="text-2xl font-bold text-gray-900">{pageTitle}</h2>
         </div>
         <div className="flex items-center gap-3">
+          {/* Search */}
+          <div className="relative w-72">
+            <svg
+              className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"
+              />
+            </svg>
+            <input
+              type="text"
+              placeholder="Project Code or Name..."
+              value={search}
+              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+              className="w-full rounded-lg border border-gray-200 py-2.5 pl-9 pr-3 text-sm text-gray-700 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            />
+          </div>
           {(statusFilter ?? filterToday) && (
             <Link
               href="/admin/dashboard/projects"
@@ -194,133 +217,28 @@ export function ProjectsList() {
 
       {/* Advanced filter bar */}
       <div className="rounded-xl border border-gray-200 bg-white px-5 py-4 shadow-sm">
-        <div className="flex flex-wrap items-end gap-4">
-          {/* Search */}
-          <div className="flex-1 min-w-48">
-            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Search</p>
-            <div className="relative">
-              <svg
-                className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"
-                />
-              </svg>
-              <input
-                type="text"
-                placeholder="Project Code or Name..."
-                value={search}
-                onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                className="w-full rounded-lg border border-gray-200 py-2 pl-9 pr-3 text-sm text-gray-700 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-              />
-            </div>
-          </div>
+        {/* Filter header */}
+        <div className="mb-4 flex items-center gap-2 border-b border-gray-100 pb-3">
+          <svg
+            className="h-4 w-4 text-gray-500"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z"
+            />
+          </svg>
+          <h3 className="text-sm font-semibold text-gray-700">Filters</h3>
 
-          {/* Source of Fund */}
-          <div>
-            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Source of Fund</p>
-            <select
-              value={sourceOfFundFilter}
-              onChange={(e) => { setSourceOfFundFilter(e.target.value); setSubTypeFilter(""); setPage(1); }}
-              className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-            >
-              <option value="">All Sources</option>
-              {SOURCE_OF_FUND_ORDER.map((k) => (
-                <option key={k} value={k}>{SOURCE_OF_FUND_LABEL[k]}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Sub-Category */}
-          <div>
-            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Sub-Category</p>
-            <select
-              value={subTypeFilter}
-              onChange={(e) => { setSubTypeFilter(e.target.value); setPage(1); }}
-              disabled={!!sourceOfFundFilter && availableSubTypes.length === 0}
-              className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400"
-            >
-              <option value="">
-                {sourceOfFundFilter && availableSubTypes.length === 0
-                  ? "No Sub-Categories"
-                  : "All Sub-Categories"}
-              </option>
-              {availableSubTypes.map((k) => (
-                <option key={k} value={k}>{PROJECT_SUB_TYPE_LABEL[k]}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* District */}
-          <div>
-            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">District</p>
-            <select
-              value={districtFilter}
-              onChange={(e) => { setDistrictFilter(e.target.value); setPage(1); }}
-              className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-            >
-              <option value="">All Districts</option>
-              <option value="DISTRICT_I">District I</option>
-              <option value="DISTRICT_II">District II</option>
-            </select>
-          </div>
-
-          {/* Status */}
-          <div>
-            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Status</p>
-            <select
-              value={statusLocal}
-              onChange={(e) => { setStatusLocal(e.target.value); setPage(1); }}
-              className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-            >
-              <option value="">All Statuses</option>
-              {PROJECT_STATUS_ORDER.map((k) => (
-                <option key={k} value={k}>{PROJECT_STATUS_LABEL[k]}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Created At Year */}
-          <div>
-            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Created At Year</p>
-            <select
-              value={yearFilter}
-              onChange={(e) => { setYearFilter(e.target.value); setPage(1); }}
-              className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-            >
-              <option value="">All Years</option>
-              {Array.from({ length: new Date().getFullYear() - 2019 }, (_, i) => new Date().getFullYear() - i).map((y) => (
-                <option key={y} value={y.toString()}>{y}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Budget Year */}
-          <div>
-            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Budget Year</p>
-            <select
-              value={budgetYearFilter}
-              onChange={(e) => { setBudgetYearFilter(e.target.value); setPage(1); }}
-              className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-            >
-              <option value="">All Budget Years</option>
-              {budgetYears?.map((y) => (
-                <option key={y} value={y}>FY {y}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Export */}
-          <div className="flex items-end gap-2">
+          {/* Export / Print */}
+          <div className="ml-auto flex items-center gap-2">
             <button
               onClick={handleExport}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
             >
               <svg
                 className="h-4 w-4"
@@ -337,11 +255,9 @@ export function ProjectsList() {
               </svg>
               Export
             </button>
-
-            {/* Print */}
             <button
               onClick={handlePrint}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
             >
               <svg
                 className="h-4 w-4"
@@ -359,9 +275,104 @@ export function ProjectsList() {
               Print
             </button>
           </div>
+        </div>
+        <div className="flex items-end gap-3">
+          {/* Source of Fund */}
+          <div className="min-w-0 flex-1">
+            <p className="mb-1.5 truncate text-[10px] font-semibold uppercase tracking-widest text-gray-400">Source of Fund</p>
+            <select
+              value={sourceOfFundFilter}
+              onChange={(e) => { setSourceOfFundFilter(e.target.value); setSubTypeFilter(""); setPage(1); }}
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            >
+              <option value="">All Sources</option>
+              {SOURCE_OF_FUND_ORDER.map((k) => (
+                <option key={k} value={k}>{SOURCE_OF_FUND_LABEL[k]}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Sub-Category */}
+          <div className="min-w-0 flex-1">
+            <p className="mb-1.5 truncate text-[10px] font-semibold uppercase tracking-widest text-gray-400">Sub-Category</p>
+            <select
+              value={subTypeFilter}
+              onChange={(e) => { setSubTypeFilter(e.target.value); setPage(1); }}
+              disabled={!!sourceOfFundFilter && availableSubTypes.length === 0}
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400"
+            >
+              <option value="">
+                {sourceOfFundFilter && availableSubTypes.length === 0
+                  ? "No Sub-Categories"
+                  : "All Sub-Categories"}
+              </option>
+              {availableSubTypes.map((k) => (
+                <option key={k} value={k}>{PROJECT_SUB_TYPE_LABEL[k]}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* District */}
+          <div className="min-w-0 flex-1">
+            <p className="mb-1.5 truncate text-[10px] font-semibold uppercase tracking-widest text-gray-400">District</p>
+            <select
+              value={districtFilter}
+              onChange={(e) => { setDistrictFilter(e.target.value); setPage(1); }}
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            >
+              <option value="">All Districts</option>
+              <option value="DISTRICT_I">District I</option>
+              <option value="DISTRICT_II">District II</option>
+            </select>
+          </div>
+
+          {/* Status */}
+          <div className="min-w-0 flex-1">
+            <p className="mb-1.5 truncate text-[10px] font-semibold uppercase tracking-widest text-gray-400">Status</p>
+            <select
+              value={statusLocal}
+              onChange={(e) => { setStatusLocal(e.target.value); setPage(1); }}
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            >
+              <option value="">All Statuses</option>
+              {PROJECT_STATUS_ORDER.map((k) => (
+                <option key={k} value={k}>{PROJECT_STATUS_LABEL[k]}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Created At Year */}
+          <div className="min-w-0 flex-1">
+            <p className="mb-1.5 truncate text-[10px] font-semibold uppercase tracking-widest text-gray-400">Created At Year</p>
+            <select
+              value={yearFilter}
+              onChange={(e) => { setYearFilter(e.target.value); setPage(1); }}
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            >
+              <option value="">All Years</option>
+              {Array.from({ length: new Date().getFullYear() - 2019 }, (_, i) => new Date().getFullYear() - i).map((y) => (
+                <option key={y} value={y.toString()}>{y}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Budget Year */}
+          <div className="min-w-0 flex-1">
+            <p className="mb-1.5 truncate text-[10px] font-semibold uppercase tracking-widest text-gray-400">Budget Year</p>
+            <select
+              value={budgetYearFilter}
+              onChange={(e) => { setBudgetYearFilter(e.target.value); setPage(1); }}
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            >
+              <option value="">All Budget Years</option>
+              {budgetYears?.map((y) => (
+                <option key={y} value={y}>FY {y}</option>
+              ))}
+            </select>
+          </div>
 
           {/* Clear All */}
-          <div className="ml-auto flex items-end">
+          <div className="flex shrink-0 items-end">
             <button
               onClick={() => {
                 setSearch("");
@@ -382,7 +393,7 @@ export function ProjectsList() {
                 !yearFilter &&
                 !budgetYearFilter
               }
-              className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white"
+              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white"
             >
               <svg
                 className="h-4 w-4"
