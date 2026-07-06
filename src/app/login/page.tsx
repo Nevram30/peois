@@ -247,7 +247,7 @@ export default function LoginPage() {
 
       {/* Footer */}
       <p className="relative z-10 mt-6 w-full max-w-md text-center text-xs text-gray-200">
-        © 2024 Provincial Government MIS. All rights reserved.
+        © 2026 Provincial Government MIS. All rights reserved.
       </p>
     </main>
   );
