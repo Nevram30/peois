@@ -566,6 +566,11 @@ export function AdminDashboardContent() {
     const yearInput = dashboardYear ? { budgetYear: dashboardYear } : undefined;
 
     const { data: statsData, isLoading: statsLoading } = api.project.getStats.useQuery(yearInput);
+    const { data: districtScope, isLoading: scopeLoading } = api.project.getMyDistrictScope.useQuery();
+    // Engineering-district admins (1ST/2ND ENGR DIST) keep the district status
+    // card beside the stat cards; office divisions (SMAD/PDPM/EPM/QACD) see
+    // both district cards below the stat cards instead.
+    const districtOnSide = scopeLoading || districtScope != null;
     const { data: projectAllocationData, isLoading: allocationLoading } = api.project.getFinancialOverview.useQuery(yearInput);
     const { data: districtData, isLoading: districtLoading } = api.project.getDistrictData.useQuery(yearInput);
     const { data: remainingBalanceData, isLoading: remainingLoading } = api.project.getRemainingBalance.useQuery(yearInput);
@@ -622,12 +627,12 @@ export function AdminDashboardContent() {
                 <YearFilter value={dashboardYear} onChange={setDashboardYear} years={budgetYears ?? []} />
             </div>
 
-            {/* Stat cards (left) + district project status (right) */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pb-5">
+            {/* Stat cards + district project status (beside for ENGR DIST divisions, below otherwise) */}
+            <div className={`grid grid-cols-1 ${districtOnSide ? "lg:grid-cols-2" : ""} gap-4 pb-5`}>
                 {statsLoading ? (
                     <StatCardsSkeleton />
                 ) : (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 content-start">
+                    <div className={`grid grid-cols-2 sm:grid-cols-3 ${districtOnSide ? "" : "lg:grid-cols-6"} gap-2 content-start`}>
                         {statCards.map((c) => (
                             <div key={c.label} className={`bg-white rounded-lg shadow-sm p-3 flex flex-col gap-1 border-t-[3px] ${c.borderColor}`}>
                                 <div className={`w-6 h-6 rounded-md ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>
@@ -640,10 +645,10 @@ export function AdminDashboardContent() {
                     </div>
                 )}
 
-                {districtLoading ? (
+                {districtLoading || scopeLoading ? (
                     <DistrictCardsSkeleton />
                 ) : (
-                    <div className="flex flex-col gap-4">
+                    <div className={districtOnSide ? "flex flex-col gap-4" : "grid grid-cols-1 lg:grid-cols-2 gap-4 items-start"}>
                         {districtData?.map((d) => (
                             <DistrictCard
                                 key={d.district}
