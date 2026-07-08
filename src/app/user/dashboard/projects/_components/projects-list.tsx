@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { api } from "~/trpc/react";
+import { formatPeso } from "~/helper/formatter";
 import {
   SOURCE_OF_FUND_LABEL,
   SOURCE_OF_FUND_ORDER,
@@ -15,44 +15,229 @@ import {
   type SourceOfFundValue,
 } from "~/lib/fund-constants";
 
-const STATUS_LABELS: Record<string, { label: string; className: string }> = {
+const STATUS_BADGES: Record<string, { label: string; className: string }> = {
   NOT_YET_STARTED: {
-    label: "Not Yet Started",
-    className: "bg-gray-100 text-gray-700",
+    label: "PENDING",
+    className: "bg-amber-100 text-amber-700",
   },
-  ON_GOING: { label: "On-going", className: "bg-blue-100 text-blue-700" },
-  COMPLETED: {
-    label: "Completed",
-    className: "bg-green-100 text-green-700",
+  ON_GOING: { label: "ON-GOING", className: "bg-blue-100 text-blue-700" },
+  COMPLETED: { label: "COMPLETED", className: "bg-emerald-100 text-emerald-700" },
+  SUSPENDED: { label: "SUSPENDED", className: "bg-red-100 text-red-700" },
+  FOR_IMPLEMENTATION: {
+    label: "FOR IMPLEMENTATION",
+    className: "bg-orange-100 text-orange-700",
   },
-  SUSPENDED: { label: "Suspended", className: "bg-red-100 text-red-700" },
+  RE_ALIGNMENT: {
+    label: "RE-ALIGNED",
+    className: "bg-purple-100 text-purple-700",
+  },
+  OTHERS: { label: "OTHERS", className: "bg-slate-100 text-slate-600" },
 };
 
-const STATUS_TITLES: Record<string, string> = {
-  COMPLETED: "Completed Projects",
-  SUSPENDED: "Suspended Projects",
-  NOT_YET_STARTED: "Projects For Implementation",
-  ON_GOING: "On-Going Projects",
-  today: "New Projects Today",
+const DISTRICT_LABELS: Record<string, string> = {
+  DISTRICT_I: "1st District",
+  DISTRICT_II: "2nd District",
 };
 
+const MODE_LABELS: Record<string, string> = {
+  BY_ADMINISTRATION: "By Administration",
+  BY_CONTRACT: "By Contract",
+};
+
+function progressBarColor(status: string, pct: number) {
+  if (status === "SUSPENDED") return "bg-red-500";
+  if (pct >= 100) return "bg-emerald-500";
+  if (status === "NOT_YET_STARTED" || status === "FOR_IMPLEMENTATION")
+    return "bg-amber-400";
+  return "bg-blue-900";
+}
+
+// ── Stat cards (top summary row) ────────────────────────────────
+type StatCardDef = {
+  label: string;
+  value: string | number;
+  borderColor: string;
+  iconBg: string;
+  iconColor: string;
+  icon: React.ReactNode;
+};
+
+function StatCards({
+  budgetYearLabel,
+  stats,
+  loading,
+}: {
+  budgetYearLabel: string;
+  stats:
+    | {
+        completed: number;
+        ongoing: number;
+        forImplementation: number;
+        suspended: number;
+        reAlignment: number;
+        others: number;
+      }
+    | undefined;
+  loading: boolean;
+}) {
+  const cards: StatCardDef[] = [
+    {
+      label: "Budget Year",
+      value: budgetYearLabel,
+      borderColor: "border-indigo-600",
+      iconBg: "bg-indigo-50",
+      iconColor: "text-indigo-600",
+      icon: (
+        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+        </svg>
+      ),
+    },
+    {
+      label: "Completed",
+      value: stats?.completed ?? 0,
+      borderColor: "border-emerald-500",
+      iconBg: "bg-emerald-50",
+      iconColor: "text-emerald-600",
+      icon: (
+        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 0 1-.982-3.172M9.497 14.25a7.454 7.454 0 0 0 .981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 0 0 7.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 0 0 2.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 0 1 2.916.52 6.003 6.003 0 0 1-5.395 4.972m0 0a6.726 6.726 0 0 1-2.749 1.35m0 0a6.772 6.772 0 0 1-3.044 0" />
+        </svg>
+      ),
+    },
+    {
+      label: "On-Going",
+      value: stats?.ongoing ?? 0,
+      borderColor: "border-blue-900",
+      iconBg: "bg-blue-50",
+      iconColor: "text-blue-800",
+      icon: (
+        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 0 1 0 .656l-5.603 3.113a.375.375 0 0 1-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112Z" />
+        </svg>
+      ),
+    },
+    {
+      label: "Implementation",
+      value: stats?.forImplementation ?? 0,
+      borderColor: "border-amber-500",
+      iconBg: "bg-amber-50",
+      iconColor: "text-amber-600",
+      icon: (
+        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.631 8.41m5.96 5.96a14.926 14.926 0 0 1-5.841 2.58m-.119-8.54a6 6 0 0 0-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 0 0-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 0 1-2.448-2.448 14.9 14.9 0 0 1 .06-.312m-2.24 2.39a4.493 4.493 0 0 0-1.757 4.306 4.493 4.493 0 0 0 4.306-1.758M16.5 9a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
+        </svg>
+      ),
+    },
+    {
+      label: "Suspended",
+      value: stats?.suspended ?? 0,
+      borderColor: "border-red-700",
+      iconBg: "bg-red-50",
+      iconColor: "text-red-600",
+      icon: (
+        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M14.25 9v6m-4.5 0V9M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+      ),
+    },
+    {
+      label: "Re-Aligned",
+      value: stats?.reAlignment ?? 0,
+      borderColor: "border-slate-400",
+      iconBg: "bg-slate-100",
+      iconColor: "text-slate-600",
+      icon: (
+        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+        </svg>
+      ),
+    },
+    {
+      label: "Others",
+      value: stats?.others ?? 0,
+      borderColor: "border-slate-600",
+      iconBg: "bg-slate-100",
+      iconColor: "text-slate-500",
+      icon: (
+        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+        </svg>
+      ),
+    },
+  ];
+
+  return (
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-7">
+      {cards.map((c) => (
+        <div
+          key={c.label}
+          className={`flex items-center gap-3 rounded-xl border-l-4 bg-white p-4 shadow-sm ${c.borderColor}`}
+        >
+          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${c.iconBg} ${c.iconColor}`}>
+            {c.icon}
+          </div>
+          <div className="min-w-0">
+            <p className="truncate text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              {c.label}
+            </p>
+            {loading && c.label !== "Budget Year" ? (
+              <div className="mt-1 h-6 w-10 animate-pulse rounded bg-slate-200" />
+            ) : (
+              <p className="text-2xl font-extrabold leading-tight text-gray-900">
+                {c.value}
+              </p>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── Main list ───────────────────────────────────────────────────
 export function UserProjectsList() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const statusFilter = searchParams.get("status");
+  const statusFilterParam = searchParams.get("status");
   const filterToday = searchParams.get("filter") === "today";
 
   const [search, setSearch] = useState("");
+  const [modeFilter, setModeFilter] = useState("");
   const [sourceOfFundFilter, setSourceOfFundFilter] = useState("");
   const [subTypeFilter, setSubTypeFilter] = useState("");
   const [districtFilter, setDistrictFilter] = useState("");
-  const [statusLocal, setStatusLocal] = useState("");
+  const [cityFilter, setCityFilter] = useState("");
+  const [barangayFilter, setBarangayFilter] = useState("");
+  const [statusLocal, setStatusLocal] = useState(statusFilterParam ?? "");
   const [yearFilter, setYearFilter] = useState("");
   const [page, setPage] = useState(1);
-  const PAGE_SIZE = 20;
+  const PAGE_SIZE = 10;
 
   const { data: projects, isLoading } = api.project.getAll.useQuery();
   const { data: districtScope } = api.project.getMyDistrictScope.useQuery();
+  const { data: budgetYears } = api.project.getBudgetYears.useQuery();
+  const { data: stats, isLoading: statsLoading } = api.project.getStats.useQuery(
+    yearFilter ? { budgetYear: yearFilter } : undefined,
+  );
+
+  // Distinct city / barangay options derived from the loaded projects.
+  const cityOptions = Array.from(
+    new Set(projects?.map((p) => p.cityMunicipality).filter((c): c is string => Boolean(c))),
+  ).sort();
+  const barangayOptions = Array.from(
+    new Set(
+      projects
+        ?.filter((p) => !cityFilter || p.cityMunicipality === cityFilter)
+        .map((p) => p.barangay)
+        .filter((b): b is string => Boolean(b)),
+    ),
+  ).sort();
+
+  const subTypeOptions = sourceOfFundFilter
+    ? (SOURCE_TO_SUB_TYPES[sourceOfFundFilter as SourceOfFundValue] ?? [])
+    : PROJECT_SUB_TYPE_VALUES;
 
   const filtered = projects?.filter((p) => {
     if (filterToday) {
@@ -65,19 +250,16 @@ export function UserProjectsList() {
       )
         return false;
     }
-    if (statusFilter && p.status !== statusFilter) return false;
     if (statusLocal && p.status !== statusLocal) return false;
+    if (modeFilter && p.modeOfImplementation !== modeFilter) return false;
     if (districtFilter && p.locationImplementation !== districtFilter)
       return false;
+    if (cityFilter && p.cityMunicipality !== cityFilter) return false;
+    if (barangayFilter && p.barangay !== barangayFilter) return false;
     if (sourceOfFundFilter && p.sourceOfFund !== sourceOfFundFilter)
       return false;
     if (subTypeFilter && p.subType !== subTypeFilter) return false;
-    if (yearFilter) {
-      const projectYear = p.dateStarted
-        ? new Date(p.dateStarted).getFullYear().toString()
-        : new Date(p.createdAt).getFullYear().toString();
-      if (projectYear !== yearFilter) return false;
-    }
+    if (yearFilter && p.budgetYear !== yearFilter) return false;
     if (search) {
       const q = search.toLowerCase();
       if (
@@ -89,164 +271,38 @@ export function UserProjectsList() {
     return true;
   });
 
-  const totalPages = Math.max(1, Math.ceil((filtered?.length ?? 0) / PAGE_SIZE));
+  const totalFiltered = filtered?.length ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalFiltered / PAGE_SIZE));
   const paginated = filtered?.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  const handlePrint = () => window.print();
-
-  const subTypeOptions = sourceOfFundFilter
-    ? (SOURCE_TO_SUB_TYPES[sourceOfFundFilter as SourceOfFundValue] ?? [])
-    : PROJECT_SUB_TYPE_VALUES;
-
-  const pageTitle =
-    filterToday
-      ? STATUS_TITLES.today
-      : statusFilter
-        ? (STATUS_TITLES[statusFilter] ?? "Projects")
-        : "All Projects";
+  const selectClass =
+    "w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20";
 
   return (
-    <div className="space-y-6 px-6 py-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="text-xs font-medium tracking-widest mb-2 text-gray-400">
-            {/* Breadcrumb */}
-            <div className="mb-4 flex items-center gap-1.5 text-sm text-gray-500">
-              <Link href="/user/dashboard" className="hover:text-gray-700">
-                Dashboard
-              </Link>
-              <span>/</span>
-              <p className="hover:text-gray-700">Projects</p>
-            </div>
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900">{pageTitle}</h2>
-        </div>
-        <div className="flex items-center gap-3">
-          {(statusFilter ?? filterToday) && (
-            <Link
-              href="/user/dashboard/projects"
-              className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
-            >
-              Clear Filter
-            </Link>
-          )}
-          <div className="relative w-72">
-            <svg
-              className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"
-              />
-            </svg>
-            <input
-              type="text"
-              placeholder="Project Code or Name..."
-              value={search}
-              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-              className="w-full rounded-lg border border-gray-200 bg-white py-2 pl-9 pr-3 text-sm text-gray-700 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-            />
-          </div>
-        </div>
-      </div>
+    <div className="space-y-6 bg-slate-50 px-6 py-6">
+      {/* Summary stat cards */}
+      <StatCards
+        budgetYearLabel={yearFilter || "All"}
+        stats={stats}
+        loading={statsLoading}
+      />
 
-      {/* Advanced filter bar */}
+      {/* Heading */}
+      <h2 className="text-lg font-extrabold uppercase tracking-wide text-blue-900">
+        Projects
+      </h2>
+
+      {/* Filter bar */}
       <div className="rounded-xl border border-gray-200 bg-white px-5 py-4 shadow-sm">
-        <div className="flex flex-nowrap items-end gap-4 overflow-x-auto">
-          {/* Source of Fund */}
-          <div className="min-w-0 flex-1">
-            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Source of Fund</p>
-            <select
-              value={sourceOfFundFilter}
-              onChange={(e) => { setSourceOfFundFilter(e.target.value); setSubTypeFilter(""); setPage(1); }}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-            >
-              <option value="">All Sources</option>
-              {SOURCE_OF_FUND_ORDER.map((k) => (
-                <option key={k} value={k}>{SOURCE_OF_FUND_LABEL[k]}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Sub-Category */}
-          <div className="min-w-0 flex-1">
-            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Sub-Category</p>
-            <select
-              value={subTypeFilter}
-              onChange={(e) => { setSubTypeFilter(e.target.value); setPage(1); }}
-              disabled={!!sourceOfFundFilter && subTypeOptions.length === 0}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400"
-            >
-              <option value="">
-                {sourceOfFundFilter && subTypeOptions.length === 0
-                  ? "No Sub-Categories"
-                  : "All Sub-Categories"}
-              </option>
-              {subTypeOptions.map((k) => (
-                <option key={k} value={k}>{PROJECT_SUB_TYPE_LABEL[k]}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* District (hidden when the user's division limits them to one district) */}
-          {!districtScope && (
-            <div className="min-w-0 flex-1">
-              <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">District</p>
-              <select
-                value={districtFilter}
-                onChange={(e) => { setDistrictFilter(e.target.value); setPage(1); }}
-                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-              >
-                <option value="">All Districts</option>
-                <option value="DISTRICT_I">District I</option>
-                <option value="DISTRICT_II">District II</option>
-              </select>
-            </div>
-          )}
-
-          {/* Status */}
-          <div className="min-w-0 flex-1">
-            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Status</p>
-            <select
-              value={statusLocal}
-              onChange={(e) => { setStatusLocal(e.target.value); setPage(1); }}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-            >
-              <option value="">All Statuses</option>
-              {PROJECT_STATUS_ORDER.map((k) => (
-                <option key={k} value={k}>{PROJECT_STATUS_LABEL[k]}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Year */}
-          <div className="min-w-0 flex-1">
-            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Year</p>
-            <select
-              value={yearFilter}
-              onChange={(e) => { setYearFilter(e.target.value); setPage(1); }}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-            >
-              <option value="">All Years</option>
-              {Array.from({ length: new Date().getFullYear() - 2019 }, (_, i) => new Date().getFullYear() - i).map((y) => (
-                <option key={y} value={y.toString()}>{y}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Print */}
-          <div className="flex items-end gap-2">
-            <button
-              onClick={handlePrint}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
-            >
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9">
+          {/* Project Title */}
+          <div className="col-span-2 sm:col-span-3 lg:col-span-2 xl:col-span-2">
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              Project Title
+            </p>
+            <div className="relative">
               <svg
-                className="h-4 w-4"
+                className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
@@ -255,239 +311,368 @@ export function UserProjectsList() {
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.056 48.056 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z"
+                  d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"
                 />
               </svg>
-              Print
-            </button>
+              <input
+                type="text"
+                placeholder="Search..."
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full rounded-lg border border-gray-200 bg-white py-2 pl-9 pr-3 text-sm text-gray-700 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              />
+            </div>
+          </div>
+
+          {/* Mode */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              Mode
+            </p>
+            <select
+              value={modeFilter}
+              onChange={(e) => {
+                setModeFilter(e.target.value);
+                setPage(1);
+              }}
+              className={selectClass}
+            >
+              <option value="">All Modes</option>
+              <option value="BY_ADMINISTRATION">By Administration</option>
+              <option value="BY_CONTRACT">By Contract</option>
+            </select>
+          </div>
+
+          {/* Source of Fund */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              Source of Fund
+            </p>
+            <select
+              value={sourceOfFundFilter}
+              onChange={(e) => {
+                setSourceOfFundFilter(e.target.value);
+                setSubTypeFilter("");
+                setPage(1);
+              }}
+              className={selectClass}
+            >
+              <option value="">All</option>
+              {SOURCE_OF_FUND_ORDER.map((k) => (
+                <option key={k} value={k}>
+                  {SOURCE_OF_FUND_LABEL[k]}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Sub-Category */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              Sub-Category
+            </p>
+            <select
+              value={subTypeFilter}
+              onChange={(e) => {
+                setSubTypeFilter(e.target.value);
+                setPage(1);
+              }}
+              disabled={!!sourceOfFundFilter && subTypeOptions.length === 0}
+              className={`${selectClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
+            >
+              <option value="">
+                {sourceOfFundFilter && subTypeOptions.length === 0
+                  ? "None"
+                  : "All"}
+              </option>
+              {subTypeOptions.map((k) => (
+                <option key={k} value={k}>
+                  {PROJECT_SUB_TYPE_LABEL[k]}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* District (hidden when the user's division limits them to one district) */}
+          {!districtScope && (
+            <div>
+              <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                District
+              </p>
+              <select
+                value={districtFilter}
+                onChange={(e) => {
+                  setDistrictFilter(e.target.value);
+                  setPage(1);
+                }}
+                className={selectClass}
+              >
+                <option value="">All</option>
+                <option value="DISTRICT_I">District I</option>
+                <option value="DISTRICT_II">District II</option>
+              </select>
+            </div>
+          )}
+
+          {/* City / Municipality */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              City/Municipality
+            </p>
+            <select
+              value={cityFilter}
+              onChange={(e) => {
+                setCityFilter(e.target.value);
+                setBarangayFilter("");
+                setPage(1);
+              }}
+              className={selectClass}
+            >
+              <option value="">All Cities</option>
+              {cityOptions.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Barangay */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              Barangay
+            </p>
+            <select
+              value={barangayFilter}
+              onChange={(e) => {
+                setBarangayFilter(e.target.value);
+                setPage(1);
+              }}
+              className={selectClass}
+            >
+              <option value="">All</option>
+              {barangayOptions.map((b) => (
+                <option key={b} value={b}>
+                  {b}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Status */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              Status
+            </p>
+            <select
+              value={statusLocal}
+              onChange={(e) => {
+                setStatusLocal(e.target.value);
+                setPage(1);
+              }}
+              className={selectClass}
+            >
+              <option value="">All Status</option>
+              {PROJECT_STATUS_ORDER.map((k) => (
+                <option key={k} value={k}>
+                  {PROJECT_STATUS_LABEL[k]}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Year */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              Year
+            </p>
+            <select
+              value={yearFilter}
+              onChange={(e) => {
+                setYearFilter(e.target.value);
+                setPage(1);
+              }}
+              className={selectClass}
+            >
+              <option value="">All Years</option>
+              {budgetYears?.map((y) => (
+                <option key={y} value={y}>
+                  {y}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
       </div>
 
+      {/* Projects table */}
       <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
         {isLoading ? (
           <div className="p-8 text-center text-gray-500">
             Loading projects...
           </div>
         ) : !filtered?.length ? (
-          <div className="p-8 text-center text-gray-500">
-            No projects found.
-          </div>
+          <div className="p-8 text-center text-gray-500">No projects found.</div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-gray-200 bg-gray-50 text-gray-500 uppercase text-xs tracking-wider">
-                  <th className="px-4 py-3 font-medium">Project Name & Location</th>
-                  <th className="px-4 py-3 font-medium">Implementation Type</th>
-                  <th className="px-4 py-3 font-medium">District</th>
-                  <th className="px-4 py-3 font-medium">Source / Sub</th>
-                  <th className="px-4 py-3 font-medium">Year</th>
-                  <th className="px-4 py-3 font-medium">Status</th>
-                  <th className="px-4 py-3 font-medium">Progress</th>
-                  <th className="px-4 py-3 font-medium">Involved Users</th>
-                  <th className="px-4 py-3 font-medium">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginated?.map((p) => {
-                  const status = STATUS_LABELS[p.status] ?? {
-                    label: p.status,
-                    className: "bg-gray-100 text-gray-700",
-                  };
-                  return (
-                    <tr
-                      key={p.id}
-                      className="border-b border-gray-100 hover:bg-gray-50"
-                    >
-                      <td className="px-4 py-3">
-                        <p className="font-medium text-gray-900">{p.title}</p>
-                        <p className="text-xs text-gray-500 mt-0.5">
-                          {p.projectCode}
-                          {p.barangay ? ` · Brgy. ${p.barangay}` : ""}
-                        </p>
-                      </td>
-                      <td className="px-4 py-3 text-gray-600">
-                        <p>{p.modeOfImplementation.replace(/_/g, " ")}</p>
-                        {p.modeOfImplementation === "BY_CONTRACT" && p.contractorName && (
-                          <p className="text-xs text-gray-400 mt-0.5">{p.contractorName}</p>
-                        )}
-                      </td>
-                      <td className="px-4 py-3 text-gray-600">
-                        {p.locationImplementation.replace(/_/g, " ")}
-                      </td>
-                      <td className="px-4 py-3 text-gray-600">
-                        <p>{p.sourceOfFund?.replace(/_/g, " ") ?? "—"}</p>
-                        {p.subType && (
-                          <p className="text-xs text-gray-400">{p.subType.replace(/_/g, " ")}</p>
-                        )}
-                      </td>
-                      <td className="px-4 py-3 text-gray-600">
-                        {p.dateStarted
-                          ? new Date(p.dateStarted).getFullYear()
-                          : new Date(p.createdAt).getFullYear()}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span
-                          className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${status.className}`}
-                        >
-                          {status.label}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          <div className="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-gray-200 text-[11px] uppercase tracking-wider text-gray-400">
+                    <th className="px-5 py-4 font-semibold">Project Title</th>
+                    <th className="px-4 py-4 font-semibold">Project Cost</th>
+                    <th className="px-4 py-4 font-semibold">Mode</th>
+                    <th className="px-4 py-4 font-semibold">Source/Sub</th>
+                    <th className="px-4 py-4 font-semibold">District</th>
+                    <th className="px-4 py-4 font-semibold">Location</th>
+                    <th className="px-4 py-4 font-semibold">Status</th>
+                    <th className="px-4 py-4 font-semibold">
+                      Physical Progress
+                    </th>
+                    <th className="px-4 py-4 font-semibold">Budget Year</th>
+                    <th className="px-4 py-4 font-semibold">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginated?.map((p) => {
+                    const badge = STATUS_BADGES[p.status] ?? {
+                      label: p.status.replace(/_/g, " "),
+                      className: "bg-gray-100 text-gray-600",
+                    };
+                    const pct = p.completionPercentage ?? 0;
+                    return (
+                      <tr
+                        key={p.id}
+                        className="border-b border-gray-100 last:border-0 hover:bg-gray-50"
+                      >
+                        <td className="max-w-xs px-5 py-4">
+                          <p className="font-semibold text-gray-900">
+                            {p.title}
+                          </p>
+                        </td>
+                        <td className="whitespace-nowrap px-4 py-4 font-medium text-gray-800">
+                          {formatPeso(p.projectCost)}
+                        </td>
+                        <td className="px-4 py-4 text-gray-600">
+                          {MODE_LABELS[p.modeOfImplementation] ??
+                            p.modeOfImplementation.replace(/_/g, " ")}
+                        </td>
+                        <td className="px-4 py-4">
+                          <p className="text-gray-700">
+                            {SOURCE_OF_FUND_LABEL[
+                              p.sourceOfFund as SourceOfFundValue
+                            ] ?? p.sourceOfFund.replace(/_/g, " ")}
+                          </p>
+                          {p.subType && (
+                            <p className="mt-0.5 text-xs text-gray-400">
+                              {PROJECT_SUB_TYPE_LABEL[p.subType] ??
+                                p.subType.replace(/_/g, " ")}
+                            </p>
+                          )}
+                        </td>
+                        <td className="whitespace-nowrap px-4 py-4 text-gray-600">
+                          {DISTRICT_LABELS[p.locationImplementation] ??
+                            p.locationImplementation.replace(/_/g, " ")}
+                        </td>
+                        <td className="px-4 py-4">
+                          <p className="text-gray-700">
+                            {p.cityMunicipality ?? "—"}
+                          </p>
+                          {p.barangay && (
+                            <p className="mt-0.5 text-xs text-gray-400">
+                              {p.barangay}
+                            </p>
+                          )}
+                        </td>
+                        <td className="px-4 py-4">
+                          <span
+                            className={`inline-flex whitespace-nowrap rounded-full px-3 py-1 text-[11px] font-bold ${badge.className}`}
+                          >
+                            {badge.label}
+                          </span>
+                        </td>
+                        <td className="px-4 py-4">
+                          <p className="mb-1 text-xs font-semibold text-gray-800">
+                            {pct}%
+                          </p>
+                          <div className="h-1.5 w-28 overflow-hidden rounded-full bg-gray-200">
                             <div
-                              className="h-full rounded-full bg-blue-500"
-                              style={{ width: `${p.completionPercentage ?? 0}%` }}
+                              className={`h-full rounded-full ${progressBarColor(p.status, pct)}`}
+                              style={{ width: `${Math.min(pct, 100)}%` }}
                             />
                           </div>
-                          <span className="text-xs text-gray-600">
-                            {p.completionPercentage ?? 0}%
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        {(() => {
-                          const seen = new Set<string>();
-                          const contributors: { id: string; name: string | null; email: string; image: string | null }[] = [];
-                          const allUsers = [p.createdBy, ...p.activities.map((a) => a.createdBy)];
-                          for (const u of allUsers) {
-                            if (!seen.has(u.id)) {
-                              seen.add(u.id);
-                              contributors.push(u);
+                        </td>
+                        <td className="px-4 py-4 text-gray-600">
+                          {p.budgetYear ?? "—"}
+                        </td>
+                        <td className="px-4 py-4">
+                          <button
+                            onClick={() =>
+                              router.push(`/user/dashboard/projects/${p.id}`)
                             }
-                          }
-                          const MAX_SHOW = 4;
-                          const visible = contributors.slice(0, MAX_SHOW);
-                          const extra = contributors.length - MAX_SHOW;
-                          const colors = ["bg-blue-500", "bg-emerald-500", "bg-violet-500", "bg-orange-500"];
-                          return (
-                            <div className="flex items-center">
-                              {visible.map((u, i) => {
-                                const initials = (u.name ?? u.email)
-                                  .split(" ")
-                                  .map((w) => w[0])
-                                  .join("")
-                                  .slice(0, 2)
-                                  .toUpperCase();
-                                return (
-                                  <div
-                                    key={u.id}
-                                    style={{ zIndex: visible.length - i, marginLeft: i === 0 ? 0 : "-8px" }}
-                                    className={`group relative flex h-7 w-7 items-center justify-center rounded-full ring-2 ring-white text-white text-[10px] font-bold cursor-default ${colors[i % colors.length]}`}
-                                  >
-                                    {u.image ? (
-                                      <img src={u.image} alt={u.name ?? u.email} className="h-full w-full rounded-full object-cover" />
-                                    ) : (
-                                      initials
-                                    )}
-                                    <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-[11px] text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
-                                      {u.name ?? u.email}
-                                    </span>
-                                  </div>
-                                );
-                              })}
-                              {extra > 0 && (
-                                <div
-                                  style={{ zIndex: 0, marginLeft: "-8px" }}
-                                  className="relative flex h-7 w-7 items-center justify-center rounded-full ring-2 ring-white bg-gray-200 text-gray-600 text-[10px] font-bold"
-                                >
-                                  +{extra}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })()}
-                      </td>
-                      <td className="px-4 py-3">
-                        <button
-                          onClick={() =>
-                            router.push(`/user/dashboard/projects/${p.id}`)
-                          }
-                          className="inline-flex items-center gap-1.5 rounded-md bg-green-500 px-2.5 py-1.5 text-xs font-medium text-white transition hover:bg-green-600"
-                        >
-                          <svg
-                            className="h-3.5 w-3.5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-blue-900 transition hover:bg-blue-50"
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178Z"
-                            />
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                            />
-                          </svg>
-                          View
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                            <svg
+                              className="h-4 w-4"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178Z"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                              />
+                            </svg>
+                            View
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
 
-            {/* Pagination */}
-            <div className="flex items-center justify-between border-t border-gray-200 px-4 py-3">
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <span>Rows per page:</span>
-                <select
-                  value={PAGE_SIZE}
-                  disabled
-                  className="rounded border border-gray-300 px-2 py-1 text-sm text-gray-700 focus:outline-none"
-                >
-                  <option value={20}>20</option>
-                </select>
-              </div>
-
-              <div className="flex items-center gap-1">
+            {/* Footer */}
+            <div className="flex items-center justify-between border-t border-gray-200 px-5 py-4">
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400">
+                Showing {paginated?.length ?? 0} of {totalFiltered} projects
+              </p>
+              <div className="flex items-center gap-2">
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="flex h-8 w-8 items-center justify-center rounded border border-gray-300 text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-30"
                 >
-                  ‹
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                  </svg>
                 </button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1)
-                  .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
-                  .reduce<(number | "…")[]>((acc, p, idx, arr) => {
-                    if (idx > 0 && p - arr[idx - 1]! > 1) acc.push("…");
-                    acc.push(p);
-                    return acc;
-                  }, [])
-                  .map((item, idx) =>
-                    item === "…" ? (
-                      <span key={`ellipsis-${idx}`} className="flex h-8 w-8 items-center justify-center text-sm text-gray-400">…</span>
-                    ) : (
-                      <button
-                        key={item}
-                        onClick={() => setPage(item)}
-                        className={`flex h-8 w-8 items-center justify-center rounded border text-sm font-medium transition ${page === item
-                          ? "border-blue-500 text-blue-600"
-                          : "border-gray-300 text-gray-600 hover:bg-gray-50"
-                          }`}
-                      >
-                        {item}
-                      </button>
-                    )
-                  )}
+                <span className="text-xs text-gray-500">
+                  {page} / {totalPages}
+                </span>
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
-                  className="flex h-8 w-8 items-center justify-center rounded border border-gray-300 text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-30"
                 >
-                  ›
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                  </svg>
                 </button>
               </div>
             </div>
-          </div>
+          </>
         )}
       </div>
     </div>

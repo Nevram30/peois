@@ -1,5 +1,5 @@
-import { UserDashboardContent } from "./_components/user-dashboard";
+import { redirect } from "next/navigation";
 
 export default function UserDashboardPage() {
-  return <UserDashboardContent />;
+  redirect("/user/dashboard/projects");
 }
