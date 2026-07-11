@@ -78,10 +78,11 @@ function DistrictCard({ title, data }: DistrictCardProps) {
                     {title}
                 </p>
                 <div className="flex items-center gap-4">
+                    {/* thickness = size/2 fills the ring to the center, rendering a solid pie */}
                     <DonutChart
                         segments={data.filter((d) => d.value > 0).map((d) => ({ value: d.value, color: d.color }))}
                         size={100}
-                        thickness={22}
+                        thickness={50}
                     />
                     <div className="grid grid-cols-2 gap-x-3 gap-y-[3px] flex-1">
                         {data.map((d) => (
@@ -579,15 +580,20 @@ export function AdminDashboardContent() {
         ? Object.values(projectAllocationData.bySource).reduce((s, v) => s + v, 0)
         : 0;
 
-    const statCards: StatCard[] = [
-        { label: "BUDGET YEAR", value: dashboardYear || "All", borderColor: "border-blue-600", iconBg: "bg-blue-100", iconColor: "text-blue-600", icon: "📅" },
+    const statusTiles: StatCard[] = [
         { label: "COMPLETED PROJECTS", value: statsData?.completed ?? "0", borderColor: "border-green-600", iconBg: "bg-green-100", iconColor: "text-green-600", icon: "✅" },
         { label: "ON-GOING PROJECTS", value: statsData?.ongoing ?? "0", borderColor: "border-blue-500", iconBg: "bg-blue-100", iconColor: "text-blue-500", icon: "▷" },
         { label: "FOR IMPLEMENTATION", value: statsData?.forImplementation ?? "0", borderColor: "border-amber-500", iconBg: "bg-amber-100", iconColor: "text-amber-500", icon: "⚠" },
         { label: "SUSPENDED PROJECTS", value: statsData?.suspended ?? "0", borderColor: "border-red-600", iconBg: "bg-red-100", iconColor: "text-red-600", icon: "⊗" },
         { label: "RE-ALIGNED PROJECTS", value: statsData?.reAlignment ?? "0", borderColor: "border-red-500", iconBg: "bg-red-100", iconColor: "text-red-500", icon: "↔" },
-        // { label: "OTHERS", value: statsData?.others ?? "0", borderColor: "border-slate-400", iconBg: "bg-slate-100", iconColor: "text-slate-500", icon: "⋯" },
+        { label: "OTHERS", value: statsData?.others ?? "0", borderColor: "border-slate-400", iconBg: "bg-slate-100", iconColor: "text-slate-500", icon: "⋯" },
     ];
+
+    const budgetYearTile: StatCard = { label: "BUDGET YEAR", value: dashboardYear || "All", borderColor: "border-blue-600", iconBg: "bg-blue-100", iconColor: "text-blue-600", icon: "📅" };
+
+    // Office divisions keep the original single-row layout: small Budget Year
+    // tile + five status tiles (no OTHERS).
+    const statCards: StatCard[] = [budgetYearTile, ...statusTiles.filter((c) => c.label !== "OTHERS")];
 
     // ── Recent Project Updates table state ──────────────────────
     const [search, setSearch] = useState("");
@@ -631,8 +637,26 @@ export function AdminDashboardContent() {
             <div className={`grid grid-cols-1 ${districtOnSide ? "lg:grid-cols-2" : ""} gap-4 pb-5`}>
                 {statsLoading ? (
                     <StatCardsSkeleton />
+                ) : districtOnSide ? (
+                    // District admins: big Budget Year card spanning both rows,
+                    // six status tiles (incl. OTHERS) in a 3×2 grid beside it.
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 content-start">
+                        <div className="col-span-2 sm:col-span-1 sm:row-span-2 bg-white rounded-xl shadow-sm border-2 border-blue-600 flex flex-col items-center justify-center gap-1 p-3 text-center">
+                            <p className="text-sm font-bold text-slate-700 leading-tight">Budget Year</p>
+                            <p className="text-3xl font-extrabold text-slate-900 leading-none">{dashboardYear || "All"}</p>
+                        </div>
+                        {statusTiles.map((c) => (
+                            <div key={c.label} className={`bg-white rounded-lg shadow-sm p-3 flex flex-col gap-1 border-t-[3px] ${c.borderColor}`}>
+                                <div className={`w-6 h-6 rounded-md ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>
+                                    {c.icon}
+                                </div>
+                                <p className="text-[9px] font-bold text-slate-500 leading-tight tracking-wide">{c.label}</p>
+                                <p className="text-2xl font-extrabold text-slate-900 leading-none">{c.value}</p>
+                            </div>
+                        ))}
+                    </div>
                 ) : (
-                    <div className={`grid grid-cols-2 sm:grid-cols-3 ${districtOnSide ? "" : "lg:grid-cols-6"} gap-2 content-start`}>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 content-start">
                         {statCards.map((c) => (
                             <div key={c.label} className={`bg-white rounded-lg shadow-sm p-3 flex flex-col gap-1 border-t-[3px] ${c.borderColor}`}>
                                 <div className={`w-6 h-6 rounded-md ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>
