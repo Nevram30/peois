@@ -94,12 +94,14 @@ function UserIcon({ type, color }: UserIconProps) {
 
 // ── transform ───────────────────────────────────────────────────
 function toCardData(counts: StatusCounts): DistrictCardItem[] {
-    return (Object.keys(STATUS_LABELS) as ProjectStatus[]).map((status) => ({
-        key: status,                        // ← add this
-        label: STATUS_LABELS[status],
-        value: counts[status] ?? 0,
-        color: STATUS_COLORS[status],
-    }));
+    return (Object.keys(STATUS_LABELS) as ProjectStatus[])
+        .filter((status) => status !== "NOT_YET_STARTED")
+        .map((status) => ({
+            key: status,                        // ← add this
+            label: STATUS_LABELS[status],
+            value: counts[status] ?? 0,
+            color: STATUS_COLORS[status],
+        }));
 }
 
 // ── DistrictCard ─────────────────────────────────────────────────
@@ -112,10 +114,11 @@ function DistrictCard({ title, data }: DistrictCardProps) {
                     {title}
                 </p>
                 <div className="flex items-center gap-4">
+                    {/* thickness = size/2 fills the ring to the center, rendering a solid pie */}
                     <DonutChart
                         segments={data.filter((d) => d.value > 0).map((d) => ({ value: d.value, color: d.color }))}
                         size={100}
-                        thickness={22}
+                        thickness={50}
                     />
                     <div className="grid grid-cols-2 gap-x-3 gap-y-[3px] flex-1">
                         {data.map((d) => (

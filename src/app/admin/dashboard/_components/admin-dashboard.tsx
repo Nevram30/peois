@@ -60,12 +60,14 @@ function DonutChart({ segments, size = 120, thickness = 28, centerLabel }: Donut
 
 // ── transform ───────────────────────────────────────────────────
 function toCardData(counts: StatusCounts): DistrictCardItem[] {
-    return (Object.keys(STATUS_LABELS) as ProjectStatus[]).map((status) => ({
-        key: status,                        // ← add this
-        label: STATUS_LABELS[status],
-        value: counts[status] ?? 0,
-        color: STATUS_COLORS[status],
-    }));
+    return (Object.keys(STATUS_LABELS) as ProjectStatus[])
+        .filter((status) => status !== "NOT_YET_STARTED")
+        .map((status) => ({
+            key: status,                        // ← add this
+            label: STATUS_LABELS[status],
+            value: counts[status] ?? 0,
+            color: STATUS_COLORS[status],
+        }));
 }
 
 // ── DistrictCard ─────────────────────────────────────────────────
