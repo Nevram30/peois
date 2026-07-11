@@ -4,9 +4,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { api } from "~/trpc/react";
 import { LiveToast } from "~/app/_components/live-toast";
+import { usePollToast } from "~/hooks/use-poll-toast";
 
 interface User {
   id: string;
@@ -93,12 +94,34 @@ export function AdminShell({
   const avatarImage = me?.image ?? user.image;
   const displayName = me?.name ?? user.name;
   const displayEmail = me?.email ?? user.email;
-  const { data: adminNotifs } = api.taskNotification.getAdminNotifications.useQuery();
+  // Polling fallback: SSE only works when one Node process serves everything
+  // (see src/server/api/events.ts), so keep notifications fresh on an interval.
+  const { data: adminNotifs } = api.taskNotification.getAdminNotifications.useQuery(undefined, {
+    refetchInterval: 10_000,
+    refetchOnWindowFocus: true,
+  });
   const utils = api.useUtils();
   const [liveToast, setLiveToast] = useState<string | null>(null);
   const dismissToast = useCallback(() => setLiveToast(null), []);
+  const pollItems = useMemo(
+    () =>
+      adminNotifs && [
+        ...adminNotifs.replies.map((r) => ({
+          id: r.id,
+          message: `${r.createdBy.name ?? "User"} replied on a task: ${r.message.slice(0, 80)}`,
+        })),
+        // "ack:" prefix matches the read-tracking key convention below.
+        ...adminNotifs.acknowledgments.map((a) => ({
+          id: `ack:${a.id}`,
+          message: `${a.notifyUser.name ?? "User"} acknowledged the task: ${a.description.slice(0, 80)}`,
+        })),
+      ],
+    [adminNotifs],
+  );
+  const { markSeen } = usePollToast(pollItems, setLiveToast);
   api.taskNotification.onReplyCreated.useSubscription(undefined, {
     onData: (e) => {
+      markSeen(e.replyId);
       void utils.taskNotification.getAdminNotifications.invalidate();
       void utils.taskNotification.getTasksSentByMe.invalidate();
       setLiveToast(
@@ -108,6 +131,7 @@ export function AdminShell({
   });
   api.taskNotification.onTaskAcknowledged.useSubscription(undefined, {
     onData: (e) => {
+      markSeen(`ack:${e.taskId}`);
       void utils.taskNotification.getAdminNotifications.invalidate();
       void utils.taskNotification.getTasksSentByMe.invalidate();
       setLiveToast(

@@ -4,9 +4,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { api } from "~/trpc/react";
 import { LiveToast } from "~/app/_components/live-toast";
+import { usePollToast } from "~/hooks/use-poll-toast";
 
 interface User {
   id: string;
@@ -86,12 +87,30 @@ export function UserShell({
   const displayName = me?.name ?? user.name;
   const displayEmail = me?.email ?? user.email;
   const utils = api.useUtils();
-  const { data: myTasks } = api.taskNotification.getMyTasks.useQuery();
+  // Polling fallback: SSE only works when one Node process serves everything
+  // (see src/server/api/events.ts), so keep the list fresh on an interval.
+  const { data: myTasks } = api.taskNotification.getMyTasks.useQuery(undefined, {
+    refetchInterval: 10_000,
+    refetchOnWindowFocus: true,
+  });
   const taskCount = myTasks?.filter((t) => !t.acknowledged).length ?? 0;
   const [liveToast, setLiveToast] = useState<string | null>(null);
   const dismissToast = useCallback(() => setLiveToast(null), []);
+  // Poll-toasts cover new tasks only; reply toasts stay SSE-only because
+  // getMyTasks includes the user's own reply ids (diffing them would
+  // self-toast).
+  const pollItems = useMemo(
+    () =>
+      myTasks?.map((t) => ({
+        id: t.id,
+        message: `New ${t.priority} task from ${t.createdBy.name ?? "Admin"}: ${t.description.slice(0, 80)}`,
+      })),
+    [myTasks],
+  );
+  const { markSeen } = usePollToast(pollItems, setLiveToast);
   api.taskNotification.onTaskCreated.useSubscription(undefined, {
     onData: (e) => {
+      markSeen(e.taskId);
       void utils.taskNotification.getMyTasks.invalidate();
       setLiveToast(
         `New ${e.priority} task from ${e.createdByName ?? "Admin"}: ${e.description.slice(0, 80)}`,
