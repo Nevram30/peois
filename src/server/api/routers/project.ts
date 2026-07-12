@@ -31,6 +31,7 @@ export const projectRouter = createTRPCRouter({
             createdBy: { select: { id: true, name: true, email: true, image: true } },
           },
         },
+        disbursements: { select: { amount: true } },
       },
       orderBy: { createdAt: "desc" },
     });
