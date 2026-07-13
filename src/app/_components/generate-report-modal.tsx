@@ -4,12 +4,13 @@ import { useState } from "react";
 import * as XLSX from "xlsx";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
+import { api } from "~/trpc/react";
 import {
   SOURCE_OF_FUND_LABEL,
   SOURCE_OF_FUND_ORDER,
   PROJECT_SUB_TYPE_LABEL,
-  PROJECT_SUB_TYPE_VALUES,
   PROJECT_STATUS_LABEL,
+  PROJECT_STATUS_ORDER,
   SOURCE_TO_SUB_TYPES,
   type SourceOfFundValue,
   type ProjectSubTypeValue,
@@ -172,6 +173,33 @@ const DEFAULT_SELECTED = [
   "financialAccomplishment",
 ];
 
+// Explicit modal layout: which fields stack in the left and right columns.
+const COLUMN_ONE_KEYS = [
+  "projectCode",
+  "modeOfImplementation",
+  "subType",
+  "cityMunicipality",
+  "status",
+  "projectCost",
+  "projectEngineer",
+  "financialAccomplishment",
+  "dateStarted",
+  "dateCompleted",
+];
+
+const COLUMN_TWO_KEYS = [
+  "title",
+  "sourceOfFund",
+  "district",
+  "barangay",
+  "budgetYear",
+  "contractorName",
+  "physicalAccomplishment",
+  "contractCost",
+  "targetCompletionDate",
+  "duration",
+];
+
 const FORMAT_OPTIONS: { value: ReportFormat; label: string; description: string }[] = [
   { value: "csv", label: "CSV", description: "Comma-separated values" },
   { value: "xlsx", label: "XLSX", description: "Excel spreadsheet" },
@@ -193,20 +221,20 @@ export function GenerateReportModal({
 }) {
   const [selected, setSelected] = useState<string[]>(DEFAULT_SELECTED);
   const [format, setFormat] = useState<ReportFormat>("csv");
-  const [dateStartedFrom, setDateStartedFrom] = useState("");
-  const [dateStartedTo, setDateStartedTo] = useState("");
-  const [targetCompletionFrom, setTargetCompletionFrom] = useState("");
-  const [targetCompletionTo, setTargetCompletionTo] = useState("");
-  const [budgetYear, setBudgetYear] = useState("");
-  const [modeFilter, setModeFilter] = useState("");
-  const [sourceFilter, setSourceFilter] = useState("");
-  const [subTypeFilter, setSubTypeFilter] = useState("");
+  const [filterMode, setFilterMode] = useState("");
+  const [filterSource, setFilterSource] = useState("");
+  const [filterSubType, setFilterSubType] = useState("");
+  const [filterDistrict, setFilterDistrict] = useState("");
+  const [filterCity, setFilterCity] = useState("");
+  const [filterBarangay, setFilterBarangay] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
+  const [filterYear, setFilterYear] = useState("");
+
+  // District their access is limited to (DISTRICT_I/DISTRICT_II divisions),
+  // or null for unrestricted divisions (SMAD/PDPM/EPM/QACD) and super admins.
+  const { data: districtScope } = api.project.getMyDistrictScope.useQuery();
 
   if (!open) return null;
-
-  const availableBudgetYears = Array.from(
-    new Set(projects.map((p) => p.budgetYear).filter((y): y is string => !!y)),
-  ).sort((a, b) => b.localeCompare(a));
 
   const toggleColumn = (key: string) => {
     setSelected((prev) =>
@@ -216,33 +244,204 @@ export function GenerateReportModal({
 
   const allSelected = selected.length === COLUMNS.length;
 
-  // A project passes when the date exists and falls inside the chosen bounds;
-  // the "to" bound is inclusive through the end of that day.
-  const inRange = (
-    date: Date | string | null,
-    from: string,
-    to: string,
-  ): boolean => {
-    if (!from && !to) return true;
-    if (!date) return false;
-    const time = new Date(date).getTime();
-    if (from && time < new Date(`${from}T00:00:00`).getTime()) return false;
-    if (to && time > new Date(`${to}T23:59:59.999`).getTime()) return false;
-    return true;
-  };
+  const availableSubTypes = filterSource
+    ? SOURCE_TO_SUB_TYPES[filterSource as SourceOfFundValue] ?? []
+    : [];
 
-  const availableSubTypes = sourceFilter
-    ? SOURCE_TO_SUB_TYPES[sourceFilter as SourceOfFundValue] ?? []
-    : PROJECT_SUB_TYPE_VALUES;
+  const availableCities = Array.from(
+    new Set(
+      projects.map((p) => p.cityMunicipality).filter((v): v is string => !!v),
+    ),
+  ).sort((a, b) => a.localeCompare(b));
+
+  const availableBarangays = Array.from(
+    new Set(
+      projects
+        .filter((p) => !filterCity || p.cityMunicipality === filterCity)
+        .map((p) => p.barangay)
+        .filter((v): v is string => !!v),
+    ),
+  ).sort((a, b) => a.localeCompare(b));
+
+  const availableYears = Array.from(
+    new Set(projects.map((p) => p.budgetYear).filter((y): y is string => !!y)),
+  ).sort((a, b) => b.localeCompare(a));
+
+  // Checkbox = include the column in the report; dropdown = filter the rows.
+  const filterFields: {
+    key: string;
+    label: string;
+    allLabel: string;
+    accent: string;
+    value: string;
+    setValue: (v: string) => void;
+    disabled?: boolean;
+    options: { value: string; label: string }[];
+  }[] = [
+    {
+      key: "modeOfImplementation",
+      label: "Mode of Implementation",
+      allLabel: "Select Mode",
+      accent: "#2563EB",
+      value: filterMode,
+      setValue: setFilterMode,
+      options: [
+        { value: "BY_CONTRACT", label: "By Contract" },
+        { value: "BY_ADMINISTRATION", label: "By Administration" },
+      ],
+    },
+    {
+      key: "sourceOfFund",
+      label: "Source of Fund",
+      allLabel: "All Sources",
+      accent: "#1D4ED8",
+      value: filterSource,
+      setValue: (v) => {
+        setFilterSource(v);
+        setFilterSubType("");
+      },
+      options: SOURCE_OF_FUND_ORDER.map((k) => ({
+        value: k,
+        label: SOURCE_OF_FUND_LABEL[k],
+      })),
+    },
+    {
+      key: "subType",
+      label: "Sub-Category",
+      allLabel: !filterSource
+        ? "Select a Source of Fund first"
+        : availableSubTypes.length === 0
+          ? "No Sub-Categories"
+          : "All Categories",
+      accent: "#7C3AED",
+      value: filterSubType,
+      setValue: setFilterSubType,
+      disabled: !filterSource || availableSubTypes.length === 0,
+      options: availableSubTypes.map((k) => ({
+        value: k,
+        label: PROJECT_SUB_TYPE_LABEL[k],
+      })),
+    },
+    // Only unrestricted divisions (SMAD/PDPM/EPM/QACD) may filter by district;
+    // District 1/2 divisions already see only their own district's projects.
+    ...(districtScope
+      ? []
+      : [
+          {
+            key: "district",
+            label: "District",
+            allLabel: "All Districts",
+            accent: "#16A34A",
+            value: filterDistrict,
+            setValue: setFilterDistrict,
+            options: [
+              { value: "DISTRICT_I", label: "District 1" },
+              { value: "DISTRICT_II", label: "District 2" },
+            ],
+          },
+        ]),
+    {
+      key: "cityMunicipality",
+      label: "City/Municipality",
+      allLabel: "All Cities",
+      accent: "#D97706",
+      value: filterCity,
+      setValue: (v) => {
+        setFilterCity(v);
+        setFilterBarangay("");
+      },
+      options: availableCities.map((c) => ({ value: c, label: c })),
+    },
+    {
+      key: "barangay",
+      label: "Barangay",
+      allLabel: "All Barangays",
+      accent: "#DC2626",
+      value: filterBarangay,
+      setValue: setFilterBarangay,
+      options: availableBarangays.map((b) => ({ value: b, label: b })),
+    },
+    {
+      key: "status",
+      label: "Status",
+      allLabel: "All Statuses",
+      accent: "#0D9488",
+      value: filterStatus,
+      setValue: setFilterStatus,
+      options: PROJECT_STATUS_ORDER.map((k) => ({
+        value: k,
+        label: PROJECT_STATUS_LABEL[k],
+      })),
+    },
+    {
+      key: "budgetYear",
+      label: "Year",
+      allLabel: "All Year",
+      accent: "#334155",
+      value: filterYear,
+      setValue: setFilterYear,
+      options: availableYears.map((y) => ({ value: y, label: `FY ${y}` })),
+    },
+  ];
+
+  // Renders one grid cell: fields with a filter get the dropdown below the
+  // checkbox card; the rest get just the card.
+  const renderField = (key: string) => {
+    const column = COLUMNS.find((c) => c.key === key);
+    if (!column) return null;
+    const filter = filterFields.find((f) => f.key === key);
+    return (
+      <div key={key}>
+        <label className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-gray-100 bg-white px-4 py-3 shadow-sm transition hover:bg-gray-50">
+          <input
+            type="checkbox"
+            checked={selected.includes(key)}
+            onChange={() => toggleColumn(key)}
+            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+          <span className="text-sm font-semibold text-gray-800">
+            {filter?.label ?? column.label}
+          </span>
+        </label>
+        {filter && (
+          <div className="relative mt-2">
+            <select
+              value={filter.value}
+              onChange={(e) => filter.setValue(e.target.value)}
+              disabled={filter.disabled}
+              style={{
+                borderColor: `${filter.accent}33`,
+                borderLeftColor: filter.accent,
+                backgroundColor: `${filter.accent}0D`,
+              }}
+              className="w-full cursor-pointer appearance-none rounded-lg border border-l-4 py-2.5 pl-3.5 pr-9 text-sm font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <option value="">{filter.allLabel}</option>
+              {filter.options.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+            <svg className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const reportProjects = projects.filter(
     (p) =>
-      (!budgetYear || p.budgetYear === budgetYear) &&
-      (!modeFilter || p.modeOfImplementation === modeFilter) &&
-      (!sourceFilter || p.sourceOfFund === sourceFilter) &&
-      (!subTypeFilter || p.subType === subTypeFilter) &&
-      inRange(p.dateStarted, dateStartedFrom, dateStartedTo) &&
-      inRange(p.targetCompletionDate, targetCompletionFrom, targetCompletionTo),
+      (!filterMode || p.modeOfImplementation === filterMode) &&
+      (!filterSource || p.sourceOfFund === filterSource) &&
+      (!filterSubType || p.subType === filterSubType) &&
+      (!filterDistrict || p.locationImplementation === filterDistrict) &&
+      (!filterCity || p.cityMunicipality === filterCity) &&
+      (!filterBarangay || p.barangay === filterBarangay) &&
+      (!filterStatus || p.status === filterStatus) &&
+      (!filterYear || p.budgetYear === filterYear),
   );
 
   const handleGenerate = () => {
@@ -328,8 +527,8 @@ export function GenerateReportModal({
 
         {/* Body */}
         <div className="flex-1 overflow-y-auto px-6 py-4">
-          {/* Column selection */}
-          <div className="mb-2 flex items-center justify-between">
+          {/* Column selection + filters */}
+          <div className="mb-3 flex items-center justify-between">
             <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">
               Project Data to Include
             </p>
@@ -342,184 +541,13 @@ export function GenerateReportModal({
               {allSelected ? "Deselect All" : "Select All"}
             </button>
           </div>
-          <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-            {COLUMNS.map((c) => (
-              <label
-                key={c.key}
-                className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-gray-100 px-3 py-2 text-sm text-gray-700 transition hover:bg-gray-50"
-              >
-                <input
-                  type="checkbox"
-                  checked={selected.includes(c.key)}
-                  onChange={() => toggleColumn(c.key)}
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-                {c.label}
-              </label>
-            ))}
-          </div>
-
-          {/* Filters */}
-          <p className="mb-2 mt-5 text-xs font-semibold uppercase tracking-wider text-gray-500">
-            Filters
-          </p>
-          <div className="flex flex-col gap-2">
-            {(
-              [
-                {
-                  label: "Budget Year",
-                  value: budgetYear,
-                  setValue: setBudgetYear,
-                  disabled: false,
-                  allLabel: "All Budget Years",
-                  options: availableBudgetYears.map((y) => ({
-                    value: y,
-                    label: `FY ${y}`,
-                  })),
-                },
-                {
-                  label: "Mode of Implementation",
-                  value: modeFilter,
-                  setValue: setModeFilter,
-                  disabled: false,
-                  allLabel: "All Modes",
-                  options: [
-                    { value: "BY_CONTRACT", label: "By Contract" },
-                    { value: "BY_ADMINISTRATION", label: "By Administration" },
-                  ],
-                },
-                {
-                  label: "Source of Fund",
-                  value: sourceFilter,
-                  setValue: (v: string) => {
-                    setSourceFilter(v);
-                    setSubTypeFilter("");
-                  },
-                  disabled: false,
-                  allLabel: "All Sources",
-                  options: SOURCE_OF_FUND_ORDER.map((k) => ({
-                    value: k,
-                    label: SOURCE_OF_FUND_LABEL[k],
-                  })),
-                },
-                {
-                  label: "Sub-Category",
-                  value: subTypeFilter,
-                  setValue: setSubTypeFilter,
-                  disabled: !sourceFilter || availableSubTypes.length === 0,
-                  allLabel: !sourceFilter
-                    ? "Select a Source of Fund first"
-                    : availableSubTypes.length === 0
-                      ? "No Sub-Categories"
-                      : "All Sub-Categories",
-                  options: sourceFilter
-                    ? availableSubTypes.map((k) => ({
-                        value: k,
-                        label: PROJECT_SUB_TYPE_LABEL[k],
-                      }))
-                    : [],
-                },
-              ] as const
-            ).map((filter) => (
-              <div
-                key={filter.label}
-                className="flex flex-wrap items-center gap-2 rounded-lg border border-gray-100 px-3 py-2"
-              >
-                <span className="w-44 shrink-0 text-sm text-gray-700">
-                  {filter.label}
-                </span>
-                <div className="relative">
-                  <select
-                    value={filter.value}
-                    onChange={(e) => filter.setValue(e.target.value)}
-                    disabled={filter.disabled}
-                    className="appearance-none rounded-lg border border-gray-200 py-1.5 pl-2.5 pr-8 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400"
-                  >
-                    <option value="">{filter.allLabel}</option>
-                    {filter.options.map((o) => (
-                      <option key={o.value} value={o.value}>
-                        {o.label}
-                      </option>
-                    ))}
-                  </select>
-                  <svg className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                  </svg>
-                </div>
-                {filter.value && (
-                  <button
-                    onClick={() => filter.setValue("")}
-                    className="cursor-pointer text-xs font-medium text-red-500 hover:text-red-600"
-                  >
-                    Clear
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* Date range selection */}
-          <p className="mb-2 mt-5 text-xs font-semibold uppercase tracking-wider text-gray-500">
-            Date Range
-          </p>
-          <div className="flex flex-col gap-2">
-            {(
-              [
-                {
-                  label: "Date Started",
-                  from: dateStartedFrom,
-                  to: dateStartedTo,
-                  setFrom: setDateStartedFrom,
-                  setTo: setDateStartedTo,
-                },
-                {
-                  label: "Target Completion Date",
-                  from: targetCompletionFrom,
-                  to: targetCompletionTo,
-                  setFrom: setTargetCompletionFrom,
-                  setTo: setTargetCompletionTo,
-                },
-              ] as const
-            ).map((range) => (
-              <div
-                key={range.label}
-                className="flex flex-wrap items-center gap-2 rounded-lg border border-gray-100 px-3 py-2"
-              >
-                <span className="w-44 shrink-0 text-sm text-gray-700">
-                  {range.label}
-                </span>
-                <input
-                  type="date"
-                  value={range.from}
-                  max={range.to || undefined}
-                  onChange={(e) => range.setFrom(e.target.value)}
-                  className="rounded-lg border border-gray-200 px-2.5 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <span className="text-xs text-gray-400">to</span>
-                <input
-                  type="date"
-                  value={range.to}
-                  min={range.from || undefined}
-                  onChange={(e) => range.setTo(e.target.value)}
-                  className="rounded-lg border border-gray-200 px-2.5 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                {(range.from || range.to) && (
-                  <button
-                    onClick={() => {
-                      range.setFrom("");
-                      range.setTo("");
-                    }}
-                    className="cursor-pointer text-xs font-medium text-red-500 hover:text-red-600"
-                  >
-                    Clear
-                  </button>
-                )}
-              </div>
-            ))}
-            <p className="text-[11px] text-gray-400">
-              Leave empty to include all projects. Projects without the selected
-              date are excluded when a range is set.
-            </p>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="flex flex-col gap-4">
+              {COLUMN_ONE_KEYS.map(renderField)}
+            </div>
+            <div className="flex flex-col gap-4">
+              {COLUMN_TWO_KEYS.map(renderField)}
+            </div>
           </div>
 
           {/* Format selection */}
