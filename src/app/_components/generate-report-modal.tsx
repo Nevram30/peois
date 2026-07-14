@@ -16,6 +16,11 @@ import {
   type ProjectSubTypeValue,
   type ProjectStatusValue,
 } from "~/lib/fund-constants";
+import {
+  getMunicipalitiesByDistrict,
+  getBarangaysByMunicipality,
+  type DavaoDistrict,
+} from "~/lib/davao-del-norte-locations";
 
 export type ReportProject = {
   projectCode: string;
@@ -248,20 +253,21 @@ export function GenerateReportModal({
     ? SOURCE_TO_SUB_TYPES[filterSource as SourceOfFundValue] ?? []
     : [];
 
-  const availableCities = Array.from(
-    new Set(
-      projects.map((p) => p.cityMunicipality).filter((v): v is string => !!v),
-    ),
-  ).sort((a, b) => a.localeCompare(b));
+  // District 1/2 division users have a fixed district (their scope); the
+  // unrestricted divisions pick one via the District filter.
+  const effectiveDistrict = (districtScope ?? filterDistrict) as
+    | DavaoDistrict
+    | "";
 
-  const availableBarangays = Array.from(
-    new Set(
-      projects
-        .filter((p) => !filterCity || p.cityMunicipality === filterCity)
-        .map((p) => p.barangay)
-        .filter((v): v is string => !!v),
-    ),
-  ).sort((a, b) => a.localeCompare(b));
+  // Canonical cascade from the static location data, matching the
+  // Project Location card on the add/edit project forms.
+  const availableCities = getMunicipalitiesByDistrict(effectiveDistrict).map(
+    (m) => m.name,
+  );
+
+  const availableBarangays = getBarangaysByMunicipality(filterCity).map(
+    (b) => b.name,
+  );
 
   const availableYears = Array.from(
     new Set(projects.map((p) => p.budgetYear).filter((y): y is string => !!y)),
@@ -333,7 +339,11 @@ export function GenerateReportModal({
             allLabel: "All Districts",
             accent: "#16A34A",
             value: filterDistrict,
-            setValue: setFilterDistrict,
+            setValue: (v: string) => {
+              setFilterDistrict(v);
+              setFilterCity("");
+              setFilterBarangay("");
+            },
             options: [
               { value: "DISTRICT_I", label: "District 1" },
               { value: "DISTRICT_II", label: "District 2" },
@@ -343,22 +353,24 @@ export function GenerateReportModal({
     {
       key: "cityMunicipality",
       label: "City/Municipality",
-      allLabel: "All Cities",
+      allLabel: !effectiveDistrict ? "Select District first" : "All Cities",
       accent: "#D97706",
       value: filterCity,
       setValue: (v) => {
         setFilterCity(v);
         setFilterBarangay("");
       },
+      disabled: !effectiveDistrict,
       options: availableCities.map((c) => ({ value: c, label: c })),
     },
     {
       key: "barangay",
       label: "Barangay",
-      allLabel: "All Barangays",
+      allLabel: !filterCity ? "Select Municipality first" : "All Barangays",
       accent: "#DC2626",
       value: filterBarangay,
       setValue: setFilterBarangay,
+      disabled: !filterCity,
       options: availableBarangays.map((b) => ({ value: b, label: b })),
     },
     {
