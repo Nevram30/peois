@@ -385,7 +385,6 @@ export function ProjectsList() {
                   <th className="px-4 py-3 font-medium">Status</th>
                   <th className="px-4 py-3 font-medium">Progress</th>
                   <th className="px-4 py-3 font-medium">Involved Users</th>
-                  <th className="px-4 py-3 font-medium">Date Created</th>
                   <th className="px-4 py-3 font-medium">Actions</th>
                 </tr>
               </thead>
@@ -498,14 +497,6 @@ export function ProjectsList() {
                           );
                         })()}
                       </td>
-                      <td className="px-4 py-3 text-gray-600">
-                        {new Date(p.createdAt).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "2-digit",
-                          year: "numeric",
-                        })}
-                      </td>
-
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <button
