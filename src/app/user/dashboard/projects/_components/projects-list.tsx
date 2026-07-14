@@ -522,17 +522,17 @@ export function UserProjectsList() {
               <table className="w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-gray-200 text-[11px] uppercase tracking-wider text-gray-400">
-                    <th className="px-5 py-4 font-semibold">Project Title</th>
-                    <th className="px-4 py-4 font-semibold">Project Cost</th>
+                    <th className="px-5 py-4 font-semibold">Project Title & Project Cost</th>
                     <th className="px-4 py-4 font-semibold">Mode</th>
                     <th className="px-4 py-4 font-semibold">Source/Sub</th>
                     <th className="px-4 py-4 font-semibold">District</th>
                     <th className="px-4 py-4 font-semibold">Location</th>
                     <th className="px-4 py-4 font-semibold">Status</th>
+                    <th className="px-4 py-4 font-semibold">Budget Year</th>
+                    <th className="px-4 py-4 font-semibold">Involved Users</th>
                     <th className="px-4 py-4 font-semibold">
                       Physical Progress
                     </th>
-                    <th className="px-4 py-4 font-semibold">Budget Year</th>
                     <th className="px-4 py-4 font-semibold">Action</th>
                   </tr>
                 </thead>
@@ -552,9 +552,9 @@ export function UserProjectsList() {
                           <p className="font-semibold text-gray-900">
                             {p.title}
                           </p>
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-4 font-medium text-gray-800">
-                          {formatPeso(p.projectCost)}
+                          <p className="mt-0.5 text-xs text-gray-500">
+                            {formatPeso(p.projectCost)}
+                          </p>
                         </td>
                         <td className="px-4 py-4 text-gray-600">
                           {MODE_LABELS[p.modeOfImplementation] ??
@@ -594,6 +594,62 @@ export function UserProjectsList() {
                             {badge.label}
                           </span>
                         </td>
+                        <td className="px-4 py-4 text-gray-600">
+                          {p.budgetYear ?? "—"}
+                        </td>
+                        <td className="px-4 py-4">
+                          {(() => {
+                            const seen = new Set<string>();
+                            const contributors: { id: string; name: string | null; email: string; image: string | null }[] = [];
+                            const allUsers = [p.createdBy, ...p.activities.map((a) => a.createdBy)];
+                            for (const u of allUsers) {
+                              if (!seen.has(u.id)) {
+                                seen.add(u.id);
+                                contributors.push(u);
+                              }
+                            }
+                            const MAX_SHOW = 4;
+                            const visible = contributors.slice(0, MAX_SHOW);
+                            const extra = contributors.length - MAX_SHOW;
+                            const colors = ["bg-blue-500", "bg-emerald-500", "bg-violet-500", "bg-orange-500"];
+                            return (
+                              <div className="flex items-center">
+                                {visible.map((u, i) => {
+                                  const initials = (u.name ?? u.email)
+                                    .split(" ")
+                                    .map((w) => w[0])
+                                    .join("")
+                                    .slice(0, 2)
+                                    .toUpperCase();
+                                  return (
+                                    <div
+                                      key={u.id}
+                                      style={{ zIndex: visible.length - i, marginLeft: i === 0 ? 0 : "-8px" }}
+                                      className={`group relative flex h-7 w-7 items-center justify-center rounded-full ring-2 ring-white text-white text-[10px] font-bold cursor-default ${colors[i % colors.length]}`}
+                                    >
+                                      {u.image ? (
+                                        <img src={u.image} alt={u.name ?? u.email} className="h-full w-full rounded-full object-cover" />
+                                      ) : (
+                                        initials
+                                      )}
+                                      <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-[11px] text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+                                        {u.name ?? u.email}
+                                      </span>
+                                    </div>
+                                  );
+                                })}
+                                {extra > 0 && (
+                                  <div
+                                    style={{ zIndex: 0, marginLeft: "-8px" }}
+                                    className="relative flex h-7 w-7 items-center justify-center rounded-full ring-2 ring-white bg-gray-200 text-gray-600 text-[10px] font-bold"
+                                  >
+                                    +{extra}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })()}
+                        </td>
                         <td className="px-4 py-4">
                           <p className="mb-1 text-xs font-semibold text-gray-800">
                             {pct}%
@@ -604,9 +660,6 @@ export function UserProjectsList() {
                               style={{ width: `${Math.min(pct, 100)}%` }}
                             />
                           </div>
-                        </td>
-                        <td className="px-4 py-4 text-gray-600">
-                          {p.budgetYear ?? "—"}
                         </td>
                         <td className="px-4 py-4">
                           <button

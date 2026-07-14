@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { api } from "~/trpc/react";
 import { GenerateReportModal } from "~/app/_components/generate-report-modal";
+import { formatPeso } from "~/helper/formatter";
 import {
   SOURCE_OF_FUND_LABEL,
   SOURCE_OF_FUND_ORDER,
@@ -377,7 +378,7 @@ export function ProjectsList() {
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-gray-200 bg-gray-50 text-gray-500 uppercase text-xs tracking-wider">
-                  <th className="px-4 py-3 font-medium">Project Name & Location</th>
+                  <th className="px-4 py-3 font-medium">Project Title & Project Cost</th>
                   <th className="px-4 py-3 font-medium">Implementation Type</th>
                   <th className="px-4 py-3 font-medium">District</th>
                   <th className="px-4 py-3 font-medium">Source / Sub</th>
@@ -402,8 +403,7 @@ export function ProjectsList() {
                       <td className="px-4 py-3">
                         <p className="font-medium text-gray-900">{p.title}</p>
                         <p className="text-xs text-gray-500 mt-0.5">
-                          {p.projectCode}
-                          {p.barangay ? ` · Brgy. ${p.barangay}` : ""}
+                          {formatPeso(p.projectCost)}
                         </p>
                       </td>
                       <td className="px-4 py-3 text-gray-600">
