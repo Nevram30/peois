@@ -379,13 +379,14 @@ export function ProjectsList() {
               <thead>
                 <tr className="border-b border-gray-200 bg-gray-50 text-gray-500 uppercase text-xs tracking-wider">
                   <th className="px-4 py-3 font-medium">Project Title & Project Cost</th>
-                  <th className="px-4 py-3 font-medium">Implementation Type</th>
+                  <th className="px-4 py-3 font-medium">Mode</th>
                   <th className="px-4 py-3 font-medium">District</th>
                   <th className="px-4 py-3 font-medium">Source / Sub</th>
+                  <th className="px-4 py-3 font-medium">Location</th>
                   <th className="px-4 py-3 font-medium">Budget Year</th>
                   <th className="px-4 py-3 font-medium">Status</th>
-                  <th className="px-4 py-3 font-medium">Progress</th>
                   <th className="px-4 py-3 font-medium">Involved Users</th>
+                  <th className="px-4 py-3 font-medium">Progress</th>
                   <th className="px-4 py-3 font-medium">Actions</th>
                 </tr>
               </thead>
@@ -421,6 +422,12 @@ export function ProjectsList() {
                           <p className="text-xs text-gray-400">{PROJECT_SUB_TYPE_LABEL[p.subType]}</p>
                         )}
                       </td>
+                      <td className="px-4 py-3">
+                        <p className="text-gray-600">{p.cityMunicipality ?? "—"}</p>
+                        {p.barangay && (
+                          <p className="mt-0.5 text-xs text-gray-400">{p.barangay}</p>
+                        )}
+                      </td>
                       <td className="px-4 py-3 text-gray-600">
                         {p.budgetYear ?? "—"}
                       </td>
@@ -430,19 +437,6 @@ export function ProjectsList() {
                         >
                           {status.label}
                         </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          <div className="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
-                            <div
-                              className={`h-full rounded-full ${p.status === "SUSPENDED" ? "bg-red-500" : (p.completionPercentage ?? 0) >= 100 ? "bg-green-500" : "bg-orange-500"}`}
-                              style={{ width: `${p.completionPercentage ?? 0}%` }}
-                            />
-                          </div>
-                          <span className="text-xs text-gray-600">
-                            {p.completionPercentage ?? 0}%
-                          </span>
-                        </div>
                       </td>
                       <td className="px-4 py-3">
                         {(() => {
@@ -496,6 +490,19 @@ export function ProjectsList() {
                             </div>
                           );
                         })()}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <div className="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
+                            <div
+                              className={`h-full rounded-full ${p.status === "SUSPENDED" ? "bg-red-500" : (p.completionPercentage ?? 0) >= 100 ? "bg-green-500" : "bg-orange-500"}`}
+                              style={{ width: `${p.completionPercentage ?? 0}%` }}
+                            />
+                          </div>
+                          <span className="text-xs text-gray-600">
+                            {p.completionPercentage ?? 0}%
+                          </span>
+                        </div>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
