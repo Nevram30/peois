@@ -594,8 +594,8 @@ export function AdminDashboardContent() {
     const budgetYearTile: StatCard = { label: "BUDGET YEAR", value: dashboardYear || "All", borderColor: "border-blue-600", iconBg: "bg-blue-100", iconColor: "text-blue-600", icon: "📅" };
 
     // Office divisions keep the original single-row layout: small Budget Year
-    // tile + five status tiles (no OTHERS).
-    const statCards: StatCard[] = [budgetYearTile, ...statusTiles.filter((c) => c.label !== "OTHERS")];
+    // tile + six status tiles (incl. OTHERS).
+    const statCards: StatCard[] = [budgetYearTile, ...statusTiles];
 
     // ── Recent Project Updates table state ──────────────────────
     const [search, setSearch] = useState("");
@@ -658,7 +658,7 @@ export function AdminDashboardContent() {
                         ))}
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 content-start">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 content-start">
                         {statCards.map((c) => (
                             <div key={c.label} className={`bg-white rounded-lg shadow-sm p-3 flex flex-col gap-1 border-t-[3px] ${c.borderColor}`}>
                                 <div className={`w-6 h-6 rounded-md ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>
