@@ -50,17 +50,10 @@ type ReportFormat = "csv" | "xlsx" | "pdf";
 type ColumnDef = {
   key: string;
   label: string;
+  // Shorter checkbox label in the modal; exports keep `label` as the header.
+  displayLabel?: string;
   value: (p: ReportProject) => string;
 };
-
-function formatDate(d: Date | string | null): string {
-  if (!d) return "—";
-  return new Date(d).toLocaleDateString("en-US", {
-    month: "short",
-    day: "2-digit",
-    year: "numeric",
-  });
-}
 
 function formatAmount(v: number): string {
   return v.toLocaleString("en-PH", {
@@ -120,38 +113,19 @@ const COLUMNS: ColumnDef[] = [
   {
     key: "projectCost",
     label: "Project Cost (PHP)",
+    displayLabel: "Project Cost",
     value: (p) => formatAmount(p.projectCost),
-  },
-  {
-    key: "contractCost",
-    label: "Contract Cost (PHP)",
-    value: (p) => formatAmount(p.contractCost),
   },
   {
     key: "contractorName",
     label: "Contractor Name",
+    displayLabel: "Contractor",
     value: (p) => p.contractorName ?? "—",
   },
   {
     key: "projectEngineer",
     label: "Project Engineer",
     value: (p) => p.projectEngineer ?? "—",
-  },
-  { key: "dateStarted", label: "Date Started", value: (p) => formatDate(p.dateStarted) },
-  {
-    key: "targetCompletionDate",
-    label: "Target Completion Date",
-    value: (p) => formatDate(p.targetCompletionDate),
-  },
-  {
-    key: "dateCompleted",
-    label: "Date Completed",
-    value: (p) => formatDate(p.dateCompleted),
-  },
-  {
-    key: "duration",
-    label: "Duration (days)",
-    value: (p) => String(p.duration ?? 0),
   },
   {
     key: "physicalAccomplishment",
@@ -172,37 +146,8 @@ const DEFAULT_SELECTED = [
   "subType",
   "district",
   "status",
-  "dateStarted",
-  "targetCompletionDate",
   "physicalAccomplishment",
   "financialAccomplishment",
-];
-
-// Explicit modal layout: which fields stack in the left and right columns.
-const COLUMN_ONE_KEYS = [
-  "projectCode",
-  "modeOfImplementation",
-  "subType",
-  "cityMunicipality",
-  "status",
-  "projectCost",
-  "projectEngineer",
-  "financialAccomplishment",
-  "dateStarted",
-  "dateCompleted",
-];
-
-const COLUMN_TWO_KEYS = [
-  "title",
-  "sourceOfFund",
-  "district",
-  "barangay",
-  "budgetYear",
-  "contractorName",
-  "physicalAccomplishment",
-  "contractCost",
-  "targetCompletionDate",
-  "duration",
 ];
 
 const FORMAT_OPTIONS: { value: ReportFormat; label: string; description: string }[] = [
@@ -396,14 +341,14 @@ export function GenerateReportModal({
     },
   ];
 
-  // Renders one grid cell: fields with a filter get the dropdown below the
-  // checkbox card; the rest get just the card.
+  // Renders one row: checkbox card on the left, the field's filter dropdown
+  // beside it on the right (empty cell when the field has no filter).
   const renderField = (key: string) => {
     const column = COLUMNS.find((c) => c.key === key);
     if (!column) return null;
     const filter = filterFields.find((f) => f.key === key);
     return (
-      <div key={key}>
+      <div key={key} className="grid grid-cols-1 items-center gap-2 sm:grid-cols-2 sm:gap-6">
         <label className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-gray-100 bg-white px-4 py-3 shadow-sm transition hover:bg-gray-50">
           <input
             type="checkbox"
@@ -412,11 +357,11 @@ export function GenerateReportModal({
             className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
           />
           <span className="text-sm font-semibold text-gray-800">
-            {filter?.label ?? column.label}
+            {filter?.label ?? column.displayLabel ?? column.label}
           </span>
         </label>
         {filter && (
-          <div className="relative mt-2">
+          <div className="relative">
             <select
               value={filter.value}
               onChange={(e) => filter.setValue(e.target.value)}
@@ -553,13 +498,8 @@ export function GenerateReportModal({
               {allSelected ? "Deselect All" : "Select All"}
             </button>
           </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="flex flex-col gap-4">
-              {COLUMN_ONE_KEYS.map(renderField)}
-            </div>
-            <div className="flex flex-col gap-4">
-              {COLUMN_TWO_KEYS.map(renderField)}
-            </div>
+          <div className="flex flex-col gap-4">
+            {COLUMNS.map((c) => renderField(c.key))}
           </div>
 
           {/* Format selection */}
