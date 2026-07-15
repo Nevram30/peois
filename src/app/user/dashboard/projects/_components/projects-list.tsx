@@ -278,6 +278,31 @@ export function UserProjectsList() {
   const selectClass =
     "w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20";
 
+  const hasActiveFilters = !!(
+    search ||
+    modeFilter ||
+    sourceOfFundFilter ||
+    subTypeFilter ||
+    districtFilter ||
+    cityFilter ||
+    barangayFilter ||
+    statusLocal ||
+    yearFilter
+  );
+
+  const clearFilters = () => {
+    setSearch("");
+    setModeFilter("");
+    setSourceOfFundFilter("");
+    setSubTypeFilter("");
+    setDistrictFilter("");
+    setCityFilter("");
+    setBarangayFilter("");
+    setStatusLocal("");
+    setYearFilter("");
+    setPage(1);
+  };
+
   return (
     <div className="space-y-6 bg-slate-50 px-6 py-6">
       {/* Summary stat cards */}
@@ -294,7 +319,9 @@ export function UserProjectsList() {
 
       {/* Filter bar */}
       <div className="rounded-xl border border-gray-200 bg-white px-5 py-4 shadow-sm">
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9">
+        <div
+          className={`grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5 ${districtScope ? "xl:grid-cols-10" : "xl:grid-cols-11"}`}
+        >
           {/* Project Title */}
           <div className="col-span-2 sm:col-span-3 lg:col-span-2 xl:col-span-2">
             <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
@@ -504,6 +531,20 @@ export function UserProjectsList() {
                 </option>
               ))}
             </select>
+          </div>
+
+          {/* Clear Filters */}
+          <div className="flex items-end">
+            <button
+              onClick={clearFilters}
+              disabled={!hasActiveFilters}
+              className="flex w-full cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-red-50"
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+              Clear Filters
+            </button>
           </div>
         </div>
       </div>

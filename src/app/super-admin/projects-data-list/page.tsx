@@ -6,9 +6,13 @@ import { api } from "~/trpc/react";
 import { GenerateReportModal } from "~/app/_components/generate-report-modal";
 import {
   PROJECT_SUB_TYPE_LABEL,
+  PROJECT_SUB_TYPE_VALUES,
+  SOURCE_OF_FUND_LABEL,
   SOURCE_OF_FUND_ORDER,
   PROJECT_STATUS_LABEL,
   PROJECT_STATUS_ORDER,
+  SOURCE_TO_SUB_TYPES,
+  type SourceOfFundValue,
   type ProjectSubTypeValue,
   type ProjectStatusValue,
 } from "~/lib/fund-constants";
@@ -216,6 +220,13 @@ export default function ProjectsDataListPage() {
         .filter((v): v is string => !!v),
     ),
   ).sort((a, b) => a.localeCompare(b));
+
+  const subTypeOptions = sourceFilter
+    ? (SOURCE_TO_SUB_TYPES[sourceFilter as SourceOfFundValue] ?? [])
+    : PROJECT_SUB_TYPE_VALUES;
+
+  const selectClass =
+    "w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20";
 
   const filtered = (projects ?? []).filter((p) => {
     const q = search.toLowerCase();
@@ -686,6 +697,163 @@ export default function ProjectsDataListPage() {
         );
       })()}
 
+      {/* Filter bar */}
+      <div className="mb-4 rounded-xl border border-gray-200 bg-white px-5 py-4 shadow-sm">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-9">
+          {/* Mode */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              Mode
+            </p>
+            <select
+              value={modeFilter}
+              onChange={(e) => { setModeFilter(e.target.value); resetPage(); }}
+              className={selectClass}
+            >
+              <option value="">All Modes</option>
+              <option value="BY_ADMINISTRATION">By Administration</option>
+              <option value="BY_CONTRACT">By Contract</option>
+            </select>
+          </div>
+
+          {/* Source of Fund */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              Source of Fund
+            </p>
+            <select
+              value={sourceFilter}
+              onChange={(e) => { setSourceFilter(e.target.value); setSubTypeFilter(""); resetPage(); }}
+              className={selectClass}
+            >
+              <option value="">All</option>
+              {SOURCE_OF_FUND_ORDER.map((k) => (
+                <option key={k} value={k}>{SOURCE_OF_FUND_LABEL[k]}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Sub-Category */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              Sub-Category
+            </p>
+            <select
+              value={subTypeFilter}
+              onChange={(e) => { setSubTypeFilter(e.target.value); resetPage(); }}
+              disabled={!!sourceFilter && subTypeOptions.length === 0}
+              className={`${selectClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
+            >
+              <option value="">
+                {sourceFilter && subTypeOptions.length === 0 ? "None" : "All"}
+              </option>
+              {subTypeOptions.map((k) => (
+                <option key={k} value={k}>{PROJECT_SUB_TYPE_LABEL[k]}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* District */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              District
+            </p>
+            <select
+              value={districtFilter}
+              onChange={(e) => { setDistrictFilter(e.target.value); resetPage(); }}
+              className={selectClass}
+            >
+              <option value="">All</option>
+              <option value="DISTRICT_I">District I</option>
+              <option value="DISTRICT_II">District II</option>
+            </select>
+          </div>
+
+          {/* City / Municipality */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              City/Municipality
+            </p>
+            <select
+              value={cityFilter}
+              onChange={(e) => { setCityFilter(e.target.value); setBarangayFilter(""); resetPage(); }}
+              className={selectClass}
+            >
+              <option value="">All Cities</option>
+              {availableCities.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Barangay */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              Barangay
+            </p>
+            <select
+              value={barangayFilter}
+              onChange={(e) => { setBarangayFilter(e.target.value); resetPage(); }}
+              disabled={availableBarangays.length === 0}
+              className={`${selectClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
+            >
+              <option value="">All</option>
+              {availableBarangays.map((b) => (
+                <option key={b} value={b}>{b}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Status */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              Status
+            </p>
+            <select
+              value={statusFilter}
+              onChange={(e) => { setStatusFilter(e.target.value); resetPage(); }}
+              className={selectClass}
+            >
+              <option value="">All Status</option>
+              {PROJECT_STATUS_ORDER.map((s) => (
+                <option key={s} value={s}>{PROJECT_STATUS_LABEL[s]}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Year */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              Year
+            </p>
+            <select
+              value={cardYearFilter}
+              onChange={(e) => { setCardYearFilter(e.target.value); resetPage(); }}
+              className={selectClass}
+            >
+              <option value="">All Years</option>
+              {availableYears.map((y) => (
+                <option key={y} value={y}>{y}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Clear Filters */}
+          <div className="flex items-end">
+            <button
+              onClick={clearFilters}
+              disabled={!hasActiveFilters}
+              className="flex w-full cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-red-50"
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+              Clear Filters
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
         {/* Table Header — title + inline filters */}
         <div className="flex flex-wrap items-center gap-2 border-b border-gray-100 px-5 py-4">
@@ -709,128 +877,6 @@ export default function ProjectsDataListPage() {
             />
           </div>
 
-          {/* District */}
-          <div className="relative shrink-0">
-            <select
-              value={districtFilter}
-              onChange={(e) => { setDistrictFilter(e.target.value); resetPage(); }}
-              className="appearance-none rounded-lg border border-gray-200 bg-gray-50 py-2 pl-3 pr-8 text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">District</option>
-              <option value="DISTRICT_I">District 1</option>
-              <option value="DISTRICT_II">District 2</option>
-            </select>
-            <svg className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-            </svg>
-          </div>
-
-          {/* Mode of Implementation */}
-          <div className="relative shrink-0">
-            <select
-              value={modeFilter}
-              onChange={(e) => { setModeFilter(e.target.value); resetPage(); }}
-              className="appearance-none rounded-lg border border-gray-200 bg-gray-50 py-2 pl-3 pr-8 text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Mode of Implementation</option>
-              <option value="BY_CONTRACT">By Contract</option>
-              <option value="BY_ADMINISTRATION">By Administration</option>
-            </select>
-            <svg className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-            </svg>
-          </div>
-
-          {/* Source of Fund */}
-          <div className="relative shrink-0">
-            <select
-              value={sourceFilter}
-              onChange={(e) => { setSourceFilter(e.target.value); resetPage(); }}
-              className="appearance-none rounded-lg border border-gray-200 bg-gray-50 py-2 pl-3 pr-8 text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Source of Fund</option>
-              {Object.entries(FUND_SOURCE_LABELS).map(([value, label]) => (
-                <option key={value} value={value}>{label}</option>
-              ))}
-            </select>
-            <svg className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-            </svg>
-          </div>
-
-          {/* Sub-Category */}
-          <div className="relative shrink-0">
-            <select
-              value={subTypeFilter}
-              onChange={(e) => { setSubTypeFilter(e.target.value); resetPage(); }}
-              className="appearance-none rounded-lg border border-gray-200 bg-gray-50 py-2 pl-3 pr-8 text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Sub-Category</option>
-              {Object.entries(PROJECT_SUBTYPE_LABELS).map(([value, label]) => (
-                <option key={value} value={value}>{label}</option>
-              ))}
-            </select>
-            <svg className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-            </svg>
-          </div>
-
-          {/* City/Municipality */}
-          <div className="relative shrink-0">
-            <select
-              value={cityFilter}
-              onChange={(e) => {
-                setCityFilter(e.target.value);
-                setBarangayFilter("");
-                resetPage();
-              }}
-              className="appearance-none rounded-lg border border-gray-200 bg-gray-50 py-2 pl-3 pr-8 text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">City/Municipality</option>
-              {availableCities.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-            <svg className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-            </svg>
-          </div>
-
-          {/* Barangay */}
-          <div className="relative shrink-0">
-            <select
-              value={barangayFilter}
-              onChange={(e) => { setBarangayFilter(e.target.value); resetPage(); }}
-              disabled={availableBarangays.length === 0}
-              className="appearance-none rounded-lg border border-gray-200 bg-gray-50 py-2 pl-3 pr-8 text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              <option value="">Barangay</option>
-              {availableBarangays.map((b) => (
-                <option key={b} value={b}>{b}</option>
-              ))}
-            </select>
-            <svg className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-            </svg>
-          </div>
-
-          {/* Status */}
-          <div className="relative shrink-0">
-            <select
-              value={statusFilter}
-              onChange={(e) => { setStatusFilter(e.target.value); resetPage(); }}
-              className="appearance-none rounded-lg border border-gray-200 bg-gray-50 py-2 pl-3 pr-8 text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">All Statuses</option>
-              {PROJECT_STATUS_ORDER.map((s) => (
-                <option key={s} value={s}>{PROJECT_STATUS_LABEL[s]}</option>
-              ))}
-            </select>
-            <svg className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-            </svg>
-          </div>
-
           {/* Generate Report */}
           <button
             onClick={() => setReportModalOpen(true)}
@@ -841,19 +887,6 @@ export default function ProjectsDataListPage() {
             </svg>
             Generate Report
           </button>
-
-          {/* Clear Filters */}
-          {hasActiveFilters && (
-            <button
-              onClick={clearFilters}
-              className="flex shrink-0 items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-100"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-              </svg>
-              Clear Filters
-            </button>
-          )}
         </div>
         <table className="w-full text-sm">
           <thead>

@@ -60,12 +60,14 @@ export function ProjectsList() {
   const filterToday = searchParams.get("filter") === "today";
 
   const [search, setSearch] = useState("");
+  const [modeFilter, setModeFilter] = useState("");
   const [sourceOfFundFilter, setSourceOfFundFilter] = useState("");
   const [subTypeFilter, setSubTypeFilter] = useState("");
   const [districtFilter, setDistrictFilter] = useState("");
+  const [cityFilter, setCityFilter] = useState("");
+  const [barangayFilter, setBarangayFilter] = useState("");
   const [statusLocal, setStatusLocal] = useState("");
   const [yearFilter, setYearFilter] = useState("");
-  const [budgetYearFilter, setBudgetYearFilter] = useState("");
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 20;
@@ -77,6 +79,19 @@ export function ProjectsList() {
   const { data: projects, isLoading } = api.project.getAll.useQuery();
   const { data: budgetYears } = api.project.getBudgetYears.useQuery();
   const { data: districtScope } = api.project.getMyDistrictScope.useQuery();
+
+  // Distinct city / barangay options derived from the loaded projects.
+  const cityOptions = Array.from(
+    new Set(projects?.map((p) => p.cityMunicipality).filter((c): c is string => Boolean(c))),
+  ).sort();
+  const barangayOptions = Array.from(
+    new Set(
+      projects
+        ?.filter((p) => !cityFilter || p.cityMunicipality === cityFilter)
+        .map((p) => p.barangay)
+        .filter((b): b is string => Boolean(b)),
+    ),
+  ).sort();
 
   const filtered = projects?.filter((p) => {
     if (filterToday) {
@@ -91,18 +106,15 @@ export function ProjectsList() {
     }
     if (statusFilter && p.status !== statusFilter) return false;
     if (statusLocal && p.status !== statusLocal) return false;
+    if (modeFilter && p.modeOfImplementation !== modeFilter) return false;
     if (districtFilter && p.locationImplementation !== districtFilter)
       return false;
+    if (cityFilter && p.cityMunicipality !== cityFilter) return false;
+    if (barangayFilter && p.barangay !== barangayFilter) return false;
     if (sourceOfFundFilter && p.sourceOfFund !== sourceOfFundFilter)
       return false;
     if (subTypeFilter && p.subType !== subTypeFilter) return false;
-    if (yearFilter) {
-      const projectYear = p.dateStarted
-        ? new Date(p.dateStarted).getFullYear().toString()
-        : new Date(p.createdAt).getFullYear().toString();
-      if (projectYear !== yearFilter) return false;
-    }
-    if (budgetYearFilter && p.budgetYear !== budgetYearFilter) return false;
+    if (yearFilter && p.budgetYear !== yearFilter) return false;
     if (search) {
       const q = search.toLowerCase();
       if (
@@ -123,6 +135,34 @@ export function ProjectsList() {
       : statusFilter
         ? (STATUS_TITLES[statusFilter] ?? "Projects")
         : "All Projects";
+
+  const selectClass =
+    "w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20";
+
+  const hasActiveFilters = !!(
+    search ||
+    modeFilter ||
+    sourceOfFundFilter ||
+    subTypeFilter ||
+    districtFilter ||
+    cityFilter ||
+    barangayFilter ||
+    statusLocal ||
+    yearFilter
+  );
+
+  const clearFilters = () => {
+    setSearch("");
+    setModeFilter("");
+    setSourceOfFundFilter("");
+    setSubTypeFilter("");
+    setDistrictFilter("");
+    setCityFilter("");
+    setBarangayFilter("");
+    setStatusLocal("");
+    setYearFilter("");
+    setPage(1);
+  };
 
   return (
     <div className="space-y-6 px-6 py-8">
@@ -204,35 +244,38 @@ export function ProjectsList() {
         </div>
       </div>
 
-      {/* Advanced filter bar */}
+      {/* Filter bar */}
       <div className="rounded-xl border border-gray-200 bg-white px-5 py-4 shadow-sm">
-        {/* Filter header */}
-        <div className="mb-4 flex items-center gap-2 border-b border-gray-100 pb-3">
-          <svg
-            className="h-4 w-4 text-gray-500"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z"
-            />
-          </svg>
-          <h3 className="text-sm font-semibold text-gray-700">Filters</h3>
-        </div>
-        <div className="flex items-end gap-3">
+        <div
+          className={`grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 ${districtScope ? "xl:grid-cols-8" : "xl:grid-cols-9"}`}
+        >
+          {/* Mode */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              Mode
+            </p>
+            <select
+              value={modeFilter}
+              onChange={(e) => { setModeFilter(e.target.value); setPage(1); }}
+              className={selectClass}
+            >
+              <option value="">All Modes</option>
+              <option value="BY_ADMINISTRATION">By Administration</option>
+              <option value="BY_CONTRACT">By Contract</option>
+            </select>
+          </div>
+
           {/* Source of Fund */}
-          <div className="min-w-0 flex-1">
-            <p className="mb-1.5 truncate text-[10px] font-semibold uppercase tracking-widest text-gray-400">Source of Fund</p>
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              Source of Fund
+            </p>
             <select
               value={sourceOfFundFilter}
               onChange={(e) => { setSourceOfFundFilter(e.target.value); setSubTypeFilter(""); setPage(1); }}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className={selectClass}
             >
-              <option value="">All Sources</option>
+              <option value="">All</option>
               {SOURCE_OF_FUND_ORDER.map((k) => (
                 <option key={k} value={k}>{SOURCE_OF_FUND_LABEL[k]}</option>
               ))}
@@ -240,18 +283,18 @@ export function ProjectsList() {
           </div>
 
           {/* Sub-Category */}
-          <div className="min-w-0 flex-1">
-            <p className="mb-1.5 truncate text-[10px] font-semibold uppercase tracking-widest text-gray-400">Sub-Category</p>
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              Sub-Category
+            </p>
             <select
               value={subTypeFilter}
               onChange={(e) => { setSubTypeFilter(e.target.value); setPage(1); }}
               disabled={!!sourceOfFundFilter && availableSubTypes.length === 0}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400"
+              className={`${selectClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
             >
               <option value="">
-                {sourceOfFundFilter && availableSubTypes.length === 0
-                  ? "No Sub-Categories"
-                  : "All Sub-Categories"}
+                {sourceOfFundFilter && availableSubTypes.length === 0 ? "None" : "All"}
               </option>
               {availableSubTypes.map((k) => (
                 <option key={k} value={k}>{PROJECT_SUB_TYPE_LABEL[k]}</option>
@@ -261,103 +304,101 @@ export function ProjectsList() {
 
           {/* District (hidden when the user's division limits them to one district) */}
           {!districtScope && (
-            <div className="min-w-0 flex-1">
-              <p className="mb-1.5 truncate text-[10px] font-semibold uppercase tracking-widest text-gray-400">District</p>
+            <div>
+              <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                District
+              </p>
               <select
                 value={districtFilter}
                 onChange={(e) => { setDistrictFilter(e.target.value); setPage(1); }}
-                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                className={selectClass}
               >
-                <option value="">All Districts</option>
+                <option value="">All</option>
                 <option value="DISTRICT_I">District I</option>
                 <option value="DISTRICT_II">District II</option>
               </select>
             </div>
           )}
 
+          {/* City / Municipality */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              City/Municipality
+            </p>
+            <select
+              value={cityFilter}
+              onChange={(e) => { setCityFilter(e.target.value); setBarangayFilter(""); setPage(1); }}
+              className={selectClass}
+            >
+              <option value="">All Cities</option>
+              {cityOptions.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Barangay */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              Barangay
+            </p>
+            <select
+              value={barangayFilter}
+              onChange={(e) => { setBarangayFilter(e.target.value); setPage(1); }}
+              className={selectClass}
+            >
+              <option value="">All</option>
+              {barangayOptions.map((b) => (
+                <option key={b} value={b}>{b}</option>
+              ))}
+            </select>
+          </div>
+
           {/* Status */}
-          <div className="min-w-0 flex-1">
-            <p className="mb-1.5 truncate text-[10px] font-semibold uppercase tracking-widest text-gray-400">Status</p>
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              Status
+            </p>
             <select
               value={statusLocal}
               onChange={(e) => { setStatusLocal(e.target.value); setPage(1); }}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className={selectClass}
             >
-              <option value="">All Statuses</option>
+              <option value="">All Status</option>
               {PROJECT_STATUS_ORDER.map((k) => (
                 <option key={k} value={k}>{PROJECT_STATUS_LABEL[k]}</option>
               ))}
             </select>
           </div>
 
-          {/* Created At Year */}
-          <div className="min-w-0 flex-1">
-            <p className="mb-1.5 truncate text-[10px] font-semibold uppercase tracking-widest text-gray-400">Created At Year</p>
+          {/* Year */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              Year
+            </p>
             <select
               value={yearFilter}
               onChange={(e) => { setYearFilter(e.target.value); setPage(1); }}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className={selectClass}
             >
               <option value="">All Years</option>
-              {Array.from({ length: new Date().getFullYear() - 2019 }, (_, i) => new Date().getFullYear() - i).map((y) => (
-                <option key={y} value={y.toString()}>{y}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Budget Year */}
-          <div className="min-w-0 flex-1">
-            <p className="mb-1.5 truncate text-[10px] font-semibold uppercase tracking-widest text-gray-400">Budget Year</p>
-            <select
-              value={budgetYearFilter}
-              onChange={(e) => { setBudgetYearFilter(e.target.value); setPage(1); }}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-            >
-              <option value="">All Budget Years</option>
               {budgetYears?.map((y) => (
-                <option key={y} value={y}>FY {y}</option>
+                <option key={y} value={y}>{y}</option>
               ))}
             </select>
           </div>
 
-          {/* Clear All */}
-          <div className="flex shrink-0 items-end">
+          {/* Clear Filters */}
+          <div className="flex items-end">
             <button
-              onClick={() => {
-                setSearch("");
-                setSourceOfFundFilter("");
-                setSubTypeFilter("");
-                setDistrictFilter("");
-                setStatusLocal("");
-                setYearFilter("");
-                setBudgetYearFilter("");
-                setPage(1);
-              }}
-              disabled={
-                !search &&
-                !sourceOfFundFilter &&
-                !subTypeFilter &&
-                !districtFilter &&
-                !statusLocal &&
-                !yearFilter &&
-                !budgetYearFilter
-              }
-              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white"
+              onClick={clearFilters}
+              disabled={!hasActiveFilters}
+              className="flex w-full cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-red-50"
             >
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18 18 6M6 6l12 12"
-                />
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
               </svg>
-              Clear All
+              Clear Filters
             </button>
           </div>
         </div>
