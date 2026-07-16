@@ -63,7 +63,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center bg-gray-100 md:items-start md:px-16 lg:px-24">
+    <main className="relative flex min-h-screen flex-col items-center justify-center bg-gray-100 px-4 py-8 sm:px-6 md:items-start md:px-16 lg:px-24">
       {/* Background image with dark overlay */}
       <Image
         src="/image/construction_bg.jpg"
@@ -77,7 +77,7 @@ export default function LoginPage() {
       {/* Top blue accent bar */}
       <div className="relative z-10 w-full max-w-md">
         <div className="h-1.5 w-full rounded-t-2xl bg-amber-500" />
-        <div className="rounded-b-2xl bg-white px-10 py-10 shadow-md">
+        <div className="rounded-b-2xl bg-white px-6 py-8 shadow-md sm:px-10 sm:py-10">
           {/* Logo */}
           <div className="mb-6 flex flex-col items-center">
             <div className="mb-4 flex h-25 w-25 items-center justify-center rounded-full bg-gray-100">
@@ -89,10 +89,10 @@ export default function LoginPage() {
                 className="rounded-full object-contain"
               />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-center text-xl font-bold text-gray-900 sm:text-2xl">
               Provincial Engineers Office
             </h1>
-            <p className="mt-0.5 text-sm font-semibold uppercase text-amber-600">
+            <p className="mt-0.5 text-center text-xs font-semibold uppercase text-amber-600 sm:text-sm">
               Project Management Information System
             </p>
             <div className="mt-3 h-px w-16 bg-gray-300" />
