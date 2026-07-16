@@ -89,7 +89,7 @@ function peso(n: number | null | undefined) {
   return `₱ ${v.toLocaleString("en-PH", { minimumFractionDigits: 2 })}`;
 }
 
-const card = "rounded-xl border border-gray-200 bg-white p-6 shadow-sm";
+const card = "rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6";
 const sectionTitle = "flex items-center gap-2 border-b border-gray-100 pb-4 mb-5";
 const fieldLabel = "text-[11px] font-semibold uppercase tracking-wider text-gray-400";
 const fieldBox =
@@ -187,10 +187,10 @@ export function ProjectDetail({ projectId }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-8">
+    <div className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6">
       {/* Breadcrumb + Edit action */}
-      <div className="mb-5 flex items-center justify-between">
-        <nav className="flex items-center gap-1.5 text-sm text-gray-500">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <nav className="flex flex-wrap items-center gap-1.5 text-sm text-gray-500">
           <Link href="/admin/dashboard" className="hover:text-gray-700">
             Dashboard
           </Link>
@@ -468,7 +468,7 @@ export function ProjectDetail({ projectId }: Props) {
                   className="mt-1.5 overflow-y-auto rounded-lg border border-gray-200"
                   style={{ maxHeight: "268px" }}
                 >
-                  <table className="w-full border-separate border-spacing-0 text-sm">
+                  <table className="w-full min-w-150 border-separate border-spacing-0 text-sm">
                     <thead className="sticky top-0 z-10 bg-gray-50">
                       <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 [&>th]:border-b [&>th]:border-gray-200">
                         <th className="px-4 py-3">Date</th>
@@ -512,8 +512,8 @@ export function ProjectDetail({ projectId }: Props) {
 
               <div>
                 <p className={fieldLabel}>Revised Contract Cost History</p>
-                <div className="mt-1.5 overflow-hidden rounded-lg border border-gray-200">
-                  <table className="w-full text-sm">
+                <div className="mt-1.5 overflow-x-auto rounded-lg border border-gray-200">
+                  <table className="w-full min-w-160 text-sm">
                     <thead className="bg-gray-50">
                       <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                         <th className="px-4 py-3">Date</th>
@@ -593,8 +593,8 @@ export function ProjectDetail({ projectId }: Props) {
           {/* Timeline Adjustment History */}
           <div>
             <p className={`${fieldLabel} mb-2`}>Timeline Adjustment History</p>
-            <div className="overflow-hidden rounded-lg border border-gray-200">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto rounded-lg border border-gray-200">
+              <table className="w-full min-w-160 text-sm">
                 <thead className="bg-gray-50">
                   <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                     <th className="px-4 py-3">Start Date</th>
@@ -680,7 +680,7 @@ export function ProjectDetail({ projectId }: Props) {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <div className="rounded-lg border border-gray-200 bg-gray-50/60 p-4">
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">
                   Female
@@ -793,8 +793,8 @@ export function ProjectDetail({ projectId }: Props) {
             </h2>
           </div>
 
-          <div className="overflow-hidden rounded-lg border border-gray-200">
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto rounded-lg border border-gray-200">
+            <table className="w-full min-w-160 text-sm">
               <thead className="bg-gray-50">
                 <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                   <th className="px-4 py-3">File Name</th>
@@ -950,9 +950,9 @@ export function ProjectDetail({ projectId }: Props) {
           </div>
 
           {activities && activities.length > 0 ? (
-            <div className="overflow-hidden rounded-lg border border-gray-200">
+            <div className="overflow-x-auto rounded-lg border border-gray-200">
               <div className="max-h-210 overflow-y-auto">
-                <table className="w-full border-separate border-spacing-0 text-sm">
+                <table className="w-full min-w-150 border-separate border-spacing-0 text-sm">
                   <thead className="sticky top-0 z-10 bg-gray-50">
                     <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 [&>th]:border-b [&>th]:border-gray-200">
                       <th className="px-4 py-3">Timestamp</th>
@@ -1010,7 +1010,7 @@ export function ProjectDetail({ projectId }: Props) {
         </section>
 
         {/* Footer */}
-        <div className="flex items-center justify-between border-t border-gray-200 pt-4 pb-8">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-200 pt-4 pb-8">
           <Link
             href="/admin/dashboard/projects"
             className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
