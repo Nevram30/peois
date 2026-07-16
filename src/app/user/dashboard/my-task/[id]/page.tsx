@@ -46,7 +46,7 @@ export default function UserTaskDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 px-6 py-8">
+      <div className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6">
         <div className="mx-auto max-w-2xl space-y-4">
           <div className="h-4 w-48 animate-pulse rounded bg-gray-200" />
           <div className="h-8 w-64 animate-pulse rounded bg-gray-200" />
@@ -73,7 +73,7 @@ export default function UserTaskDetailPage() {
   const isAcknowledged = task.acknowledged;
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-8">
+    <div className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6">
       <div className="mx-auto max-w-2xl">
 
         {/* Breadcrumb */}
@@ -86,7 +86,7 @@ export default function UserTaskDetailPage() {
         </nav>
 
         {/* Page Heading */}
-        <div className="mb-5 flex items-center gap-3">
+        <div className="mb-5 flex flex-wrap items-center gap-3">
           <h1 className="text-2xl font-bold text-gray-900">Task Assignment</h1>
           <span className={`rounded px-2 py-0.5 text-[11px] font-bold tracking-widest text-white ${priorityBg}`}>
             {priorityLabel}
@@ -100,7 +100,7 @@ export default function UserTaskDetailPage() {
 
         {/* Main Card */}
         <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
 
             {/* Task Header */}
             <div className="mb-4 flex items-start gap-3">
@@ -154,7 +154,7 @@ export default function UserTaskDetailPage() {
           </div>
 
           {/* Action Row */}
-          <div className="flex flex-wrap items-center gap-3 border-t border-gray-100 px-6 py-4">
+          <div className="flex flex-wrap items-center gap-3 border-t border-gray-100 px-4 py-4 sm:px-6">
             {/* Acknowledge */}
             <button
               onClick={() => acknowledgeMutation.mutate({ taskId: id })}

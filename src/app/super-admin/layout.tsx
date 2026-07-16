@@ -22,7 +22,7 @@ export default async function SuperAdminLayout({
     <main className="min-h-screen bg-gray-50">
       <SessionTimeout />
       <NavHeader user={session.user} userId={session.user.id} />
-      <div className="px-6 pb-6 pt-36">
+      <div className="px-4 pb-6 pt-36 sm:px-6">
         {children}
       </div>
     </main>

@@ -108,7 +108,7 @@ export default function UserReplyPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 px-6 py-8">
+      <div className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6">
         <div className="mx-auto max-w-5xl space-y-4">
           <div className="h-4 w-64 animate-pulse rounded bg-gray-200" />
           <div className="h-10 w-80 animate-pulse rounded bg-gray-200" />
@@ -166,10 +166,10 @@ export default function UserReplyPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="mx-auto max-w-5xl px-6 py-8">
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
 
         {/* Breadcrumb */}
-        <nav className="mb-5 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+        <nav className="mb-5 flex flex-wrap items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
           <Link href="/user/dashboard" className="transition hover:text-gray-600">Dashboard</Link>
           <span className="text-gray-300">&gt;</span>
           <Link href="/user/dashboard/my-task" className="transition hover:text-gray-600">My Tasks</Link>
@@ -180,8 +180,8 @@ export default function UserReplyPage() {
         </nav>
 
         {/* Page Heading */}
-        <div className="mb-1 flex items-start justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">Reply to Task Assignment</h1>
+        <div className="mb-1 flex flex-wrap items-start justify-between gap-3">
+          <h1 className="text-xl font-bold text-gray-900 sm:text-2xl">Reply to Task Assignment</h1>
           <div className="text-right">
             <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">System ID</p>
             <p className={`mt-0.5 rounded px-2 py-0.5 text-xs font-bold text-white ${priorityBg}`}>
@@ -449,8 +449,8 @@ export default function UserReplyPage() {
       </div>
 
       {/* Sticky bottom action bar */}
-      <div className="sticky bottom-0 border-t border-gray-200 bg-white px-6 py-4 shadow-md">
-        <div className="mx-auto flex max-w-5xl items-center justify-between">
+      <div className="sticky bottom-0 border-t border-gray-200 bg-white px-4 py-4 shadow-md sm:px-6">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3">
           <Link
             href={`/user/dashboard/my-task/${id}`}
             className="flex items-center gap-1.5 text-sm font-medium text-gray-500 transition hover:text-gray-700"

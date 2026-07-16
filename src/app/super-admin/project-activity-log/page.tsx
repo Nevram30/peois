@@ -135,7 +135,7 @@ export default function ProjectActivityLogPage() {
       </div>
 
       {/* Stat Cards */}
-      <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-6">
+      <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         <div className="rounded-2xl bg-blue-600 p-4 text-white shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-wider opacity-80">Total Entries</p>
           <p className="mt-1 text-3xl font-extrabold leading-none">{counts.total}</p>
@@ -226,7 +226,8 @@ export default function ProjectActivityLogPage() {
           )}
         </div>
 
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full min-w-200 text-sm">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50">
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Date / Time</th>
@@ -319,8 +320,9 @@ export default function ProjectActivityLogPage() {
             )}
           </tbody>
         </table>
+        </div>
 
-        <div className="flex items-center justify-between border-t border-gray-100 px-4 py-3">
+        <div className="flex flex-col gap-3 border-t border-gray-100 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-gray-500">
             {filtered.length === 0 ? (
               "No results"

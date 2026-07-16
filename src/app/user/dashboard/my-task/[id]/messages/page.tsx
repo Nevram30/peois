@@ -167,7 +167,7 @@ export default function UserMessagesPage() {
     <div className="flex h-[calc(100vh-112px)] flex-col bg-gray-50">
 
       {/* ── Header ── */}
-      <div className="shrink-0 border-b border-gray-200 bg-white px-6 py-4 shadow-sm">
+      <div className="shrink-0 border-b border-gray-200 bg-white px-4 py-4 shadow-sm sm:px-6">
         <div className="mx-auto flex max-w-3xl items-start justify-between gap-4">
           {/* Breadcrumb + title */}
           <div className="min-w-0">
@@ -178,7 +178,7 @@ export default function UserMessagesPage() {
               <span className="text-gray-300">&gt;</span>
               <span className="text-gray-500">Messages</span>
             </nav>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-base font-bold text-gray-900">Task Messages</h1>
               <span className={`rounded px-2 py-0.5 text-[10px] font-bold tracking-widest text-white ${priorityBg}`}>
                 {priorityLabel}
@@ -192,7 +192,7 @@ export default function UserMessagesPage() {
           </div>
 
           {/* Assigner info */}
-          <div className="shrink-0 text-right">
+          <div className="hidden shrink-0 text-right sm:block">
             <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Assigned by</p>
             <p className="text-sm font-semibold text-gray-700">{assignerName}</p>
           </div>
@@ -213,7 +213,7 @@ export default function UserMessagesPage() {
       </div>
 
       {/* ── Message Thread ── */}
-      <div className="flex-1 overflow-y-auto px-6 py-5">
+      <div className="flex-1 overflow-y-auto px-4 py-5 sm:px-6">
         <div className="mx-auto max-w-3xl flex flex-col gap-4">
 
           {thread.map((item) => {
@@ -227,7 +227,7 @@ export default function UserMessagesPage() {
                   </div>
                   {/* Initial task message bubble — from admin (left side for user) */}
                   <div className="flex w-full justify-start">
-                    <div className="flex max-w-[75%] items-end gap-2">
+                    <div className="flex max-w-[85%] items-end gap-2 sm:max-w-[75%]">
                       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1e3a4f] text-xs font-bold text-white">
                         {assignerName.charAt(0).toUpperCase()}
                       </div>
@@ -272,7 +272,7 @@ export default function UserMessagesPage() {
                 // My message — right aligned (dark navy)
                 return (
                   <div key={item.id} className="flex w-full justify-end">
-                    <div className="flex max-w-[75%] items-end gap-2">
+                    <div className="flex max-w-[85%] items-end gap-2 sm:max-w-[75%]">
                       <div className="min-w-0">
                         <div className="mb-1 flex items-center justify-end gap-1.5">
                           {statusLabel && (
@@ -319,7 +319,7 @@ export default function UserMessagesPage() {
               // Admin message — left aligned
               return (
                 <div key={item.id} className="flex w-full justify-start">
-                  <div className="flex max-w-[75%] items-end gap-2">
+                  <div className="flex max-w-[85%] items-end gap-2 sm:max-w-[75%]">
                     <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-300 text-xs font-bold text-gray-700">
                       {item.senderName.charAt(0).toUpperCase()}
                     </div>
@@ -366,7 +366,7 @@ export default function UserMessagesPage() {
       </div>
 
       {/* ── Input Bar ── */}
-      <div className="shrink-0 border-t border-gray-200 bg-white px-6 py-4">
+      <div className="shrink-0 border-t border-gray-200 bg-white px-4 py-4 sm:px-6">
         <div className="mx-auto max-w-3xl">
           {/* Attached files preview */}
           {attachedFiles.length > 0 && (
@@ -387,8 +387,8 @@ export default function UserMessagesPage() {
               ))}
             </div>
           )}
-          <div className="flex items-end gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1e3a4f] text-sm font-bold text-white">
+          <div className="flex items-end gap-2 sm:gap-3">
+            <div className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1e3a4f] text-sm font-bold text-white sm:flex">
               {myName.charAt(0).toUpperCase()}
             </div>
             <div className="flex-1 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-2.5 focus-within:border-[#1e3a4f] focus-within:bg-white focus-within:ring-1 focus-within:ring-[#1e3a4f] transition">

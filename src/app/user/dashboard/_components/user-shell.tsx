@@ -149,9 +149,9 @@ export function UserShell({
       <div className="sticky top-0 z-40 bg-gray-50">
       {/* Top Header */}
       <header className="bg-white text-gray-900 border-b border-gray-200 shadow-sm">
-        <div className="flex items-center justify-between px-6 py-3">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg overflow-hidden bg-gray-100">
+        <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-6">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg overflow-hidden bg-gray-100">
               <Image
                 src="/image/logo.jpeg"
                 alt="PEO Logo"
@@ -160,22 +160,25 @@ export function UserShell({
                 className="object-contain"
               />
             </div>
-            <div>
-              <h1 className="text-lg font-semibold leading-tight">
-                PEO - Project Management Information System
+            <div className="min-w-0">
+              <h1 className="text-sm font-semibold leading-tight sm:text-lg">
+                <span className="sm:hidden">PEO - PMIS</span>
+                <span className="hidden sm:inline">
+                  PEO - Project Management Information System
+                </span>
               </h1>
-              <p className="text-xs text-gray-500">
+              <p className="hidden text-xs text-gray-500 sm:block">
                 Provincial Government of Davao del Norte
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-4">
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setDropdownOpen((v) => !v)}
                 className="flex items-center gap-3 rounded-lg px-2 py-1 transition hover:bg-gray-100"
               >
-                <div className="text-right">
+                <div className="hidden text-right sm:block">
                   <p className="text-sm font-medium leading-tight">
                     {displayName ?? displayEmail}
                   </p>
@@ -247,7 +250,7 @@ export function UserShell({
               </button>
 
               {notifOpen && (
-                <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-xl border border-gray-100 bg-white shadow-xl">
+                <div className="absolute right-0 top-full z-50 mt-2 w-80 max-w-[calc(100vw-2rem)] rounded-xl border border-gray-100 bg-white shadow-xl">
                   <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
                     <h3 className="text-sm font-semibold text-gray-900">Task Notifications</h3>
                     <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-500">{taskCount}</span>
@@ -314,12 +317,12 @@ export function UserShell({
       </header>
 
       {/* Navigation Tabs */}
-      <nav className="flex items-center gap-2 bg-white px-6 border-b border-gray-200 mt-3">
+      <nav className="flex items-center gap-2 overflow-x-auto bg-white px-4 border-b border-gray-200 mt-3 sm:px-6">
         {navItems.map((item) => (
           <Link
             key={item.href}
             href={item.href}
-            className={`-mb-px flex items-center gap-2 border-b-[3px] px-4 py-2.5 text-sm transition ${
+            className={`-mb-px flex shrink-0 items-center gap-2 whitespace-nowrap border-b-[3px] px-4 py-2.5 text-sm transition ${
               isActive(item.href)
                 ? "border-amber-500 font-medium text-amber-600"
                 : "border-transparent font-normal text-gray-600 hover:border-gray-300 hover:text-gray-900"
@@ -342,7 +345,7 @@ export function UserShell({
 
       {/* Logout Confirmation Modal */}
       {logoutModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
               <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">

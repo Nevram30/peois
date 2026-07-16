@@ -58,7 +58,7 @@ export default function UserMyTaskPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-8">
+    <div className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6">
       <div className="mx-auto max-w-2xl">
 
         {/* Breadcrumb */}
@@ -69,7 +69,7 @@ export default function UserMyTaskPage() {
         </nav>
 
         {/* Page Heading */}
-        <div className="mb-5 flex items-center justify-between">
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">My Tasks</h1>
             <p className="mt-0.5 text-sm text-gray-500">Tasks assigned to you by the administrator</p>
@@ -80,7 +80,7 @@ export default function UserMyTaskPage() {
         </div>
 
         {/* Summary Strip */}
-        <div className="mb-5 grid grid-cols-4 gap-3">
+        <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {(["URGENT", "HIGH", "MEDIUM", "LOW"] as Priority[]).map((p) => (
             <div key={p} className={`rounded-xl border px-4 py-3 shadow-sm ${
               p === "URGENT" ? "border-red-100 bg-red-50" :
@@ -105,12 +105,12 @@ export default function UserMyTaskPage() {
         </div>
 
         {/* Toggle Tabs */}
-        <div className="mb-4 flex gap-2 border-b border-gray-200">
+        <div className="mb-4 flex gap-2 overflow-x-auto border-b border-gray-200">
           {tabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`-mb-px flex flex-1 items-center justify-center gap-1.5 border-b-[3px] px-3 py-2.5 text-xs uppercase tracking-wide transition ${
+              className={`-mb-px flex flex-1 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap border-b-[3px] px-2 py-2.5 text-xs uppercase tracking-wide transition sm:px-3 ${
                 activeTab === tab.key
                   ? "border-amber-500 font-semibold text-amber-600"
                   : "border-transparent font-medium text-gray-600 hover:border-gray-300 hover:text-gray-900"

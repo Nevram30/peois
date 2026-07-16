@@ -133,9 +133,9 @@ export function NavHeader({ user, userId }: { user: { name?: string | null; emai
       <div className="fixed top-0 left-0 right-0 z-40 bg-white">
         {/* Top bar */}
         <header className="bg-white text-gray-900 border-b border-gray-200">
-          <div className="flex items-center justify-between px-6 py-3">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg overflow-hidden bg-gray-100">
+          <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-6">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg overflow-hidden bg-gray-100">
                 <Image
                   src="/image/logo.jpeg"
                   alt="PEO Logo"
@@ -144,20 +144,20 @@ export function NavHeader({ user, userId }: { user: { name?: string | null; emai
                   className="object-contain"
                 />
               </div>
-              <div>
-                <h1 className="text-lg font-bold text-gray-900">PEO MIS</h1>
-                <p className="text-xs text-gray-500">Super Admin Console</p>
+              <div className="min-w-0">
+                <h1 className="text-sm font-bold text-gray-900 sm:text-lg">PEO MIS</h1>
+                <p className="hidden text-xs text-gray-500 sm:block">Super Admin Console</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex shrink-0 items-center gap-2 sm:gap-4">
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setDropdownOpen((v) => !v)}
                   className="flex items-center gap-3 rounded-lg px-2 py-1 transition hover:bg-gray-100"
                   title={user.name ?? user.email ?? "Account"}
                 >
-                  <span className="text-sm font-medium text-gray-700">{user.name ?? user.email}</span>
+                  <span className="hidden text-sm font-medium text-gray-700 sm:block">{user.name ?? user.email}</span>
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-sm font-medium text-white ring-2 ring-blue-200 transition hover:ring-blue-300">
                     {getInitials(user.name, user.email)}
                   </div>
@@ -201,7 +201,7 @@ export function NavHeader({ user, userId }: { user: { name?: string | null; emai
                 </button>
 
                 {notifOpen && (
-                  <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-xl border border-gray-100 bg-white shadow-xl">
+                  <div className="absolute right-0 top-full z-50 mt-2 w-80 max-w-[calc(100vw-2rem)] rounded-xl border border-gray-100 bg-white shadow-xl">
                     <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
                       <h3 className="text-sm font-semibold text-gray-900">Notifications</h3>
                       <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-500">0</span>
@@ -225,7 +225,7 @@ export function NavHeader({ user, userId }: { user: { name?: string | null; emai
         </header>
 
         {/* Navigation Tabs */}
-        <nav className="flex items-center gap-2 px-6 border-b border-gray-200 mt-3">
+        <nav className="flex items-center gap-2 overflow-x-auto px-4 border-b border-gray-200 mt-3 sm:px-6">
           {NAV_ITEMS.map((item) => {
             const isActive =
               item.href === "/super-admin/dashboard"
@@ -237,7 +237,7 @@ export function NavHeader({ user, userId }: { user: { name?: string | null; emai
               <Link
                 key={item.href}
                 href={`${item.href}?id=${userId}`}
-                className={`-mb-px flex items-center gap-2 border-b-[3px] px-4 py-2.5 text-sm transition ${isActive
+                className={`-mb-px flex shrink-0 items-center gap-2 whitespace-nowrap border-b-[3px] px-4 py-2.5 text-sm transition ${isActive
                   ? "border-amber-500 font-medium text-amber-600"
                   : "border-transparent font-normal text-gray-600 hover:border-gray-300 hover:text-gray-900"
                   }`}
@@ -256,7 +256,7 @@ export function NavHeader({ user, userId }: { user: { name?: string | null; emai
       </div>
       {/* Logout Confirmation Modal */}
       {logoutModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
               <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">

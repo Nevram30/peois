@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { api } from "~/trpc/react";
+import { api, type RouterOutputs } from "~/trpc/react";
 import { GenerateReportModal } from "~/app/_components/generate-report-modal";
 import { formatPeso } from "~/helper/formatter";
 import {
@@ -53,8 +53,155 @@ const STATUS_TITLES: Record<string, string> = {
   today: "New Projects Today",
 };
 
-export function ProjectsList() {
+type ProjectRow = RouterOutputs["project"]["getAll"][number];
+
+function StatusBadge({ status }: { status: string }) {
+  const s = STATUS_LABELS[status] ?? {
+    label: status,
+    className: "bg-gray-100 text-gray-700",
+  };
+  return (
+    <span
+      className={`whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-medium ${s.className}`}
+    >
+      {s.label}
+    </span>
+  );
+}
+
+function ContributorAvatars({ project }: { project: ProjectRow }) {
+  const seen = new Set<string>();
+  const contributors: { id: string; name: string | null; email: string; image: string | null }[] = [];
+  const allUsers = [project.createdBy, ...project.activities.map((a) => a.createdBy)];
+  for (const u of allUsers) {
+    if (!seen.has(u.id)) {
+      seen.add(u.id);
+      contributors.push(u);
+    }
+  }
+  const MAX_SHOW = 4;
+  const visible = contributors.slice(0, MAX_SHOW);
+  const extra = contributors.length - MAX_SHOW;
+  const colors = ["bg-blue-500", "bg-emerald-500", "bg-violet-500", "bg-orange-500"];
+  return (
+    <div className="flex items-center">
+      {visible.map((u, i) => {
+        const initials = (u.name ?? u.email)
+          .split(" ")
+          .map((w) => w[0])
+          .join("")
+          .slice(0, 2)
+          .toUpperCase();
+        return (
+          <div
+            key={u.id}
+            style={{ zIndex: visible.length - i, marginLeft: i === 0 ? 0 : "-8px" }}
+            className={`group relative flex h-7 w-7 items-center justify-center rounded-full ring-2 ring-white text-white text-[10px] font-bold cursor-default ${colors[i % colors.length]}`}
+          >
+            {u.image ? (
+              <img src={u.image} alt={u.name ?? u.email} className="h-full w-full rounded-full object-cover" />
+            ) : (
+              initials
+            )}
+            <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-[11px] text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+              {u.name ?? u.email}
+            </span>
+          </div>
+        );
+      })}
+      {extra > 0 && (
+        <div
+          style={{ zIndex: 0, marginLeft: "-8px" }}
+          className="relative flex h-7 w-7 items-center justify-center rounded-full ring-2 ring-white bg-gray-200 text-gray-600 text-[10px] font-bold"
+        >
+          +{extra}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ProjectProgress({
+  project,
+  barClassName = "w-24",
+}: {
+  project: ProjectRow;
+  barClassName?: string;
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <div className={`h-2 overflow-hidden rounded-full bg-gray-200 ${barClassName}`}>
+        <div
+          className={`h-full rounded-full ${project.status === "SUSPENDED" ? "bg-red-500" : (project.completionPercentage ?? 0) >= 100 ? "bg-green-500" : "bg-orange-500"}`}
+          style={{ width: `${project.completionPercentage ?? 0}%` }}
+        />
+      </div>
+      <span className="text-xs text-gray-600">
+        {project.completionPercentage ?? 0}%
+      </span>
+    </div>
+  );
+}
+
+function ProjectActions({
+  id,
+  grow = false,
+}: {
+  id: ProjectRow["id"];
+  grow?: boolean;
+}) {
   const router = useRouter();
+  const growClass = grow ? "flex-1" : "";
+  return (
+    <div className="flex items-center gap-2">
+      <button
+        onClick={() => router.push(`/admin/dashboard/projects/${id}/view`)}
+        className={`inline-flex items-center justify-center gap-1.5 rounded-md bg-blue-500 px-2.5 py-1.5 text-xs font-medium text-white transition hover:bg-blue-600 ${growClass}`}
+      >
+        <svg
+          className="h-3.5 w-3.5"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+          />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+          />
+        </svg>
+        View
+      </button>
+      <button
+        onClick={() => router.push(`/admin/dashboard/projects/${id}`)}
+        className={`inline-flex items-center justify-center gap-1.5 rounded-md bg-green-500 px-2.5 py-1.5 text-xs font-medium text-white transition hover:bg-green-600 ${growClass}`}
+      >
+        <svg
+          className="h-3.5 w-3.5"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+          />
+        </svg>
+        Update
+      </button>
+    </div>
+  );
+}
+
+export function ProjectsList() {
   const searchParams = useSearchParams();
   const statusFilter = searchParams.get("status");
   const filterToday = searchParams.get("filter") === "today";
@@ -165,8 +312,8 @@ export function ProjectsList() {
   };
 
   return (
-    <div className="space-y-6 px-6 py-8">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 px-4 py-6 sm:px-6 sm:py-8">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <div className="text-xs font-medium tracking-widest mb-2 text-gray-400">
             {/* Breadcrumb */}
@@ -182,11 +329,11 @@ export function ProjectsList() {
               </p>
             </div>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900">{pageTitle}</h2>
+          <h2 className="text-xl font-bold text-gray-900 sm:text-2xl">{pageTitle}</h2>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           {/* Search */}
-          <div className="relative w-72">
+          <div className="relative w-full sm:w-72">
             <svg
               className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
               fill="none"
@@ -211,14 +358,14 @@ export function ProjectsList() {
           {(statusFilter ?? filterToday) && (
             <Link
               href="/admin/dashboard/projects"
-              className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
+              className="grow rounded-lg border border-gray-200 px-4 py-2.5 text-center text-sm font-medium text-gray-600 transition hover:bg-gray-50 sm:grow-0"
             >
               Clear Filter
             </Link>
           )}
           <button
             onClick={() => setReportModalOpen(true)}
-            className="inline-flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+            className="inline-flex grow cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 sm:grow-0"
           >
             <svg
               className="h-4 w-4"
@@ -237,7 +384,7 @@ export function ProjectsList() {
           </button>
           <Link
             href="/admin/dashboard/projects/new"
-            className="rounded-lg bg-[#1e3a4f] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#2a4d66]"
+            className="grow whitespace-nowrap rounded-lg bg-[#1e3a4f] px-4 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition hover:bg-[#2a4d66] sm:grow-0"
           >
             + Add New Project
           </Link>
@@ -245,9 +392,9 @@ export function ProjectsList() {
       </div>
 
       {/* Filter bar */}
-      <div className="rounded-xl border border-gray-200 bg-white px-5 py-4 shadow-sm">
+      <div className="rounded-xl border border-gray-200 bg-white px-4 py-4 shadow-sm sm:px-5">
         <div
-          className={`grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 ${districtScope ? "xl:grid-cols-8" : "xl:grid-cols-9"}`}
+          className={`grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 ${districtScope ? "xl:grid-cols-8" : "xl:grid-cols-9"}`}
         >
           {/* Mode */}
           <div>
@@ -415,8 +562,84 @@ export function ProjectsList() {
             No projects found.
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+          <>
+            {/* Mobile / tablet card list */}
+            <div className="divide-y divide-gray-100 lg:hidden">
+              {paginated?.map((p) => (
+                <div key={p.id} className="space-y-3 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="font-medium text-gray-900">{p.title}</p>
+                      <p className="mt-0.5 text-xs text-gray-500">
+                        {formatPeso(p.projectCost)}
+                      </p>
+                    </div>
+                    <StatusBadge status={p.status} />
+                  </div>
+                  <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-3">
+                    <div>
+                      <dt className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                        Mode
+                      </dt>
+                      <dd className="text-gray-600">
+                        {p.modeOfImplementation === "BY_CONTRACT" ? "By Contract" : "By Administration"}
+                      </dd>
+                      {p.modeOfImplementation === "BY_CONTRACT" && p.contractorName && (
+                        <dd className="text-xs text-gray-400">{p.contractorName}</dd>
+                      )}
+                    </div>
+                    <div>
+                      <dt className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                        District
+                      </dt>
+                      <dd className="text-gray-600">
+                        {p.locationImplementation === "DISTRICT_I" ? "District 1" : "District 2"}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                        Source / Sub
+                      </dt>
+                      <dd className="text-gray-600">
+                        {p.sourceOfFund ? SOURCE_OF_FUND_LABEL[p.sourceOfFund] : "—"}
+                      </dd>
+                      {p.subType && (
+                        <dd className="text-xs text-gray-400">{PROJECT_SUB_TYPE_LABEL[p.subType]}</dd>
+                      )}
+                    </div>
+                    <div>
+                      <dt className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                        Location
+                      </dt>
+                      <dd className="text-gray-600">{p.cityMunicipality ?? "—"}</dd>
+                      {p.barangay && (
+                        <dd className="text-xs text-gray-400">{p.barangay}</dd>
+                      )}
+                    </div>
+                    <div>
+                      <dt className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                        Budget Year
+                      </dt>
+                      <dd className="text-gray-600">{p.budgetYear ?? "—"}</dd>
+                    </div>
+                    <div>
+                      <dt className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                        Involved Users
+                      </dt>
+                      <dd>
+                        <ContributorAvatars project={p} />
+                      </dd>
+                    </div>
+                  </dl>
+                  <ProjectProgress project={p} barClassName="flex-1" />
+                  <ProjectActions id={p.id} grow />
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop table */}
+            <div className="hidden overflow-x-auto lg:block">
+            <table className="w-full min-w-275 text-left text-sm">
               <thead>
                 <tr className="border-b border-gray-200 bg-gray-50 text-gray-500 uppercase text-xs tracking-wider">
                   <th className="px-4 py-3 font-medium">Project Title & Project Cost</th>
@@ -432,12 +655,7 @@ export function ProjectsList() {
                 </tr>
               </thead>
               <tbody>
-                {paginated?.map((p) => {
-                  const status = STATUS_LABELS[p.status] ?? {
-                    label: p.status,
-                    className: "bg-gray-100 text-gray-700",
-                  };
-                  return (
+                {paginated?.map((p) => (
                     <tr
                       key={p.id}
                       className="border-b border-gray-100 hover:bg-gray-50"
@@ -473,137 +691,25 @@ export function ProjectsList() {
                         {p.budgetYear ?? "—"}
                       </td>
                       <td className="px-4 py-3">
-                        <span
-                          className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${status.className}`}
-                        >
-                          {status.label}
-                        </span>
+                        <StatusBadge status={p.status} />
                       </td>
                       <td className="px-4 py-3">
-                        {(() => {
-                          const seen = new Set<string>();
-                          const contributors: { id: string; name: string | null; email: string; image: string | null }[] = [];
-                          const allUsers = [p.createdBy, ...p.activities.map((a) => a.createdBy)];
-                          for (const u of allUsers) {
-                            if (!seen.has(u.id)) {
-                              seen.add(u.id);
-                              contributors.push(u);
-                            }
-                          }
-                          const MAX_SHOW = 4;
-                          const visible = contributors.slice(0, MAX_SHOW);
-                          const extra = contributors.length - MAX_SHOW;
-                          const colors = ["bg-blue-500", "bg-emerald-500", "bg-violet-500", "bg-orange-500"];
-                          return (
-                            <div className="flex items-center">
-                              {visible.map((u, i) => {
-                                const initials = (u.name ?? u.email)
-                                  .split(" ")
-                                  .map((w) => w[0])
-                                  .join("")
-                                  .slice(0, 2)
-                                  .toUpperCase();
-                                return (
-                                  <div
-                                    key={u.id}
-                                    style={{ zIndex: visible.length - i, marginLeft: i === 0 ? 0 : "-8px" }}
-                                    className={`group relative flex h-7 w-7 items-center justify-center rounded-full ring-2 ring-white text-white text-[10px] font-bold cursor-default ${colors[i % colors.length]}`}
-                                  >
-                                    {u.image ? (
-                                      <img src={u.image} alt={u.name ?? u.email} className="h-full w-full rounded-full object-cover" />
-                                    ) : (
-                                      initials
-                                    )}
-                                    <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-[11px] text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
-                                      {u.name ?? u.email}
-                                    </span>
-                                  </div>
-                                );
-                              })}
-                              {extra > 0 && (
-                                <div
-                                  style={{ zIndex: 0, marginLeft: "-8px" }}
-                                  className="relative flex h-7 w-7 items-center justify-center rounded-full ring-2 ring-white bg-gray-200 text-gray-600 text-[10px] font-bold"
-                                >
-                                  +{extra}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })()}
+                        <ContributorAvatars project={p} />
                       </td>
                       <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          <div className="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
-                            <div
-                              className={`h-full rounded-full ${p.status === "SUSPENDED" ? "bg-red-500" : (p.completionPercentage ?? 0) >= 100 ? "bg-green-500" : "bg-orange-500"}`}
-                              style={{ width: `${p.completionPercentage ?? 0}%` }}
-                            />
-                          </div>
-                          <span className="text-xs text-gray-600">
-                            {p.completionPercentage ?? 0}%
-                          </span>
-                        </div>
+                        <ProjectProgress project={p} />
                       </td>
                       <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() =>
-                              router.push(`/admin/dashboard/projects/${p.id}/view`)
-                            }
-                            className="inline-flex items-center gap-1.5 rounded-md bg-blue-500 px-2.5 py-1.5 text-xs font-medium text-white transition hover:bg-blue-600"
-                          >
-                            <svg
-                              className="h-3.5 w-3.5"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={1.5}
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
-                              />
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                              />
-                            </svg>
-                            View
-                          </button>
-                          <button
-                            onClick={() =>
-                              router.push(`/admin/dashboard/projects/${p.id}`)
-                            }
-                            className="inline-flex items-center gap-1.5 rounded-md bg-green-500 px-2.5 py-1.5 text-xs font-medium text-white transition hover:bg-green-600"
-                          >
-                            <svg
-                              className="h-3.5 w-3.5"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={1.5}
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-                              />
-                            </svg>
-                            Update
-                          </button>
-                        </div>
+                        <ProjectActions id={p.id} />
                       </td>
                     </tr>
-                  );
-                })}
+                ))}
               </tbody>
             </table>
+            </div>
 
             {/* Pagination */}
-            <div className="flex items-center justify-between border-t border-gray-200 px-4 py-3">
+            <div className="flex flex-col gap-3 border-t border-gray-200 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
               {/* Rows per page */}
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <span>Rows per page:</span>
@@ -657,7 +763,7 @@ export function ProjectsList() {
                 </button>
               </div>
             </div>
-          </div>
+          </>
         )}
       </div>
 

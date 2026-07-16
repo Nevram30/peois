@@ -81,7 +81,7 @@ function peso(n: number | null | undefined) {
   return `₱ ${v.toLocaleString("en-PH", { minimumFractionDigits: 2 })}`;
 }
 
-const card = "rounded-xl border border-gray-200 bg-white p-6 shadow-sm";
+const card = "rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6";
 const sectionTitle = "flex items-center gap-2 border-b border-gray-100 pb-4 mb-5";
 const fieldLabel = "text-[11px] font-semibold uppercase tracking-wider text-gray-400";
 const fieldBox =
@@ -196,10 +196,10 @@ export function UserProjectDetail({ projectId }: Props) {
     .filter(Boolean);
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-8">
+    <div className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6">
       {/* Breadcrumb + Back button */}
-      <div className="mb-5 flex items-center justify-between">
-        <nav className="flex items-center gap-1.5 text-sm text-gray-500">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <nav className="flex flex-wrap items-center gap-1.5 text-sm text-gray-500">
           <Link href="/user/dashboard" className="hover:text-gray-700">
             Dashboard
           </Link>
@@ -470,8 +470,8 @@ export function UserProjectDetail({ projectId }: Props) {
             <div className="space-y-6 lg:col-span-2">
               <div>
                 <p className={fieldLabel}>Recent Disbursements</p>
-                <div className="mt-1.5 overflow-hidden rounded-lg border border-gray-200">
-                  <table className="w-full text-sm">
+                <div className="mt-1.5 overflow-x-auto rounded-lg border border-gray-200">
+                  <table className="w-full min-w-160 text-sm">
                     <thead className="bg-gray-50">
                       <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                         <th className="px-4 py-3">Date</th>
@@ -521,8 +521,8 @@ export function UserProjectDetail({ projectId }: Props) {
 
               <div>
                 <p className={fieldLabel}>Revised Contract Cost History</p>
-                <div className="mt-1.5 overflow-hidden rounded-lg border border-gray-200">
-                  <table className="w-full text-sm">
+                <div className="mt-1.5 overflow-x-auto rounded-lg border border-gray-200">
+                  <table className="w-full min-w-160 text-sm">
                     <thead className="bg-gray-50">
                       <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                         <th className="px-4 py-3">Date</th>
@@ -601,8 +601,8 @@ export function UserProjectDetail({ projectId }: Props) {
           </div>
 
           <p className={fieldLabel}>Timeline Adjustment History</p>
-          <div className="mt-1.5 overflow-hidden rounded-lg border border-gray-200">
-            <table className="w-full text-sm">
+          <div className="mt-1.5 overflow-x-auto rounded-lg border border-gray-200">
+            <table className="w-full min-w-160 text-sm">
               <thead className="bg-gray-50">
                 <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                   <th className="px-4 py-3">Start Date</th>
@@ -800,8 +800,8 @@ export function UserProjectDetail({ projectId }: Props) {
             </h2>
           </div>
 
-          <div className="overflow-hidden rounded-lg border border-gray-200">
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto rounded-lg border border-gray-200">
+            <table className="w-full min-w-160 text-sm">
               <thead className="bg-gray-50">
                 <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                   <th className="px-4 py-3">File Name</th>
@@ -871,7 +871,7 @@ export function UserProjectDetail({ projectId }: Props) {
 
         {/* ── Activity Log (full width) — kept ── */}
         <section className={card}>
-          <div className="mb-5 flex items-center justify-between">
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <svg
                 className="h-5 w-5 text-blue-500"
@@ -915,7 +915,7 @@ export function UserProjectDetail({ projectId }: Props) {
           {activities && activities.length > 0 ? (
             <div className="rounded-xl border border-gray-100 bg-gray-50/50">
               {/* Header row */}
-              <div className="grid grid-cols-[190px_1fr_200px] border-b border-gray-200 px-5 py-3">
+              <div className="hidden border-b border-gray-200 px-5 py-3 sm:grid sm:grid-cols-[190px_1fr_200px]">
                 <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
                   Date
                 </span>
@@ -939,7 +939,7 @@ export function UserProjectDetail({ projectId }: Props) {
                   return (
                     <div
                       key={a.id}
-                      className="grid grid-cols-[190px_1fr_200px] items-center border-b border-gray-100 px-5 py-4 last:border-0"
+                      className="grid grid-cols-1 gap-2 border-b border-gray-100 px-4 py-4 last:border-0 sm:grid-cols-[190px_1fr_200px] sm:items-center sm:gap-0 sm:px-5"
                     >
                       <div className="text-sm text-gray-500">
                         <p>{fmt(a.createdAt)}</p>
@@ -954,7 +954,7 @@ export function UserProjectDetail({ projectId }: Props) {
                         <span className={`h-2 w-2 shrink-0 rounded-full ${dot}`} />
                         <span className="text-sm text-gray-700">{a.description}</span>
                       </div>
-                      <div className="flex justify-end">
+                      <div className="flex sm:justify-end">
                         <span className="inline-flex max-w-full items-center gap-2 rounded-lg border border-gray-200 bg-white py-1 pl-1 pr-3 text-xs font-medium text-gray-700 shadow-sm">
                           {a.createdBy.image ? (
                             <img

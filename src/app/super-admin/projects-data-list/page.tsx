@@ -504,7 +504,7 @@ export default function ProjectsDataListPage() {
         return (
           <div className="mb-8 rounded-2xl border border-gray-100 bg-white shadow-sm">
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-4 py-4 sm:px-6">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
                   Financial Overview
@@ -888,7 +888,8 @@ export default function ProjectsDataListPage() {
             Generate Report
           </button>
         </div>
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full min-w-250 text-sm">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50">
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
@@ -1033,8 +1034,9 @@ export default function ProjectsDataListPage() {
             )}
           </tbody>
         </table>
+        </div>
 
-        <div className="flex items-center justify-between border-t border-gray-100 px-4 py-3">
+        <div className="flex flex-col gap-3 border-t border-gray-100 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-gray-500">
             {filtered.length === 0 ? (
               "No results"
@@ -1046,7 +1048,7 @@ export default function ProjectsDataListPage() {
               </>
             )}
           </p>
-          <div className="flex items-center gap-1">
+          <div className="flex flex-wrap items-center gap-1">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={safePage === 1}

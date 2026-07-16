@@ -113,7 +113,7 @@ function DistrictCard({ title, data }: DistrictCardProps) {
                 <p className="text-[11px] font-extrabold text-[#1e3a8a] tracking-widest uppercase mb-3">
                     {title}
                 </p>
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col items-center gap-4 sm:flex-row">
                     {/* thickness = size/2 fills the ring to the center, rendering a solid pie */}
                     <DonutChart
                         segments={data.filter((d) => d.value > 0).map((d) => ({ value: d.value, color: d.color }))}
@@ -236,12 +236,12 @@ function AnnualAllocationCard({ bySource, bySubType, variationBySource, variatio
                     </p>
                 </div>
 
-                <div className="flex items-start gap-8">
+                <div className="flex flex-col items-center gap-6 md:flex-row md:items-start md:gap-8">
                     <div className="shrink-0 pt-2">
                         <DonutChart segments={segments} size={150} thickness={34} centerLabel={formatToPHPBillions(total)} />
                     </div>
 
-                    <div className="flex-1 columns-2 gap-12 *:break-inside-avoid">
+                    <div className="w-full flex-1 columns-1 gap-12 *:break-inside-avoid sm:columns-2">
                         {entries.map((e) => (
                             <div key={e.src} className="mb-2.5">
                                 <div className="flex items-center justify-between gap-2">
@@ -369,12 +369,12 @@ function SourceBreakdownCard({ title, footerLabel, bySource, bySubType, variatio
                     {title}
                 </p>
 
-                <div className="flex items-start gap-5">
+                <div className="flex flex-col items-center gap-5 md:flex-row md:items-start">
                     <div className="shrink-0 pt-1">
                         <DonutChart segments={segments} size={120} thickness={60} />
                     </div>
 
-                    <div className="flex-1 columns-2 gap-6 *:break-inside-avoid">
+                    <div className="w-full flex-1 columns-1 gap-6 *:break-inside-avoid sm:columns-2">
                         {entries.map((e) => (
                             <div key={e.src} className="mb-2.5">
                                 <div className="flex items-center justify-between gap-2">
@@ -535,7 +535,7 @@ const PEOISDashboard = () => {
             </div>
 
             {/* User Cards */}
-            <div className="grid grid-cols-4 gap-2 mb-5">
+            <div className="grid grid-cols-2 gap-2 mb-5 md:grid-cols-4">
                 {userCards.map((c) => (
                     <div key={c.label} className={`bg-white rounded-lg shadow-sm p-3 flex items-center gap-3 border-l-4 ${c.border}`}>
                         <div className={`w-9 h-9 rounded-full ${c.iconBg} flex items-center justify-center shrink-0`}>
@@ -559,7 +559,7 @@ const PEOISDashboard = () => {
             </div>
 
             {/* Stat Cards */}
-            <div className="grid grid-cols-7 gap-2 mb-3">
+            <div className="grid grid-cols-2 gap-2 mb-3 sm:grid-cols-4 xl:grid-cols-7">
                 {statCards.map((c) => (
                     <div key={c.label} className={`bg-white rounded-lg shadow-sm p-3 flex flex-col gap-1 border-t-[3px] ${c.borderColor}`}>
                         <div className={`w-6 h-6 rounded-md ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>

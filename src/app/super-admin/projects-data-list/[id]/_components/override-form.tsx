@@ -472,7 +472,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
   return (
     <>
       {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <div className="mb-1 flex items-center gap-2">
             <button
@@ -502,7 +502,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
 
       <form onSubmit={handleSubmit} className="space-y-4 pb-36">
         {/* Row 1 — Identity & Location */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           {/* PROJECT IDENTITY & STATUS */}
           <SectionCard
             icon={
@@ -512,9 +512,9 @@ export function OverrideForm({ projectId }: { projectId: string }) {
             }
             title="Project Identity & Status"
           >
-            <div className="flex gap-4 items-stretch">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-stretch">
               {/* Project Image with code overlay */}
-              <div className="relative w-72 shrink-0 overflow-hidden rounded-lg border border-gray-200">
+              <div className="relative h-56 w-full shrink-0 overflow-hidden rounded-lg border border-gray-200 sm:h-auto sm:w-72">
                 {project.imageUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -540,7 +540,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                   <TextInput value={form.title} onChange={(v) => set("title", v)} required />
                 </div>
                 {/* Project Cost | Current Status */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div>
                     <FieldLabel required>Project Cost</FieldLabel>
                     <div className="flex items-center rounded-lg border border-gray-200 focus-within:ring-2 focus-within:ring-blue-500">
@@ -574,7 +574,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                   </div>
                 </div>
                 {/* Track Number | Implementation Mode */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div>
                     <FieldLabel>Track Number</FieldLabel>
                     <TextInput value={project.projectCode} disabled />
@@ -600,7 +600,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                   </div>
                 </div>
                 {/* Contractor Name | Physical Progress */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div>
                     <FieldLabel>Contractor Name</FieldLabel>
                     <TextInput
@@ -663,7 +663,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                 <FieldLabel required>Barangay</FieldLabel>
                 <TextInput value={form.barangay} onChange={(v) => set("barangay", v)} placeholder="Enter barangay" />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
                   <FieldLabel>Purok</FieldLabel>
                   <TextInput value={form.purok} onChange={(v) => set("purok", v)} placeholder="e.g. Purok 4" />
@@ -686,7 +686,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
           }
           title="Funding & Disbursement Tracking"
         >
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {/* Left — fund fields & balances */}
             <div className="space-y-3">
               <div>
@@ -784,8 +784,8 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                 <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-gray-400">
                   Recent Disbursements
                 </p>
-                <div className="overflow-hidden rounded-lg border border-gray-100">
-                  <table className="w-full text-sm">
+                <div className="overflow-x-auto rounded-lg border border-gray-100">
+                  <table className="w-full min-w-150 text-sm">
                     <thead>
                       <tr className="border-b border-gray-100 bg-gray-50">
                         <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-gray-400">Date</th>
@@ -916,8 +916,8 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                 <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-gray-400">
                   Revised Contract Cost History
                 </p>
-                <div className="overflow-hidden rounded-lg border border-gray-100">
-                  <table className="w-full text-sm">
+                <div className="overflow-x-auto rounded-lg border border-gray-100">
+                  <table className="w-full min-w-150 text-sm">
                     <thead>
                       <tr className="border-b border-gray-100 bg-gray-50">
                         <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-gray-400">Date</th>
@@ -1047,8 +1047,8 @@ export function OverrideForm({ projectId }: { projectId: string }) {
           <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-gray-400">
             Timeline Adjustment History
           </p>
-          <div className="overflow-hidden rounded-lg border border-gray-100">
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto rounded-lg border border-gray-100">
+            <table className="w-full min-w-150 text-sm">
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50">
                   <th className="px-4 py-2.5 text-left text-[10px] font-semibold uppercase tracking-wide text-gray-400">Start Date</th>
@@ -1172,7 +1172,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
         </SectionCard>
 
         {/* Row — Workforce + In-Charge */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           {/* WORKFORCE DISTRIBUTION */}
           <SectionCard
             icon={
@@ -1190,7 +1190,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
               </span>
             }
           >
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <div className="rounded-xl border border-gray-200 p-4">
                 <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-400">Female</p>
                 <div className="mt-1 flex items-center justify-between">
@@ -1238,7 +1238,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
             }
             title="Project In-Charge & Profile"
           >
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               <div>
                 <FieldLabel>Engineers In-Charge</FieldLabel>
                 <div className="flex flex-wrap items-center gap-2">
@@ -1302,8 +1302,8 @@ export function OverrideForm({ projectId }: { projectId: string }) {
           title="Project Documentation"
           badge={<></>}
         >
-          <div className="overflow-hidden rounded-lg border border-gray-100">
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto rounded-lg border border-gray-100">
+            <table className="w-full min-w-150 text-sm">
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50">
                   <th className="px-4 py-2.5 text-left text-[10px] font-semibold uppercase tracking-wide text-gray-400">File Name</th>
@@ -1396,7 +1396,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
               Notification sent successfully.
             </div>
           )}
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* Left — user + priority */}
             <div className="space-y-4">
               <div>
@@ -1421,7 +1421,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
               </div>
               <div>
                 <FieldLabel required>Priority Level</FieldLabel>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                   {PRIORITY_LEVELS.map((p) => {
                     const selected = notifPriority === p.value;
                     return (
@@ -1521,7 +1521,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
             </div>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-150 text-sm">
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50">
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Timestamp</th>
@@ -1586,8 +1586,8 @@ export function OverrideForm({ projectId }: { projectId: string }) {
         </div>
 
         {/* FIXED ACTION BAR */}
-        <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white px-6 py-4 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
-          <div className="flex items-center justify-end gap-3">
+        <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white px-4 py-4 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] sm:px-6">
+          <div className="flex flex-wrap items-center justify-end gap-3">
             <button
               type="button"
               onClick={handleCancel}

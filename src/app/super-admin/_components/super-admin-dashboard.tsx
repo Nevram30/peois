@@ -377,7 +377,7 @@ function AddUserModal({
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <div>
                 <label className={labelClass}>
                   First Name <span className="text-red-500">*</span>
@@ -416,7 +416,7 @@ function AddUserModal({
               </div>
             </div>
 
-            <div className="mt-3 grid grid-cols-[140px_1fr_1fr] gap-3">
+            <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-[140px_1fr_1fr]">
               <div>
                 <label className={labelClass}>Extension</label>
                 <input
@@ -468,7 +468,7 @@ function AddUserModal({
               </h3>
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <div>
                 <label className={labelClass}>
                   Designation <span className="text-red-500">*</span>
@@ -615,7 +615,7 @@ function AddUserModal({
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
                 <label className={labelClass}>
                   Password <span className="text-red-500">*</span>
@@ -854,7 +854,7 @@ function EditUserModal({
             </svg>
           </button>
         </div>
-        <form onSubmit={handleSubmit} className="px-6 py-5">
+        <form onSubmit={handleSubmit} className="max-h-[70vh] overflow-y-auto px-6 py-5">
           {message && (
             <div
               className={`mb-4 rounded-lg border p-3 text-sm ${
@@ -1227,7 +1227,7 @@ export function UserManagementContent() {
   return (
     <>
       {/* Page Title */}
-      <div className="mb-6 flex items-start justify-between">
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">System Users</h2>
         </div>
@@ -1293,7 +1293,7 @@ export function UserManagementContent() {
       {/* Users Table */}
       <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
+          <table className="w-full min-w-250 text-left text-sm">
             <thead>
               <tr className="border-b border-gray-200 bg-gray-50/50">
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">User Name</th>
@@ -1398,13 +1398,13 @@ export function UserManagementContent() {
 
         {/* Pagination */}
         {total > 0 && (
-          <div className="flex items-center justify-between border-t border-gray-200 px-4 py-3">
+          <div className="flex flex-col gap-3 border-t border-gray-200 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-gray-500">
               Showing <span className="font-medium text-gray-900">{(page - 1) * pageSize + 1}</span> to{" "}
               <span className="font-medium text-gray-900">{Math.min(page * pageSize, total)}</span> of{" "}
               <span className="font-medium text-gray-900">{total}</span> results
             </p>
-            <div className="flex items-center gap-1">
+            <div className="flex flex-wrap items-center gap-1">
               <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page === 1} className="rounded-lg border border-gray-300 p-2 text-gray-500 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
