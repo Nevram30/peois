@@ -205,7 +205,8 @@ export default function ProjectAccessRequestPage() {
           )}
         </div>
 
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full min-w-250 text-sm">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50">
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Date / Time</th>
@@ -357,8 +358,9 @@ export default function ProjectAccessRequestPage() {
             )}
           </tbody>
         </table>
+        </div>
 
-        <div className="flex items-center justify-between border-t border-gray-100 px-4 py-3">
+        <div className="flex flex-col gap-3 border-t border-gray-100 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-gray-500">
             {filtered.length === 0 ? (
               "No results"
