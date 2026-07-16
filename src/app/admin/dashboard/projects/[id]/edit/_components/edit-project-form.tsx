@@ -74,7 +74,7 @@ function SectionHeader({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between border-b border-gray-100 px-5 py-3.5">
+    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 px-5 py-3.5">
       <div className="flex items-center gap-2">
         <span className="text-blue-500">{icon}</span>
         <span className="text-xs font-bold uppercase tracking-widest text-gray-700">{title}</span>
@@ -598,7 +598,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
       )}
 
       {/* ── Page Header / Breadcrumb ── */}
-      <div className="border-b border-gray-200 bg-white px-6 py-4">
+      <div className="border-b border-gray-200 bg-white px-4 py-4 sm:px-6">
         <nav className="flex items-center gap-1.5 text-sm text-gray-400">
           <Link href="/admin/dashboard/projects" className="hover:text-gray-600">Projects</Link>
           <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
@@ -609,7 +609,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
       </div>
 
       {/* ── Two-column Layout ── */}
-      <div className="flex gap-5 px-6 py-5">
+      <div className="flex flex-col gap-5 px-4 py-5 sm:px-6 xl:flex-row">
 
         {/* ════════════════════════════════
             LEFT  —  Main edit sections
@@ -617,20 +617,20 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
         <div className="min-w-0 flex-1 space-y-4">
 
           {/* ── Row 1: Identity + Location ── */}
-          <div className="grid grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
 
             {/* PROJECT IDENTITY & STATUS */}
-            <SectionCard className="col-span-3">
+            <SectionCard className="lg:col-span-3">
               <SectionHeader
                 icon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>}
                 title="Project Identity & Status"
                 action={<button type="button" className="text-gray-400 hover:text-gray-600"><EditIcon /></button>}
               />
-              <div className="flex">
+              <div className="flex flex-col sm:flex-row">
                 {/* Thumbnail — full height of the card body */}
                 <div
                   onClick={() => mediaInputRef.current?.click()}
-                  className="group relative w-64 shrink-0 cursor-pointer overflow-hidden rounded-bl-xl bg-gray-100"
+                  className="group relative h-48 w-full shrink-0 cursor-pointer overflow-hidden bg-gray-100 sm:h-auto sm:w-64 sm:rounded-bl-xl"
                 >
                   {project.imageUrl ? (
                     <Image src={project.imageUrl} alt={project.title} fill className="object-cover" />
@@ -651,7 +651,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
 
                 {/* Fields */}
                 <div className="min-w-0 flex-1 space-y-3 p-4">
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <div className="min-w-0">
                       <FieldLabel>Project Title</FieldLabel>
                       <p className="truncate text-sm font-semibold text-gray-900">{project.title}</p>
@@ -662,7 +662,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <div>
                       <FieldLabel>Track Number</FieldLabel>
                       <p className="font-mono text-sm text-gray-700">{project.projectCode}</p>
@@ -681,7 +681,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <div>
                       <FieldLabel>Implementation Mode</FieldLabel>
                       <Select
@@ -751,7 +751,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
             </SectionCard>
 
             {/* PROJECT LOCATION */}
-            <SectionCard className="col-span-2">
+            <SectionCard className="lg:col-span-2">
               <SectionHeader
                 icon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>}
                 title="Project Location"
@@ -814,7 +814,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                     ))}
                   </Select>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div>
                     <FieldLabel>Purok</FieldLabel>
                     <Input
@@ -843,9 +843,9 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
               title="Funding & Disbursement Tracking"
               action={<button type="button" className="text-gray-400 hover:text-gray-600"><EditIcon /></button>}
             />
-            <div className="grid grid-cols-5 gap-0 divide-x divide-gray-100">
+            <div className="grid grid-cols-1 gap-0 divide-y divide-gray-100 lg:grid-cols-5 lg:divide-x lg:divide-y-0">
               {/* Left: fund fields */}
-              <div className="col-span-2 space-y-3 p-4">
+              <div className="space-y-3 p-4 lg:col-span-2">
                 <div>
                   <FieldLabel>Source of Fund</FieldLabel>
                   <Select
@@ -918,13 +918,13 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
               </div>
 
               {/* Right: disbursements table + record */}
-              <div className="col-span-3 flex flex-col p-4">
+              <div className="flex flex-col p-4 lg:col-span-3">
                 <FieldLabel>Recent Disbursements</FieldLabel>
                 <div
-                  className="flex-1 overflow-y-auto rounded-lg border border-gray-200"
+                  className="flex-1 overflow-auto rounded-lg border border-gray-200"
                   style={{ maxHeight: "212px" }}
                 >
-                  <table className="w-full border-separate border-spacing-0 text-xs">
+                  <table className="w-full min-w-120 border-separate border-spacing-0 text-xs">
                     <thead className="sticky top-0 z-10 bg-gray-50">
                       <tr className="[&>th]:border-b [&>th]:border-gray-100">
                         <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Date</th>
@@ -953,8 +953,8 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                 </div>
 
                 {/* Record form */}
-                <div className="mt-3 flex gap-2">
-                  <div className="relative w-36 shrink-0">
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <div className="relative w-full shrink-0 sm:w-36">
                     <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">₱</span>
                     <Input
                       type="number" min={0} placeholder="Amount *"
@@ -969,9 +969,9 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                     value={disbRef}
                     onChange={(e) => { setDisbRef(e.target.value); setDisbErrors((p) => ({ ...p, ref: undefined })); }}
                     error={!!disbErrors.ref}
-                    className="flex-1"
+                    className="min-w-40 flex-1"
                   />
-                  <div className="w-36 shrink-0">
+                  <div className="w-full shrink-0 sm:w-36">
                     <Select
                       value={disbType}
                       onChange={(e) => {
@@ -1008,10 +1008,10 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                 <div className="mt-5 border-t border-gray-100 pt-4">
                   <FieldLabel>Revised Contract Cost History</FieldLabel>
                   <div
-                    className="overflow-y-auto rounded-lg border border-gray-200"
+                    className="overflow-auto rounded-lg border border-gray-200"
                     style={{ maxHeight: "212px" }}
                   >
-                    <table className="w-full border-separate border-spacing-0 text-xs">
+                    <table className="w-full min-w-140 border-separate border-spacing-0 text-xs">
                       <thead className="sticky top-0 z-10 bg-gray-50">
                         <tr className="[&>th]:border-b [&>th]:border-gray-100">
                           <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Date</th>
@@ -1045,8 +1045,8 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                   </div>
 
                   {/* Record form — Source of Fund + Variation + Record only */}
-                  <div className="mt-3 flex gap-2">
-                    <div className="w-44 shrink-0">
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <div className="w-full shrink-0 sm:w-44">
                       <Select
                         value={revisedSourceOfFund}
                         onChange={(e) => setRevisedSourceOfFund(e.target.value as SourceOfFundValue | "")}
@@ -1059,7 +1059,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                         ))}
                       </Select>
                     </div>
-                    <div className="relative flex-1">
+                    <div className="relative min-w-40 flex-1">
                       <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">₱</span>
                       <Input
                         type="number" min={0} placeholder="Variation"
@@ -1095,10 +1095,10 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
             <div className="p-4">
               <FieldLabel>Timeline Adjustment History</FieldLabel>
               <div
-                className="overflow-y-auto rounded-lg border border-gray-200"
+                className="overflow-auto rounded-lg border border-gray-200"
                 style={{ maxHeight: "392px" }}
               >
-                <table className="w-full border-separate border-spacing-0 text-xs">
+                <table className="w-full min-w-160 border-separate border-spacing-0 text-xs">
                   <thead className="sticky top-0 z-10 bg-gray-50">
                     <tr className="[&>th]:border-b [&>th]:border-gray-100">
                       <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Start Date</th>
@@ -1130,24 +1130,24 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
               </div>
 
               {/* Record form — with labels */}
-              <div className="mt-3 flex items-end gap-2">
-                <div className="w-40 shrink-0">
+              <div className="mt-3 flex flex-wrap items-end gap-2">
+                <div className="w-full shrink-0 sm:w-40">
                   <FieldLabel>Start Date</FieldLabel>
                   <Input type="date" value={dateStarted} onChange={(e) => { setDateStarted(e.target.value); setAdjError(null); }} error={!!adjError && !dateStarted} />
                 </div>
-                <div className="w-40 shrink-0">
+                <div className="w-full shrink-0 sm:w-40">
                   <FieldLabel>End Date</FieldLabel>
                   <Input type="date" value={targetCompletion} onChange={(e) => { setTargetCompletion(e.target.value); setAdjError(null); }} error={!!adjError && !targetCompletion} />
                 </div>
-                <div className="w-40 shrink-0">
+                <div className="w-full shrink-0 sm:w-40">
                   <FieldLabel>Revised Target Completion</FieldLabel>
                   <Input type="date" value={revisedCompletion} onChange={(e) => setRevisedCompletion(e.target.value)} />
                 </div>
-                <div className="w-24 shrink-0">
+                <div className="w-full shrink-0 sm:w-24">
                   <FieldLabel>Duration</FieldLabel>
                   <Input type="number" min={0} placeholder="0" value={adjDays} onChange={(e) => { setAdjDays(e.target.value); setAdjError(null); }} error={!!adjError && !adjDays} />
                 </div>
-                <div className="w-40 shrink-0">
+                <div className="w-full shrink-0 sm:w-40">
                   <FieldLabel>Type</FieldLabel>
                   <Select
                     value={adjType}
@@ -1160,7 +1160,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                     ))}
                   </Select>
                 </div>
-                <div className="flex-1">
+                <div className="min-w-full flex-1 sm:min-w-48">
                   <FieldLabel>Justification / Basis</FieldLabel>
                   <Input type="text" placeholder="Justification / Basis..." value={adjJustification} onChange={(e) => setAdjJustification(e.target.value)} />
                 </div>
@@ -1196,7 +1196,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                   Live
                 </span>
               </div>
-              <div className="grid grid-cols-3 gap-3 p-5">
+              <div className="grid grid-cols-1 gap-3 p-5 sm:grid-cols-3">
                 {/* Female */}
                 <div className="rounded-xl border border-gray-200 bg-gray-50 p-3.5">
                   <div className="flex items-center justify-between">
@@ -1357,7 +1357,8 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                   <button type="button" onClick={() => setDeleteNotice(null)} className="ml-auto text-green-400 hover:text-green-600">✕</button>
                 </div>
               )}
-              <table className="w-full text-xs">
+              <div className="overflow-x-auto">
+              <table className="w-full min-w-140 text-xs">
                 <thead>
                   <tr className="border-b border-gray-100 bg-gray-50">
                     <th className="px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">File Name</th>
@@ -1427,6 +1428,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                   )}
                 </tbody>
               </table>
+              </div>
             </div>
           </SectionCard>
 
@@ -1444,7 +1446,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                   <button type="button" onClick={() => setShowNotifSuccess(false)} className="ml-auto text-green-400 hover:text-green-600">✕</button>
                 </div>
               )}
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 {/* Left */}
                 <div className="space-y-4">
                   <div>
@@ -1531,8 +1533,8 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
         {/* ════════════════════════════════
             RIGHT  —  Activity Log (sticky)
         ════════════════════════════════ */}
-        <div className="w-lg shrink-0">
-          <div className="sticky top-5 space-y-3">
+        <div className="w-full shrink-0 xl:w-lg">
+          <div className="space-y-3 xl:sticky xl:top-5">
             {/* Status badge */}
             <div className={`flex items-center gap-2 rounded-xl border px-4 py-3 ${statusCfg.badge}`}>
               <span className={`h-2 w-2 rounded-full ${statusCfg.dot}`} />
@@ -1620,14 +1622,14 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
       </div>
 
       {/* ── Fixed bottom action bar ── */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white px-8 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
-        <div className="flex items-center justify-end gap-3">
+      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white px-4 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] sm:px-8">
+        <div className="flex flex-wrap items-center justify-end gap-3">
           {updateProject.isError && (
-            <p className="mr-auto text-xs text-red-600">{updateProject.error.message}</p>
+            <p className="w-full text-xs text-red-600 sm:mr-auto sm:w-auto">{updateProject.error.message}</p>
           )}
           <Link
             href={`/admin/dashboard/projects/${projectId}`}
-            className="rounded-lg border border-gray-200 bg-white px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-gray-600 transition hover:bg-gray-50"
+            className="shrink-0 whitespace-nowrap rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-center text-xs font-bold uppercase tracking-wide text-gray-600 transition hover:bg-gray-50 sm:px-6 sm:tracking-widest"
           >
             Cancel Changes
           </Link>
@@ -1635,7 +1637,7 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
             type="button"
             onClick={handleSaveChanges}
             disabled={updateProject.isPending}
-            className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-50"
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-blue-600 px-3 py-2.5 text-xs font-bold uppercase tracking-wide text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-50 sm:flex-initial sm:px-6 sm:tracking-widest"
           >
             {updateProject.isPending ? (
               <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
