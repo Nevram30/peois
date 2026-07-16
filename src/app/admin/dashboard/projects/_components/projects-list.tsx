@@ -216,6 +216,7 @@ export function ProjectsList() {
   const [statusLocal, setStatusLocal] = useState("");
   const [yearFilter, setYearFilter] = useState("");
   const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 20;
 
@@ -314,22 +315,16 @@ export function ProjectsList() {
   return (
     <div className="space-y-6 px-4 py-6 sm:px-6 sm:py-8">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div>
-          <div className="text-xs font-medium tracking-widest mb-2 text-gray-400">
-            {/* Breadcrumb */}
-            <div className="mb-4 flex items-center gap-1.5 text-sm text-gray-500">
-              <Link href="/admin/dashboard" className="hover:text-gray-700">
-                Dashboard
-              </Link>
-              <span>/</span>
-              <p
-                className="hover:text-gray-700"
-              >
-                Projects
-              </p>
-            </div>
+        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 sm:block">
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-1.5 text-sm text-gray-500 sm:mb-4">
+            <Link href="/admin/dashboard" className="hover:text-gray-700">
+              Dashboard
+            </Link>
+            <span>/</span>
+            <p className="hover:text-gray-700">Projects</p>
           </div>
-          <h2 className="text-xl font-bold text-gray-900 sm:text-2xl">{pageTitle}</h2>
+          <h2 className="text-lg font-bold text-gray-900 sm:text-2xl">{pageTitle}</h2>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           {/* Search */}
@@ -392,7 +387,34 @@ export function ProjectsList() {
       </div>
 
       {/* Filter bar */}
-      <div className="rounded-xl border border-gray-200 bg-white px-4 py-4 shadow-sm sm:px-5">
+      <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+        {/* Mobile filter toggle */}
+        <button
+          type="button"
+          onClick={() => setFiltersOpen((v) => !v)}
+          className="flex w-full items-center justify-between px-4 py-3 lg:hidden"
+        >
+          <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
+            </svg>
+            Filters
+            {hasActiveFilters && (
+              <span className="h-2 w-2 rounded-full bg-blue-500" />
+            )}
+          </span>
+          <svg
+            className={`h-4 w-4 text-gray-400 transition-transform ${filtersOpen ? "rotate-180" : ""}`}
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+          </svg>
+        </button>
+
+        <div className={`${filtersOpen ? "block" : "hidden"} border-t border-gray-100 px-4 py-4 sm:px-5 lg:block lg:border-t-0`}>
         <div
           className={`grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 ${districtScope ? "xl:grid-cols-8" : "xl:grid-cols-9"}`}
         >
@@ -548,6 +570,7 @@ export function ProjectsList() {
               Clear Filters
             </button>
           </div>
+        </div>
         </div>
       </div>
 
