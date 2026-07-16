@@ -169,7 +169,7 @@ export default function AdminMessagesPage() {
     <div className="flex h-[calc(100vh-112px)] flex-col bg-gray-50">
 
       {/* ── Header ── */}
-      <div className="shrink-0 border-b border-gray-200 bg-white px-6 py-4 shadow-sm">
+      <div className="shrink-0 border-b border-gray-200 bg-white px-4 py-4 shadow-sm sm:px-6">
         <div className="mx-auto flex max-w-3xl items-start justify-between gap-4">
           {/* Breadcrumb + title */}
           <div className="min-w-0">
@@ -180,7 +180,7 @@ export default function AdminMessagesPage() {
               <span className="text-gray-300">&gt;</span>
               <span className="text-gray-500">Messages</span>
             </nav>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-base font-bold text-gray-900">Task Messages</h1>
               <span className={`rounded px-2 py-0.5 text-[10px] font-bold tracking-widest text-white ${priorityBg}`}>
                 {priorityLabel}
@@ -194,7 +194,7 @@ export default function AdminMessagesPage() {
           </div>
 
           {/* Recipient info */}
-          <div className="shrink-0 text-right">
+          <div className="hidden shrink-0 text-right sm:block">
             <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Assigned to</p>
             <p className="text-sm font-semibold text-gray-700">{recipientName}</p>
           </div>
@@ -215,7 +215,7 @@ export default function AdminMessagesPage() {
       </div>
 
       {/* ── Message Thread ── */}
-      <div className="flex-1 overflow-y-auto px-6 py-5">
+      <div className="flex-1 overflow-y-auto px-4 py-5 sm:px-6">
         <div className="mx-auto max-w-3xl flex flex-col gap-4">
 
           {thread.map((item) => {
@@ -229,7 +229,7 @@ export default function AdminMessagesPage() {
                   </div>
                   {/* Initial task message bubble — from admin (right side) */}
                   <div className="flex w-full justify-end">
-                    <div className="flex max-w-[75%] items-end gap-2">
+                    <div className="flex max-w-[85%] items-end gap-2 sm:max-w-[75%]">
                       <div className="min-w-0">
                         <div className="mb-1 flex items-center justify-end gap-1.5">
                           <span className="text-[11px] text-gray-400">{timeAgo(item.date)}</span>
@@ -274,7 +274,7 @@ export default function AdminMessagesPage() {
                 // Admin message — right aligned
                 return (
                   <div key={item.id} className="flex w-full justify-end">
-                    <div className="flex max-w-[75%] items-end gap-2">
+                    <div className="flex max-w-[85%] items-end gap-2 sm:max-w-[75%]">
                       <div className="min-w-0">
                         <div className="mb-1 flex items-center justify-end gap-1.5">
                           <span className="text-[11px] text-gray-400">{timeAgo(item.date)}</span>
@@ -316,7 +316,7 @@ export default function AdminMessagesPage() {
               // User message — left aligned
               return (
                 <div key={item.id} className="flex w-full justify-start">
-                  <div className="flex max-w-[75%] items-end gap-2">
+                  <div className="flex max-w-[85%] items-end gap-2 sm:max-w-[75%]">
                     <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-300 text-xs font-bold text-gray-700">
                       {item.senderName.charAt(0).toUpperCase()}
                     </div>
@@ -368,7 +368,7 @@ export default function AdminMessagesPage() {
       </div>
 
       {/* ── Input Bar ── */}
-      <div className="shrink-0 border-t border-gray-200 bg-white px-6 py-4">
+      <div className="shrink-0 border-t border-gray-200 bg-white px-4 py-4 sm:px-6">
         <div className="mx-auto max-w-3xl">
           {/* Attached files preview */}
           {attachedFiles.length > 0 && (
@@ -389,8 +389,8 @@ export default function AdminMessagesPage() {
               ))}
             </div>
           )}
-          <div className="flex items-end gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1e3a4f] text-sm font-bold text-white">
+          <div className="flex items-end gap-2 sm:gap-3">
+            <div className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1e3a4f] text-sm font-bold text-white sm:flex">
               {adminName.charAt(0).toUpperCase()}
             </div>
             <div className="flex-1 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-2.5 focus-within:border-[#1e3a4f] focus-within:bg-white focus-within:ring-1 focus-within:ring-[#1e3a4f] transition">

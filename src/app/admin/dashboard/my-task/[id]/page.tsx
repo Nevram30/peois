@@ -45,7 +45,7 @@ export default function TaskDetailPage() {
   // Loading skeleton
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 px-6 py-8">
+      <div className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6">
         <div className="mx-auto max-w-2xl space-y-4">
           <div className="h-4 w-48 animate-pulse rounded bg-gray-200" />
           <div className="h-8 w-64 animate-pulse rounded bg-gray-200" />
@@ -78,7 +78,7 @@ export default function TaskDetailPage() {
   const hasActionTaken = task.replies.some((r) => r.taskStatus === "action-taken");
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-8">
+    <div className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6">
       <div className="mx-auto max-w-2xl">
 
         {/* Breadcrumb */}
@@ -95,7 +95,7 @@ export default function TaskDetailPage() {
         </nav>
 
         {/* Page Heading */}
-        <div className="mb-5 flex items-center gap-3">
+        <div className="mb-5 flex flex-wrap items-center gap-3">
           <h1 className="text-2xl font-bold text-gray-900">Task Assignment</h1>
         </div>
 
@@ -103,7 +103,7 @@ export default function TaskDetailPage() {
         <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
 
           {/* Card Body */}
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
 
             {/* Task Title Row */}
             <div className="mb-4 flex items-start gap-3">
@@ -184,7 +184,7 @@ export default function TaskDetailPage() {
           </div>
 
           {/* Action Row */}
-          <div className="flex flex-wrap items-center gap-3 border-t border-gray-100 px-6 py-4">
+          <div className="flex flex-wrap items-center gap-3 border-t border-gray-100 px-4 py-4 sm:px-6">
             {/* View Project Details */}
             <Link
               href={`/admin/dashboard/projects/${task.project.id}`}
