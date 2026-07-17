@@ -72,8 +72,8 @@ export default function ProjectRegistryPage() {
           className="block w-full max-w-md rounded-lg border border-gray-200 bg-slate-50 px-3.5 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
         />
 
-        <div className="mt-4 overflow-x-auto">
-          <table className="w-full min-w-[840px] text-left text-sm">
+        <div className="-mx-4 mt-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+          <table className="w-full min-w-210 whitespace-nowrap text-left text-sm sm:whitespace-normal">
             <thead>
               <tr className="border-b border-gray-200">
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Project</th>
@@ -106,7 +106,9 @@ export default function ProjectRegistryPage() {
                 filtered.map((e) => (
                   <tr key={e.id} className="border-b border-gray-50 hover:bg-gray-50">
                     <td className="px-4 py-3">
-                      <p className="font-medium text-gray-900">{e.project.title}</p>
+                      <p className="max-w-64 truncate font-medium text-gray-900" title={e.project.title}>
+                        {e.project.title}
+                      </p>
                       <p className="font-mono text-xs text-gray-500">{e.project.projectCode}</p>
                     </td>
                     <td className="px-4 py-3 text-gray-600">{e.roomLocation}</td>
