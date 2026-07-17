@@ -47,3 +47,7 @@ yarn-error.log*
 
 # uploads
 /public/uploads/
+
+# serwist service worker (generated at build time)
+/public/sw.js
+/public/sw.js.map

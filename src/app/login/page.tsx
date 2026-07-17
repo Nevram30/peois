@@ -3,6 +3,7 @@
 import { signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import InstallPrompt from "~/app/_components/InstallPrompt";
 
 export default function LoginPage() {
   const [employeeId, setEmployeeId] = useState("");
@@ -251,6 +252,8 @@ export default function LoginPage() {
       <p className="relative z-10 mt-6 w-full max-w-md text-center text-xs text-gray-200">
         © 2026 Provincial Government MIS. All rights reserved.
       </p>
+
+      <InstallPrompt />
     </main>
   );
 }

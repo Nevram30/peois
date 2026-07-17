@@ -1,6 +1,6 @@
 import "~/styles/globals.css";
 
-import { type Metadata } from "next";
+import { type Metadata, type Viewport } from "next";
 import { Poppins } from "next/font/google";
 
 import { TRPCReactProvider } from "~/trpc/react";
@@ -9,6 +9,15 @@ export const metadata: Metadata = {
   title: "PEO-PMIS",
   description: "Provincial Engineers Office Management Information System",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "PEO-PMIS",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#f59e0b",
 };
 
 const poppins = Poppins({
