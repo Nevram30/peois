@@ -288,7 +288,7 @@ export default function PhysicalArchiveEntryPage() {
 
           <div className="divide-y divide-gray-200 rounded-2xl bg-slate-50 shadow-sm">
             <Link
-              href="/archiver/dashboard/registry"
+              href="/archiver/registry"
               className="flex items-center justify-between px-6 py-4 text-xs font-bold uppercase tracking-wider text-[#1e3a4f] transition hover:bg-slate-100"
             >
               View Project Registry

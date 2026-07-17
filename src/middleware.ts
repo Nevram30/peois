@@ -67,10 +67,7 @@ export default auth((req) => {
   }
 
   // Admin routes (check after more specific routes)
-  if (
-    pathname === "/admin/dashboard" ||
-    pathname.startsWith("/admin/dashboard/")
-  ) {
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
     if (!token) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
