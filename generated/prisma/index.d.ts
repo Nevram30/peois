@@ -29,6 +29,11 @@ export type UserSession = $Result.DefaultSelection<Prisma.$UserSessionPayload>
  */
 export type Project = $Result.DefaultSelection<Prisma.$ProjectPayload>
 /**
+ * Model PhysicalArchiveLocation
+ * 
+ */
+export type PhysicalArchiveLocation = $Result.DefaultSelection<Prisma.$PhysicalArchiveLocationPayload>
+/**
  * Model ProjectActivity
  * 
  */
@@ -91,7 +96,8 @@ export namespace $Enums {
   export const UserRole: {
   SUPER_ADMIN: 'SUPER_ADMIN',
   ADMIN: 'ADMIN',
-  USER: 'USER'
+  USER: 'USER',
+  ARCHIVER: 'ARCHIVER'
 };
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
@@ -491,6 +497,16 @@ export class PrismaClient<
     * ```
     */
   get project(): Prisma.ProjectDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.physicalArchiveLocation`: Exposes CRUD operations for the **PhysicalArchiveLocation** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PhysicalArchiveLocations
+    * const physicalArchiveLocations = await prisma.physicalArchiveLocation.findMany()
+    * ```
+    */
+  get physicalArchiveLocation(): Prisma.PhysicalArchiveLocationDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.projectActivity`: Exposes CRUD operations for the **ProjectActivity** model.
@@ -1045,6 +1061,7 @@ export namespace Prisma {
     User: 'User',
     UserSession: 'UserSession',
     Project: 'Project',
+    PhysicalArchiveLocation: 'PhysicalArchiveLocation',
     ProjectActivity: 'ProjectActivity',
     Disbursement: 'Disbursement',
     VariationOrder: 'VariationOrder',
@@ -1074,7 +1091,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "userSession" | "project" | "projectActivity" | "disbursement" | "variationOrder" | "timelineAdjustment" | "taskNotification" | "taskReply" | "taskReplyDocument" | "document" | "projectFile" | "projectAccessRequest" | "post"
+      modelProps: "user" | "userSession" | "project" | "physicalArchiveLocation" | "projectActivity" | "disbursement" | "variationOrder" | "timelineAdjustment" | "taskNotification" | "taskReply" | "taskReplyDocument" | "document" | "projectFile" | "projectAccessRequest" | "post"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1297,6 +1314,80 @@ export namespace Prisma {
           count: {
             args: Prisma.ProjectCountArgs<ExtArgs>
             result: $Utils.Optional<ProjectCountAggregateOutputType> | number
+          }
+        }
+      }
+      PhysicalArchiveLocation: {
+        payload: Prisma.$PhysicalArchiveLocationPayload<ExtArgs>
+        fields: Prisma.PhysicalArchiveLocationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PhysicalArchiveLocationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhysicalArchiveLocationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PhysicalArchiveLocationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhysicalArchiveLocationPayload>
+          }
+          findFirst: {
+            args: Prisma.PhysicalArchiveLocationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhysicalArchiveLocationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PhysicalArchiveLocationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhysicalArchiveLocationPayload>
+          }
+          findMany: {
+            args: Prisma.PhysicalArchiveLocationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhysicalArchiveLocationPayload>[]
+          }
+          create: {
+            args: Prisma.PhysicalArchiveLocationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhysicalArchiveLocationPayload>
+          }
+          createMany: {
+            args: Prisma.PhysicalArchiveLocationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PhysicalArchiveLocationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhysicalArchiveLocationPayload>[]
+          }
+          delete: {
+            args: Prisma.PhysicalArchiveLocationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhysicalArchiveLocationPayload>
+          }
+          update: {
+            args: Prisma.PhysicalArchiveLocationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhysicalArchiveLocationPayload>
+          }
+          deleteMany: {
+            args: Prisma.PhysicalArchiveLocationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PhysicalArchiveLocationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PhysicalArchiveLocationUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhysicalArchiveLocationPayload>[]
+          }
+          upsert: {
+            args: Prisma.PhysicalArchiveLocationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PhysicalArchiveLocationPayload>
+          }
+          aggregate: {
+            args: Prisma.PhysicalArchiveLocationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePhysicalArchiveLocation>
+          }
+          groupBy: {
+            args: Prisma.PhysicalArchiveLocationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PhysicalArchiveLocationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PhysicalArchiveLocationCountArgs<ExtArgs>
+            result: $Utils.Optional<PhysicalArchiveLocationCountAggregateOutputType> | number
           }
         }
       }
@@ -2213,6 +2304,7 @@ export namespace Prisma {
     user?: UserOmit
     userSession?: UserSessionOmit
     project?: ProjectOmit
+    physicalArchiveLocation?: PhysicalArchiveLocationOmit
     projectActivity?: ProjectActivityOmit
     disbursement?: DisbursementOmit
     variationOrder?: VariationOrderOmit
@@ -2318,6 +2410,7 @@ export namespace Prisma {
     timelineAdjustments: number
     accessRequestsMade: number
     accessRequestsReviewed: number
+    archiveLocations: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2335,6 +2428,7 @@ export namespace Prisma {
     timelineAdjustments?: boolean | UserCountOutputTypeCountTimelineAdjustmentsArgs
     accessRequestsMade?: boolean | UserCountOutputTypeCountAccessRequestsMadeArgs
     accessRequestsReviewed?: boolean | UserCountOutputTypeCountAccessRequestsReviewedArgs
+    archiveLocations?: boolean | UserCountOutputTypeCountArchiveLocationsArgs
   }
 
   // Custom InputTypes
@@ -2446,6 +2540,13 @@ export namespace Prisma {
     where?: ProjectAccessRequestWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountArchiveLocationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PhysicalArchiveLocationWhereInput
+  }
+
 
   /**
    * Count Type ProjectCountOutputType
@@ -2459,6 +2560,7 @@ export namespace Prisma {
     files: number
     timelineAdjustments: number
     accessRequests: number
+    archiveLocations: number
   }
 
   export type ProjectCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2469,6 +2571,7 @@ export namespace Prisma {
     files?: boolean | ProjectCountOutputTypeCountFilesArgs
     timelineAdjustments?: boolean | ProjectCountOutputTypeCountTimelineAdjustmentsArgs
     accessRequests?: boolean | ProjectCountOutputTypeCountAccessRequestsArgs
+    archiveLocations?: boolean | ProjectCountOutputTypeCountArchiveLocationsArgs
   }
 
   // Custom InputTypes
@@ -2529,6 +2632,13 @@ export namespace Prisma {
    */
   export type ProjectCountOutputTypeCountAccessRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ProjectAccessRequestWhereInput
+  }
+
+  /**
+   * ProjectCountOutputType without action
+   */
+  export type ProjectCountOutputTypeCountArchiveLocationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PhysicalArchiveLocationWhereInput
   }
 
 
@@ -2895,6 +3005,7 @@ export namespace Prisma {
     timelineAdjustments?: boolean | User$timelineAdjustmentsArgs<ExtArgs>
     accessRequestsMade?: boolean | User$accessRequestsMadeArgs<ExtArgs>
     accessRequestsReviewed?: boolean | User$accessRequestsReviewedArgs<ExtArgs>
+    archiveLocations?: boolean | User$archiveLocationsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2971,6 +3082,7 @@ export namespace Prisma {
     timelineAdjustments?: boolean | User$timelineAdjustmentsArgs<ExtArgs>
     accessRequestsMade?: boolean | User$accessRequestsMadeArgs<ExtArgs>
     accessRequestsReviewed?: boolean | User$accessRequestsReviewedArgs<ExtArgs>
+    archiveLocations?: boolean | User$archiveLocationsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2993,6 +3105,7 @@ export namespace Prisma {
       timelineAdjustments: Prisma.$TimelineAdjustmentPayload<ExtArgs>[]
       accessRequestsMade: Prisma.$ProjectAccessRequestPayload<ExtArgs>[]
       accessRequestsReviewed: Prisma.$ProjectAccessRequestPayload<ExtArgs>[]
+      archiveLocations: Prisma.$PhysicalArchiveLocationPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3419,6 +3532,7 @@ export namespace Prisma {
     timelineAdjustments<T extends User$timelineAdjustmentsArgs<ExtArgs> = {}>(args?: Subset<T, User$timelineAdjustmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TimelineAdjustmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     accessRequestsMade<T extends User$accessRequestsMadeArgs<ExtArgs> = {}>(args?: Subset<T, User$accessRequestsMadeArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     accessRequestsReviewed<T extends User$accessRequestsReviewedArgs<ExtArgs> = {}>(args?: Subset<T, User$accessRequestsReviewedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    archiveLocations<T extends User$archiveLocationsArgs<ExtArgs> = {}>(args?: Subset<T, User$archiveLocationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhysicalArchiveLocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4185,6 +4299,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ProjectAccessRequestScalarFieldEnum | ProjectAccessRequestScalarFieldEnum[]
+  }
+
+  /**
+   * User.archiveLocations
+   */
+  export type User$archiveLocationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhysicalArchiveLocation
+     */
+    select?: PhysicalArchiveLocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhysicalArchiveLocation
+     */
+    omit?: PhysicalArchiveLocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhysicalArchiveLocationInclude<ExtArgs> | null
+    where?: PhysicalArchiveLocationWhereInput
+    orderBy?: PhysicalArchiveLocationOrderByWithRelationInput | PhysicalArchiveLocationOrderByWithRelationInput[]
+    cursor?: PhysicalArchiveLocationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PhysicalArchiveLocationScalarFieldEnum | PhysicalArchiveLocationScalarFieldEnum[]
   }
 
   /**
@@ -5788,6 +5926,7 @@ export namespace Prisma {
     files?: boolean | Project$filesArgs<ExtArgs>
     timelineAdjustments?: boolean | Project$timelineAdjustmentsArgs<ExtArgs>
     accessRequests?: boolean | Project$accessRequestsArgs<ExtArgs>
+    archiveLocations?: boolean | Project$archiveLocationsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["project"]>
 
@@ -5923,6 +6062,7 @@ export namespace Prisma {
     files?: boolean | Project$filesArgs<ExtArgs>
     timelineAdjustments?: boolean | Project$timelineAdjustmentsArgs<ExtArgs>
     accessRequests?: boolean | Project$accessRequestsArgs<ExtArgs>
+    archiveLocations?: boolean | Project$archiveLocationsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProjectIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5943,6 +6083,7 @@ export namespace Prisma {
       files: Prisma.$ProjectFilePayload<ExtArgs>[]
       timelineAdjustments: Prisma.$TimelineAdjustmentPayload<ExtArgs>[]
       accessRequests: Prisma.$ProjectAccessRequestPayload<ExtArgs>[]
+      archiveLocations: Prisma.$PhysicalArchiveLocationPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6384,6 +6525,7 @@ export namespace Prisma {
     files<T extends Project$filesArgs<ExtArgs> = {}>(args?: Subset<T, Project$filesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectFilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     timelineAdjustments<T extends Project$timelineAdjustmentsArgs<ExtArgs> = {}>(args?: Subset<T, Project$timelineAdjustmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TimelineAdjustmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     accessRequests<T extends Project$accessRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Project$accessRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    archiveLocations<T extends Project$archiveLocationsArgs<ExtArgs> = {}>(args?: Subset<T, Project$archiveLocationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhysicalArchiveLocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7014,6 +7156,30 @@ export namespace Prisma {
   }
 
   /**
+   * Project.archiveLocations
+   */
+  export type Project$archiveLocationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhysicalArchiveLocation
+     */
+    select?: PhysicalArchiveLocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhysicalArchiveLocation
+     */
+    omit?: PhysicalArchiveLocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhysicalArchiveLocationInclude<ExtArgs> | null
+    where?: PhysicalArchiveLocationWhereInput
+    orderBy?: PhysicalArchiveLocationOrderByWithRelationInput | PhysicalArchiveLocationOrderByWithRelationInput[]
+    cursor?: PhysicalArchiveLocationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PhysicalArchiveLocationScalarFieldEnum | PhysicalArchiveLocationScalarFieldEnum[]
+  }
+
+  /**
    * Project without action
    */
   export type ProjectDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7029,6 +7195,1184 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: ProjectInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model PhysicalArchiveLocation
+   */
+
+  export type AggregatePhysicalArchiveLocation = {
+    _count: PhysicalArchiveLocationCountAggregateOutputType | null
+    _avg: PhysicalArchiveLocationAvgAggregateOutputType | null
+    _sum: PhysicalArchiveLocationSumAggregateOutputType | null
+    _min: PhysicalArchiveLocationMinAggregateOutputType | null
+    _max: PhysicalArchiveLocationMaxAggregateOutputType | null
+  }
+
+  export type PhysicalArchiveLocationAvgAggregateOutputType = {
+    shelfNumber: number | null
+  }
+
+  export type PhysicalArchiveLocationSumAggregateOutputType = {
+    shelfNumber: number | null
+  }
+
+  export type PhysicalArchiveLocationMinAggregateOutputType = {
+    id: string | null
+    roomLocation: string | null
+    cabinetLabel: string | null
+    shelfNumber: number | null
+    boxId: string | null
+    folderRange: string | null
+    remarks: string | null
+    projectId: string | null
+    createdById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PhysicalArchiveLocationMaxAggregateOutputType = {
+    id: string | null
+    roomLocation: string | null
+    cabinetLabel: string | null
+    shelfNumber: number | null
+    boxId: string | null
+    folderRange: string | null
+    remarks: string | null
+    projectId: string | null
+    createdById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PhysicalArchiveLocationCountAggregateOutputType = {
+    id: number
+    roomLocation: number
+    cabinetLabel: number
+    shelfNumber: number
+    boxId: number
+    folderRange: number
+    remarks: number
+    projectId: number
+    createdById: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type PhysicalArchiveLocationAvgAggregateInputType = {
+    shelfNumber?: true
+  }
+
+  export type PhysicalArchiveLocationSumAggregateInputType = {
+    shelfNumber?: true
+  }
+
+  export type PhysicalArchiveLocationMinAggregateInputType = {
+    id?: true
+    roomLocation?: true
+    cabinetLabel?: true
+    shelfNumber?: true
+    boxId?: true
+    folderRange?: true
+    remarks?: true
+    projectId?: true
+    createdById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PhysicalArchiveLocationMaxAggregateInputType = {
+    id?: true
+    roomLocation?: true
+    cabinetLabel?: true
+    shelfNumber?: true
+    boxId?: true
+    folderRange?: true
+    remarks?: true
+    projectId?: true
+    createdById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PhysicalArchiveLocationCountAggregateInputType = {
+    id?: true
+    roomLocation?: true
+    cabinetLabel?: true
+    shelfNumber?: true
+    boxId?: true
+    folderRange?: true
+    remarks?: true
+    projectId?: true
+    createdById?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type PhysicalArchiveLocationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PhysicalArchiveLocation to aggregate.
+     */
+    where?: PhysicalArchiveLocationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PhysicalArchiveLocations to fetch.
+     */
+    orderBy?: PhysicalArchiveLocationOrderByWithRelationInput | PhysicalArchiveLocationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PhysicalArchiveLocationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PhysicalArchiveLocations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PhysicalArchiveLocations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PhysicalArchiveLocations
+    **/
+    _count?: true | PhysicalArchiveLocationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PhysicalArchiveLocationAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PhysicalArchiveLocationSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PhysicalArchiveLocationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PhysicalArchiveLocationMaxAggregateInputType
+  }
+
+  export type GetPhysicalArchiveLocationAggregateType<T extends PhysicalArchiveLocationAggregateArgs> = {
+        [P in keyof T & keyof AggregatePhysicalArchiveLocation]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePhysicalArchiveLocation[P]>
+      : GetScalarType<T[P], AggregatePhysicalArchiveLocation[P]>
+  }
+
+
+
+
+  export type PhysicalArchiveLocationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PhysicalArchiveLocationWhereInput
+    orderBy?: PhysicalArchiveLocationOrderByWithAggregationInput | PhysicalArchiveLocationOrderByWithAggregationInput[]
+    by: PhysicalArchiveLocationScalarFieldEnum[] | PhysicalArchiveLocationScalarFieldEnum
+    having?: PhysicalArchiveLocationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PhysicalArchiveLocationCountAggregateInputType | true
+    _avg?: PhysicalArchiveLocationAvgAggregateInputType
+    _sum?: PhysicalArchiveLocationSumAggregateInputType
+    _min?: PhysicalArchiveLocationMinAggregateInputType
+    _max?: PhysicalArchiveLocationMaxAggregateInputType
+  }
+
+  export type PhysicalArchiveLocationGroupByOutputType = {
+    id: string
+    roomLocation: string
+    cabinetLabel: string
+    shelfNumber: number
+    boxId: string
+    folderRange: string
+    remarks: string | null
+    projectId: string
+    createdById: string
+    createdAt: Date
+    updatedAt: Date
+    _count: PhysicalArchiveLocationCountAggregateOutputType | null
+    _avg: PhysicalArchiveLocationAvgAggregateOutputType | null
+    _sum: PhysicalArchiveLocationSumAggregateOutputType | null
+    _min: PhysicalArchiveLocationMinAggregateOutputType | null
+    _max: PhysicalArchiveLocationMaxAggregateOutputType | null
+  }
+
+  type GetPhysicalArchiveLocationGroupByPayload<T extends PhysicalArchiveLocationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PhysicalArchiveLocationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PhysicalArchiveLocationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PhysicalArchiveLocationGroupByOutputType[P]>
+            : GetScalarType<T[P], PhysicalArchiveLocationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PhysicalArchiveLocationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    roomLocation?: boolean
+    cabinetLabel?: boolean
+    shelfNumber?: boolean
+    boxId?: boolean
+    folderRange?: boolean
+    remarks?: boolean
+    projectId?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["physicalArchiveLocation"]>
+
+  export type PhysicalArchiveLocationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    roomLocation?: boolean
+    cabinetLabel?: boolean
+    shelfNumber?: boolean
+    boxId?: boolean
+    folderRange?: boolean
+    remarks?: boolean
+    projectId?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["physicalArchiveLocation"]>
+
+  export type PhysicalArchiveLocationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    roomLocation?: boolean
+    cabinetLabel?: boolean
+    shelfNumber?: boolean
+    boxId?: boolean
+    folderRange?: boolean
+    remarks?: boolean
+    projectId?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["physicalArchiveLocation"]>
+
+  export type PhysicalArchiveLocationSelectScalar = {
+    id?: boolean
+    roomLocation?: boolean
+    cabinetLabel?: boolean
+    shelfNumber?: boolean
+    boxId?: boolean
+    folderRange?: boolean
+    remarks?: boolean
+    projectId?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type PhysicalArchiveLocationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "roomLocation" | "cabinetLabel" | "shelfNumber" | "boxId" | "folderRange" | "remarks" | "projectId" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["physicalArchiveLocation"]>
+  export type PhysicalArchiveLocationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type PhysicalArchiveLocationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type PhysicalArchiveLocationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $PhysicalArchiveLocationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PhysicalArchiveLocation"
+    objects: {
+      project: Prisma.$ProjectPayload<ExtArgs>
+      createdBy: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      roomLocation: string
+      cabinetLabel: string
+      shelfNumber: number
+      boxId: string
+      folderRange: string
+      remarks: string | null
+      projectId: string
+      createdById: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["physicalArchiveLocation"]>
+    composites: {}
+  }
+
+  type PhysicalArchiveLocationGetPayload<S extends boolean | null | undefined | PhysicalArchiveLocationDefaultArgs> = $Result.GetResult<Prisma.$PhysicalArchiveLocationPayload, S>
+
+  type PhysicalArchiveLocationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PhysicalArchiveLocationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PhysicalArchiveLocationCountAggregateInputType | true
+    }
+
+  export interface PhysicalArchiveLocationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PhysicalArchiveLocation'], meta: { name: 'PhysicalArchiveLocation' } }
+    /**
+     * Find zero or one PhysicalArchiveLocation that matches the filter.
+     * @param {PhysicalArchiveLocationFindUniqueArgs} args - Arguments to find a PhysicalArchiveLocation
+     * @example
+     * // Get one PhysicalArchiveLocation
+     * const physicalArchiveLocation = await prisma.physicalArchiveLocation.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PhysicalArchiveLocationFindUniqueArgs>(args: SelectSubset<T, PhysicalArchiveLocationFindUniqueArgs<ExtArgs>>): Prisma__PhysicalArchiveLocationClient<$Result.GetResult<Prisma.$PhysicalArchiveLocationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PhysicalArchiveLocation that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PhysicalArchiveLocationFindUniqueOrThrowArgs} args - Arguments to find a PhysicalArchiveLocation
+     * @example
+     * // Get one PhysicalArchiveLocation
+     * const physicalArchiveLocation = await prisma.physicalArchiveLocation.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PhysicalArchiveLocationFindUniqueOrThrowArgs>(args: SelectSubset<T, PhysicalArchiveLocationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PhysicalArchiveLocationClient<$Result.GetResult<Prisma.$PhysicalArchiveLocationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PhysicalArchiveLocation that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PhysicalArchiveLocationFindFirstArgs} args - Arguments to find a PhysicalArchiveLocation
+     * @example
+     * // Get one PhysicalArchiveLocation
+     * const physicalArchiveLocation = await prisma.physicalArchiveLocation.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PhysicalArchiveLocationFindFirstArgs>(args?: SelectSubset<T, PhysicalArchiveLocationFindFirstArgs<ExtArgs>>): Prisma__PhysicalArchiveLocationClient<$Result.GetResult<Prisma.$PhysicalArchiveLocationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PhysicalArchiveLocation that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PhysicalArchiveLocationFindFirstOrThrowArgs} args - Arguments to find a PhysicalArchiveLocation
+     * @example
+     * // Get one PhysicalArchiveLocation
+     * const physicalArchiveLocation = await prisma.physicalArchiveLocation.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PhysicalArchiveLocationFindFirstOrThrowArgs>(args?: SelectSubset<T, PhysicalArchiveLocationFindFirstOrThrowArgs<ExtArgs>>): Prisma__PhysicalArchiveLocationClient<$Result.GetResult<Prisma.$PhysicalArchiveLocationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PhysicalArchiveLocations that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PhysicalArchiveLocationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PhysicalArchiveLocations
+     * const physicalArchiveLocations = await prisma.physicalArchiveLocation.findMany()
+     * 
+     * // Get first 10 PhysicalArchiveLocations
+     * const physicalArchiveLocations = await prisma.physicalArchiveLocation.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const physicalArchiveLocationWithIdOnly = await prisma.physicalArchiveLocation.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PhysicalArchiveLocationFindManyArgs>(args?: SelectSubset<T, PhysicalArchiveLocationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhysicalArchiveLocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PhysicalArchiveLocation.
+     * @param {PhysicalArchiveLocationCreateArgs} args - Arguments to create a PhysicalArchiveLocation.
+     * @example
+     * // Create one PhysicalArchiveLocation
+     * const PhysicalArchiveLocation = await prisma.physicalArchiveLocation.create({
+     *   data: {
+     *     // ... data to create a PhysicalArchiveLocation
+     *   }
+     * })
+     * 
+     */
+    create<T extends PhysicalArchiveLocationCreateArgs>(args: SelectSubset<T, PhysicalArchiveLocationCreateArgs<ExtArgs>>): Prisma__PhysicalArchiveLocationClient<$Result.GetResult<Prisma.$PhysicalArchiveLocationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PhysicalArchiveLocations.
+     * @param {PhysicalArchiveLocationCreateManyArgs} args - Arguments to create many PhysicalArchiveLocations.
+     * @example
+     * // Create many PhysicalArchiveLocations
+     * const physicalArchiveLocation = await prisma.physicalArchiveLocation.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PhysicalArchiveLocationCreateManyArgs>(args?: SelectSubset<T, PhysicalArchiveLocationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PhysicalArchiveLocations and returns the data saved in the database.
+     * @param {PhysicalArchiveLocationCreateManyAndReturnArgs} args - Arguments to create many PhysicalArchiveLocations.
+     * @example
+     * // Create many PhysicalArchiveLocations
+     * const physicalArchiveLocation = await prisma.physicalArchiveLocation.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PhysicalArchiveLocations and only return the `id`
+     * const physicalArchiveLocationWithIdOnly = await prisma.physicalArchiveLocation.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PhysicalArchiveLocationCreateManyAndReturnArgs>(args?: SelectSubset<T, PhysicalArchiveLocationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhysicalArchiveLocationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PhysicalArchiveLocation.
+     * @param {PhysicalArchiveLocationDeleteArgs} args - Arguments to delete one PhysicalArchiveLocation.
+     * @example
+     * // Delete one PhysicalArchiveLocation
+     * const PhysicalArchiveLocation = await prisma.physicalArchiveLocation.delete({
+     *   where: {
+     *     // ... filter to delete one PhysicalArchiveLocation
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PhysicalArchiveLocationDeleteArgs>(args: SelectSubset<T, PhysicalArchiveLocationDeleteArgs<ExtArgs>>): Prisma__PhysicalArchiveLocationClient<$Result.GetResult<Prisma.$PhysicalArchiveLocationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PhysicalArchiveLocation.
+     * @param {PhysicalArchiveLocationUpdateArgs} args - Arguments to update one PhysicalArchiveLocation.
+     * @example
+     * // Update one PhysicalArchiveLocation
+     * const physicalArchiveLocation = await prisma.physicalArchiveLocation.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PhysicalArchiveLocationUpdateArgs>(args: SelectSubset<T, PhysicalArchiveLocationUpdateArgs<ExtArgs>>): Prisma__PhysicalArchiveLocationClient<$Result.GetResult<Prisma.$PhysicalArchiveLocationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PhysicalArchiveLocations.
+     * @param {PhysicalArchiveLocationDeleteManyArgs} args - Arguments to filter PhysicalArchiveLocations to delete.
+     * @example
+     * // Delete a few PhysicalArchiveLocations
+     * const { count } = await prisma.physicalArchiveLocation.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PhysicalArchiveLocationDeleteManyArgs>(args?: SelectSubset<T, PhysicalArchiveLocationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PhysicalArchiveLocations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PhysicalArchiveLocationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PhysicalArchiveLocations
+     * const physicalArchiveLocation = await prisma.physicalArchiveLocation.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PhysicalArchiveLocationUpdateManyArgs>(args: SelectSubset<T, PhysicalArchiveLocationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PhysicalArchiveLocations and returns the data updated in the database.
+     * @param {PhysicalArchiveLocationUpdateManyAndReturnArgs} args - Arguments to update many PhysicalArchiveLocations.
+     * @example
+     * // Update many PhysicalArchiveLocations
+     * const physicalArchiveLocation = await prisma.physicalArchiveLocation.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PhysicalArchiveLocations and only return the `id`
+     * const physicalArchiveLocationWithIdOnly = await prisma.physicalArchiveLocation.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PhysicalArchiveLocationUpdateManyAndReturnArgs>(args: SelectSubset<T, PhysicalArchiveLocationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhysicalArchiveLocationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PhysicalArchiveLocation.
+     * @param {PhysicalArchiveLocationUpsertArgs} args - Arguments to update or create a PhysicalArchiveLocation.
+     * @example
+     * // Update or create a PhysicalArchiveLocation
+     * const physicalArchiveLocation = await prisma.physicalArchiveLocation.upsert({
+     *   create: {
+     *     // ... data to create a PhysicalArchiveLocation
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PhysicalArchiveLocation we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PhysicalArchiveLocationUpsertArgs>(args: SelectSubset<T, PhysicalArchiveLocationUpsertArgs<ExtArgs>>): Prisma__PhysicalArchiveLocationClient<$Result.GetResult<Prisma.$PhysicalArchiveLocationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PhysicalArchiveLocations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PhysicalArchiveLocationCountArgs} args - Arguments to filter PhysicalArchiveLocations to count.
+     * @example
+     * // Count the number of PhysicalArchiveLocations
+     * const count = await prisma.physicalArchiveLocation.count({
+     *   where: {
+     *     // ... the filter for the PhysicalArchiveLocations we want to count
+     *   }
+     * })
+    **/
+    count<T extends PhysicalArchiveLocationCountArgs>(
+      args?: Subset<T, PhysicalArchiveLocationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PhysicalArchiveLocationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PhysicalArchiveLocation.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PhysicalArchiveLocationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PhysicalArchiveLocationAggregateArgs>(args: Subset<T, PhysicalArchiveLocationAggregateArgs>): Prisma.PrismaPromise<GetPhysicalArchiveLocationAggregateType<T>>
+
+    /**
+     * Group by PhysicalArchiveLocation.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PhysicalArchiveLocationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PhysicalArchiveLocationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PhysicalArchiveLocationGroupByArgs['orderBy'] }
+        : { orderBy?: PhysicalArchiveLocationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PhysicalArchiveLocationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPhysicalArchiveLocationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PhysicalArchiveLocation model
+   */
+  readonly fields: PhysicalArchiveLocationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PhysicalArchiveLocation.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PhysicalArchiveLocationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PhysicalArchiveLocation model
+   */
+  interface PhysicalArchiveLocationFieldRefs {
+    readonly id: FieldRef<"PhysicalArchiveLocation", 'String'>
+    readonly roomLocation: FieldRef<"PhysicalArchiveLocation", 'String'>
+    readonly cabinetLabel: FieldRef<"PhysicalArchiveLocation", 'String'>
+    readonly shelfNumber: FieldRef<"PhysicalArchiveLocation", 'Int'>
+    readonly boxId: FieldRef<"PhysicalArchiveLocation", 'String'>
+    readonly folderRange: FieldRef<"PhysicalArchiveLocation", 'String'>
+    readonly remarks: FieldRef<"PhysicalArchiveLocation", 'String'>
+    readonly projectId: FieldRef<"PhysicalArchiveLocation", 'String'>
+    readonly createdById: FieldRef<"PhysicalArchiveLocation", 'String'>
+    readonly createdAt: FieldRef<"PhysicalArchiveLocation", 'DateTime'>
+    readonly updatedAt: FieldRef<"PhysicalArchiveLocation", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PhysicalArchiveLocation findUnique
+   */
+  export type PhysicalArchiveLocationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhysicalArchiveLocation
+     */
+    select?: PhysicalArchiveLocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhysicalArchiveLocation
+     */
+    omit?: PhysicalArchiveLocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhysicalArchiveLocationInclude<ExtArgs> | null
+    /**
+     * Filter, which PhysicalArchiveLocation to fetch.
+     */
+    where: PhysicalArchiveLocationWhereUniqueInput
+  }
+
+  /**
+   * PhysicalArchiveLocation findUniqueOrThrow
+   */
+  export type PhysicalArchiveLocationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhysicalArchiveLocation
+     */
+    select?: PhysicalArchiveLocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhysicalArchiveLocation
+     */
+    omit?: PhysicalArchiveLocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhysicalArchiveLocationInclude<ExtArgs> | null
+    /**
+     * Filter, which PhysicalArchiveLocation to fetch.
+     */
+    where: PhysicalArchiveLocationWhereUniqueInput
+  }
+
+  /**
+   * PhysicalArchiveLocation findFirst
+   */
+  export type PhysicalArchiveLocationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhysicalArchiveLocation
+     */
+    select?: PhysicalArchiveLocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhysicalArchiveLocation
+     */
+    omit?: PhysicalArchiveLocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhysicalArchiveLocationInclude<ExtArgs> | null
+    /**
+     * Filter, which PhysicalArchiveLocation to fetch.
+     */
+    where?: PhysicalArchiveLocationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PhysicalArchiveLocations to fetch.
+     */
+    orderBy?: PhysicalArchiveLocationOrderByWithRelationInput | PhysicalArchiveLocationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PhysicalArchiveLocations.
+     */
+    cursor?: PhysicalArchiveLocationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PhysicalArchiveLocations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PhysicalArchiveLocations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PhysicalArchiveLocations.
+     */
+    distinct?: PhysicalArchiveLocationScalarFieldEnum | PhysicalArchiveLocationScalarFieldEnum[]
+  }
+
+  /**
+   * PhysicalArchiveLocation findFirstOrThrow
+   */
+  export type PhysicalArchiveLocationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhysicalArchiveLocation
+     */
+    select?: PhysicalArchiveLocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhysicalArchiveLocation
+     */
+    omit?: PhysicalArchiveLocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhysicalArchiveLocationInclude<ExtArgs> | null
+    /**
+     * Filter, which PhysicalArchiveLocation to fetch.
+     */
+    where?: PhysicalArchiveLocationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PhysicalArchiveLocations to fetch.
+     */
+    orderBy?: PhysicalArchiveLocationOrderByWithRelationInput | PhysicalArchiveLocationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PhysicalArchiveLocations.
+     */
+    cursor?: PhysicalArchiveLocationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PhysicalArchiveLocations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PhysicalArchiveLocations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PhysicalArchiveLocations.
+     */
+    distinct?: PhysicalArchiveLocationScalarFieldEnum | PhysicalArchiveLocationScalarFieldEnum[]
+  }
+
+  /**
+   * PhysicalArchiveLocation findMany
+   */
+  export type PhysicalArchiveLocationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhysicalArchiveLocation
+     */
+    select?: PhysicalArchiveLocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhysicalArchiveLocation
+     */
+    omit?: PhysicalArchiveLocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhysicalArchiveLocationInclude<ExtArgs> | null
+    /**
+     * Filter, which PhysicalArchiveLocations to fetch.
+     */
+    where?: PhysicalArchiveLocationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PhysicalArchiveLocations to fetch.
+     */
+    orderBy?: PhysicalArchiveLocationOrderByWithRelationInput | PhysicalArchiveLocationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PhysicalArchiveLocations.
+     */
+    cursor?: PhysicalArchiveLocationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PhysicalArchiveLocations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PhysicalArchiveLocations.
+     */
+    skip?: number
+    distinct?: PhysicalArchiveLocationScalarFieldEnum | PhysicalArchiveLocationScalarFieldEnum[]
+  }
+
+  /**
+   * PhysicalArchiveLocation create
+   */
+  export type PhysicalArchiveLocationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhysicalArchiveLocation
+     */
+    select?: PhysicalArchiveLocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhysicalArchiveLocation
+     */
+    omit?: PhysicalArchiveLocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhysicalArchiveLocationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PhysicalArchiveLocation.
+     */
+    data: XOR<PhysicalArchiveLocationCreateInput, PhysicalArchiveLocationUncheckedCreateInput>
+  }
+
+  /**
+   * PhysicalArchiveLocation createMany
+   */
+  export type PhysicalArchiveLocationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PhysicalArchiveLocations.
+     */
+    data: PhysicalArchiveLocationCreateManyInput | PhysicalArchiveLocationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PhysicalArchiveLocation createManyAndReturn
+   */
+  export type PhysicalArchiveLocationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhysicalArchiveLocation
+     */
+    select?: PhysicalArchiveLocationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhysicalArchiveLocation
+     */
+    omit?: PhysicalArchiveLocationOmit<ExtArgs> | null
+    /**
+     * The data used to create many PhysicalArchiveLocations.
+     */
+    data: PhysicalArchiveLocationCreateManyInput | PhysicalArchiveLocationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhysicalArchiveLocationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PhysicalArchiveLocation update
+   */
+  export type PhysicalArchiveLocationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhysicalArchiveLocation
+     */
+    select?: PhysicalArchiveLocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhysicalArchiveLocation
+     */
+    omit?: PhysicalArchiveLocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhysicalArchiveLocationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PhysicalArchiveLocation.
+     */
+    data: XOR<PhysicalArchiveLocationUpdateInput, PhysicalArchiveLocationUncheckedUpdateInput>
+    /**
+     * Choose, which PhysicalArchiveLocation to update.
+     */
+    where: PhysicalArchiveLocationWhereUniqueInput
+  }
+
+  /**
+   * PhysicalArchiveLocation updateMany
+   */
+  export type PhysicalArchiveLocationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PhysicalArchiveLocations.
+     */
+    data: XOR<PhysicalArchiveLocationUpdateManyMutationInput, PhysicalArchiveLocationUncheckedUpdateManyInput>
+    /**
+     * Filter which PhysicalArchiveLocations to update
+     */
+    where?: PhysicalArchiveLocationWhereInput
+    /**
+     * Limit how many PhysicalArchiveLocations to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PhysicalArchiveLocation updateManyAndReturn
+   */
+  export type PhysicalArchiveLocationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhysicalArchiveLocation
+     */
+    select?: PhysicalArchiveLocationSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhysicalArchiveLocation
+     */
+    omit?: PhysicalArchiveLocationOmit<ExtArgs> | null
+    /**
+     * The data used to update PhysicalArchiveLocations.
+     */
+    data: XOR<PhysicalArchiveLocationUpdateManyMutationInput, PhysicalArchiveLocationUncheckedUpdateManyInput>
+    /**
+     * Filter which PhysicalArchiveLocations to update
+     */
+    where?: PhysicalArchiveLocationWhereInput
+    /**
+     * Limit how many PhysicalArchiveLocations to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhysicalArchiveLocationIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PhysicalArchiveLocation upsert
+   */
+  export type PhysicalArchiveLocationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhysicalArchiveLocation
+     */
+    select?: PhysicalArchiveLocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhysicalArchiveLocation
+     */
+    omit?: PhysicalArchiveLocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhysicalArchiveLocationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PhysicalArchiveLocation to update in case it exists.
+     */
+    where: PhysicalArchiveLocationWhereUniqueInput
+    /**
+     * In case the PhysicalArchiveLocation found by the `where` argument doesn't exist, create a new PhysicalArchiveLocation with this data.
+     */
+    create: XOR<PhysicalArchiveLocationCreateInput, PhysicalArchiveLocationUncheckedCreateInput>
+    /**
+     * In case the PhysicalArchiveLocation was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PhysicalArchiveLocationUpdateInput, PhysicalArchiveLocationUncheckedUpdateInput>
+  }
+
+  /**
+   * PhysicalArchiveLocation delete
+   */
+  export type PhysicalArchiveLocationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhysicalArchiveLocation
+     */
+    select?: PhysicalArchiveLocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhysicalArchiveLocation
+     */
+    omit?: PhysicalArchiveLocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhysicalArchiveLocationInclude<ExtArgs> | null
+    /**
+     * Filter which PhysicalArchiveLocation to delete.
+     */
+    where: PhysicalArchiveLocationWhereUniqueInput
+  }
+
+  /**
+   * PhysicalArchiveLocation deleteMany
+   */
+  export type PhysicalArchiveLocationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PhysicalArchiveLocations to delete
+     */
+    where?: PhysicalArchiveLocationWhereInput
+    /**
+     * Limit how many PhysicalArchiveLocations to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PhysicalArchiveLocation without action
+   */
+  export type PhysicalArchiveLocationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhysicalArchiveLocation
+     */
+    select?: PhysicalArchiveLocationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhysicalArchiveLocation
+     */
+    omit?: PhysicalArchiveLocationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhysicalArchiveLocationInclude<ExtArgs> | null
   }
 
 
@@ -19712,6 +21056,23 @@ export namespace Prisma {
   export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
 
 
+  export const PhysicalArchiveLocationScalarFieldEnum: {
+    id: 'id',
+    roomLocation: 'roomLocation',
+    cabinetLabel: 'cabinetLabel',
+    shelfNumber: 'shelfNumber',
+    boxId: 'boxId',
+    folderRange: 'folderRange',
+    remarks: 'remarks',
+    projectId: 'projectId',
+    createdById: 'createdById',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type PhysicalArchiveLocationScalarFieldEnum = (typeof PhysicalArchiveLocationScalarFieldEnum)[keyof typeof PhysicalArchiveLocationScalarFieldEnum]
+
+
   export const ProjectActivityScalarFieldEnum: {
     id: 'id',
     projectId: 'projectId',
@@ -20225,6 +21586,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentListRelationFilter
     accessRequestsMade?: ProjectAccessRequestListRelationFilter
     accessRequestsReviewed?: ProjectAccessRequestListRelationFilter
+    archiveLocations?: PhysicalArchiveLocationListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -20258,6 +21620,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentOrderByRelationAggregateInput
     accessRequestsMade?: ProjectAccessRequestOrderByRelationAggregateInput
     accessRequestsReviewed?: ProjectAccessRequestOrderByRelationAggregateInput
+    archiveLocations?: PhysicalArchiveLocationOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -20294,6 +21657,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentListRelationFilter
     accessRequestsMade?: ProjectAccessRequestListRelationFilter
     accessRequestsReviewed?: ProjectAccessRequestListRelationFilter
+    archiveLocations?: PhysicalArchiveLocationListRelationFilter
   }, "id" | "email" | "employeeId">
 
   export type UserOrderByWithAggregationInput = {
@@ -20454,6 +21818,7 @@ export namespace Prisma {
     files?: ProjectFileListRelationFilter
     timelineAdjustments?: TimelineAdjustmentListRelationFilter
     accessRequests?: ProjectAccessRequestListRelationFilter
+    archiveLocations?: PhysicalArchiveLocationListRelationFilter
   }
 
   export type ProjectOrderByWithRelationInput = {
@@ -20502,6 +21867,7 @@ export namespace Prisma {
     files?: ProjectFileOrderByRelationAggregateInput
     timelineAdjustments?: TimelineAdjustmentOrderByRelationAggregateInput
     accessRequests?: ProjectAccessRequestOrderByRelationAggregateInput
+    archiveLocations?: PhysicalArchiveLocationOrderByRelationAggregateInput
   }
 
   export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -20553,6 +21919,7 @@ export namespace Prisma {
     files?: ProjectFileListRelationFilter
     timelineAdjustments?: TimelineAdjustmentListRelationFilter
     accessRequests?: ProjectAccessRequestListRelationFilter
+    archiveLocations?: PhysicalArchiveLocationListRelationFilter
   }, "id" | "projectCode">
 
   export type ProjectOrderByWithAggregationInput = {
@@ -20641,6 +22008,96 @@ export namespace Prisma {
     createdById?: StringWithAggregatesFilter<"Project"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Project"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Project"> | Date | string
+  }
+
+  export type PhysicalArchiveLocationWhereInput = {
+    AND?: PhysicalArchiveLocationWhereInput | PhysicalArchiveLocationWhereInput[]
+    OR?: PhysicalArchiveLocationWhereInput[]
+    NOT?: PhysicalArchiveLocationWhereInput | PhysicalArchiveLocationWhereInput[]
+    id?: StringFilter<"PhysicalArchiveLocation"> | string
+    roomLocation?: StringFilter<"PhysicalArchiveLocation"> | string
+    cabinetLabel?: StringFilter<"PhysicalArchiveLocation"> | string
+    shelfNumber?: IntFilter<"PhysicalArchiveLocation"> | number
+    boxId?: StringFilter<"PhysicalArchiveLocation"> | string
+    folderRange?: StringFilter<"PhysicalArchiveLocation"> | string
+    remarks?: StringNullableFilter<"PhysicalArchiveLocation"> | string | null
+    projectId?: StringFilter<"PhysicalArchiveLocation"> | string
+    createdById?: StringFilter<"PhysicalArchiveLocation"> | string
+    createdAt?: DateTimeFilter<"PhysicalArchiveLocation"> | Date | string
+    updatedAt?: DateTimeFilter<"PhysicalArchiveLocation"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type PhysicalArchiveLocationOrderByWithRelationInput = {
+    id?: SortOrder
+    roomLocation?: SortOrder
+    cabinetLabel?: SortOrder
+    shelfNumber?: SortOrder
+    boxId?: SortOrder
+    folderRange?: SortOrder
+    remarks?: SortOrderInput | SortOrder
+    projectId?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    project?: ProjectOrderByWithRelationInput
+    createdBy?: UserOrderByWithRelationInput
+  }
+
+  export type PhysicalArchiveLocationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: PhysicalArchiveLocationWhereInput | PhysicalArchiveLocationWhereInput[]
+    OR?: PhysicalArchiveLocationWhereInput[]
+    NOT?: PhysicalArchiveLocationWhereInput | PhysicalArchiveLocationWhereInput[]
+    roomLocation?: StringFilter<"PhysicalArchiveLocation"> | string
+    cabinetLabel?: StringFilter<"PhysicalArchiveLocation"> | string
+    shelfNumber?: IntFilter<"PhysicalArchiveLocation"> | number
+    boxId?: StringFilter<"PhysicalArchiveLocation"> | string
+    folderRange?: StringFilter<"PhysicalArchiveLocation"> | string
+    remarks?: StringNullableFilter<"PhysicalArchiveLocation"> | string | null
+    projectId?: StringFilter<"PhysicalArchiveLocation"> | string
+    createdById?: StringFilter<"PhysicalArchiveLocation"> | string
+    createdAt?: DateTimeFilter<"PhysicalArchiveLocation"> | Date | string
+    updatedAt?: DateTimeFilter<"PhysicalArchiveLocation"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type PhysicalArchiveLocationOrderByWithAggregationInput = {
+    id?: SortOrder
+    roomLocation?: SortOrder
+    cabinetLabel?: SortOrder
+    shelfNumber?: SortOrder
+    boxId?: SortOrder
+    folderRange?: SortOrder
+    remarks?: SortOrderInput | SortOrder
+    projectId?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: PhysicalArchiveLocationCountOrderByAggregateInput
+    _avg?: PhysicalArchiveLocationAvgOrderByAggregateInput
+    _max?: PhysicalArchiveLocationMaxOrderByAggregateInput
+    _min?: PhysicalArchiveLocationMinOrderByAggregateInput
+    _sum?: PhysicalArchiveLocationSumOrderByAggregateInput
+  }
+
+  export type PhysicalArchiveLocationScalarWhereWithAggregatesInput = {
+    AND?: PhysicalArchiveLocationScalarWhereWithAggregatesInput | PhysicalArchiveLocationScalarWhereWithAggregatesInput[]
+    OR?: PhysicalArchiveLocationScalarWhereWithAggregatesInput[]
+    NOT?: PhysicalArchiveLocationScalarWhereWithAggregatesInput | PhysicalArchiveLocationScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"PhysicalArchiveLocation"> | string
+    roomLocation?: StringWithAggregatesFilter<"PhysicalArchiveLocation"> | string
+    cabinetLabel?: StringWithAggregatesFilter<"PhysicalArchiveLocation"> | string
+    shelfNumber?: IntWithAggregatesFilter<"PhysicalArchiveLocation"> | number
+    boxId?: StringWithAggregatesFilter<"PhysicalArchiveLocation"> | string
+    folderRange?: StringWithAggregatesFilter<"PhysicalArchiveLocation"> | string
+    remarks?: StringNullableWithAggregatesFilter<"PhysicalArchiveLocation"> | string | null
+    projectId?: StringWithAggregatesFilter<"PhysicalArchiveLocation"> | string
+    createdById?: StringWithAggregatesFilter<"PhysicalArchiveLocation"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"PhysicalArchiveLocation"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"PhysicalArchiveLocation"> | Date | string
   }
 
   export type ProjectActivityWhereInput = {
@@ -21530,6 +22987,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -21563,6 +23021,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUpdateInput = {
@@ -21596,6 +23055,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -21629,6 +23089,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -21802,6 +23263,7 @@ export namespace Prisma {
     files?: ProjectFileCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateInput = {
@@ -21849,6 +23311,7 @@ export namespace Prisma {
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUpdateInput = {
@@ -21896,6 +23359,7 @@ export namespace Prisma {
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateInput = {
@@ -21943,6 +23407,7 @@ export namespace Prisma {
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateManyInput = {
@@ -22059,6 +23524,102 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PhysicalArchiveLocationCreateInput = {
+    id?: string
+    roomLocation: string
+    cabinetLabel: string
+    shelfNumber: number
+    boxId: string
+    folderRange: string
+    remarks?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutArchiveLocationsInput
+    createdBy: UserCreateNestedOneWithoutArchiveLocationsInput
+  }
+
+  export type PhysicalArchiveLocationUncheckedCreateInput = {
+    id?: string
+    roomLocation: string
+    cabinetLabel: string
+    shelfNumber: number
+    boxId: string
+    folderRange: string
+    remarks?: string | null
+    projectId: string
+    createdById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PhysicalArchiveLocationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    roomLocation?: StringFieldUpdateOperationsInput | string
+    cabinetLabel?: StringFieldUpdateOperationsInput | string
+    shelfNumber?: IntFieldUpdateOperationsInput | number
+    boxId?: StringFieldUpdateOperationsInput | string
+    folderRange?: StringFieldUpdateOperationsInput | string
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutArchiveLocationsNestedInput
+    createdBy?: UserUpdateOneRequiredWithoutArchiveLocationsNestedInput
+  }
+
+  export type PhysicalArchiveLocationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    roomLocation?: StringFieldUpdateOperationsInput | string
+    cabinetLabel?: StringFieldUpdateOperationsInput | string
+    shelfNumber?: IntFieldUpdateOperationsInput | number
+    boxId?: StringFieldUpdateOperationsInput | string
+    folderRange?: StringFieldUpdateOperationsInput | string
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    projectId?: StringFieldUpdateOperationsInput | string
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PhysicalArchiveLocationCreateManyInput = {
+    id?: string
+    roomLocation: string
+    cabinetLabel: string
+    shelfNumber: number
+    boxId: string
+    folderRange: string
+    remarks?: string | null
+    projectId: string
+    createdById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PhysicalArchiveLocationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    roomLocation?: StringFieldUpdateOperationsInput | string
+    cabinetLabel?: StringFieldUpdateOperationsInput | string
+    shelfNumber?: IntFieldUpdateOperationsInput | number
+    boxId?: StringFieldUpdateOperationsInput | string
+    folderRange?: StringFieldUpdateOperationsInput | string
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PhysicalArchiveLocationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    roomLocation?: StringFieldUpdateOperationsInput | string
+    cabinetLabel?: StringFieldUpdateOperationsInput | string
+    shelfNumber?: IntFieldUpdateOperationsInput | number
+    boxId?: StringFieldUpdateOperationsInput | string
+    folderRange?: StringFieldUpdateOperationsInput | string
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    projectId?: StringFieldUpdateOperationsInput | string
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23085,6 +24646,12 @@ export namespace Prisma {
     none?: ProjectAccessRequestWhereInput
   }
 
+  export type PhysicalArchiveLocationListRelationFilter = {
+    every?: PhysicalArchiveLocationWhereInput
+    some?: PhysicalArchiveLocationWhereInput
+    none?: PhysicalArchiveLocationWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -23135,6 +24702,10 @@ export namespace Prisma {
   }
 
   export type ProjectAccessRequestOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PhysicalArchiveLocationOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -23629,6 +25200,56 @@ export namespace Prisma {
   export type ProjectScalarRelationFilter = {
     is?: ProjectWhereInput
     isNot?: ProjectWhereInput
+  }
+
+  export type PhysicalArchiveLocationCountOrderByAggregateInput = {
+    id?: SortOrder
+    roomLocation?: SortOrder
+    cabinetLabel?: SortOrder
+    shelfNumber?: SortOrder
+    boxId?: SortOrder
+    folderRange?: SortOrder
+    remarks?: SortOrder
+    projectId?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PhysicalArchiveLocationAvgOrderByAggregateInput = {
+    shelfNumber?: SortOrder
+  }
+
+  export type PhysicalArchiveLocationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    roomLocation?: SortOrder
+    cabinetLabel?: SortOrder
+    shelfNumber?: SortOrder
+    boxId?: SortOrder
+    folderRange?: SortOrder
+    remarks?: SortOrder
+    projectId?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PhysicalArchiveLocationMinOrderByAggregateInput = {
+    id?: SortOrder
+    roomLocation?: SortOrder
+    cabinetLabel?: SortOrder
+    shelfNumber?: SortOrder
+    boxId?: SortOrder
+    folderRange?: SortOrder
+    remarks?: SortOrder
+    projectId?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PhysicalArchiveLocationSumOrderByAggregateInput = {
+    shelfNumber?: SortOrder
   }
 
   export type ProjectActivityCountOrderByAggregateInput = {
@@ -24420,6 +26041,13 @@ export namespace Prisma {
     connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
   }
 
+  export type PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<PhysicalArchiveLocationCreateWithoutCreatedByInput, PhysicalArchiveLocationUncheckedCreateWithoutCreatedByInput> | PhysicalArchiveLocationCreateWithoutCreatedByInput[] | PhysicalArchiveLocationUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: PhysicalArchiveLocationCreateOrConnectWithoutCreatedByInput | PhysicalArchiveLocationCreateOrConnectWithoutCreatedByInput[]
+    createMany?: PhysicalArchiveLocationCreateManyCreatedByInputEnvelope
+    connect?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
+  }
+
   export type PostUncheckedCreateNestedManyWithoutCreatedByInput = {
     create?: XOR<PostCreateWithoutCreatedByInput, PostUncheckedCreateWithoutCreatedByInput> | PostCreateWithoutCreatedByInput[] | PostUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: PostCreateOrConnectWithoutCreatedByInput | PostCreateOrConnectWithoutCreatedByInput[]
@@ -24516,6 +26144,13 @@ export namespace Prisma {
     connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutReviewedByInput | ProjectAccessRequestCreateOrConnectWithoutReviewedByInput[]
     createMany?: ProjectAccessRequestCreateManyReviewedByInputEnvelope
     connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+  }
+
+  export type PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<PhysicalArchiveLocationCreateWithoutCreatedByInput, PhysicalArchiveLocationUncheckedCreateWithoutCreatedByInput> | PhysicalArchiveLocationCreateWithoutCreatedByInput[] | PhysicalArchiveLocationUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: PhysicalArchiveLocationCreateOrConnectWithoutCreatedByInput | PhysicalArchiveLocationCreateOrConnectWithoutCreatedByInput[]
+    createMany?: PhysicalArchiveLocationCreateManyCreatedByInputEnvelope
+    connect?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -24742,6 +26377,20 @@ export namespace Prisma {
     deleteMany?: ProjectAccessRequestScalarWhereInput | ProjectAccessRequestScalarWhereInput[]
   }
 
+  export type PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<PhysicalArchiveLocationCreateWithoutCreatedByInput, PhysicalArchiveLocationUncheckedCreateWithoutCreatedByInput> | PhysicalArchiveLocationCreateWithoutCreatedByInput[] | PhysicalArchiveLocationUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: PhysicalArchiveLocationCreateOrConnectWithoutCreatedByInput | PhysicalArchiveLocationCreateOrConnectWithoutCreatedByInput[]
+    upsert?: PhysicalArchiveLocationUpsertWithWhereUniqueWithoutCreatedByInput | PhysicalArchiveLocationUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: PhysicalArchiveLocationCreateManyCreatedByInputEnvelope
+    set?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
+    disconnect?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
+    delete?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
+    connect?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
+    update?: PhysicalArchiveLocationUpdateWithWhereUniqueWithoutCreatedByInput | PhysicalArchiveLocationUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: PhysicalArchiveLocationUpdateManyWithWhereWithoutCreatedByInput | PhysicalArchiveLocationUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: PhysicalArchiveLocationScalarWhereInput | PhysicalArchiveLocationScalarWhereInput[]
+  }
+
   export type PostUncheckedUpdateManyWithoutCreatedByNestedInput = {
     create?: XOR<PostCreateWithoutCreatedByInput, PostUncheckedCreateWithoutCreatedByInput> | PostCreateWithoutCreatedByInput[] | PostUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: PostCreateOrConnectWithoutCreatedByInput | PostCreateOrConnectWithoutCreatedByInput[]
@@ -24938,6 +26587,20 @@ export namespace Prisma {
     deleteMany?: ProjectAccessRequestScalarWhereInput | ProjectAccessRequestScalarWhereInput[]
   }
 
+  export type PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<PhysicalArchiveLocationCreateWithoutCreatedByInput, PhysicalArchiveLocationUncheckedCreateWithoutCreatedByInput> | PhysicalArchiveLocationCreateWithoutCreatedByInput[] | PhysicalArchiveLocationUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: PhysicalArchiveLocationCreateOrConnectWithoutCreatedByInput | PhysicalArchiveLocationCreateOrConnectWithoutCreatedByInput[]
+    upsert?: PhysicalArchiveLocationUpsertWithWhereUniqueWithoutCreatedByInput | PhysicalArchiveLocationUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: PhysicalArchiveLocationCreateManyCreatedByInputEnvelope
+    set?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
+    disconnect?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
+    delete?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
+    connect?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
+    update?: PhysicalArchiveLocationUpdateWithWhereUniqueWithoutCreatedByInput | PhysicalArchiveLocationUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: PhysicalArchiveLocationUpdateManyWithWhereWithoutCreatedByInput | PhysicalArchiveLocationUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: PhysicalArchiveLocationScalarWhereInput | PhysicalArchiveLocationScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutSessionsInput = {
     create?: XOR<UserCreateWithoutSessionsInput, UserUncheckedCreateWithoutSessionsInput>
     connectOrCreate?: UserCreateOrConnectWithoutSessionsInput
@@ -25007,6 +26670,13 @@ export namespace Prisma {
     connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
   }
 
+  export type PhysicalArchiveLocationCreateNestedManyWithoutProjectInput = {
+    create?: XOR<PhysicalArchiveLocationCreateWithoutProjectInput, PhysicalArchiveLocationUncheckedCreateWithoutProjectInput> | PhysicalArchiveLocationCreateWithoutProjectInput[] | PhysicalArchiveLocationUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: PhysicalArchiveLocationCreateOrConnectWithoutProjectInput | PhysicalArchiveLocationCreateOrConnectWithoutProjectInput[]
+    createMany?: PhysicalArchiveLocationCreateManyProjectInputEnvelope
+    connect?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
+  }
+
   export type ProjectActivityUncheckedCreateNestedManyWithoutProjectInput = {
     create?: XOR<ProjectActivityCreateWithoutProjectInput, ProjectActivityUncheckedCreateWithoutProjectInput> | ProjectActivityCreateWithoutProjectInput[] | ProjectActivityUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: ProjectActivityCreateOrConnectWithoutProjectInput | ProjectActivityCreateOrConnectWithoutProjectInput[]
@@ -25054,6 +26724,13 @@ export namespace Prisma {
     connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutProjectInput | ProjectAccessRequestCreateOrConnectWithoutProjectInput[]
     createMany?: ProjectAccessRequestCreateManyProjectInputEnvelope
     connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+  }
+
+  export type PhysicalArchiveLocationUncheckedCreateNestedManyWithoutProjectInput = {
+    create?: XOR<PhysicalArchiveLocationCreateWithoutProjectInput, PhysicalArchiveLocationUncheckedCreateWithoutProjectInput> | PhysicalArchiveLocationCreateWithoutProjectInput[] | PhysicalArchiveLocationUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: PhysicalArchiveLocationCreateOrConnectWithoutProjectInput | PhysicalArchiveLocationCreateOrConnectWithoutProjectInput[]
+    createMany?: PhysicalArchiveLocationCreateManyProjectInputEnvelope
+    connect?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
   }
 
   export type NullableEnumProjectSubTypeFieldUpdateOperationsInput = {
@@ -25202,6 +26879,20 @@ export namespace Prisma {
     deleteMany?: ProjectAccessRequestScalarWhereInput | ProjectAccessRequestScalarWhereInput[]
   }
 
+  export type PhysicalArchiveLocationUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<PhysicalArchiveLocationCreateWithoutProjectInput, PhysicalArchiveLocationUncheckedCreateWithoutProjectInput> | PhysicalArchiveLocationCreateWithoutProjectInput[] | PhysicalArchiveLocationUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: PhysicalArchiveLocationCreateOrConnectWithoutProjectInput | PhysicalArchiveLocationCreateOrConnectWithoutProjectInput[]
+    upsert?: PhysicalArchiveLocationUpsertWithWhereUniqueWithoutProjectInput | PhysicalArchiveLocationUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: PhysicalArchiveLocationCreateManyProjectInputEnvelope
+    set?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
+    disconnect?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
+    delete?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
+    connect?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
+    update?: PhysicalArchiveLocationUpdateWithWhereUniqueWithoutProjectInput | PhysicalArchiveLocationUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: PhysicalArchiveLocationUpdateManyWithWhereWithoutProjectInput | PhysicalArchiveLocationUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: PhysicalArchiveLocationScalarWhereInput | PhysicalArchiveLocationScalarWhereInput[]
+  }
+
   export type ProjectActivityUncheckedUpdateManyWithoutProjectNestedInput = {
     create?: XOR<ProjectActivityCreateWithoutProjectInput, ProjectActivityUncheckedCreateWithoutProjectInput> | ProjectActivityCreateWithoutProjectInput[] | ProjectActivityUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: ProjectActivityCreateOrConnectWithoutProjectInput | ProjectActivityCreateOrConnectWithoutProjectInput[]
@@ -25298,6 +26989,48 @@ export namespace Prisma {
     update?: ProjectAccessRequestUpdateWithWhereUniqueWithoutProjectInput | ProjectAccessRequestUpdateWithWhereUniqueWithoutProjectInput[]
     updateMany?: ProjectAccessRequestUpdateManyWithWhereWithoutProjectInput | ProjectAccessRequestUpdateManyWithWhereWithoutProjectInput[]
     deleteMany?: ProjectAccessRequestScalarWhereInput | ProjectAccessRequestScalarWhereInput[]
+  }
+
+  export type PhysicalArchiveLocationUncheckedUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<PhysicalArchiveLocationCreateWithoutProjectInput, PhysicalArchiveLocationUncheckedCreateWithoutProjectInput> | PhysicalArchiveLocationCreateWithoutProjectInput[] | PhysicalArchiveLocationUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: PhysicalArchiveLocationCreateOrConnectWithoutProjectInput | PhysicalArchiveLocationCreateOrConnectWithoutProjectInput[]
+    upsert?: PhysicalArchiveLocationUpsertWithWhereUniqueWithoutProjectInput | PhysicalArchiveLocationUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: PhysicalArchiveLocationCreateManyProjectInputEnvelope
+    set?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
+    disconnect?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
+    delete?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
+    connect?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
+    update?: PhysicalArchiveLocationUpdateWithWhereUniqueWithoutProjectInput | PhysicalArchiveLocationUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: PhysicalArchiveLocationUpdateManyWithWhereWithoutProjectInput | PhysicalArchiveLocationUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: PhysicalArchiveLocationScalarWhereInput | PhysicalArchiveLocationScalarWhereInput[]
+  }
+
+  export type ProjectCreateNestedOneWithoutArchiveLocationsInput = {
+    create?: XOR<ProjectCreateWithoutArchiveLocationsInput, ProjectUncheckedCreateWithoutArchiveLocationsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutArchiveLocationsInput
+    connect?: ProjectWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutArchiveLocationsInput = {
+    create?: XOR<UserCreateWithoutArchiveLocationsInput, UserUncheckedCreateWithoutArchiveLocationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutArchiveLocationsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type ProjectUpdateOneRequiredWithoutArchiveLocationsNestedInput = {
+    create?: XOR<ProjectCreateWithoutArchiveLocationsInput, ProjectUncheckedCreateWithoutArchiveLocationsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutArchiveLocationsInput
+    upsert?: ProjectUpsertWithoutArchiveLocationsInput
+    connect?: ProjectWhereUniqueInput
+    update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutArchiveLocationsInput, ProjectUpdateWithoutArchiveLocationsInput>, ProjectUncheckedUpdateWithoutArchiveLocationsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutArchiveLocationsNestedInput = {
+    create?: XOR<UserCreateWithoutArchiveLocationsInput, UserUncheckedCreateWithoutArchiveLocationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutArchiveLocationsInput
+    upsert?: UserUpsertWithoutArchiveLocationsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutArchiveLocationsInput, UserUpdateWithoutArchiveLocationsInput>, UserUncheckedUpdateWithoutArchiveLocationsInput>
   }
 
   export type ProjectCreateNestedOneWithoutActivitiesInput = {
@@ -26398,6 +28131,7 @@ export namespace Prisma {
     files?: ProjectFileCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutCreatedByInput = {
@@ -26444,6 +28178,7 @@ export namespace Prisma {
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutCreatedByInput = {
@@ -26847,6 +28582,42 @@ export namespace Prisma {
 
   export type ProjectAccessRequestCreateManyReviewedByInputEnvelope = {
     data: ProjectAccessRequestCreateManyReviewedByInput | ProjectAccessRequestCreateManyReviewedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PhysicalArchiveLocationCreateWithoutCreatedByInput = {
+    id?: string
+    roomLocation: string
+    cabinetLabel: string
+    shelfNumber: number
+    boxId: string
+    folderRange: string
+    remarks?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutArchiveLocationsInput
+  }
+
+  export type PhysicalArchiveLocationUncheckedCreateWithoutCreatedByInput = {
+    id?: string
+    roomLocation: string
+    cabinetLabel: string
+    shelfNumber: number
+    boxId: string
+    folderRange: string
+    remarks?: string | null
+    projectId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PhysicalArchiveLocationCreateOrConnectWithoutCreatedByInput = {
+    where: PhysicalArchiveLocationWhereUniqueInput
+    create: XOR<PhysicalArchiveLocationCreateWithoutCreatedByInput, PhysicalArchiveLocationUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type PhysicalArchiveLocationCreateManyCreatedByInputEnvelope = {
+    data: PhysicalArchiveLocationCreateManyCreatedByInput | PhysicalArchiveLocationCreateManyCreatedByInput[]
     skipDuplicates?: boolean
   }
 
@@ -27277,6 +29048,39 @@ export namespace Prisma {
     data: XOR<ProjectAccessRequestUpdateManyMutationInput, ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByInput>
   }
 
+  export type PhysicalArchiveLocationUpsertWithWhereUniqueWithoutCreatedByInput = {
+    where: PhysicalArchiveLocationWhereUniqueInput
+    update: XOR<PhysicalArchiveLocationUpdateWithoutCreatedByInput, PhysicalArchiveLocationUncheckedUpdateWithoutCreatedByInput>
+    create: XOR<PhysicalArchiveLocationCreateWithoutCreatedByInput, PhysicalArchiveLocationUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type PhysicalArchiveLocationUpdateWithWhereUniqueWithoutCreatedByInput = {
+    where: PhysicalArchiveLocationWhereUniqueInput
+    data: XOR<PhysicalArchiveLocationUpdateWithoutCreatedByInput, PhysicalArchiveLocationUncheckedUpdateWithoutCreatedByInput>
+  }
+
+  export type PhysicalArchiveLocationUpdateManyWithWhereWithoutCreatedByInput = {
+    where: PhysicalArchiveLocationScalarWhereInput
+    data: XOR<PhysicalArchiveLocationUpdateManyMutationInput, PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByInput>
+  }
+
+  export type PhysicalArchiveLocationScalarWhereInput = {
+    AND?: PhysicalArchiveLocationScalarWhereInput | PhysicalArchiveLocationScalarWhereInput[]
+    OR?: PhysicalArchiveLocationScalarWhereInput[]
+    NOT?: PhysicalArchiveLocationScalarWhereInput | PhysicalArchiveLocationScalarWhereInput[]
+    id?: StringFilter<"PhysicalArchiveLocation"> | string
+    roomLocation?: StringFilter<"PhysicalArchiveLocation"> | string
+    cabinetLabel?: StringFilter<"PhysicalArchiveLocation"> | string
+    shelfNumber?: IntFilter<"PhysicalArchiveLocation"> | number
+    boxId?: StringFilter<"PhysicalArchiveLocation"> | string
+    folderRange?: StringFilter<"PhysicalArchiveLocation"> | string
+    remarks?: StringNullableFilter<"PhysicalArchiveLocation"> | string | null
+    projectId?: StringFilter<"PhysicalArchiveLocation"> | string
+    createdById?: StringFilter<"PhysicalArchiveLocation"> | string
+    createdAt?: DateTimeFilter<"PhysicalArchiveLocation"> | Date | string
+    updatedAt?: DateTimeFilter<"PhysicalArchiveLocation"> | Date | string
+  }
+
   export type UserCreateWithoutSessionsInput = {
     id?: string
     name?: string | null
@@ -27307,6 +29111,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -27339,6 +29144,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -27387,6 +29193,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -27419,6 +29226,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutProjectsInput = {
@@ -27451,6 +29259,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutProjectsInput = {
@@ -27483,6 +29292,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutProjectsInput = {
@@ -27708,6 +29518,42 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type PhysicalArchiveLocationCreateWithoutProjectInput = {
+    id?: string
+    roomLocation: string
+    cabinetLabel: string
+    shelfNumber: number
+    boxId: string
+    folderRange: string
+    remarks?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: UserCreateNestedOneWithoutArchiveLocationsInput
+  }
+
+  export type PhysicalArchiveLocationUncheckedCreateWithoutProjectInput = {
+    id?: string
+    roomLocation: string
+    cabinetLabel: string
+    shelfNumber: number
+    boxId: string
+    folderRange: string
+    remarks?: string | null
+    createdById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PhysicalArchiveLocationCreateOrConnectWithoutProjectInput = {
+    where: PhysicalArchiveLocationWhereUniqueInput
+    create: XOR<PhysicalArchiveLocationCreateWithoutProjectInput, PhysicalArchiveLocationUncheckedCreateWithoutProjectInput>
+  }
+
+  export type PhysicalArchiveLocationCreateManyProjectInputEnvelope = {
+    data: PhysicalArchiveLocationCreateManyProjectInput | PhysicalArchiveLocationCreateManyProjectInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutProjectsInput = {
     update: XOR<UserUpdateWithoutProjectsInput, UserUncheckedUpdateWithoutProjectsInput>
     create: XOR<UserCreateWithoutProjectsInput, UserUncheckedCreateWithoutProjectsInput>
@@ -27749,6 +29595,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectsInput = {
@@ -27781,6 +29628,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectActivityUpsertWithWhereUniqueWithoutProjectInput = {
@@ -27895,6 +29743,374 @@ export namespace Prisma {
     data: XOR<ProjectAccessRequestUpdateManyMutationInput, ProjectAccessRequestUncheckedUpdateManyWithoutProjectInput>
   }
 
+  export type PhysicalArchiveLocationUpsertWithWhereUniqueWithoutProjectInput = {
+    where: PhysicalArchiveLocationWhereUniqueInput
+    update: XOR<PhysicalArchiveLocationUpdateWithoutProjectInput, PhysicalArchiveLocationUncheckedUpdateWithoutProjectInput>
+    create: XOR<PhysicalArchiveLocationCreateWithoutProjectInput, PhysicalArchiveLocationUncheckedCreateWithoutProjectInput>
+  }
+
+  export type PhysicalArchiveLocationUpdateWithWhereUniqueWithoutProjectInput = {
+    where: PhysicalArchiveLocationWhereUniqueInput
+    data: XOR<PhysicalArchiveLocationUpdateWithoutProjectInput, PhysicalArchiveLocationUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type PhysicalArchiveLocationUpdateManyWithWhereWithoutProjectInput = {
+    where: PhysicalArchiveLocationScalarWhereInput
+    data: XOR<PhysicalArchiveLocationUpdateManyMutationInput, PhysicalArchiveLocationUncheckedUpdateManyWithoutProjectInput>
+  }
+
+  export type ProjectCreateWithoutArchiveLocationsInput = {
+    id?: string
+    projectCode: string
+    title: string
+    subType?: $Enums.ProjectSubType | null
+    modeOfImplementation: $Enums.ModeOfImplementation
+    locationImplementation: $Enums.District
+    sourceOfFund: $Enums.SourceOfFund
+    projectCost?: number
+    contractCost?: number
+    contractorName?: string | null
+    projectEngineer?: string | null
+    budgetYear?: string | null
+    dateStarted?: Date | string | null
+    targetCompletionDate?: Date | string | null
+    duration?: number
+    revisedCompletionDate?: Date | string | null
+    dateCompleted?: Date | string | null
+    daysSuspended?: number
+    daysExtended?: number
+    numFemale?: number
+    numMale?: number
+    numPersons?: number
+    numManDays?: number
+    district?: $Enums.District | null
+    cityMunicipality?: string | null
+    barangay?: string | null
+    purok?: string | null
+    sitio?: string | null
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    completionPercentage?: number
+    imageUrl?: string | null
+    documentUrl?: string | null
+    documentName?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: UserCreateNestedOneWithoutProjectsInput
+    activities?: ProjectActivityCreateNestedManyWithoutProjectInput
+    disbursements?: DisbursementCreateNestedManyWithoutProjectInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutProjectInput
+    taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
+    files?: ProjectFileCreateNestedManyWithoutProjectInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
+    accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectUncheckedCreateWithoutArchiveLocationsInput = {
+    id?: string
+    projectCode: string
+    title: string
+    subType?: $Enums.ProjectSubType | null
+    modeOfImplementation: $Enums.ModeOfImplementation
+    locationImplementation: $Enums.District
+    sourceOfFund: $Enums.SourceOfFund
+    projectCost?: number
+    contractCost?: number
+    contractorName?: string | null
+    projectEngineer?: string | null
+    budgetYear?: string | null
+    dateStarted?: Date | string | null
+    targetCompletionDate?: Date | string | null
+    duration?: number
+    revisedCompletionDate?: Date | string | null
+    dateCompleted?: Date | string | null
+    daysSuspended?: number
+    daysExtended?: number
+    numFemale?: number
+    numMale?: number
+    numPersons?: number
+    numManDays?: number
+    district?: $Enums.District | null
+    cityMunicipality?: string | null
+    barangay?: string | null
+    purok?: string | null
+    sitio?: string | null
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    completionPercentage?: number
+    imageUrl?: string | null
+    documentUrl?: string | null
+    documentName?: string | null
+    createdById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    activities?: ProjectActivityUncheckedCreateNestedManyWithoutProjectInput
+    disbursements?: DisbursementUncheckedCreateNestedManyWithoutProjectInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutProjectInput
+    taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
+    files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
+    accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectCreateOrConnectWithoutArchiveLocationsInput = {
+    where: ProjectWhereUniqueInput
+    create: XOR<ProjectCreateWithoutArchiveLocationsInput, ProjectUncheckedCreateWithoutArchiveLocationsInput>
+  }
+
+  export type UserCreateWithoutArchiveLocationsInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password: string
+    role?: $Enums.UserRole
+    employeeId?: string | null
+    designation?: string | null
+    division?: string | null
+    contactNumber?: string | null
+    birthday?: Date | string | null
+    sex?: $Enums.Sex | null
+    status?: $Enums.UserStatus
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    posts?: PostCreateNestedManyWithoutCreatedByInput
+    projects?: ProjectCreateNestedManyWithoutCreatedByInput
+    sessions?: UserSessionCreateNestedManyWithoutUserInput
+    documents?: DocumentCreateNestedManyWithoutCreatedByInput
+    projectActivities?: ProjectActivityCreateNestedManyWithoutCreatedByInput
+    disbursements?: DisbursementCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutCreatedByInput
+    taskNotificationsReceived?: TaskNotificationCreateNestedManyWithoutNotifyUserInput
+    taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
+    taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
+    projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+  }
+
+  export type UserUncheckedCreateWithoutArchiveLocationsInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password: string
+    role?: $Enums.UserRole
+    employeeId?: string | null
+    designation?: string | null
+    division?: string | null
+    contactNumber?: string | null
+    birthday?: Date | string | null
+    sex?: $Enums.Sex | null
+    status?: $Enums.UserStatus
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
+    projects?: ProjectUncheckedCreateNestedManyWithoutCreatedByInput
+    sessions?: UserSessionUncheckedCreateNestedManyWithoutUserInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutCreatedByInput
+    projectActivities?: ProjectActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    disbursements?: DisbursementUncheckedCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutCreatedByInput
+    taskNotificationsReceived?: TaskNotificationUncheckedCreateNestedManyWithoutNotifyUserInput
+    taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
+    taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
+    projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+  }
+
+  export type UserCreateOrConnectWithoutArchiveLocationsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutArchiveLocationsInput, UserUncheckedCreateWithoutArchiveLocationsInput>
+  }
+
+  export type ProjectUpsertWithoutArchiveLocationsInput = {
+    update: XOR<ProjectUpdateWithoutArchiveLocationsInput, ProjectUncheckedUpdateWithoutArchiveLocationsInput>
+    create: XOR<ProjectCreateWithoutArchiveLocationsInput, ProjectUncheckedCreateWithoutArchiveLocationsInput>
+    where?: ProjectWhereInput
+  }
+
+  export type ProjectUpdateToOneWithWhereWithoutArchiveLocationsInput = {
+    where?: ProjectWhereInput
+    data: XOR<ProjectUpdateWithoutArchiveLocationsInput, ProjectUncheckedUpdateWithoutArchiveLocationsInput>
+  }
+
+  export type ProjectUpdateWithoutArchiveLocationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectCode?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
+    locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
+    sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
+    projectCost?: FloatFieldUpdateOperationsInput | number
+    contractCost?: FloatFieldUpdateOperationsInput | number
+    contractorName?: NullableStringFieldUpdateOperationsInput | string | null
+    projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
+    budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duration?: IntFieldUpdateOperationsInput | number
+    revisedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCompleted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    daysSuspended?: IntFieldUpdateOperationsInput | number
+    daysExtended?: IntFieldUpdateOperationsInput | number
+    numFemale?: IntFieldUpdateOperationsInput | number
+    numMale?: IntFieldUpdateOperationsInput | number
+    numPersons?: IntFieldUpdateOperationsInput | number
+    numManDays?: IntFieldUpdateOperationsInput | number
+    district?: NullableEnumDistrictFieldUpdateOperationsInput | $Enums.District | null
+    cityMunicipality?: NullableStringFieldUpdateOperationsInput | string | null
+    barangay?: NullableStringFieldUpdateOperationsInput | string | null
+    purok?: NullableStringFieldUpdateOperationsInput | string | null
+    sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    completionPercentage?: IntFieldUpdateOperationsInput | number
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    documentName?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutProjectsNestedInput
+    activities?: ProjectActivityUpdateManyWithoutProjectNestedInput
+    disbursements?: DisbursementUpdateManyWithoutProjectNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutProjectNestedInput
+    taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
+    files?: ProjectFileUpdateManyWithoutProjectNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
+    accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
+  }
+
+  export type ProjectUncheckedUpdateWithoutArchiveLocationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectCode?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
+    locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
+    sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
+    projectCost?: FloatFieldUpdateOperationsInput | number
+    contractCost?: FloatFieldUpdateOperationsInput | number
+    contractorName?: NullableStringFieldUpdateOperationsInput | string | null
+    projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
+    budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duration?: IntFieldUpdateOperationsInput | number
+    revisedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCompleted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    daysSuspended?: IntFieldUpdateOperationsInput | number
+    daysExtended?: IntFieldUpdateOperationsInput | number
+    numFemale?: IntFieldUpdateOperationsInput | number
+    numMale?: IntFieldUpdateOperationsInput | number
+    numPersons?: IntFieldUpdateOperationsInput | number
+    numManDays?: IntFieldUpdateOperationsInput | number
+    district?: NullableEnumDistrictFieldUpdateOperationsInput | $Enums.District | null
+    cityMunicipality?: NullableStringFieldUpdateOperationsInput | string | null
+    barangay?: NullableStringFieldUpdateOperationsInput | string | null
+    purok?: NullableStringFieldUpdateOperationsInput | string | null
+    sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    completionPercentage?: IntFieldUpdateOperationsInput | number
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    documentName?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    activities?: ProjectActivityUncheckedUpdateManyWithoutProjectNestedInput
+    disbursements?: DisbursementUncheckedUpdateManyWithoutProjectNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutProjectNestedInput
+    taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
+    files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
+    accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
+  }
+
+  export type UserUpsertWithoutArchiveLocationsInput = {
+    update: XOR<UserUpdateWithoutArchiveLocationsInput, UserUncheckedUpdateWithoutArchiveLocationsInput>
+    create: XOR<UserCreateWithoutArchiveLocationsInput, UserUncheckedCreateWithoutArchiveLocationsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutArchiveLocationsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutArchiveLocationsInput, UserUncheckedUpdateWithoutArchiveLocationsInput>
+  }
+
+  export type UserUpdateWithoutArchiveLocationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    designation?: NullableStringFieldUpdateOperationsInput | string | null
+    division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    posts?: PostUpdateManyWithoutCreatedByNestedInput
+    projects?: ProjectUpdateManyWithoutCreatedByNestedInput
+    sessions?: UserSessionUpdateManyWithoutUserNestedInput
+    documents?: DocumentUpdateManyWithoutCreatedByNestedInput
+    projectActivities?: ProjectActivityUpdateManyWithoutCreatedByNestedInput
+    disbursements?: DisbursementUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutCreatedByNestedInput
+    taskNotificationsReceived?: TaskNotificationUpdateManyWithoutNotifyUserNestedInput
+    taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
+    taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
+    projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutArchiveLocationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    designation?: NullableStringFieldUpdateOperationsInput | string | null
+    division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
+    projects?: ProjectUncheckedUpdateManyWithoutCreatedByNestedInput
+    sessions?: UserSessionUncheckedUpdateManyWithoutUserNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectActivities?: ProjectActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    disbursements?: DisbursementUncheckedUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+    taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
+    taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
+    taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+  }
+
   export type ProjectCreateWithoutActivitiesInput = {
     id?: string
     projectCode: string
@@ -27939,6 +30155,7 @@ export namespace Prisma {
     files?: ProjectFileCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutActivitiesInput = {
@@ -27985,6 +30202,7 @@ export namespace Prisma {
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutActivitiesInput = {
@@ -28022,6 +30240,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutProjectActivitiesInput = {
@@ -28054,6 +30273,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutProjectActivitiesInput = {
@@ -28116,6 +30336,7 @@ export namespace Prisma {
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutActivitiesInput = {
@@ -28162,6 +30383,7 @@ export namespace Prisma {
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutProjectActivitiesInput = {
@@ -28205,6 +30427,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectActivitiesInput = {
@@ -28237,6 +30460,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectCreateWithoutDisbursementsInput = {
@@ -28283,6 +30507,7 @@ export namespace Prisma {
     files?: ProjectFileCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutDisbursementsInput = {
@@ -28329,6 +30554,7 @@ export namespace Prisma {
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutDisbursementsInput = {
@@ -28366,6 +30592,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutDisbursementsInput = {
@@ -28398,6 +30625,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutDisbursementsInput = {
@@ -28460,6 +30688,7 @@ export namespace Prisma {
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutDisbursementsInput = {
@@ -28506,6 +30735,7 @@ export namespace Prisma {
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutDisbursementsInput = {
@@ -28549,6 +30779,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDisbursementsInput = {
@@ -28581,6 +30812,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectCreateWithoutVariationOrdersInput = {
@@ -28627,6 +30859,7 @@ export namespace Prisma {
     files?: ProjectFileCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutVariationOrdersInput = {
@@ -28673,6 +30906,7 @@ export namespace Prisma {
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutVariationOrdersInput = {
@@ -28710,6 +30944,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutVariationOrdersInput = {
@@ -28742,6 +30977,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutVariationOrdersInput = {
@@ -28804,6 +31040,7 @@ export namespace Prisma {
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutVariationOrdersInput = {
@@ -28850,6 +31087,7 @@ export namespace Prisma {
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutVariationOrdersInput = {
@@ -28893,6 +31131,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutVariationOrdersInput = {
@@ -28925,6 +31164,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectCreateWithoutTimelineAdjustmentsInput = {
@@ -28971,6 +31211,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
     files?: ProjectFileCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutTimelineAdjustmentsInput = {
@@ -29017,6 +31258,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutTimelineAdjustmentsInput = {
@@ -29054,6 +31296,7 @@ export namespace Prisma {
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTimelineAdjustmentsInput = {
@@ -29086,6 +31329,7 @@ export namespace Prisma {
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTimelineAdjustmentsInput = {
@@ -29148,6 +31392,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutTimelineAdjustmentsInput = {
@@ -29194,6 +31439,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutTimelineAdjustmentsInput = {
@@ -29237,6 +31483,7 @@ export namespace Prisma {
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTimelineAdjustmentsInput = {
@@ -29269,6 +31516,7 @@ export namespace Prisma {
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectCreateWithoutTaskNotificationsInput = {
@@ -29315,6 +31563,7 @@ export namespace Prisma {
     files?: ProjectFileCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutTaskNotificationsInput = {
@@ -29361,6 +31610,7 @@ export namespace Prisma {
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutTaskNotificationsInput = {
@@ -29398,6 +31648,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTaskNotificationsReceivedInput = {
@@ -29430,6 +31681,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTaskNotificationsReceivedInput = {
@@ -29467,6 +31719,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTaskNotificationsCreatedInput = {
@@ -29499,6 +31752,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTaskNotificationsCreatedInput = {
@@ -29589,6 +31843,7 @@ export namespace Prisma {
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutTaskNotificationsInput = {
@@ -29635,6 +31890,7 @@ export namespace Prisma {
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutTaskNotificationsReceivedInput = {
@@ -29678,6 +31934,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTaskNotificationsReceivedInput = {
@@ -29710,6 +31967,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUpsertWithoutTaskNotificationsCreatedInput = {
@@ -29753,6 +32011,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTaskNotificationsCreatedInput = {
@@ -29785,6 +32044,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type TaskReplyUpsertWithWhereUniqueWithoutTaskNotificationInput = {
@@ -29862,6 +32122,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTaskRepliesInput = {
@@ -29894,6 +32155,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTaskRepliesInput = {
@@ -30005,6 +32267,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTaskRepliesInput = {
@@ -30037,6 +32300,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type TaskReplyDocumentUpsertWithWhereUniqueWithoutReplyInput = {
@@ -30150,6 +32414,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutDocumentsInput = {
@@ -30182,6 +32447,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutDocumentsInput = {
@@ -30230,6 +32496,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDocumentsInput = {
@@ -30262,6 +32529,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectCreateWithoutFilesInput = {
@@ -30308,6 +32576,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutFilesInput = {
@@ -30354,6 +32623,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutFilesInput = {
@@ -30391,6 +32661,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutProjectFilesInput = {
@@ -30423,6 +32694,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutProjectFilesInput = {
@@ -30521,6 +32793,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutFilesInput = {
@@ -30567,6 +32840,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutProjectFilesInput = {
@@ -30610,6 +32884,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectFilesInput = {
@@ -30642,6 +32917,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectAccessRequestUpsertWithWhereUniqueWithoutProjectFileInput = {
@@ -30704,6 +32980,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
     files?: ProjectFileCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutAccessRequestsInput = {
@@ -30750,6 +33027,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutAccessRequestsInput = {
@@ -30814,6 +33092,7 @@ export namespace Prisma {
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutAccessRequestsMadeInput = {
@@ -30846,6 +33125,7 @@ export namespace Prisma {
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutAccessRequestsMadeInput = {
@@ -30883,6 +33163,7 @@ export namespace Prisma {
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutAccessRequestsReviewedInput = {
@@ -30915,6 +33196,7 @@ export namespace Prisma {
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutAccessRequestsReviewedInput = {
@@ -30977,6 +33259,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutAccessRequestsInput = {
@@ -31023,6 +33306,7 @@ export namespace Prisma {
     taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectFileUpsertWithoutAccessRequestsInput = {
@@ -31099,6 +33383,7 @@ export namespace Prisma {
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccessRequestsMadeInput = {
@@ -31131,6 +33416,7 @@ export namespace Prisma {
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUpsertWithoutAccessRequestsReviewedInput = {
@@ -31174,6 +33460,7 @@ export namespace Prisma {
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccessRequestsReviewedInput = {
@@ -31206,6 +33493,7 @@ export namespace Prisma {
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutPostsInput = {
@@ -31238,6 +33526,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutPostsInput = {
@@ -31270,6 +33559,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutPostsInput = {
@@ -31318,6 +33608,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPostsInput = {
@@ -31350,6 +33641,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type PostCreateManyCreatedByInput = {
@@ -31531,6 +33823,19 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type PhysicalArchiveLocationCreateManyCreatedByInput = {
+    id?: string
+    roomLocation: string
+    cabinetLabel: string
+    shelfNumber: number
+    boxId: string
+    folderRange: string
+    remarks?: string | null
+    projectId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type PostUpdateWithoutCreatedByInput = {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -31595,6 +33900,7 @@ export namespace Prisma {
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutCreatedByInput = {
@@ -31641,6 +33947,7 @@ export namespace Prisma {
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateManyWithoutCreatedByInput = {
@@ -32089,6 +34396,45 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type PhysicalArchiveLocationUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    roomLocation?: StringFieldUpdateOperationsInput | string
+    cabinetLabel?: StringFieldUpdateOperationsInput | string
+    shelfNumber?: IntFieldUpdateOperationsInput | number
+    boxId?: StringFieldUpdateOperationsInput | string
+    folderRange?: StringFieldUpdateOperationsInput | string
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutArchiveLocationsNestedInput
+  }
+
+  export type PhysicalArchiveLocationUncheckedUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    roomLocation?: StringFieldUpdateOperationsInput | string
+    cabinetLabel?: StringFieldUpdateOperationsInput | string
+    shelfNumber?: IntFieldUpdateOperationsInput | number
+    boxId?: StringFieldUpdateOperationsInput | string
+    folderRange?: StringFieldUpdateOperationsInput | string
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    projectId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    roomLocation?: StringFieldUpdateOperationsInput | string
+    cabinetLabel?: StringFieldUpdateOperationsInput | string
+    shelfNumber?: IntFieldUpdateOperationsInput | number
+    boxId?: StringFieldUpdateOperationsInput | string
+    folderRange?: StringFieldUpdateOperationsInput | string
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    projectId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ProjectActivityCreateManyProjectInput = {
     id?: string
     description: string
@@ -32157,6 +34503,19 @@ export namespace Prisma {
     requestedById: string
     reviewedById?: string | null
     reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PhysicalArchiveLocationCreateManyProjectInput = {
+    id?: string
+    roomLocation: string
+    cabinetLabel: string
+    shelfNumber: number
+    boxId: string
+    folderRange: string
+    remarks?: string | null
+    createdById: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -32377,6 +34736,45 @@ export namespace Prisma {
     requestedById?: StringFieldUpdateOperationsInput | string
     reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PhysicalArchiveLocationUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    roomLocation?: StringFieldUpdateOperationsInput | string
+    cabinetLabel?: StringFieldUpdateOperationsInput | string
+    shelfNumber?: IntFieldUpdateOperationsInput | number
+    boxId?: StringFieldUpdateOperationsInput | string
+    folderRange?: StringFieldUpdateOperationsInput | string
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutArchiveLocationsNestedInput
+  }
+
+  export type PhysicalArchiveLocationUncheckedUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    roomLocation?: StringFieldUpdateOperationsInput | string
+    cabinetLabel?: StringFieldUpdateOperationsInput | string
+    shelfNumber?: IntFieldUpdateOperationsInput | number
+    boxId?: StringFieldUpdateOperationsInput | string
+    folderRange?: StringFieldUpdateOperationsInput | string
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PhysicalArchiveLocationUncheckedUpdateManyWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    roomLocation?: StringFieldUpdateOperationsInput | string
+    cabinetLabel?: StringFieldUpdateOperationsInput | string
+    shelfNumber?: IntFieldUpdateOperationsInput | number
+    boxId?: StringFieldUpdateOperationsInput | string
+    folderRange?: StringFieldUpdateOperationsInput | string
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

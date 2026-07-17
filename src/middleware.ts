@@ -25,6 +25,8 @@ export default auth((req) => {
         return NextResponse.redirect(new URL("/admin/dashboard", req.url));
       } else if (role === "USER") {
         return NextResponse.redirect(new URL("/user/dashboard", req.url));
+      } else if (role === "ARCHIVER") {
+        return NextResponse.redirect(new URL("/archiver/dashboard", req.url));
       }
     }
     return NextResponse.next();
@@ -37,6 +39,17 @@ export default auth((req) => {
     }
     const role = token.user?.role as string | undefined;
     if (role !== "SUPER_ADMIN") {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+    return NextResponse.next();
+  }
+
+  if (pathname.startsWith("/archiver/")) {
+    if (!token) {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+    const role = token.user?.role as string | undefined;
+    if (role !== "ARCHIVER") {
       return NextResponse.redirect(new URL("/login", req.url));
     }
     return NextResponse.next();
@@ -77,5 +90,6 @@ export const config = {
     "/super-admin/:path*",
     "/admin/:path*",
     "/user/:path*",
+    "/archiver/:path*",
   ],
 };

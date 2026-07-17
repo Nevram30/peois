@@ -190,6 +190,20 @@ exports.Prisma.ProjectScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.PhysicalArchiveLocationScalarFieldEnum = {
+  id: 'id',
+  roomLocation: 'roomLocation',
+  cabinetLabel: 'cabinetLabel',
+  shelfNumber: 'shelfNumber',
+  boxId: 'boxId',
+  folderRange: 'folderRange',
+  remarks: 'remarks',
+  projectId: 'projectId',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.ProjectActivityScalarFieldEnum = {
   id: 'id',
   projectId: 'projectId',
@@ -334,7 +348,8 @@ exports.Prisma.NullsOrder = {
 exports.UserRole = exports.$Enums.UserRole = {
   SUPER_ADMIN: 'SUPER_ADMIN',
   ADMIN: 'ADMIN',
-  USER: 'USER'
+  USER: 'USER',
+  ARCHIVER: 'ARCHIVER'
 };
 
 exports.Sex = exports.$Enums.Sex = {
@@ -478,6 +493,7 @@ exports.Prisma.ModelName = {
   User: 'User',
   UserSession: 'UserSession',
   Project: 'Project',
+  PhysicalArchiveLocation: 'PhysicalArchiveLocation',
   ProjectActivity: 'ProjectActivity',
   Disbursement: 'Disbursement',
   VariationOrder: 'VariationOrder',

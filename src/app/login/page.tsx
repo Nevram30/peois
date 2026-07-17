@@ -53,6 +53,8 @@ export default function LoginPage() {
         window.location.href = "/admin/dashboard";
       } else if (role === "USER") {
         window.location.href = "/user/dashboard";
+      } else if (role === "ARCHIVER") {
+        window.location.href = "/archiver/dashboard";
       } else {
         window.location.href = "/login";
       }

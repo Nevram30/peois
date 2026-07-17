@@ -13,6 +13,7 @@ enum UserRole {
   SUPER_ADMIN
   ADMIN
   USER
+  ARCHIVER
 }
 
 enum UserStatus {
@@ -156,22 +157,22 @@ enum AccessRequestStatus {
 }
 
 model User {
-  id                        String                 @id @default(cuid())
+  id                        String                    @id @default(cuid())
   name                      String?
-  email                     String                 @unique
+  email                     String                    @unique
   password                  String
-  role                      UserRole               @default(ADMIN)
-  employeeId                String?                @unique
+  role                      UserRole                  @default(ADMIN)
+  employeeId                String?                   @unique
   designation               String?
   division                  String?
   contactNumber             String?
   birthday                  DateTime?
   sex                       Sex?
-  status                    UserStatus             @default(PENDING)
+  status                    UserStatus                @default(PENDING)
   emailVerified             DateTime?
   image                     String?
-  createdAt                 DateTime               @default(now())
-  updatedAt                 DateTime               @updatedAt
+  createdAt                 DateTime                  @default(now())
+  updatedAt                 DateTime                  @updatedAt
   posts                     Post[]
   projects                  Project[]
   sessions                  UserSession[]
@@ -179,13 +180,14 @@ model User {
   projectActivities         ProjectActivity[]
   disbursements             Disbursement[]
   variationOrders           VariationOrder[]
-  taskNotificationsReceived TaskNotification[]     @relation("UserNotificationsReceived")
-  taskNotificationsCreated  TaskNotification[]     @relation("UserNotificationsCreated")
+  taskNotificationsReceived TaskNotification[]        @relation("UserNotificationsReceived")
+  taskNotificationsCreated  TaskNotification[]        @relation("UserNotificationsCreated")
   taskReplies               TaskReply[]
   projectFiles              ProjectFile[]
   timelineAdjustments       TimelineAdjustment[]
-  accessRequestsMade        ProjectAccessRequest[] @relation("AccessRequestsMade")
-  accessRequestsReviewed    ProjectAccessRequest[] @relation("AccessRequestsReviewed")
+  accessRequestsMade        ProjectAccessRequest[]    @relation("AccessRequestsMade")
+  accessRequestsReviewed    ProjectAccessRequest[]    @relation("AccessRequestsReviewed")
+  archiveLocations          PhysicalArchiveLocation[]
 }
 
 model UserSession {
@@ -250,9 +252,29 @@ model Project {
   files               ProjectFile[]
   timelineAdjustments TimelineAdjustment[]
   accessRequests      ProjectAccessRequest[]
+  archiveLocations    PhysicalArchiveLocation[]
 
   @@index([title])
   @@index([status])
+  @@index([createdById])
+}
+
+model PhysicalArchiveLocation {
+  id           String   @id @default(cuid())
+  roomLocation String
+  cabinetLabel String
+  shelfNumber  Int
+  boxId        String
+  folderRange  String
+  remarks      String?
+  project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId    String
+  createdBy    User     @relation(fields: [createdById], references: [id])
+  createdById  String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([projectId])
   @@index([createdById])
 }
 

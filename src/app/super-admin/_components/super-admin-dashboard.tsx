@@ -6,7 +6,7 @@ import { api } from "~/trpc/react";
 import { useUploadThing } from "~/lib/uploadthing";
 import { DIVISIONS } from "~/lib/divisions";
 
-type RoleType = "ADMIN" | "USER";
+type RoleType = "ADMIN" | "USER" | "ARCHIVER";
 
 const STATUS_STYLES: Record<string, { bg: string; dot: string; text: string }> = {
   ACTIVE: { bg: "bg-green-50", dot: "bg-green-500", text: "text-green-700" },
@@ -201,7 +201,7 @@ function AddUserModal({
     if (!DESIGNATIONS.includes(designation)) return fail("Invalid designation selected.");
     if (!division) return fail("Please select a division.");
     if (!DIVISIONS.includes(division)) return fail("Invalid division selected.");
-    if (role !== "ADMIN" && role !== "USER") return fail("Invalid role selected.");
+    if (role !== "ADMIN" && role !== "USER" && role !== "ARCHIVER") return fail("Invalid role selected.");
 
     if (!trimmedEmployeeId) return fail("Employee ID is required.");
 
@@ -524,6 +524,7 @@ function AddUserModal({
                   >
                     <option value="ADMIN">Admin</option>
                     <option value="USER">User</option>
+                    <option value="ARCHIVER">Archiver</option>
                   </select>
                   {selectChevron}
                 </div>
@@ -886,6 +887,7 @@ function EditUserModal({
               <select value={role} onChange={(e) => setRole(e.target.value as RoleType)} className="block w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
                 <option value="ADMIN">Admin</option>
                 <option value="USER">User</option>
+                <option value="ARCHIVER">Archiver</option>
               </select>
             </div>
             <div>
@@ -1261,6 +1263,7 @@ export function UserManagementContent() {
           <option value="SUPER_ADMIN">Super Admin</option>
           <option value="ADMIN">Admin</option>
           <option value="USER">User</option>
+          <option value="ARCHIVER">Archiver</option>
         </select>
         <select value={divisionFilter} onChange={(e) => handleFilterChange(setDivisionFilter, e.target.value)} className="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
           <option value="">All Divisions</option>
@@ -1359,9 +1362,11 @@ export function UserManagementContent() {
                             ? "bg-purple-50 text-purple-700"
                             : u.role === "ADMIN"
                               ? "bg-blue-50 text-blue-700"
-                              : "bg-gray-100 text-gray-700"
+                              : u.role === "ARCHIVER"
+                                ? "bg-amber-50 text-amber-700"
+                                : "bg-gray-100 text-gray-700"
                         }`}>
-                          {u.role === "SUPER_ADMIN" ? "Super Admin" : u.role === "ADMIN" ? "Admin" : "User"}
+                          {u.role === "SUPER_ADMIN" ? "Super Admin" : u.role === "ADMIN" ? "Admin" : u.role === "ARCHIVER" ? "Archiver" : "User"}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-gray-600">{u.designation ?? "—"}</td>

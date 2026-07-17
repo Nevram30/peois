@@ -169,6 +169,16 @@ export const superAdminProcedure = protectedProcedure.use(({ ctx, next }) => {
   return next({ ctx });
 });
 
+export const archiverProcedure = protectedProcedure.use(({ ctx, next }) => {
+  if (ctx.session.user.role !== "SUPER_ADMIN" && ctx.session.user.role !== "ARCHIVER") {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Only archivers can perform this action",
+    });
+  }
+  return next({ ctx });
+});
+
 export const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
   if (ctx.session.user.role !== "SUPER_ADMIN" && ctx.session.user.role !== "ADMIN") {
     throw new TRPCError({
