@@ -70,8 +70,7 @@ export default function LoginPage() {
       {/* Left side: white background with login form */}
       <div className="flex w-full flex-col items-center justify-center bg-white px-4 py-8 sm:px-6 md:w-1/2 lg:px-16">
         <div className="w-full max-w-md">
-          <div className="h-1.5 w-full rounded-t-2xl bg-amber-500" />
-          <div className="rounded-b-2xl border border-t-0 border-gray-200 bg-white px-6 py-8 shadow-md sm:px-10 sm:py-10">
+          <div className="bg-white px-6 py-8 sm:px-10 sm:py-10">
             {/* Logo */}
             <div className="mb-6 flex flex-col items-center">
               <div className="mb-4 flex h-25 w-25 items-center justify-center rounded-full bg-gray-100">
