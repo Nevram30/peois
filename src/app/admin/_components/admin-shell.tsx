@@ -8,6 +8,7 @@ import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { api } from "~/trpc/react";
 import { LiveToast } from "~/app/_components/live-toast";
 import { usePollToast } from "~/hooks/use-poll-toast";
+import { SideNav } from "~/app/_components/side-nav";
 
 interface User {
   id: string;
@@ -83,11 +84,9 @@ export function AdminShell({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
 
   const { data: me } = api.user.me.useQuery();
@@ -190,9 +189,6 @@ export function AdminShell({
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setDropdownOpen(false);
-      }
       if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
         setNotifOpen(false);
       }
@@ -230,11 +226,8 @@ export function AdminShell({
               </div>
             </div>
             <div className="flex shrink-0 items-center gap-2 sm:gap-4">
-              <div className="relative" ref={dropdownRef}>
-                <button
-                  onClick={() => setDropdownOpen((v) => !v)}
-                  className="flex items-center gap-3 rounded-lg px-2 py-1 transition hover:bg-gray-100"
-                >
+              {/* Profile display — logout lives in the sidebar (desktop) and header icon (mobile) */}
+              <div className="flex items-center gap-3 px-2 py-1">
                   <div className="hidden text-right sm:block">
                     <p className="text-sm font-medium leading-tight">
                       {displayName ?? displayEmail}
@@ -255,21 +248,6 @@ export function AdminShell({
                       {(displayName ?? displayEmail ?? "U").charAt(0).toUpperCase()}
                     </div>
                   )}
-                </button>
-
-                {dropdownOpen && (
-                  <div className="absolute right-0 top-full mt-1 w-48 rounded-lg border border-gray-100 bg-white py-1 shadow-lg">
-                    <button
-                      onClick={() => { setDropdownOpen(false); setLogoutModalOpen(true); }}
-                      className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                    >
-                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
-                      </svg>
-                      Logout
-                    </button>
-                  </div>
-                )}
               </div>
 
               <Link
@@ -401,12 +379,22 @@ export function AdminShell({
                   </div>
                 )}
               </div>
+
+              <button
+                onClick={() => setLogoutModalOpen(true)}
+                title="Logout"
+                className="rounded-full p-1.5 text-gray-500 transition hover:bg-red-50 hover:text-red-600 lg:hidden"
+              >
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+                </svg>
+              </button>
             </div>
           </div>
         </header>
 
-        {/* Navigation Tabs */}
-        <nav className="flex items-center gap-2 overflow-x-auto bg-white px-4 border-b border-gray-200 mt-3 sm:px-6">
+        {/* Navigation Tabs — mobile/tablet only; desktop uses the left sidebar */}
+        <nav className="flex items-center gap-2 overflow-x-auto bg-white px-4 border-b border-gray-200 mt-3 sm:px-6 lg:hidden">
           {navItems.map((item) => {
             const badgeCount =
               item.href === "/admin/project-access-request" ? (pendingAccessCount ?? 0) : 0;
@@ -432,8 +420,25 @@ export function AdminShell({
         </nav>
       </div>
 
-      {/* Page Content */}
-      <main>{children}</main>
+      {/* Left sidebar (desktop/laptop) + Page Content */}
+      <div className="flex">
+        <SideNav
+          storageKey="admin-sidenav-open"
+          items={navItems.map((item) => ({
+            label: item.label,
+            href: item.href,
+            icon: item.icon,
+            active: isActive(item.href),
+            badge:
+              item.href === "/admin/project-access-request"
+                ? (pendingAccessCount ?? 0)
+                : 0,
+          }))}
+          helpHref="/admin/it-help-desk"
+          onLogout={() => setLogoutModalOpen(true)}
+        />
+        <main className="min-w-0 flex-1">{children}</main>
+      </div>
 
       {/* Logout Confirmation Modal */}
       {logoutModalOpen && (

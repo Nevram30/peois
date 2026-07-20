@@ -6,6 +6,7 @@ import Image from "next/image";
 import { signOut } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import { api } from "~/trpc/react";
+import { SideNav } from "~/app/_components/side-nav";
 
 const getInitials = (name?: string | null, email?: string | null): string => {
   if (name) {
@@ -77,13 +78,19 @@ const NAV_ITEMS = [
   // },
 ];
 
-export const NavHeader = ({ user, userId }: { user: { name?: string | null; email?: string | null }; userId: string }) => {
+export const NavHeader = ({
+  user,
+  userId,
+  children,
+}: {
+  user: { name?: string | null; email?: string | null };
+  userId: string;
+  children?: React.ReactNode;
+}) => {
   const pathname = usePathname();
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
   const utils = api.useUtils();
 
@@ -117,9 +124,6 @@ export const NavHeader = ({ user, userId }: { user: { name?: string | null; emai
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setDropdownOpen(false);
-      }
       if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
         setNotifOpen(false);
       }
@@ -151,31 +155,15 @@ export const NavHeader = ({ user, userId }: { user: { name?: string | null; emai
             </div>
 
             <div className="flex shrink-0 items-center gap-2 sm:gap-4">
-              <div className="relative" ref={dropdownRef}>
-                <button
-                  onClick={() => setDropdownOpen((v) => !v)}
-                  className="flex items-center gap-3 rounded-lg px-2 py-1 transition hover:bg-gray-100"
-                  title={user.name ?? user.email ?? "Account"}
-                >
+              {/* Profile display — logout lives in the sidebar (desktop) and header icon (mobile) */}
+              <div
+                className="flex items-center gap-3 px-2 py-1"
+                title={user.name ?? user.email ?? "Account"}
+              >
                   <span className="hidden text-sm font-medium text-gray-700 sm:block">{user.name ?? user.email}</span>
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-sm font-medium text-white ring-2 ring-blue-200 transition hover:ring-blue-300">
                     {getInitials(user.name, user.email)}
                   </div>
-                </button>
-
-                {dropdownOpen && (
-                  <div className="absolute right-0 top-full mt-1 w-48 rounded-lg border border-gray-100 bg-white py-1 shadow-lg">
-                    <button
-                      onClick={() => { setDropdownOpen(false); setLogoutModalOpen(true); }}
-                      className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                    >
-                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
-                      </svg>
-                      Logout
-                    </button>
-                  </div>
-                )}
               </div>
 
               <Link
@@ -220,12 +208,22 @@ export const NavHeader = ({ user, userId }: { user: { name?: string | null; emai
                   </div>
                 )}
               </div>
+
+              <button
+                onClick={() => setLogoutModalOpen(true)}
+                title="Logout"
+                className="rounded-lg p-2 text-gray-500 transition hover:bg-red-50 hover:text-red-600 lg:hidden"
+              >
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+                </svg>
+              </button>
             </div>
           </div>
         </header>
 
-        {/* Navigation Tabs */}
-        <nav className="flex items-center gap-2 overflow-x-auto px-4 border-b border-gray-200 mt-3 sm:px-6">
+        {/* Navigation Tabs — mobile/tablet only; desktop uses the left sidebar */}
+        <nav className="flex items-center gap-2 overflow-x-auto px-4 border-b border-gray-200 mt-3 sm:px-6 lg:hidden">
           {NAV_ITEMS.map((item) => {
             const isActive =
               item.href === "/super-admin/dashboard"
@@ -254,6 +252,30 @@ export const NavHeader = ({ user, userId }: { user: { name?: string | null; emai
           })}
         </nav>
       </div>
+
+      {/* Left sidebar (desktop/laptop) + Page Content */}
+      <div className="flex pt-32 lg:pt-16.25">
+        <SideNav
+          storageKey="super-admin-sidenav-open"
+          items={NAV_ITEMS.map((item) => ({
+            label: item.label,
+            href: `${item.href}?id=${userId}`,
+            icon: item.icon,
+            active:
+              item.href === "/super-admin/dashboard"
+                ? pathname === "/super-admin/dashboard"
+                : pathname.startsWith(item.href),
+            badge:
+              item.href === "/super-admin/project-activity-log"
+                ? (recentActivityCount ?? 0)
+                : 0,
+          }))}
+          helpHref={`/super-admin/it-help-desk?id=${userId}`}
+          onLogout={() => setLogoutModalOpen(true)}
+        />
+        <div className="min-w-0 flex-1 px-4 pb-6 pt-4 sm:px-6">{children}</div>
+      </div>
+
       {/* Logout Confirmation Modal */}
       {logoutModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
