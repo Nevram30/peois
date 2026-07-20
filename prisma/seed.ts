@@ -66,7 +66,7 @@ async function seedSampleArchiveEntry(archiverId: string) {
   });
 
   if (existingEntry) {
-    console.log("Sample archive entry already exists:", existingEntry.boxId);
+    console.log("Sample archive entry already exists:", existingEntry.boxRange);
     return;
   }
 
@@ -82,18 +82,16 @@ async function seedSampleArchiveEntry(archiverId: string) {
 
   const entry = await prisma.physicalArchiveLocation.create({
     data: {
-      roomLocation: "Wing A - Ground Floor",
-      cabinetLabel: "CAB-PR-01",
-      shelfNumber: 3,
-      boxId: "BOX-2024-88",
-      folderRange: "FLD-001 to FLD-015",
+      boxLabel: "COMPLETED",
+      boxRange: "1-15",
+      boxNumbers: "1, 2",
       projectId: project.id,
       createdById: archiverId,
     },
   });
 
   console.log(
-    `Sample archive entry created: ${entry.boxId} for project "${project.title}"`,
+    `Sample archive entry created: boxes ${entry.boxNumbers} (${entry.boxRange}) for project "${project.title}"`,
   );
 }
 

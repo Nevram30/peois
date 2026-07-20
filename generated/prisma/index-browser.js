@@ -192,11 +192,9 @@ exports.Prisma.ProjectScalarFieldEnum = {
 
 exports.Prisma.PhysicalArchiveLocationScalarFieldEnum = {
   id: 'id',
-  roomLocation: 'roomLocation',
-  cabinetLabel: 'cabinetLabel',
-  shelfNumber: 'shelfNumber',
-  boxId: 'boxId',
-  folderRange: 'folderRange',
+  boxLabel: 'boxLabel',
+  boxRange: 'boxRange',
+  boxNumbers: 'boxNumbers',
   remarks: 'remarks',
   projectId: 'projectId',
   createdById: 'createdById',
@@ -425,6 +423,11 @@ exports.ProjectStatus = exports.$Enums.ProjectStatus = {
   SUSPENDED: 'SUSPENDED',
   FOR_IMPLEMENTATION: 'FOR_IMPLEMENTATION',
   RE_ALIGNMENT: 'RE_ALIGNMENT',
+  OTHERS: 'OTHERS'
+};
+
+exports.BoxLabel = exports.$Enums.BoxLabel = {
+  COMPLETED: 'COMPLETED',
   OTHERS: 'OTHERS'
 };
 

@@ -18,7 +18,7 @@ interface User {
 
 const navItems = [
   {
-    label: "Archive Entry",
+    label: "Projects",
     href: "/archiver/dashboard",
     exact: true,
     icon: (
@@ -71,7 +71,7 @@ export function ArchiverShell({
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 font-sans">
       {/* Sticky header + nav */}
       <div className="sticky top-0 z-40 bg-gray-50 print:hidden">
         {/* Top Header */}

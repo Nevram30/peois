@@ -259,20 +259,23 @@ model Project {
     @@index([createdById])
 }
 
+enum BoxLabel {
+    COMPLETED
+    OTHERS
+}
+
 model PhysicalArchiveLocation {
-    id           String   @id @default(cuid())
-    roomLocation String
-    cabinetLabel String
-    shelfNumber  Int
-    boxId        String
-    folderRange  String
-    remarks      String?
-    project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-    projectId    String
-    createdBy    User     @relation(fields: [createdById], references: [id])
-    createdById  String
-    createdAt    DateTime @default(now())
-    updatedAt    DateTime @updatedAt
+    id          String   @id @default(cuid())
+    boxLabel    BoxLabel
+    boxRange    String
+    boxNumbers  String?
+    remarks     String?
+    project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+    projectId   String
+    createdBy   User     @relation(fields: [createdById], references: [id])
+    createdById String
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
 
     @@index([projectId])
     @@index([createdById])

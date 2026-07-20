@@ -284,6 +284,14 @@ export const AccessRequestStatus: {
 
 export type AccessRequestStatus = (typeof AccessRequestStatus)[keyof typeof AccessRequestStatus]
 
+
+export const BoxLabel: {
+  COMPLETED: 'COMPLETED',
+  OTHERS: 'OTHERS'
+};
+
+export type BoxLabel = (typeof BoxLabel)[keyof typeof BoxLabel]
+
 }
 
 export type UserRole = $Enums.UserRole
@@ -349,6 +357,10 @@ export const AccessRequestAction: typeof $Enums.AccessRequestAction
 export type AccessRequestStatus = $Enums.AccessRequestStatus
 
 export const AccessRequestStatus: typeof $Enums.AccessRequestStatus
+
+export type BoxLabel = $Enums.BoxLabel
+
+export const BoxLabel: typeof $Enums.BoxLabel
 
 /**
  * ##  Prisma Client ʲˢ
@@ -7204,27 +7216,15 @@ export namespace Prisma {
 
   export type AggregatePhysicalArchiveLocation = {
     _count: PhysicalArchiveLocationCountAggregateOutputType | null
-    _avg: PhysicalArchiveLocationAvgAggregateOutputType | null
-    _sum: PhysicalArchiveLocationSumAggregateOutputType | null
     _min: PhysicalArchiveLocationMinAggregateOutputType | null
     _max: PhysicalArchiveLocationMaxAggregateOutputType | null
   }
 
-  export type PhysicalArchiveLocationAvgAggregateOutputType = {
-    shelfNumber: number | null
-  }
-
-  export type PhysicalArchiveLocationSumAggregateOutputType = {
-    shelfNumber: number | null
-  }
-
   export type PhysicalArchiveLocationMinAggregateOutputType = {
     id: string | null
-    roomLocation: string | null
-    cabinetLabel: string | null
-    shelfNumber: number | null
-    boxId: string | null
-    folderRange: string | null
+    boxLabel: $Enums.BoxLabel | null
+    boxRange: string | null
+    boxNumbers: string | null
     remarks: string | null
     projectId: string | null
     createdById: string | null
@@ -7234,11 +7234,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationMaxAggregateOutputType = {
     id: string | null
-    roomLocation: string | null
-    cabinetLabel: string | null
-    shelfNumber: number | null
-    boxId: string | null
-    folderRange: string | null
+    boxLabel: $Enums.BoxLabel | null
+    boxRange: string | null
+    boxNumbers: string | null
     remarks: string | null
     projectId: string | null
     createdById: string | null
@@ -7248,11 +7246,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationCountAggregateOutputType = {
     id: number
-    roomLocation: number
-    cabinetLabel: number
-    shelfNumber: number
-    boxId: number
-    folderRange: number
+    boxLabel: number
+    boxRange: number
+    boxNumbers: number
     remarks: number
     projectId: number
     createdById: number
@@ -7262,21 +7258,11 @@ export namespace Prisma {
   }
 
 
-  export type PhysicalArchiveLocationAvgAggregateInputType = {
-    shelfNumber?: true
-  }
-
-  export type PhysicalArchiveLocationSumAggregateInputType = {
-    shelfNumber?: true
-  }
-
   export type PhysicalArchiveLocationMinAggregateInputType = {
     id?: true
-    roomLocation?: true
-    cabinetLabel?: true
-    shelfNumber?: true
-    boxId?: true
-    folderRange?: true
+    boxLabel?: true
+    boxRange?: true
+    boxNumbers?: true
     remarks?: true
     projectId?: true
     createdById?: true
@@ -7286,11 +7272,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationMaxAggregateInputType = {
     id?: true
-    roomLocation?: true
-    cabinetLabel?: true
-    shelfNumber?: true
-    boxId?: true
-    folderRange?: true
+    boxLabel?: true
+    boxRange?: true
+    boxNumbers?: true
     remarks?: true
     projectId?: true
     createdById?: true
@@ -7300,11 +7284,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationCountAggregateInputType = {
     id?: true
-    roomLocation?: true
-    cabinetLabel?: true
-    shelfNumber?: true
-    boxId?: true
-    folderRange?: true
+    boxLabel?: true
+    boxRange?: true
+    boxNumbers?: true
     remarks?: true
     projectId?: true
     createdById?: true
@@ -7351,18 +7333,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: PhysicalArchiveLocationAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: PhysicalArchiveLocationSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: PhysicalArchiveLocationMinAggregateInputType
@@ -7393,27 +7363,21 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: PhysicalArchiveLocationCountAggregateInputType | true
-    _avg?: PhysicalArchiveLocationAvgAggregateInputType
-    _sum?: PhysicalArchiveLocationSumAggregateInputType
     _min?: PhysicalArchiveLocationMinAggregateInputType
     _max?: PhysicalArchiveLocationMaxAggregateInputType
   }
 
   export type PhysicalArchiveLocationGroupByOutputType = {
     id: string
-    roomLocation: string
-    cabinetLabel: string
-    shelfNumber: number
-    boxId: string
-    folderRange: string
+    boxLabel: $Enums.BoxLabel
+    boxRange: string
+    boxNumbers: string | null
     remarks: string | null
     projectId: string
     createdById: string
     createdAt: Date
     updatedAt: Date
     _count: PhysicalArchiveLocationCountAggregateOutputType | null
-    _avg: PhysicalArchiveLocationAvgAggregateOutputType | null
-    _sum: PhysicalArchiveLocationSumAggregateOutputType | null
     _min: PhysicalArchiveLocationMinAggregateOutputType | null
     _max: PhysicalArchiveLocationMaxAggregateOutputType | null
   }
@@ -7434,11 +7398,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    roomLocation?: boolean
-    cabinetLabel?: boolean
-    shelfNumber?: boolean
-    boxId?: boolean
-    folderRange?: boolean
+    boxLabel?: boolean
+    boxRange?: boolean
+    boxNumbers?: boolean
     remarks?: boolean
     projectId?: boolean
     createdById?: boolean
@@ -7450,11 +7412,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    roomLocation?: boolean
-    cabinetLabel?: boolean
-    shelfNumber?: boolean
-    boxId?: boolean
-    folderRange?: boolean
+    boxLabel?: boolean
+    boxRange?: boolean
+    boxNumbers?: boolean
     remarks?: boolean
     projectId?: boolean
     createdById?: boolean
@@ -7466,11 +7426,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    roomLocation?: boolean
-    cabinetLabel?: boolean
-    shelfNumber?: boolean
-    boxId?: boolean
-    folderRange?: boolean
+    boxLabel?: boolean
+    boxRange?: boolean
+    boxNumbers?: boolean
     remarks?: boolean
     projectId?: boolean
     createdById?: boolean
@@ -7482,11 +7440,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationSelectScalar = {
     id?: boolean
-    roomLocation?: boolean
-    cabinetLabel?: boolean
-    shelfNumber?: boolean
-    boxId?: boolean
-    folderRange?: boolean
+    boxLabel?: boolean
+    boxRange?: boolean
+    boxNumbers?: boolean
     remarks?: boolean
     projectId?: boolean
     createdById?: boolean
@@ -7494,7 +7450,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type PhysicalArchiveLocationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "roomLocation" | "cabinetLabel" | "shelfNumber" | "boxId" | "folderRange" | "remarks" | "projectId" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["physicalArchiveLocation"]>
+  export type PhysicalArchiveLocationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "boxLabel" | "boxRange" | "boxNumbers" | "remarks" | "projectId" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["physicalArchiveLocation"]>
   export type PhysicalArchiveLocationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
@@ -7516,11 +7472,9 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      roomLocation: string
-      cabinetLabel: string
-      shelfNumber: number
-      boxId: string
-      folderRange: string
+      boxLabel: $Enums.BoxLabel
+      boxRange: string
+      boxNumbers: string | null
       remarks: string | null
       projectId: string
       createdById: string
@@ -7952,11 +7906,9 @@ export namespace Prisma {
    */
   interface PhysicalArchiveLocationFieldRefs {
     readonly id: FieldRef<"PhysicalArchiveLocation", 'String'>
-    readonly roomLocation: FieldRef<"PhysicalArchiveLocation", 'String'>
-    readonly cabinetLabel: FieldRef<"PhysicalArchiveLocation", 'String'>
-    readonly shelfNumber: FieldRef<"PhysicalArchiveLocation", 'Int'>
-    readonly boxId: FieldRef<"PhysicalArchiveLocation", 'String'>
-    readonly folderRange: FieldRef<"PhysicalArchiveLocation", 'String'>
+    readonly boxLabel: FieldRef<"PhysicalArchiveLocation", 'BoxLabel'>
+    readonly boxRange: FieldRef<"PhysicalArchiveLocation", 'String'>
+    readonly boxNumbers: FieldRef<"PhysicalArchiveLocation", 'String'>
     readonly remarks: FieldRef<"PhysicalArchiveLocation", 'String'>
     readonly projectId: FieldRef<"PhysicalArchiveLocation", 'String'>
     readonly createdById: FieldRef<"PhysicalArchiveLocation", 'String'>
@@ -21058,11 +21010,9 @@ export namespace Prisma {
 
   export const PhysicalArchiveLocationScalarFieldEnum: {
     id: 'id',
-    roomLocation: 'roomLocation',
-    cabinetLabel: 'cabinetLabel',
-    shelfNumber: 'shelfNumber',
-    boxId: 'boxId',
-    folderRange: 'folderRange',
+    boxLabel: 'boxLabel',
+    boxRange: 'boxRange',
+    boxNumbers: 'boxNumbers',
     remarks: 'remarks',
     projectId: 'projectId',
     createdById: 'createdById',
@@ -21427,6 +21377,20 @@ export namespace Prisma {
    * Reference to a field of type 'ProjectStatus[]'
    */
   export type ListEnumProjectStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProjectStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'BoxLabel'
+   */
+  export type EnumBoxLabelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BoxLabel'>
+    
+
+
+  /**
+   * Reference to a field of type 'BoxLabel[]'
+   */
+  export type ListEnumBoxLabelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BoxLabel[]'>
     
 
 
@@ -22015,11 +21979,9 @@ export namespace Prisma {
     OR?: PhysicalArchiveLocationWhereInput[]
     NOT?: PhysicalArchiveLocationWhereInput | PhysicalArchiveLocationWhereInput[]
     id?: StringFilter<"PhysicalArchiveLocation"> | string
-    roomLocation?: StringFilter<"PhysicalArchiveLocation"> | string
-    cabinetLabel?: StringFilter<"PhysicalArchiveLocation"> | string
-    shelfNumber?: IntFilter<"PhysicalArchiveLocation"> | number
-    boxId?: StringFilter<"PhysicalArchiveLocation"> | string
-    folderRange?: StringFilter<"PhysicalArchiveLocation"> | string
+    boxLabel?: EnumBoxLabelFilter<"PhysicalArchiveLocation"> | $Enums.BoxLabel
+    boxRange?: StringFilter<"PhysicalArchiveLocation"> | string
+    boxNumbers?: StringNullableFilter<"PhysicalArchiveLocation"> | string | null
     remarks?: StringNullableFilter<"PhysicalArchiveLocation"> | string | null
     projectId?: StringFilter<"PhysicalArchiveLocation"> | string
     createdById?: StringFilter<"PhysicalArchiveLocation"> | string
@@ -22031,11 +21993,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationOrderByWithRelationInput = {
     id?: SortOrder
-    roomLocation?: SortOrder
-    cabinetLabel?: SortOrder
-    shelfNumber?: SortOrder
-    boxId?: SortOrder
-    folderRange?: SortOrder
+    boxLabel?: SortOrder
+    boxRange?: SortOrder
+    boxNumbers?: SortOrderInput | SortOrder
     remarks?: SortOrderInput | SortOrder
     projectId?: SortOrder
     createdById?: SortOrder
@@ -22050,11 +22010,9 @@ export namespace Prisma {
     AND?: PhysicalArchiveLocationWhereInput | PhysicalArchiveLocationWhereInput[]
     OR?: PhysicalArchiveLocationWhereInput[]
     NOT?: PhysicalArchiveLocationWhereInput | PhysicalArchiveLocationWhereInput[]
-    roomLocation?: StringFilter<"PhysicalArchiveLocation"> | string
-    cabinetLabel?: StringFilter<"PhysicalArchiveLocation"> | string
-    shelfNumber?: IntFilter<"PhysicalArchiveLocation"> | number
-    boxId?: StringFilter<"PhysicalArchiveLocation"> | string
-    folderRange?: StringFilter<"PhysicalArchiveLocation"> | string
+    boxLabel?: EnumBoxLabelFilter<"PhysicalArchiveLocation"> | $Enums.BoxLabel
+    boxRange?: StringFilter<"PhysicalArchiveLocation"> | string
+    boxNumbers?: StringNullableFilter<"PhysicalArchiveLocation"> | string | null
     remarks?: StringNullableFilter<"PhysicalArchiveLocation"> | string | null
     projectId?: StringFilter<"PhysicalArchiveLocation"> | string
     createdById?: StringFilter<"PhysicalArchiveLocation"> | string
@@ -22066,21 +22024,17 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationOrderByWithAggregationInput = {
     id?: SortOrder
-    roomLocation?: SortOrder
-    cabinetLabel?: SortOrder
-    shelfNumber?: SortOrder
-    boxId?: SortOrder
-    folderRange?: SortOrder
+    boxLabel?: SortOrder
+    boxRange?: SortOrder
+    boxNumbers?: SortOrderInput | SortOrder
     remarks?: SortOrderInput | SortOrder
     projectId?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: PhysicalArchiveLocationCountOrderByAggregateInput
-    _avg?: PhysicalArchiveLocationAvgOrderByAggregateInput
     _max?: PhysicalArchiveLocationMaxOrderByAggregateInput
     _min?: PhysicalArchiveLocationMinOrderByAggregateInput
-    _sum?: PhysicalArchiveLocationSumOrderByAggregateInput
   }
 
   export type PhysicalArchiveLocationScalarWhereWithAggregatesInput = {
@@ -22088,11 +22042,9 @@ export namespace Prisma {
     OR?: PhysicalArchiveLocationScalarWhereWithAggregatesInput[]
     NOT?: PhysicalArchiveLocationScalarWhereWithAggregatesInput | PhysicalArchiveLocationScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"PhysicalArchiveLocation"> | string
-    roomLocation?: StringWithAggregatesFilter<"PhysicalArchiveLocation"> | string
-    cabinetLabel?: StringWithAggregatesFilter<"PhysicalArchiveLocation"> | string
-    shelfNumber?: IntWithAggregatesFilter<"PhysicalArchiveLocation"> | number
-    boxId?: StringWithAggregatesFilter<"PhysicalArchiveLocation"> | string
-    folderRange?: StringWithAggregatesFilter<"PhysicalArchiveLocation"> | string
+    boxLabel?: EnumBoxLabelWithAggregatesFilter<"PhysicalArchiveLocation"> | $Enums.BoxLabel
+    boxRange?: StringWithAggregatesFilter<"PhysicalArchiveLocation"> | string
+    boxNumbers?: StringNullableWithAggregatesFilter<"PhysicalArchiveLocation"> | string | null
     remarks?: StringNullableWithAggregatesFilter<"PhysicalArchiveLocation"> | string | null
     projectId?: StringWithAggregatesFilter<"PhysicalArchiveLocation"> | string
     createdById?: StringWithAggregatesFilter<"PhysicalArchiveLocation"> | string
@@ -23531,11 +23483,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationCreateInput = {
     id?: string
-    roomLocation: string
-    cabinetLabel: string
-    shelfNumber: number
-    boxId: string
-    folderRange: string
+    boxLabel: $Enums.BoxLabel
+    boxRange: string
+    boxNumbers?: string | null
     remarks?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -23545,11 +23495,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationUncheckedCreateInput = {
     id?: string
-    roomLocation: string
-    cabinetLabel: string
-    shelfNumber: number
-    boxId: string
-    folderRange: string
+    boxLabel: $Enums.BoxLabel
+    boxRange: string
+    boxNumbers?: string | null
     remarks?: string | null
     projectId: string
     createdById: string
@@ -23559,11 +23507,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    roomLocation?: StringFieldUpdateOperationsInput | string
-    cabinetLabel?: StringFieldUpdateOperationsInput | string
-    shelfNumber?: IntFieldUpdateOperationsInput | number
-    boxId?: StringFieldUpdateOperationsInput | string
-    folderRange?: StringFieldUpdateOperationsInput | string
+    boxLabel?: EnumBoxLabelFieldUpdateOperationsInput | $Enums.BoxLabel
+    boxRange?: StringFieldUpdateOperationsInput | string
+    boxNumbers?: NullableStringFieldUpdateOperationsInput | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23573,11 +23519,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    roomLocation?: StringFieldUpdateOperationsInput | string
-    cabinetLabel?: StringFieldUpdateOperationsInput | string
-    shelfNumber?: IntFieldUpdateOperationsInput | number
-    boxId?: StringFieldUpdateOperationsInput | string
-    folderRange?: StringFieldUpdateOperationsInput | string
+    boxLabel?: EnumBoxLabelFieldUpdateOperationsInput | $Enums.BoxLabel
+    boxRange?: StringFieldUpdateOperationsInput | string
+    boxNumbers?: NullableStringFieldUpdateOperationsInput | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     projectId?: StringFieldUpdateOperationsInput | string
     createdById?: StringFieldUpdateOperationsInput | string
@@ -23587,11 +23531,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationCreateManyInput = {
     id?: string
-    roomLocation: string
-    cabinetLabel: string
-    shelfNumber: number
-    boxId: string
-    folderRange: string
+    boxLabel: $Enums.BoxLabel
+    boxRange: string
+    boxNumbers?: string | null
     remarks?: string | null
     projectId: string
     createdById: string
@@ -23601,11 +23543,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    roomLocation?: StringFieldUpdateOperationsInput | string
-    cabinetLabel?: StringFieldUpdateOperationsInput | string
-    shelfNumber?: IntFieldUpdateOperationsInput | number
-    boxId?: StringFieldUpdateOperationsInput | string
-    folderRange?: StringFieldUpdateOperationsInput | string
+    boxLabel?: EnumBoxLabelFieldUpdateOperationsInput | $Enums.BoxLabel
+    boxRange?: StringFieldUpdateOperationsInput | string
+    boxNumbers?: NullableStringFieldUpdateOperationsInput | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23613,11 +23553,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    roomLocation?: StringFieldUpdateOperationsInput | string
-    cabinetLabel?: StringFieldUpdateOperationsInput | string
-    shelfNumber?: IntFieldUpdateOperationsInput | number
-    boxId?: StringFieldUpdateOperationsInput | string
-    folderRange?: StringFieldUpdateOperationsInput | string
+    boxLabel?: EnumBoxLabelFieldUpdateOperationsInput | $Enums.BoxLabel
+    boxRange?: StringFieldUpdateOperationsInput | string
+    boxNumbers?: NullableStringFieldUpdateOperationsInput | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     projectId?: StringFieldUpdateOperationsInput | string
     createdById?: StringFieldUpdateOperationsInput | string
@@ -25197,6 +25135,13 @@ export namespace Prisma {
     _max?: NestedEnumProjectStatusFilter<$PrismaModel>
   }
 
+  export type EnumBoxLabelFilter<$PrismaModel = never> = {
+    equals?: $Enums.BoxLabel | EnumBoxLabelFieldRefInput<$PrismaModel>
+    in?: $Enums.BoxLabel[] | ListEnumBoxLabelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BoxLabel[] | ListEnumBoxLabelFieldRefInput<$PrismaModel>
+    not?: NestedEnumBoxLabelFilter<$PrismaModel> | $Enums.BoxLabel
+  }
+
   export type ProjectScalarRelationFilter = {
     is?: ProjectWhereInput
     isNot?: ProjectWhereInput
@@ -25204,11 +25149,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationCountOrderByAggregateInput = {
     id?: SortOrder
-    roomLocation?: SortOrder
-    cabinetLabel?: SortOrder
-    shelfNumber?: SortOrder
-    boxId?: SortOrder
-    folderRange?: SortOrder
+    boxLabel?: SortOrder
+    boxRange?: SortOrder
+    boxNumbers?: SortOrder
     remarks?: SortOrder
     projectId?: SortOrder
     createdById?: SortOrder
@@ -25216,17 +25159,11 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
-  export type PhysicalArchiveLocationAvgOrderByAggregateInput = {
-    shelfNumber?: SortOrder
-  }
-
   export type PhysicalArchiveLocationMaxOrderByAggregateInput = {
     id?: SortOrder
-    roomLocation?: SortOrder
-    cabinetLabel?: SortOrder
-    shelfNumber?: SortOrder
-    boxId?: SortOrder
-    folderRange?: SortOrder
+    boxLabel?: SortOrder
+    boxRange?: SortOrder
+    boxNumbers?: SortOrder
     remarks?: SortOrder
     projectId?: SortOrder
     createdById?: SortOrder
@@ -25236,11 +25173,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationMinOrderByAggregateInput = {
     id?: SortOrder
-    roomLocation?: SortOrder
-    cabinetLabel?: SortOrder
-    shelfNumber?: SortOrder
-    boxId?: SortOrder
-    folderRange?: SortOrder
+    boxLabel?: SortOrder
+    boxRange?: SortOrder
+    boxNumbers?: SortOrder
     remarks?: SortOrder
     projectId?: SortOrder
     createdById?: SortOrder
@@ -25248,8 +25183,14 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
-  export type PhysicalArchiveLocationSumOrderByAggregateInput = {
-    shelfNumber?: SortOrder
+  export type EnumBoxLabelWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.BoxLabel | EnumBoxLabelFieldRefInput<$PrismaModel>
+    in?: $Enums.BoxLabel[] | ListEnumBoxLabelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BoxLabel[] | ListEnumBoxLabelFieldRefInput<$PrismaModel>
+    not?: NestedEnumBoxLabelWithAggregatesFilter<$PrismaModel> | $Enums.BoxLabel
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumBoxLabelFilter<$PrismaModel>
+    _max?: NestedEnumBoxLabelFilter<$PrismaModel>
   }
 
   export type ProjectActivityCountOrderByAggregateInput = {
@@ -27017,6 +26958,10 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type EnumBoxLabelFieldUpdateOperationsInput = {
+    set?: $Enums.BoxLabel
+  }
+
   export type ProjectUpdateOneRequiredWithoutArchiveLocationsNestedInput = {
     create?: XOR<ProjectCreateWithoutArchiveLocationsInput, ProjectUncheckedCreateWithoutArchiveLocationsInput>
     connectOrCreate?: ProjectCreateOrConnectWithoutArchiveLocationsInput
@@ -27855,6 +27800,23 @@ export namespace Prisma {
     _max?: NestedEnumProjectStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumBoxLabelFilter<$PrismaModel = never> = {
+    equals?: $Enums.BoxLabel | EnumBoxLabelFieldRefInput<$PrismaModel>
+    in?: $Enums.BoxLabel[] | ListEnumBoxLabelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BoxLabel[] | ListEnumBoxLabelFieldRefInput<$PrismaModel>
+    not?: NestedEnumBoxLabelFilter<$PrismaModel> | $Enums.BoxLabel
+  }
+
+  export type NestedEnumBoxLabelWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.BoxLabel | EnumBoxLabelFieldRefInput<$PrismaModel>
+    in?: $Enums.BoxLabel[] | ListEnumBoxLabelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.BoxLabel[] | ListEnumBoxLabelFieldRefInput<$PrismaModel>
+    not?: NestedEnumBoxLabelWithAggregatesFilter<$PrismaModel> | $Enums.BoxLabel
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumBoxLabelFilter<$PrismaModel>
+    _max?: NestedEnumBoxLabelFilter<$PrismaModel>
+  }
+
   export type NestedEnumDisbursementTypeNullableFilter<$PrismaModel = never> = {
     equals?: $Enums.DisbursementType | EnumDisbursementTypeFieldRefInput<$PrismaModel> | null
     in?: $Enums.DisbursementType[] | ListEnumDisbursementTypeFieldRefInput<$PrismaModel> | null
@@ -28587,11 +28549,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationCreateWithoutCreatedByInput = {
     id?: string
-    roomLocation: string
-    cabinetLabel: string
-    shelfNumber: number
-    boxId: string
-    folderRange: string
+    boxLabel: $Enums.BoxLabel
+    boxRange: string
+    boxNumbers?: string | null
     remarks?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -28600,11 +28560,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationUncheckedCreateWithoutCreatedByInput = {
     id?: string
-    roomLocation: string
-    cabinetLabel: string
-    shelfNumber: number
-    boxId: string
-    folderRange: string
+    boxLabel: $Enums.BoxLabel
+    boxRange: string
+    boxNumbers?: string | null
     remarks?: string | null
     projectId: string
     createdAt?: Date | string
@@ -29069,11 +29027,9 @@ export namespace Prisma {
     OR?: PhysicalArchiveLocationScalarWhereInput[]
     NOT?: PhysicalArchiveLocationScalarWhereInput | PhysicalArchiveLocationScalarWhereInput[]
     id?: StringFilter<"PhysicalArchiveLocation"> | string
-    roomLocation?: StringFilter<"PhysicalArchiveLocation"> | string
-    cabinetLabel?: StringFilter<"PhysicalArchiveLocation"> | string
-    shelfNumber?: IntFilter<"PhysicalArchiveLocation"> | number
-    boxId?: StringFilter<"PhysicalArchiveLocation"> | string
-    folderRange?: StringFilter<"PhysicalArchiveLocation"> | string
+    boxLabel?: EnumBoxLabelFilter<"PhysicalArchiveLocation"> | $Enums.BoxLabel
+    boxRange?: StringFilter<"PhysicalArchiveLocation"> | string
+    boxNumbers?: StringNullableFilter<"PhysicalArchiveLocation"> | string | null
     remarks?: StringNullableFilter<"PhysicalArchiveLocation"> | string | null
     projectId?: StringFilter<"PhysicalArchiveLocation"> | string
     createdById?: StringFilter<"PhysicalArchiveLocation"> | string
@@ -29520,11 +29476,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationCreateWithoutProjectInput = {
     id?: string
-    roomLocation: string
-    cabinetLabel: string
-    shelfNumber: number
-    boxId: string
-    folderRange: string
+    boxLabel: $Enums.BoxLabel
+    boxRange: string
+    boxNumbers?: string | null
     remarks?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29533,11 +29487,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationUncheckedCreateWithoutProjectInput = {
     id?: string
-    roomLocation: string
-    cabinetLabel: string
-    shelfNumber: number
-    boxId: string
-    folderRange: string
+    boxLabel: $Enums.BoxLabel
+    boxRange: string
+    boxNumbers?: string | null
     remarks?: string | null
     createdById: string
     createdAt?: Date | string
@@ -33825,11 +33777,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationCreateManyCreatedByInput = {
     id?: string
-    roomLocation: string
-    cabinetLabel: string
-    shelfNumber: number
-    boxId: string
-    folderRange: string
+    boxLabel: $Enums.BoxLabel
+    boxRange: string
+    boxNumbers?: string | null
     remarks?: string | null
     projectId: string
     createdAt?: Date | string
@@ -34398,11 +34348,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationUpdateWithoutCreatedByInput = {
     id?: StringFieldUpdateOperationsInput | string
-    roomLocation?: StringFieldUpdateOperationsInput | string
-    cabinetLabel?: StringFieldUpdateOperationsInput | string
-    shelfNumber?: IntFieldUpdateOperationsInput | number
-    boxId?: StringFieldUpdateOperationsInput | string
-    folderRange?: StringFieldUpdateOperationsInput | string
+    boxLabel?: EnumBoxLabelFieldUpdateOperationsInput | $Enums.BoxLabel
+    boxRange?: StringFieldUpdateOperationsInput | string
+    boxNumbers?: NullableStringFieldUpdateOperationsInput | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34411,11 +34359,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationUncheckedUpdateWithoutCreatedByInput = {
     id?: StringFieldUpdateOperationsInput | string
-    roomLocation?: StringFieldUpdateOperationsInput | string
-    cabinetLabel?: StringFieldUpdateOperationsInput | string
-    shelfNumber?: IntFieldUpdateOperationsInput | number
-    boxId?: StringFieldUpdateOperationsInput | string
-    folderRange?: StringFieldUpdateOperationsInput | string
+    boxLabel?: EnumBoxLabelFieldUpdateOperationsInput | $Enums.BoxLabel
+    boxRange?: StringFieldUpdateOperationsInput | string
+    boxNumbers?: NullableStringFieldUpdateOperationsInput | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     projectId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34424,11 +34370,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByInput = {
     id?: StringFieldUpdateOperationsInput | string
-    roomLocation?: StringFieldUpdateOperationsInput | string
-    cabinetLabel?: StringFieldUpdateOperationsInput | string
-    shelfNumber?: IntFieldUpdateOperationsInput | number
-    boxId?: StringFieldUpdateOperationsInput | string
-    folderRange?: StringFieldUpdateOperationsInput | string
+    boxLabel?: EnumBoxLabelFieldUpdateOperationsInput | $Enums.BoxLabel
+    boxRange?: StringFieldUpdateOperationsInput | string
+    boxNumbers?: NullableStringFieldUpdateOperationsInput | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     projectId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34509,11 +34453,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationCreateManyProjectInput = {
     id?: string
-    roomLocation: string
-    cabinetLabel: string
-    shelfNumber: number
-    boxId: string
-    folderRange: string
+    boxLabel: $Enums.BoxLabel
+    boxRange: string
+    boxNumbers?: string | null
     remarks?: string | null
     createdById: string
     createdAt?: Date | string
@@ -34742,11 +34684,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationUpdateWithoutProjectInput = {
     id?: StringFieldUpdateOperationsInput | string
-    roomLocation?: StringFieldUpdateOperationsInput | string
-    cabinetLabel?: StringFieldUpdateOperationsInput | string
-    shelfNumber?: IntFieldUpdateOperationsInput | number
-    boxId?: StringFieldUpdateOperationsInput | string
-    folderRange?: StringFieldUpdateOperationsInput | string
+    boxLabel?: EnumBoxLabelFieldUpdateOperationsInput | $Enums.BoxLabel
+    boxRange?: StringFieldUpdateOperationsInput | string
+    boxNumbers?: NullableStringFieldUpdateOperationsInput | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34755,11 +34695,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationUncheckedUpdateWithoutProjectInput = {
     id?: StringFieldUpdateOperationsInput | string
-    roomLocation?: StringFieldUpdateOperationsInput | string
-    cabinetLabel?: StringFieldUpdateOperationsInput | string
-    shelfNumber?: IntFieldUpdateOperationsInput | number
-    boxId?: StringFieldUpdateOperationsInput | string
-    folderRange?: StringFieldUpdateOperationsInput | string
+    boxLabel?: EnumBoxLabelFieldUpdateOperationsInput | $Enums.BoxLabel
+    boxRange?: StringFieldUpdateOperationsInput | string
+    boxNumbers?: NullableStringFieldUpdateOperationsInput | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34768,11 +34706,9 @@ export namespace Prisma {
 
   export type PhysicalArchiveLocationUncheckedUpdateManyWithoutProjectInput = {
     id?: StringFieldUpdateOperationsInput | string
-    roomLocation?: StringFieldUpdateOperationsInput | string
-    cabinetLabel?: StringFieldUpdateOperationsInput | string
-    shelfNumber?: IntFieldUpdateOperationsInput | number
-    boxId?: StringFieldUpdateOperationsInput | string
-    folderRange?: StringFieldUpdateOperationsInput | string
+    boxLabel?: EnumBoxLabelFieldUpdateOperationsInput | $Enums.BoxLabel
+    boxRange?: StringFieldUpdateOperationsInput | string
+    boxNumbers?: NullableStringFieldUpdateOperationsInput | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
