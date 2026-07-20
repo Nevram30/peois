@@ -9,7 +9,7 @@ interface BeforeInstallPromptEvent extends Event {
 
 const DISMISS_KEY = "pwa-install-dismissed";
 
-export default function InstallPrompt() {
+export const InstallPrompt = () => {
   const [installEvent, setInstallEvent] =
     useState<BeforeInstallPromptEvent | null>(null);
   const [showIosGuide, setShowIosGuide] = useState(false);

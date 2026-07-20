@@ -3,6 +3,7 @@
  * and the client-side idle timer. Keep this file free of imports so it is
  * safe in every runtime.
  */
+
 export const SESSION_MAX_AGE_SECONDS = 5 * 60;
 export const SESSION_MAX_AGE_MS = SESSION_MAX_AGE_SECONDS * 1000;
 

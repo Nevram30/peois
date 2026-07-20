@@ -2,10 +2,10 @@
 
 import { useCallback, useEffect, useRef } from "react";
 
-export interface PollToastItem {
+export type PollToastItem = {
   id: string;
   message: string;
-}
+};
 
 /**
  * Fires `onNew(message)` when a polled list gains ids not seen before.
@@ -17,10 +17,10 @@ export interface PollToastItem {
  * in-process EventEmitter behind the SSE subscriptions doesn't span
  * instances (see src/server/api/events.ts).
  */
-export function usePollToast(
+export const usePollToast = (
   items: PollToastItem[] | undefined,
   onNew: (message: string) => void,
-) {
+) => {
   const seenRef = useRef(new Set<string>());
   const initializedRef = useRef(false);
   const onNewRef = useRef(onNew);

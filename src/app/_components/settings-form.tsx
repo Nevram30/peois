@@ -7,7 +7,7 @@ import { useUploadThing } from "~/lib/uploadthing";
 
 type Banner = { kind: "success" | "error"; text: string } | null;
 
-export function SettingsForm() {
+export const SettingsForm = () => {
   const utils = api.useUtils();
   const { data: me, isLoading } = api.user.me.useQuery();
 
@@ -222,11 +222,10 @@ export function SettingsForm() {
 
           {profileBanner && (
             <div
-              className={`rounded-lg px-3 py-2 text-sm ${
-                profileBanner.kind === "success"
-                  ? "bg-green-50 text-green-700"
-                  : "bg-red-50 text-red-700"
-              }`}
+              className={`rounded-lg px-3 py-2 text-sm ${profileBanner.kind === "success"
+                ? "bg-green-50 text-green-700"
+                : "bg-red-50 text-red-700"
+                }`}
             >
               {profileBanner.text}
             </div>
@@ -245,68 +244,67 @@ export function SettingsForm() {
       </section>
 
       {canChangePassword && (
-      <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="text-base font-semibold text-gray-900">Password</h2>
-        <p className="mt-0.5 text-xs text-gray-500">
-          Use a strong password that you don&apos;t use elsewhere.
-        </p>
+        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="text-base font-semibold text-gray-900">Password</h2>
+          <p className="mt-0.5 text-xs text-gray-500">
+            Use a strong password that you don&apos;t use elsewhere.
+          </p>
 
-        <form onSubmit={handleChangePassword} className="mt-5 space-y-4">
-          <PasswordField
-            label="Current password"
-            value={currentPassword}
-            onChange={setCurrentPassword}
-            visible={showCurrent}
-            onToggle={() => setShowCurrent((v) => !v)}
-            autoComplete="current-password"
-          />
-          <PasswordField
-            label="New password"
-            value={newPassword}
-            onChange={setNewPassword}
-            visible={showNew}
-            onToggle={() => setShowNew((v) => !v)}
-            autoComplete="new-password"
-            hint="Minimum 8 characters."
-          />
-          <PasswordField
-            label="Confirm new password"
-            value={confirmPassword}
-            onChange={setConfirmPassword}
-            visible={showConfirm}
-            onToggle={() => setShowConfirm((v) => !v)}
-            autoComplete="new-password"
-          />
+          <form onSubmit={handleChangePassword} className="mt-5 space-y-4">
+            <PasswordField
+              label="Current password"
+              value={currentPassword}
+              onChange={setCurrentPassword}
+              visible={showCurrent}
+              onToggle={() => setShowCurrent((v) => !v)}
+              autoComplete="current-password"
+            />
+            <PasswordField
+              label="New password"
+              value={newPassword}
+              onChange={setNewPassword}
+              visible={showNew}
+              onToggle={() => setShowNew((v) => !v)}
+              autoComplete="new-password"
+              hint="Minimum 8 characters."
+            />
+            <PasswordField
+              label="Confirm new password"
+              value={confirmPassword}
+              onChange={setConfirmPassword}
+              visible={showConfirm}
+              onToggle={() => setShowConfirm((v) => !v)}
+              autoComplete="new-password"
+            />
 
-          {passwordBanner && (
-            <div
-              className={`rounded-lg px-3 py-2 text-sm ${
-                passwordBanner.kind === "success"
+            {passwordBanner && (
+              <div
+                className={`rounded-lg px-3 py-2 text-sm ${passwordBanner.kind === "success"
                   ? "bg-green-50 text-green-700"
                   : "bg-red-50 text-red-700"
-              }`}
-            >
-              {passwordBanner.text}
-            </div>
-          )}
+                  }`}
+              >
+                {passwordBanner.text}
+              </div>
+            )}
 
-          <div className="flex justify-end">
-            <button
-              type="submit"
-              disabled={changePassword.isPending}
-              className="rounded-lg bg-[#1e3a4f] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#16293a] disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {changePassword.isPending ? "Updating…" : "Update password"}
-            </button>
-          </div>
-        </form>
-      </section>
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                disabled={changePassword.isPending}
+                className="rounded-lg bg-[#1e3a4f] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#16293a] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {changePassword.isPending ? "Updating…" : "Update password"}
+              </button>
+            </div>
+          </form>
+        </section>
       )}
     </div>
   );
 }
 
-function PasswordField({
+const PasswordField = ({
   label,
   value,
   onChange,
@@ -322,7 +320,7 @@ function PasswordField({
   onToggle: () => void;
   autoComplete?: string;
   hint?: string;
-}) {
+}) => {
   return (
     <div>
       <label className="mb-1 block text-xs font-medium text-gray-700">{label}</label>

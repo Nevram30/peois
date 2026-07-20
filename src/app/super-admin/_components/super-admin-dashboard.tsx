@@ -14,7 +14,7 @@ const STATUS_STYLES: Record<string, { bg: string; dot: string; text: string }> =
   PENDING: { bg: "bg-yellow-50", dot: "bg-yellow-500", text: "text-yellow-700" },
 };
 
-function getInitials(name?: string | null, email?: string | null): string {
+const getInitials = (name?: string | null, email?: string | null): string => {
   if (name) {
     return name
       .split(" ")
@@ -26,7 +26,7 @@ function getInitials(name?: string | null, email?: string | null): string {
   return (email?.[0] ?? "U").toUpperCase();
 }
 
-function getAvatarColor(name?: string | null): string {
+const getAvatarColor = (name?: string | null): string => {
   const colors = [
     "bg-blue-500",
     "bg-green-500",
@@ -98,13 +98,13 @@ function getPasswordStrength(password: string): {
 
 // ─── Add New User Modal ────────────────────────────────────────────────────────
 
-function AddUserModal({
+const AddUserModal = ({
   open,
   onClose,
 }: {
   open: boolean;
   onClose: () => void;
-}) {
+}) => {
   const [firstName, setFirstName] = useState("");
   const [middleName, setMiddleName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -305,11 +305,10 @@ function AddUserModal({
         <form id="create-user-form" onSubmit={handleSubmit} noValidate className="max-h-[70vh] overflow-y-auto px-7 pt-2 pb-0">
           {message && (
             <div
-              className={`mb-4 rounded-lg border p-3 text-sm ${
-                messageType === "success"
-                  ? "border-green-200 bg-green-50 text-green-700"
-                  : "border-red-200 bg-red-50 text-red-700"
-              }`}
+              className={`mb-4 rounded-lg border p-3 text-sm ${messageType === "success"
+                ? "border-green-200 bg-green-50 text-green-700"
+                : "border-red-200 bg-red-50 text-red-700"
+                }`}
             >
               {message}
             </div>
@@ -654,11 +653,10 @@ function AddUserModal({
                       {[1, 2, 3, 4].map((i) => (
                         <div
                           key={i}
-                          className={`h-1.5 flex-1 rounded-full ${
-                            i <= passwordStrength.bars
-                              ? passwordStrength.color
-                              : "bg-gray-200"
-                          }`}
+                          className={`h-1.5 flex-1 rounded-full ${i <= passwordStrength.bars
+                            ? passwordStrength.color
+                            : "bg-gray-200"
+                            }`}
                         />
                       ))}
                     </div>
@@ -680,21 +678,19 @@ function AddUserModal({
                     minLength={6}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className={`${inputClass} pr-10 ${
-                      !passwordsMatch
-                        ? "border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-500/20"
-                        : ""
-                    }`}
+                    className={`${inputClass} pr-10 ${!passwordsMatch
+                      ? "border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-500/20"
+                      : ""
+                      }`}
                     placeholder="Re-enter password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className={`absolute right-3 top-1/2 -translate-y-1/2 ${
-                      !passwordsMatch
-                        ? "text-red-400 hover:text-red-600"
-                        : "text-gray-400 hover:text-gray-600"
-                    }`}
+                    className={`absolute right-3 top-1/2 -translate-y-1/2 ${!passwordsMatch
+                      ? "text-red-400 hover:text-red-600"
+                      : "text-gray-400 hover:text-gray-600"
+                      }`}
                   >
                     {!passwordsMatch ? (
                       <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -858,11 +854,10 @@ function EditUserModal({
         <form onSubmit={handleSubmit} className="max-h-[70vh] overflow-y-auto px-6 py-5">
           {message && (
             <div
-              className={`mb-4 rounded-lg border p-3 text-sm ${
-                messageType === "success"
-                  ? "border-green-200 bg-green-50 text-green-700"
-                  : "border-red-200 bg-red-50 text-red-700"
-              }`}
+              className={`mb-4 rounded-lg border p-3 text-sm ${messageType === "success"
+                ? "border-green-200 bg-green-50 text-green-700"
+                : "border-red-200 bg-red-50 text-red-700"
+                }`}
             >
               {message}
             </div>
@@ -1357,15 +1352,14 @@ export function UserManagementContent() {
                       </td>
                       <td className="px-4 py-3"><span className="font-mono text-xs text-gray-600">{u.employeeId ?? "—"}</span></td>
                       <td className="px-4 py-3">
-                        <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${
-                          u.role === "SUPER_ADMIN"
-                            ? "bg-purple-50 text-purple-700"
-                            : u.role === "ADMIN"
-                              ? "bg-blue-50 text-blue-700"
-                              : u.role === "ARCHIVER"
-                                ? "bg-amber-50 text-amber-700"
-                                : "bg-gray-100 text-gray-700"
-                        }`}>
+                        <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${u.role === "SUPER_ADMIN"
+                          ? "bg-purple-50 text-purple-700"
+                          : u.role === "ADMIN"
+                            ? "bg-blue-50 text-blue-700"
+                            : u.role === "ARCHIVER"
+                              ? "bg-amber-50 text-amber-700"
+                              : "bg-gray-100 text-gray-700"
+                          }`}>
                           {u.role === "SUPER_ADMIN" ? "Super Admin" : u.role === "ADMIN" ? "Admin" : u.role === "ARCHIVER" ? "Archiver" : "User"}
                         </span>
                       </td>
@@ -1422,9 +1416,8 @@ export function UserManagementContent() {
                   <button
                     key={p}
                     onClick={() => setPage(Number(p))}
-                    className={`min-w-9 rounded-lg border px-3 py-2 text-sm font-medium transition ${
-                      page === p ? "border-blue-600 bg-blue-600 text-white" : "border-gray-300 text-gray-700 hover:bg-gray-50"
-                    }`}
+                    className={`min-w-9 rounded-lg border px-3 py-2 text-sm font-medium transition ${page === p ? "border-blue-600 bg-blue-600 text-white" : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                      }`}
                   >
                     {p}
                   </button>

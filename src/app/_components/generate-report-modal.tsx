@@ -21,39 +21,7 @@ import {
   getBarangaysByMunicipality,
   type DavaoDistrict,
 } from "~/lib/davao-del-norte-locations";
-
-export type ReportProject = {
-  projectCode: string;
-  title: string;
-  subType: string | null;
-  modeOfImplementation: string;
-  locationImplementation: string;
-  sourceOfFund: string;
-  projectCost: number;
-  contractCost: number;
-  contractorName: string | null;
-  projectEngineer: string | null;
-  budgetYear: string | null;
-  dateStarted: Date | string | null;
-  targetCompletionDate: Date | string | null;
-  dateCompleted: Date | string | null;
-  duration: number;
-  cityMunicipality: string | null;
-  barangay: string | null;
-  status: string;
-  completionPercentage: number | null;
-  disbursements?: { amount: number }[];
-};
-
-type ReportFormat = "csv" | "xlsx" | "pdf";
-
-type ColumnDef = {
-  key: string;
-  label: string;
-  // Shorter checkbox label in the modal; exports keep `label` as the header.
-  displayLabel?: string;
-  value: (p: ReportProject) => string;
-};
+import { type ColumnDef, type ReportFormat, type ReportProject } from "../types/GenerateReportsTypes";
 
 function formatAmount(v: number): string {
   return v.toLocaleString("en-PH", {
@@ -156,7 +124,7 @@ const FORMAT_OPTIONS: { value: ReportFormat; label: string; description: string 
   { value: "pdf", label: "PDF", description: "Printable document" },
 ];
 
-export function GenerateReportModal({
+export const GenerateReportModal = ({
   open,
   onClose,
   projects,
@@ -168,7 +136,7 @@ export function GenerateReportModal({
   projects: ReportProject[];
   fileName?: string;
   reportTitle?: string;
-}) {
+}) => {
   const [selected, setSelected] = useState<string[]>(DEFAULT_SELECTED);
   const [format, setFormat] = useState<ReportFormat>("csv");
   const [filterMode, setFilterMode] = useState("");
@@ -229,55 +197,55 @@ export function GenerateReportModal({
     disabled?: boolean;
     options: { value: string; label: string }[];
   }[] = [
-    {
-      key: "modeOfImplementation",
-      label: "Mode of Implementation",
-      allLabel: "Select Mode",
-      accent: "#2563EB",
-      value: filterMode,
-      setValue: setFilterMode,
-      options: [
-        { value: "BY_CONTRACT", label: "By Contract" },
-        { value: "BY_ADMINISTRATION", label: "By Administration" },
-      ],
-    },
-    {
-      key: "sourceOfFund",
-      label: "Source of Fund",
-      allLabel: "All Sources",
-      accent: "#1D4ED8",
-      value: filterSource,
-      setValue: (v) => {
-        setFilterSource(v);
-        setFilterSubType("");
+      {
+        key: "modeOfImplementation",
+        label: "Mode of Implementation",
+        allLabel: "Select Mode",
+        accent: "#2563EB",
+        value: filterMode,
+        setValue: setFilterMode,
+        options: [
+          { value: "BY_CONTRACT", label: "By Contract" },
+          { value: "BY_ADMINISTRATION", label: "By Administration" },
+        ],
       },
-      options: SOURCE_OF_FUND_ORDER.map((k) => ({
-        value: k,
-        label: SOURCE_OF_FUND_LABEL[k],
-      })),
-    },
-    {
-      key: "subType",
-      label: "Sub-Category",
-      allLabel: !filterSource
-        ? "Select a Source of Fund first"
-        : availableSubTypes.length === 0
-          ? "No Sub-Categories"
-          : "All Categories",
-      accent: "#7C3AED",
-      value: filterSubType,
-      setValue: setFilterSubType,
-      disabled: !filterSource || availableSubTypes.length === 0,
-      options: availableSubTypes.map((k) => ({
-        value: k,
-        label: PROJECT_SUB_TYPE_LABEL[k],
-      })),
-    },
-    // Only unrestricted divisions (SMAD/PDPM/EPM/QACD) may filter by district;
-    // District 1/2 divisions already see only their own district's projects.
-    ...(districtScope
-      ? []
-      : [
+      {
+        key: "sourceOfFund",
+        label: "Source of Fund",
+        allLabel: "All Sources",
+        accent: "#1D4ED8",
+        value: filterSource,
+        setValue: (v) => {
+          setFilterSource(v);
+          setFilterSubType("");
+        },
+        options: SOURCE_OF_FUND_ORDER.map((k) => ({
+          value: k,
+          label: SOURCE_OF_FUND_LABEL[k],
+        })),
+      },
+      {
+        key: "subType",
+        label: "Sub-Category",
+        allLabel: !filterSource
+          ? "Select a Source of Fund first"
+          : availableSubTypes.length === 0
+            ? "No Sub-Categories"
+            : "All Categories",
+        accent: "#7C3AED",
+        value: filterSubType,
+        setValue: setFilterSubType,
+        disabled: !filterSource || availableSubTypes.length === 0,
+        options: availableSubTypes.map((k) => ({
+          value: k,
+          label: PROJECT_SUB_TYPE_LABEL[k],
+        })),
+      },
+      // Only unrestricted divisions (SMAD/PDPM/EPM/QACD) may filter by district;
+      // District 1/2 divisions already see only their own district's projects.
+      ...(districtScope
+        ? []
+        : [
           {
             key: "district",
             label: "District",
@@ -295,51 +263,51 @@ export function GenerateReportModal({
             ],
           },
         ]),
-    {
-      key: "cityMunicipality",
-      label: "City/Municipality",
-      allLabel: !effectiveDistrict ? "Select District first" : "All Cities",
-      accent: "#D97706",
-      value: filterCity,
-      setValue: (v) => {
-        setFilterCity(v);
-        setFilterBarangay("");
+      {
+        key: "cityMunicipality",
+        label: "City/Municipality",
+        allLabel: !effectiveDistrict ? "Select District first" : "All Cities",
+        accent: "#D97706",
+        value: filterCity,
+        setValue: (v) => {
+          setFilterCity(v);
+          setFilterBarangay("");
+        },
+        disabled: !effectiveDistrict,
+        options: availableCities.map((c) => ({ value: c, label: c })),
       },
-      disabled: !effectiveDistrict,
-      options: availableCities.map((c) => ({ value: c, label: c })),
-    },
-    {
-      key: "barangay",
-      label: "Barangay",
-      allLabel: !filterCity ? "Select Municipality first" : "All Barangays",
-      accent: "#DC2626",
-      value: filterBarangay,
-      setValue: setFilterBarangay,
-      disabled: !filterCity,
-      options: availableBarangays.map((b) => ({ value: b, label: b })),
-    },
-    {
-      key: "status",
-      label: "Status",
-      allLabel: "All Statuses",
-      accent: "#0D9488",
-      value: filterStatus,
-      setValue: setFilterStatus,
-      options: PROJECT_STATUS_ORDER.map((k) => ({
-        value: k,
-        label: PROJECT_STATUS_LABEL[k],
-      })),
-    },
-    {
-      key: "budgetYear",
-      label: "Year",
-      allLabel: "All Year",
-      accent: "#334155",
-      value: filterYear,
-      setValue: setFilterYear,
-      options: availableYears.map((y) => ({ value: y, label: `FY ${y}` })),
-    },
-  ];
+      {
+        key: "barangay",
+        label: "Barangay",
+        allLabel: !filterCity ? "Select Municipality first" : "All Barangays",
+        accent: "#DC2626",
+        value: filterBarangay,
+        setValue: setFilterBarangay,
+        disabled: !filterCity,
+        options: availableBarangays.map((b) => ({ value: b, label: b })),
+      },
+      {
+        key: "status",
+        label: "Status",
+        allLabel: "All Statuses",
+        accent: "#0D9488",
+        value: filterStatus,
+        setValue: setFilterStatus,
+        options: PROJECT_STATUS_ORDER.map((k) => ({
+          value: k,
+          label: PROJECT_STATUS_LABEL[k],
+        })),
+      },
+      {
+        key: "budgetYear",
+        label: "Year",
+        allLabel: "All Year",
+        accent: "#334155",
+        value: filterYear,
+        setValue: setFilterYear,
+        options: availableYears.map((y) => ({ value: y, label: `FY ${y}` })),
+      },
+    ];
 
   // Renders one row: checkbox card on the left, the field's filter dropdown
   // beside it on the right (empty cell when the field has no filter).
@@ -510,11 +478,10 @@ export function GenerateReportModal({
             {FORMAT_OPTIONS.map((f) => (
               <label
                 key={f.value}
-                className={`flex cursor-pointer flex-col items-center gap-0.5 rounded-lg border px-3 py-3 text-center transition ${
-                  format === f.value
-                    ? "border-blue-500 bg-blue-50 ring-1 ring-blue-500"
-                    : "border-gray-200 hover:bg-gray-50"
-                }`}
+                className={`flex cursor-pointer flex-col items-center gap-0.5 rounded-lg border px-3 py-3 text-center transition ${format === f.value
+                  ? "border-blue-500 bg-blue-50 ring-1 ring-blue-500"
+                  : "border-gray-200 hover:bg-gray-50"
+                  }`}
               >
                 <input
                   type="radio"

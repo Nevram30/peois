@@ -7,7 +7,7 @@ import { signOut } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import { api } from "~/trpc/react";
 
-function getInitials(name?: string | null, email?: string | null): string {
+const getInitials = (name?: string | null, email?: string | null): string => {
   if (name) {
     return name
       .split(" ")
@@ -77,7 +77,7 @@ const NAV_ITEMS = [
   // },
 ];
 
-export function NavHeader({ user, userId }: { user: { name?: string | null; email?: string | null }; userId: string }) {
+export const NavHeader = ({ user, userId }: { user: { name?: string | null; email?: string | null }; userId: string }) => {
   const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);

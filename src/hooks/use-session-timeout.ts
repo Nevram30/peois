@@ -32,7 +32,7 @@ const ACTIVITY_EVENTS = [
  * The last-activity timestamp is mirrored to localStorage so activity in any
  * tab keeps every tab alive.
  */
-export function useSessionTimeout() {
+export const useSessionTimeout = () => {
   const lastActivityRef = useRef(Date.now());
   const lastKeepaliveRef = useRef(Date.now());
   const expiredRef = useRef(false);

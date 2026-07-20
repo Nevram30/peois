@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { api } from "~/trpc/react";
 import type { DistrictCardProps, Segment, StatCard, UserCard, UserIconProps, DonutChartProps } from "./super.admin.types";
-import type { DistrictCardItem, ProjectStatus, StatusCounts } from "./super.adminv2.types";
+import type { AnnualAllocationCardProps, DistrictCardItem, ProjectStatus, SourceBreakdownCardProps, StatusCounts } from "./super.adminv2.types";
 import { STATUS_COLORS, STATUS_LABELS } from "./super.adminv2.types";
 import { formatPeso } from "~/helper/formatter"
 import { formatToPHPBillions, formatToPHPMillions } from "~/helper/formatter";
@@ -14,7 +14,7 @@ import {
 } from "~/lib/fund-constants";
 
 // ── DonutChart ─────────────────────────────────────────────────
-function DonutChart({ segments, size = 120, thickness = 28, centerLabel }: DonutChartProps) {
+const DonutChart = ({ segments, size = 120, thickness = 28, centerLabel }: DonutChartProps) => {
     const r = (size - thickness) / 2;
     const cx = size / 2;
     const cy = size / 2;
@@ -57,7 +57,7 @@ function DonutChart({ segments, size = 120, thickness = 28, centerLabel }: Donut
 }
 
 // ── UserIcon ───────────────────────────────────────────────────
-function UserIcon({ type, color }: UserIconProps) {
+const UserIcon = ({ type, color }: UserIconProps) => {
     if (type === "group")
         return (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2">
@@ -93,7 +93,7 @@ function UserIcon({ type, color }: UserIconProps) {
 }
 
 // ── transform ───────────────────────────────────────────────────
-function toCardData(counts: StatusCounts): DistrictCardItem[] {
+const toCardData = (counts: StatusCounts): DistrictCardItem[] => {
     return (Object.keys(STATUS_LABELS) as ProjectStatus[])
         .filter((status) => status !== "NOT_YET_STARTED")
         .map((status) => ({
@@ -105,7 +105,7 @@ function toCardData(counts: StatusCounts): DistrictCardItem[] {
 }
 
 // ── DistrictCard ─────────────────────────────────────────────────
-function DistrictCard({ title, data }: DistrictCardProps) {
+const DistrictCard = ({ title, data }: DistrictCardProps) => {
     const total = data.reduce((s, d) => s + d.value, 0);
     return (
         <div className="bg-white rounded-xl overflow-hidden border border-slate-200">
@@ -181,18 +181,7 @@ const SOURCE_SHORT_LABEL: Record<string, string> = {
     OTHERS: "OTHERS",
 };
 
-type BySubTypeMap = Record<string, { amount: number; sourceOfFund: string }>;
-
-type AnnualAllocationCardProps = {
-    bySource: Record<string, number>;
-    bySubType: BySubTypeMap;
-    variationBySource: Record<string, number>;
-    variationProjectsBySource: Record<string, Record<string, number>>;
-    total: number;
-    budgetYear: string;
-};
-
-function AnnualAllocationCard({ bySource, bySubType, variationBySource, variationProjectsBySource, total }: AnnualAllocationCardProps) {
+const AnnualAllocationCard = ({ bySource, bySubType, variationBySource, variationProjectsBySource, total }: AnnualAllocationCardProps) => {
     // Order known sources first, then append any unmapped sources that have allocations.
     const ordered = [...SOURCE_OF_FUND_ORDER, "CONFIDENTIAL", ...Object.keys(bySource)].filter(
         (src, i, arr) => arr.indexOf(src) === i && (bySource[src] ?? 0) > 0,
@@ -321,16 +310,7 @@ const REM_SOURCE_LABEL: Record<string, string> = {
     OTHERS: "Others",
 };
 
-type SourceBreakdownCardProps = {
-    title: string;
-    footerLabel: string;
-    bySource: Record<string, number>;
-    bySubType: BySubTypeMap;
-    variationProjectsBySource?: Record<string, Record<string, number>>;
-    total: number;
-};
-
-function SourceBreakdownCard({ title, footerLabel, bySource, bySubType, variationProjectsBySource, total }: SourceBreakdownCardProps) {
+const SourceBreakdownCard = ({ title, footerLabel, bySource, bySubType, variationProjectsBySource, total }: SourceBreakdownCardProps) => {
     const ordered = [...SOURCE_OF_FUND_ORDER, "CONFIDENTIAL", ...Object.keys(bySource)].filter(
         (src, i, arr) => arr.indexOf(src) === i && (bySource[src] ?? undefined) !== undefined,
     );
@@ -433,7 +413,7 @@ function SourceBreakdownCard({ title, footerLabel, bySource, bySubType, variatio
 // ── Year Filter (header button) ────────────────────────────────
 // Styled to match the dashboard's dark "YEAR" header button, but acts as a
 // fiscal-year selector that drives the year-aware cards.
-function YearFilter({
+const YearFilter = ({
     value,
     onChange,
     years,
@@ -441,7 +421,7 @@ function YearFilter({
     value: string;
     onChange: (value: string) => void;
     years: string[];
-}) {
+}) => {
     return (
         <div className="relative">
             <svg

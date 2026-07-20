@@ -2,7 +2,7 @@
 
 import { useSessionTimeout } from "~/hooks/use-session-timeout";
 
-export function SessionTimeout() {
+export const SessionTimeout = () => {
   useSessionTimeout();
   return null;
 }

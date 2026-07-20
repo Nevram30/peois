@@ -6,13 +6,13 @@ import { useEffect } from "react";
  * Minimal fixed-position toast for live (SSE) notifications.
  * Auto-dismisses after 5 seconds; parent owns the message state.
  */
-export function LiveToast({
+export const LiveToast = ({
   message,
   onDismiss,
 }: {
   message: string | null;
   onDismiss: () => void;
-}) {
+}) => {
   useEffect(() => {
     if (!message) return;
     const timer = setTimeout(onDismiss, 5000);

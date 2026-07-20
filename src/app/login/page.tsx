@@ -3,7 +3,8 @@
 import { signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import InstallPrompt from "~/app/_components/InstallPrompt";
+import { InstallPrompt } from "../_components/InstallPrompt";
+
 
 export default function LoginPage() {
   const [employeeId, setEmployeeId] = useState("");
