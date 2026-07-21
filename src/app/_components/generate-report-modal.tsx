@@ -478,7 +478,7 @@ export const GenerateReportModal = ({
             {FORMAT_OPTIONS.map((f) => (
               <label
                 key={f.value}
-                className={`flex cursor-pointer flex-col items-center gap-0.5 rounded-lg border px-3 py-3 text-center transition ${format === f.value
+                className={`relative flex cursor-pointer flex-col items-center gap-0.5 rounded-lg border px-3 py-3 text-center transition ${format === f.value
                   ? "border-blue-500 bg-blue-50 ring-1 ring-blue-500"
                   : "border-gray-200 hover:bg-gray-50"
                   }`}
