@@ -3,11 +3,7 @@ import { auth } from "~/server/auth";
 import { ArchiverShell } from "./_components/archiver-shell";
 import { SessionTimeout } from "~/app/_components/session-timeout";
 
-export default async function ArchiverLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+const ArchiverLayout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth();
 
   if (!session?.user) {
@@ -25,3 +21,5 @@ export default async function ArchiverLayout({
     </ArchiverShell>
   );
 }
+
+export default ArchiverLayout;
