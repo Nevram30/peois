@@ -23,15 +23,15 @@ import {
 } from "~/lib/davao-del-norte-locations";
 import { type ColumnDef, type ReportFormat, type ReportProject } from "../types/GenerateReportsTypes";
 
-function formatAmount(v: number): string {
+const formatAmount = (v: number): string => {
   return v.toLocaleString("en-PH", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
-}
+};
 
 // Financial Accomplishment: Percentage = (Disbursed Amount / Project Cost) * 100
-function financialAccomplishment(p: ReportProject): string {
+const financialAccomplishment = (p: ReportProject): string => {
   const disbursed = (p.disbursements ?? []).reduce((sum, d) => sum + d.amount, 0);
   if (!p.projectCost) return "—";
   return `${((disbursed / p.projectCost) * 100).toFixed(1)}%`;

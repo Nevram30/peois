@@ -23,9 +23,9 @@ const DIVISION_TO_DISTRICT: Record<string, DistrictValue> = {
  * divisions, and unrecognized values. Matching is tolerant (trim, uppercase,
  * collapsed whitespace) because legacy division values were free-text.
  */
-export function divisionToDistrict(
+export const divisionToDistrict = (
   division: string | null | undefined,
-): DistrictValue | null {
+): DistrictValue | null => {
   if (!division) return null;
   const normalized = division.trim().toUpperCase().replace(/\s+/g, " ");
   return DIVISION_TO_DISTRICT[normalized] ?? null;

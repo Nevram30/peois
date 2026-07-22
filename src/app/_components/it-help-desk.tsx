@@ -3,7 +3,7 @@
  * (/admin, /user, /archiver, /super-admin) so it inherits that role's shell.
  * NOTE: update the contact details below with the real IT support channels.
  */
-export function ItHelpDesk() {
+export const ItHelpDesk = () => {
   return (
     <div className="mx-auto max-w-5xl">
       {/* Page header */}

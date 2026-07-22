@@ -1,5 +1,7 @@
 import { AdminDashboardContent } from "../_components/admin-dashboard";
 
-export default function AdminPage() {
+const AdminPage = () => {
   return <AdminDashboardContent />;
 }
+
+export default AdminPage;
