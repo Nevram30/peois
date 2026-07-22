@@ -20,12 +20,12 @@ type TimelineEvent = {
 
 const priorityConfig: Record<Priority, { label: string; bg: string }> = {
   URGENT: { label: "URGENT", bg: "bg-red-600" },
-  HIGH:   { label: "HIGH",   bg: "bg-orange-500" },
+  HIGH: { label: "HIGH", bg: "bg-orange-500" },
   MEDIUM: { label: "MEDIUM", bg: "bg-yellow-500" },
-  LOW:    { label: "LOW",    bg: "bg-green-500" },
+  LOW: { label: "LOW", bg: "bg-green-500" },
 };
 
-function formatDate(date: Date | string): string {
+const formatDate = (date: Date | string): string => {
   return new Date(date).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
@@ -35,7 +35,7 @@ function formatDate(date: Date | string): string {
   });
 }
 
-export default function ReplyPage() {
+const ReplyPage = () => {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
@@ -156,8 +156,8 @@ export default function ReplyPage() {
   for (const reply of task.replies) {
     const eventType: TimelineEventType =
       reply.taskStatus === "in-progress" ? "in-progress"
-      : reply.taskStatus === "action-taken" ? "action-taken"
-      : "reply";
+        : reply.taskStatus === "action-taken" ? "action-taken"
+          : "reply";
     timelineEvents.push({
       id: reply.id,
       label: `Reply by ${reply.createdBy.name ?? reply.createdBy.email}`,
@@ -301,11 +301,10 @@ export default function ReplyPage() {
                   onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
                   onDragLeave={() => setIsDragOver(false)}
                   onDrop={handleDrop}
-                  className={`flex flex-col items-center justify-center rounded-xl border-2 border-dashed py-10 transition ${
-                    isDragOver
-                      ? "border-[#1e3a4f] bg-[#1e3a4f]/5"
-                      : "border-gray-200 bg-gray-50"
-                  }`}
+                  className={`flex flex-col items-center justify-center rounded-xl border-2 border-dashed py-10 transition ${isDragOver
+                    ? "border-[#1e3a4f] bg-[#1e3a4f]/5"
+                    : "border-gray-200 bg-gray-50"
+                    }`}
                 >
                   <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-[#1e3a4f]/10">
                     <svg className="h-6 w-6 text-[#1e3a4f]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -380,17 +379,15 @@ export default function ReplyPage() {
                   {/* In Progress */}
                   <button
                     onClick={() => setTaskStatus("in-progress")}
-                    className={`flex items-start gap-3 rounded-lg border p-3 text-left transition ${
-                      taskStatus === "in-progress"
-                        ? "border-[#1e3a4f] bg-[#1e3a4f]/5"
-                        : "border-gray-200 hover:bg-gray-50"
-                    }`}
+                    className={`flex items-start gap-3 rounded-lg border p-3 text-left transition ${taskStatus === "in-progress"
+                      ? "border-[#1e3a4f] bg-[#1e3a4f]/5"
+                      : "border-gray-200 hover:bg-gray-50"
+                      }`}
                   >
-                    <div className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 transition ${
-                      taskStatus === "in-progress"
-                        ? "border-[#1e3a4f] bg-[#1e3a4f]"
-                        : "border-gray-300"
-                    }`}>
+                    <div className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 transition ${taskStatus === "in-progress"
+                      ? "border-[#1e3a4f] bg-[#1e3a4f]"
+                      : "border-gray-300"
+                      }`}>
                       {taskStatus === "in-progress" && (
                         <div className="h-1.5 w-1.5 rounded-full bg-white" />
                       )}
@@ -406,17 +403,15 @@ export default function ReplyPage() {
                   {/* Action Taken */}
                   <button
                     onClick={() => setTaskStatus("action-taken")}
-                    className={`flex items-start gap-3 rounded-lg border p-3 text-left transition ${
-                      taskStatus === "action-taken"
-                        ? "border-[#1e3a4f] bg-[#1e3a4f]/5"
-                        : "border-gray-200 hover:bg-gray-50"
-                    }`}
+                    className={`flex items-start gap-3 rounded-lg border p-3 text-left transition ${taskStatus === "action-taken"
+                      ? "border-[#1e3a4f] bg-[#1e3a4f]/5"
+                      : "border-gray-200 hover:bg-gray-50"
+                      }`}
                   >
-                    <div className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 transition ${
-                      taskStatus === "action-taken"
-                        ? "border-[#1e3a4f] bg-[#1e3a4f]"
-                        : "border-gray-300"
-                    }`}>
+                    <div className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 transition ${taskStatus === "action-taken"
+                      ? "border-[#1e3a4f] bg-[#1e3a4f]"
+                      : "border-gray-300"
+                      }`}>
                       {taskStatus === "action-taken" && (
                         <div className="h-1.5 w-1.5 rounded-full bg-white" />
                       )}
@@ -477,24 +472,22 @@ export default function ReplyPage() {
                   <div className="absolute left-1.5 top-2 h-[calc(100%-16px)] w-px bg-gray-200" />
                   {timelineEvents.map((event, i) => (
                     <div key={event.id} className={`relative flex items-start gap-3 ${i < timelineEvents.length - 1 ? "pb-4" : ""}`}>
-                      <div className={`absolute -left-px mt-1 h-3 w-3 rounded-full border-2 ${
-                        event.eventType === "created"      ? "border-[#1e3a4f] bg-white"
+                      <div className={`absolute -left-px mt-1 h-3 w-3 rounded-full border-2 ${event.eventType === "created" ? "border-[#1e3a4f] bg-white"
                         : event.eventType === "acknowledged" ? "border-green-500 bg-green-500"
-                        : event.eventType === "in-progress"  ? "border-amber-500 bg-amber-500"
-                        : event.eventType === "action-taken" ? "border-emerald-600 bg-emerald-600"
-                        : "border-gray-400 bg-gray-400"
-                      }`} />
+                          : event.eventType === "in-progress" ? "border-amber-500 bg-amber-500"
+                            : event.eventType === "action-taken" ? "border-emerald-600 bg-emerald-600"
+                              : "border-gray-400 bg-gray-400"
+                        }`} />
                       <div className="pl-4">
                         <p className="text-xs font-semibold text-gray-800">{event.label}</p>
                         {event.sublabel && (
                           <p className="text-[10px] text-gray-400">{event.sublabel}</p>
                         )}
                         {(event.eventType === "in-progress" || event.eventType === "action-taken") && (
-                          <span className={`mt-0.5 inline-block rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide ${
-                            event.eventType === "in-progress"
-                              ? "bg-amber-100 text-amber-700"
-                              : "bg-emerald-100 text-emerald-700"
-                          }`}>
+                          <span className={`mt-0.5 inline-block rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide ${event.eventType === "in-progress"
+                            ? "bg-amber-100 text-amber-700"
+                            : "bg-emerald-100 text-emerald-700"
+                            }`}>
                             {event.eventType === "in-progress" ? "In Progress" : "Action Taken"}
                           </span>
                         )}
@@ -555,3 +548,5 @@ export default function ReplyPage() {
     </div>
   );
 }
+
+export default ReplyPage;

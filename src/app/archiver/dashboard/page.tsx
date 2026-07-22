@@ -58,7 +58,7 @@ function BoxLabelPill({ label }: { label: BoxLabel }) {
   );
 }
 
-export default function ArchiverProjectsPage() {
+const ArchiverProjectsPage = () => {
   const [search, setSearch] = useState("");
   const [yearFilter, setYearFilter] = useState("");
   const [labelFilter, setLabelFilter] = useState("");
@@ -413,7 +413,7 @@ export default function ArchiverProjectsPage() {
   );
 }
 
-function PhysicalArchiveEntryModal({
+const PhysicalArchiveEntryModal = ({
   project,
   existing,
   onClose,
@@ -421,10 +421,10 @@ function PhysicalArchiveEntryModal({
   project: ProjectRow;
   existing?: ArchiveEntry;
   onClose: () => void;
-}) {
+}) => {
   const [boxLabel, setBoxLabel] = useState<BoxLabel>(
     existing?.boxLabel ??
-      (project.status === "COMPLETED" ? "COMPLETED" : "OTHERS"),
+    (project.status === "COMPLETED" ? "COMPLETED" : "OTHERS"),
   );
   const [boxRange, setBoxRange] = useState(existing?.boxRange ?? "");
   const [boxNumber, setBoxNumber] = useState(
@@ -676,13 +676,13 @@ function PhysicalArchiveEntryModal({
   );
 }
 
-function ProjectViewModal({
+const ProjectViewModal = ({
   project,
   onClose,
 }: {
   project: ProjectRow;
   onClose: () => void;
-}) {
+}) => {
   const archive = project.archiveLocations[0];
 
   const rows: [string, string][] = [
@@ -792,3 +792,5 @@ function ProjectViewModal({
     </div>
   );
 }
+
+export default ArchiverProjectsPage;

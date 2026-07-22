@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { api } from "~/trpc/react";
 
-export default function ProjectRegistryPage() {
+const ProjectRegistryPage = () => {
   const [search, setSearch] = useState("");
 
   const { data: entries, isLoading } = api.archive.getAll.useQuery();
@@ -120,3 +120,5 @@ export default function ProjectRegistryPage() {
     </div>
   );
 }
+
+export default ProjectRegistryPage;

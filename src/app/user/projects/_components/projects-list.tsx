@@ -44,17 +44,17 @@ const MODE_LABELS: Record<string, string> = {
   BY_CONTRACT: "By Contract",
 };
 
-function progressBarColor(status: string, pct: number) {
+const progressBarColor = (status: string, pct: number) => {
   if (status === "SUSPENDED") return "bg-red-500";
   if (pct >= 100) return "bg-emerald-500";
   if (status === "NOT_YET_STARTED" || status === "FOR_IMPLEMENTATION")
     return "bg-amber-400";
   return "bg-blue-900";
-}
+};
 
 type ProjectRow = RouterOutputs["project"]["getAll"][number];
 
-function StatusBadge({ status }: { status: string }) {
+const StatusBadge = ({ status }: { status: string }) => {
   const badge = STATUS_BADGES[status] ?? {
     label: status.replace(/_/g, " "),
     className: "bg-gray-100 text-gray-600",
@@ -68,7 +68,7 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-function ContributorAvatars({ project }: { project: ProjectRow }) {
+const ContributorAvatars = ({ project }: { project: ProjectRow }) => {
   const seen = new Set<string>();
   const contributors: { id: string; name: string | null; email: string; image: string | null }[] = [];
   const allUsers = [project.createdBy, ...project.activities.map((a) => a.createdBy)];
@@ -130,24 +130,24 @@ type StatCardDef = {
   icon: React.ReactNode;
 };
 
-function StatCards({
+const StatCards = ({
   budgetYearLabel,
   stats,
   loading,
 }: {
   budgetYearLabel: string;
   stats:
-    | {
-        completed: number;
-        ongoing: number;
-        forImplementation: number;
-        suspended: number;
-        reAlignment: number;
-        others: number;
-      }
-    | undefined;
+  | {
+    completed: number;
+    ongoing: number;
+    forImplementation: number;
+    suspended: number;
+    reAlignment: number;
+    others: number;
+  }
+  | undefined;
   loading: boolean;
-}) {
+}) => {
   const cards: StatCardDef[] = [
     {
       label: "Budget Year",
@@ -265,7 +265,7 @@ function StatCards({
 }
 
 // ── Main list ───────────────────────────────────────────────────
-export function UserProjectsList() {
+export const UserProjectsList = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const statusFilterParam = searchParams.get("status");

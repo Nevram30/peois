@@ -8,12 +8,12 @@ type Priority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
 
 const priorityConfig: Record<Priority, { label: string; bg: string }> = {
   URGENT: { label: "URGENT", bg: "bg-red-600" },
-  HIGH:   { label: "HIGH",   bg: "bg-orange-500" },
+  HIGH: { label: "HIGH", bg: "bg-orange-500" },
   MEDIUM: { label: "MEDIUM", bg: "bg-yellow-500" },
-  LOW:    { label: "LOW",    bg: "bg-green-500" },
+  LOW: { label: "LOW", bg: "bg-green-500" },
 };
 
-function formatDate(date: Date | string): string {
+const formatDate = (date: Date | string): string => {
   return new Date(date).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
@@ -23,7 +23,7 @@ function formatDate(date: Date | string): string {
   });
 }
 
-function timeAgo(date: Date | string): string {
+const timeAgo = (date: Date | string): string => {
   const diff = Date.now() - new Date(date).getTime();
   const mins = Math.floor(diff / 60000);
   if (mins < 1) return "Just now";
@@ -33,7 +33,7 @@ function timeAgo(date: Date | string): string {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
-export default function UserTaskDetailPage() {
+const UserTaskDetailPage = () => {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
@@ -159,11 +159,10 @@ export default function UserTaskDetailPage() {
             <button
               onClick={() => acknowledgeMutation.mutate({ taskId: id })}
               disabled={isAcknowledged || acknowledgeMutation.isPending}
-              className={`flex items-center gap-2 rounded-lg px-5 py-2.5 text-xs font-bold uppercase tracking-widest transition ${
-                isAcknowledged
-                  ? "cursor-default bg-emerald-600 text-white"
-                  : "cursor-pointer bg-[#1e3a4f] text-white hover:bg-[#16303f] disabled:opacity-60"
-              }`}
+              className={`flex items-center gap-2 rounded-lg px-5 py-2.5 text-xs font-bold uppercase tracking-widest transition ${isAcknowledged
+                ? "cursor-default bg-emerald-600 text-white"
+                : "cursor-pointer bg-[#1e3a4f] text-white hover:bg-[#16303f] disabled:opacity-60"
+                }`}
             >
               {acknowledgeMutation.isPending ? (
                 <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -259,7 +258,7 @@ export default function UserTaskDetailPage() {
               const replyInitial = replyAuthor.charAt(0).toUpperCase();
               const statusLabel =
                 reply.taskStatus === "in-progress" ? "In Progress" :
-                reply.taskStatus === "action-taken" ? "Action Taken" : null;
+                  reply.taskStatus === "action-taken" ? "Action Taken" : null;
               return (
                 <div key={reply.id} className="flex items-start gap-3 rounded-xl border border-blue-100 bg-blue-50 p-4 shadow-sm">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-500 text-sm font-bold text-white">
@@ -289,3 +288,5 @@ export default function UserTaskDetailPage() {
     </div>
   );
 }
+
+export default UserTaskDetailPage;

@@ -3,11 +3,11 @@ import { auth } from "~/server/auth";
 import { AdminShell } from "./_components/admin-shell";
 import { SessionTimeout } from "~/app/_components/session-timeout";
 
-export default async function AdminLayout({
+const AdminLayout = async ({
   children,
 }: {
   children: React.ReactNode;
-}) {
+}) => {
   const session = await auth();
 
   if (!session?.user) {
@@ -25,3 +25,5 @@ export default async function AdminLayout({
     </AdminShell>
   );
 }
+
+export default AdminLayout;

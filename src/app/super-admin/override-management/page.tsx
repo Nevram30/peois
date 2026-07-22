@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
 
-export default function OverrideManagementPage() {
+const OverrideManagementPage = () => {
   redirect("/super-admin/projects-data-list");
 }
+
+export default OverrideManagementPage;

@@ -2,6 +2,8 @@
 
 import { UserManagementContent } from "../_components/super-admin-dashboard";
 
-export default function UserManagementPage() {
+const UserManagementPage = () => {
   return <UserManagementContent />;
-}
+};
+
+export default UserManagementPage;

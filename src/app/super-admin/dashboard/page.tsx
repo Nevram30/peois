@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { api } from "~/trpc/react";
 
-export default function DashboardPage() {
+const DashboardPage = () => {
   const { data: statsData } = api.user.getStats.useQuery();
   const { data: budgetYears } = api.project.getBudgetYears.useQuery();
   const [budgetYear, setBudgetYear] = useState<string>("");
@@ -166,3 +166,5 @@ export default function DashboardPage() {
     </>
   );
 }
+
+export default DashboardPage;

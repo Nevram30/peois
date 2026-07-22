@@ -76,13 +76,13 @@ const DESIGNATIONS = [
 
 // ─── Password Strength ────────────────────────────────────────────────────────
 
-function getPasswordStrength(password: string): {
+const getPasswordStrength = (password: string): {
   score: number;
   bars: number;
   label: string;
   color: string;
   textColor: string;
-} {
+} => {
   let score = 0;
   if (password.length >= 6) score++;
   if (password.length >= 8) score++;
@@ -94,7 +94,7 @@ function getPasswordStrength(password: string): {
   if (score <= 3) return { score, bars: 2, label: "Medium Strength", color: "bg-blue-500", textColor: "text-blue-600" };
   if (score <= 4) return { score, bars: 3, label: "Strong", color: "bg-green-500", textColor: "text-green-600" };
   return { score, bars: 4, label: "Very Strong", color: "bg-green-600", textColor: "text-green-600" };
-}
+};
 
 // ─── Add New User Modal ────────────────────────────────────────────────────────
 

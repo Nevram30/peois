@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { api } from "~/trpc/react";
 
-function formatDateTime(d: Date | string): string {
+const formatDateTime = (d: Date | string): string => {
   return new Date(d).toLocaleString("en-PH", {
     year: "numeric",
     month: "short",
@@ -15,7 +15,7 @@ function formatDateTime(d: Date | string): string {
   });
 }
 
-function getInitials(name?: string | null, email?: string | null): string {
+const getInitials = (name?: string | null, email?: string | null): string => {
   if (name) {
     return name
       .split(" ")
@@ -50,7 +50,7 @@ const ROLE_LABEL: Record<string, string> = {
   USER: "User",
 };
 
-export default function ProjectAccessRequestPage() {
+const ProjectAccessRequestPage = () => {
   const utils = api.useUtils();
 
   const { data: requests, isLoading } = api.projectAccessRequest.list.useQuery(undefined, {
@@ -206,158 +206,158 @@ export default function ProjectAccessRequestPage() {
         </div>
 
         <div className="overflow-x-auto">
-        <table className="w-full min-w-250 text-sm">
-          <thead>
-            <tr className="border-b border-gray-100 bg-gray-50">
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Date / Time</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Project</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Document</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Action</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Requested By</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Role</th>
-              <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-gray-500">Notes</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Status</th>
-              <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">Decision</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-50">
-            {isLoading ? (
-              <tr>
-                <td colSpan={9} className="py-16 text-center text-sm text-gray-400">
-                  <div className="flex flex-col items-center gap-2">
-                    <svg className="h-8 w-8 animate-spin text-blue-400" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                    </svg>
-                    <span>Loading access requests...</span>
-                  </div>
-                </td>
+          <table className="w-full min-w-250 text-sm">
+            <thead>
+              <tr className="border-b border-gray-100 bg-gray-50">
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Date / Time</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Project</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Document</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Action</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Requested By</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Role</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-gray-500">Notes</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Status</th>
+                <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">Decision</th>
               </tr>
-            ) : filtered.length === 0 ? (
-              <tr>
-                <td colSpan={9} className="py-16 text-center text-sm text-gray-400">
-                  No access requests found.
-                </td>
-              </tr>
-            ) : (
-              paginated.map((r) => {
-                const status = STATUS_PILL[r.status] ?? STATUS_PILL.PENDING!;
-                return (
-                  <tr key={r.id} className="transition hover:bg-gray-50">
-                    <td className="whitespace-nowrap px-4 py-3 text-gray-600">{formatDateTime(r.createdAt)}</td>
-                    <td className="max-w-xs px-4 py-3">
-                      <Link
-                        href={`/admin/projects/${r.project.id}`}
-                        className="line-clamp-1 font-medium text-gray-900 hover:text-blue-600"
-                      >
-                        {r.project.title}
-                      </Link>
-                      <p className="text-xs text-gray-400">{r.project.projectCode}</p>
-                    </td>
-                    <td className="max-w-xs px-4 py-3">
-                      <p className="line-clamp-1 text-gray-700">{r.projectFile.fileName}</p>
-                      <p className="text-[10px] uppercase tracking-wider text-gray-400">{r.projectFile.fileType}</p>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${ACTION_PILL[r.action] ?? "bg-gray-100 text-gray-600"}`}>
-                        {r.action}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        {r.requestedBy.image ? (
-                          <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-full">
-                            <Image
-                              src={r.requestedBy.image}
-                              alt={r.requestedBy.name ?? r.requestedBy.email ?? "User"}
-                              fill
-                              sizes="28px"
-                              className="object-cover"
-                            />
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {isLoading ? (
+                <tr>
+                  <td colSpan={9} className="py-16 text-center text-sm text-gray-400">
+                    <div className="flex flex-col items-center gap-2">
+                      <svg className="h-8 w-8 animate-spin text-blue-400" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                      </svg>
+                      <span>Loading access requests...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={9} className="py-16 text-center text-sm text-gray-400">
+                    No access requests found.
+                  </td>
+                </tr>
+              ) : (
+                paginated.map((r) => {
+                  const status = STATUS_PILL[r.status] ?? STATUS_PILL.PENDING!;
+                  return (
+                    <tr key={r.id} className="transition hover:bg-gray-50">
+                      <td className="whitespace-nowrap px-4 py-3 text-gray-600">{formatDateTime(r.createdAt)}</td>
+                      <td className="max-w-xs px-4 py-3">
+                        <Link
+                          href={`/admin/projects/${r.project.id}`}
+                          className="line-clamp-1 font-medium text-gray-900 hover:text-blue-600"
+                        >
+                          {r.project.title}
+                        </Link>
+                        <p className="text-xs text-gray-400">{r.project.projectCode}</p>
+                      </td>
+                      <td className="max-w-xs px-4 py-3">
+                        <p className="line-clamp-1 text-gray-700">{r.projectFile.fileName}</p>
+                        <p className="text-[10px] uppercase tracking-wider text-gray-400">{r.projectFile.fileType}</p>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className={`inline-flex rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${ACTION_PILL[r.action] ?? "bg-gray-100 text-gray-600"}`}>
+                          {r.action}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          {r.requestedBy.image ? (
+                            <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-full">
+                              <Image
+                                src={r.requestedBy.image}
+                                alt={r.requestedBy.name ?? r.requestedBy.email ?? "User"}
+                                fill
+                                sizes="28px"
+                                className="object-cover"
+                              />
+                            </div>
+                          ) : (
+                            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 text-[10px] font-bold text-blue-700">
+                              {getInitials(r.requestedBy.name, r.requestedBy.email)}
+                            </div>
+                          )}
+                          <div className="min-w-0">
+                            <p className="truncate text-xs font-medium text-gray-700">{r.requestedBy.name ?? "—"}</p>
+                            <p className="truncate text-[10px] text-gray-400">
+                              {r.requestedBy.employeeId ? `ID: ${r.requestedBy.employeeId}` : r.requestedBy.email}
+                            </p>
                           </div>
-                        ) : (
-                          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 text-[10px] font-bold text-blue-700">
-                            {getInitials(r.requestedBy.name, r.requestedBy.email)}
-                          </div>
-                        )}
-                        <div className="min-w-0">
-                          <p className="truncate text-xs font-medium text-gray-700">{r.requestedBy.name ?? "—"}</p>
-                          <p className="truncate text-[10px] text-gray-400">
-                            {r.requestedBy.employeeId ? `ID: ${r.requestedBy.employeeId}` : r.requestedBy.email}
-                          </p>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${ROLE_PILL[r.requestedBy.role] ?? "bg-gray-100 text-gray-600"}`}>
-                        {ROLE_LABEL[r.requestedBy.role] ?? r.requestedBy.role}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      {r.note ? (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setNoteModal({
-                              note: r.note ?? "",
-                              fileName: r.projectFile.fileName,
-                              projectTitle: r.project.title,
-                              requesterName: r.requestedBy.name ?? r.requestedBy.email ?? "—",
-                              role: ROLE_LABEL[r.requestedBy.role] ?? r.requestedBy.role,
-                            })
-                          }
-                          className="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white p-1.5 text-blue-500 shadow-sm transition hover:bg-blue-50 hover:text-blue-700"
-                          title="View justification"
-                          aria-label="View justification"
-                        >
-                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178Z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                          </svg>
-                        </button>
-                      ) : (
-                        <span className="text-xs text-gray-300">—</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${status.bg} ${status.text}`}>
-                        <span className={`h-1.5 w-1.5 rounded-full ${status.dot}`} />
-                        {status.label}
-                      </span>
-                      {r.reviewedBy && (
-                        <p className="mt-1 text-[10px] text-gray-400">by {r.reviewedBy.name ?? r.reviewedBy.email}</p>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => decide.mutate({ id: r.id, decision: "APPROVED" })}
-                          disabled={r.status === "APPROVED" || isDeciding(r.id)}
-                          className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-xs font-medium text-emerald-700 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-40"
-                        >
-                          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                          </svg>
-                          Approve
-                        </button>
-                        <button
-                          onClick={() => decide.mutate({ id: r.id, decision: "DENIED" })}
-                          disabled={r.status === "DENIED" || isDeciding(r.id)}
-                          className="inline-flex items-center gap-1 rounded-lg border border-red-200 bg-red-50 px-2.5 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40"
-                        >
-                          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                          </svg>
-                          Deny
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className={`inline-flex rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${ROLE_PILL[r.requestedBy.role] ?? "bg-gray-100 text-gray-600"}`}>
+                          {ROLE_LABEL[r.requestedBy.role] ?? r.requestedBy.role}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        {r.note ? (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setNoteModal({
+                                note: r.note ?? "",
+                                fileName: r.projectFile.fileName,
+                                projectTitle: r.project.title,
+                                requesterName: r.requestedBy.name ?? r.requestedBy.email ?? "—",
+                                role: ROLE_LABEL[r.requestedBy.role] ?? r.requestedBy.role,
+                              })
+                            }
+                            className="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white p-1.5 text-blue-500 shadow-sm transition hover:bg-blue-50 hover:text-blue-700"
+                            title="View justification"
+                            aria-label="View justification"
+                          >
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178Z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                            </svg>
+                          </button>
+                        ) : (
+                          <span className="text-xs text-gray-300">—</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${status.bg} ${status.text}`}>
+                          <span className={`h-1.5 w-1.5 rounded-full ${status.dot}`} />
+                          {status.label}
+                        </span>
+                        {r.reviewedBy && (
+                          <p className="mt-1 text-[10px] text-gray-400">by {r.reviewedBy.name ?? r.reviewedBy.email}</p>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => decide.mutate({ id: r.id, decision: "APPROVED" })}
+                            disabled={r.status === "APPROVED" || isDeciding(r.id)}
+                            className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-xs font-medium text-emerald-700 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-40"
+                          >
+                            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                            </svg>
+                            Approve
+                          </button>
+                          <button
+                            onClick={() => decide.mutate({ id: r.id, decision: "DENIED" })}
+                            disabled={r.status === "DENIED" || isDeciding(r.id)}
+                            className="inline-flex items-center gap-1 rounded-lg border border-red-200 bg-red-50 px-2.5 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40"
+                          >
+                            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                            </svg>
+                            Deny
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
         </div>
 
         <div className="flex flex-col gap-3 border-t border-gray-100 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
@@ -457,3 +457,5 @@ export default function ProjectAccessRequestPage() {
     </div>
   );
 }
+
+export default ProjectAccessRequestPage;

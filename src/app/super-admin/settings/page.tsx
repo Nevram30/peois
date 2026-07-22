@@ -1,5 +1,7 @@
 import { SettingsForm } from "~/app/_components/settings-form";
 
-export default function SettingsPage() {
+const SettingsPage = () => {
   return <SettingsForm />;
-}
+};
+
+export default SettingsPage;

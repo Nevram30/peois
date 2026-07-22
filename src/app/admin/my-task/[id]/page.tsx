@@ -13,7 +13,7 @@ const priorityConfig: Record<Priority, { label: string; bg: string }> = {
   LOW: { label: "LOW", bg: "bg-green-500" },
 };
 
-function formatDate(date: Date | string): string {
+const formatDate = (date: Date | string): string => {
   return new Date(date).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
@@ -23,7 +23,7 @@ function formatDate(date: Date | string): string {
   });
 }
 
-function timeAgo(date: Date | string): string {
+const timeAgo = (date: Date | string): string => {
   const diff = Date.now() - new Date(date).getTime();
   const mins = Math.floor(diff / 60000);
   if (mins < 1) return "Just now";
@@ -34,7 +34,7 @@ function timeAgo(date: Date | string): string {
   return `${days}d ago`;
 }
 
-export default function TaskDetailPage() {
+const TaskDetailPage = () => {
   const params = useParams();
   const id = params.id as string;
 
@@ -296,3 +296,5 @@ export default function TaskDetailPage() {
     </div>
   );
 }
+
+export default TaskDetailPage;

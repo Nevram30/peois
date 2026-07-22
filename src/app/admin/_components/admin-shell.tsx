@@ -76,13 +76,13 @@ const navItems = [
   },
 ];
 
-export function AdminShell({
+export const AdminShell = ({
   user,
   children,
 }: {
   user: User;
   children: React.ReactNode;
-}) {
+}) => {
   const pathname = usePathname();
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
@@ -228,26 +228,26 @@ export function AdminShell({
             <div className="flex shrink-0 items-center gap-2 sm:gap-4">
               {/* Profile display — logout lives in the sidebar (desktop) and header icon (mobile) */}
               <div className="flex items-center gap-3 px-2 py-1">
-                  <div className="hidden text-right sm:block">
-                    <p className="text-sm font-medium leading-tight">
-                      {displayName ?? displayEmail}
-                    </p>
-                    <p className="text-xs text-gray-500">{user.designation ?? "Administrator"}</p>
+                <div className="hidden text-right sm:block">
+                  <p className="text-sm font-medium leading-tight">
+                    {displayName ?? displayEmail}
+                  </p>
+                  <p className="text-xs text-gray-500">{user.designation ?? "Administrator"}</p>
+                </div>
+                {avatarImage ? (
+                  <div className="relative h-9 w-9 overflow-hidden rounded-full ring-2 ring-gray-200">
+                    <Image
+                      src={avatarImage}
+                      alt={displayName ?? "User avatar"}
+                      fill
+                      className="object-cover"
+                    />
                   </div>
-                  {avatarImage ? (
-                    <div className="relative h-9 w-9 overflow-hidden rounded-full ring-2 ring-gray-200">
-                      <Image
-                        src={avatarImage}
-                        alt={displayName ?? "User avatar"}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-700 transition hover:bg-gray-200">
-                      {(displayName ?? displayEmail ?? "U").charAt(0).toUpperCase()}
-                    </div>
-                  )}
+                ) : (
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-700 transition hover:bg-gray-200">
+                    {(displayName ?? displayEmail ?? "U").charAt(0).toUpperCase()}
+                  </div>
+                )}
               </div>
 
               <Link
@@ -403,8 +403,8 @@ export function AdminShell({
                 key={item.href}
                 href={item.href}
                 className={`-mb-px flex shrink-0 items-center gap-2 whitespace-nowrap border-b-[3px] px-4 py-2.5 text-sm transition ${isActive(item.href)
-                    ? "border-amber-500 font-medium text-amber-600"
-                    : "border-transparent font-normal text-gray-600 hover:border-gray-300 hover:text-gray-900"
+                  ? "border-amber-500 font-medium text-amber-600"
+                  : "border-transparent font-normal text-gray-600 hover:border-gray-300 hover:text-gray-900"
                   }`}
               >
                 {item.icon}

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { InstallPrompt } from "../_components/InstallPrompt";
 
-export default function LoginPage() {
+const LoginPage = () => {
   const [employeeId, setEmployeeId] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -260,3 +260,5 @@ export default function LoginPage() {
     </main>
   );
 }
+
+export default LoginPage;

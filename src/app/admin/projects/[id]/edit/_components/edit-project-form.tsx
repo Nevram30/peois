@@ -46,18 +46,18 @@ const TIMELINE_ADJ_TYPE_CONFIG: Record<string, { label: string; badge: string }>
   RESUMPTION: { label: "Resumption", badge: "bg-green-50 text-green-700 border-green-200" },
 };
 
-function fmt(d: Date | string | null | undefined) {
+const fmt = (d: Date | string | null | undefined) => {
   if (!d) return "—";
   return new Date(d).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" });
 }
 
-function toInputDate(d: Date | string | null | undefined) {
+const toInputDate = (d: Date | string | null | undefined) => {
   if (!d) return "";
   return new Date(d).toISOString().slice(0, 10);
 }
 
 // ─── Section card wrapper ────────────────────────────────────────────────────
-function SectionCard({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
+const SectionCard = ({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) => {
   return (
     <div className={`rounded-xl border border-gray-200 bg-white shadow-sm ${className}`} style={style}>
       {children}
@@ -66,13 +66,13 @@ function SectionCard({ children, className = "", style }: { children: React.Reac
 }
 
 // ─── Section header ──────────────────────────────────────────────────────────
-function SectionHeader({
+const SectionHeader = ({
   icon, title, action,
 }: {
   icon: React.ReactNode;
   title: string;
   action?: React.ReactNode;
-}) {
+}) => {
   return (
     <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 px-5 py-3.5">
       <div className="flex items-center gap-2">
@@ -85,12 +85,12 @@ function SectionHeader({
 }
 
 // ─── Field label ─────────────────────────────────────────────────────────────
-function FieldLabel({ children }: { children: React.ReactNode }) {
+const FieldLabel = ({ children }: { children: React.ReactNode }) => {
   return <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-gray-400">{children}</p>;
 }
 
 // ─── Input ───────────────────────────────────────────────────────────────────
-function Input(props: React.InputHTMLAttributes<HTMLInputElement> & { error?: boolean }) {
+const Input = (props: React.InputHTMLAttributes<HTMLInputElement> & { error?: boolean }) => {
   const { error, className = "", ...rest } = props;
   return (
     <input
@@ -104,7 +104,7 @@ function Input(props: React.InputHTMLAttributes<HTMLInputElement> & { error?: bo
 }
 
 // ─── Select ──────────────────────────────────────────────────────────────────
-function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
+const Select = (props: React.SelectHTMLAttributes<HTMLSelectElement>) => {
   return (
     <div className="relative">
       <select
@@ -126,7 +126,7 @@ const EditIcon = () => (
 );
 
 // ─── Main Component ──────────────────────────────────────────────────────────
-export function EditProjectForm({ projectId }: { projectId: string }) {
+export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   const utils = api.useUtils();
   const mediaInputRef = useRef<HTMLInputElement>(null);
   const docInputRef = useRef<HTMLInputElement>(null);
@@ -1358,76 +1358,76 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
                 </div>
               )}
               <div className="overflow-x-auto">
-              <table className="w-full min-w-140 text-xs">
-                <thead>
-                  <tr className="border-b border-gray-100 bg-gray-50">
-                    <th className="px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">File Name</th>
-                    <th className="px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Type</th>
-                    <th className="px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Upload Date</th>
-                    <th className="px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Uploaded By</th>
-                    <th className="px-3 py-2.5 text-center text-[10px] font-bold uppercase tracking-wider text-gray-400">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {projectFiles && projectFiles.length > 0 ? projectFiles.map((f) => {
-                    const isImage = f.fileType === "IMAGE" || /\.(jpg|jpeg|png|webp)$/i.exec(f.fileName);
-                    const typeColors: Record<string, string> = {
-                      IMAGE: "bg-purple-50 text-purple-600",
-                      BLUEPRINT: "bg-blue-50   text-blue-600",
-                      REPORT: "bg-amber-50  text-amber-600",
-                      CONTRACT: "bg-green-50  text-green-600",
-                      PERMIT: "bg-teal-50   text-teal-600",
-                      OTHER: "bg-gray-100  text-gray-600",
-                    };
-                    return (
-                      <tr key={f.id} className="hover:bg-gray-50/50">
-                        <td className="px-3 py-3">
-                          <div className="flex items-center gap-2">
-                            <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded ${isImage ? "bg-purple-50" : "bg-red-50"}`}>
-                              {isImage ? (
-                                <svg className="h-4 w-4 text-purple-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M2.25 19.5h19.5M2.25 4.5h19.5" /></svg>
-                              ) : (
-                                <svg className="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
-                              )}
+                <table className="w-full min-w-140 text-xs">
+                  <thead>
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <th className="px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">File Name</th>
+                      <th className="px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Type</th>
+                      <th className="px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Upload Date</th>
+                      <th className="px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Uploaded By</th>
+                      <th className="px-3 py-2.5 text-center text-[10px] font-bold uppercase tracking-wider text-gray-400">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {projectFiles && projectFiles.length > 0 ? projectFiles.map((f) => {
+                      const isImage = f.fileType === "IMAGE" || /\.(jpg|jpeg|png|webp)$/i.exec(f.fileName);
+                      const typeColors: Record<string, string> = {
+                        IMAGE: "bg-purple-50 text-purple-600",
+                        BLUEPRINT: "bg-blue-50   text-blue-600",
+                        REPORT: "bg-amber-50  text-amber-600",
+                        CONTRACT: "bg-green-50  text-green-600",
+                        PERMIT: "bg-teal-50   text-teal-600",
+                        OTHER: "bg-gray-100  text-gray-600",
+                      };
+                      return (
+                        <tr key={f.id} className="hover:bg-gray-50/50">
+                          <td className="px-3 py-3">
+                            <div className="flex items-center gap-2">
+                              <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded ${isImage ? "bg-purple-50" : "bg-red-50"}`}>
+                                {isImage ? (
+                                  <svg className="h-4 w-4 text-purple-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M2.25 19.5h19.5M2.25 4.5h19.5" /></svg>
+                                ) : (
+                                  <svg className="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+                                )}
+                              </div>
+                              <span className="max-w-45 truncate font-medium text-gray-700">{f.fileName}</span>
                             </div>
-                            <span className="max-w-45 truncate font-medium text-gray-700">{f.fileName}</span>
-                          </div>
-                        </td>
-                        <td className="px-3 py-3">
-                          <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${typeColors[f.fileType] ?? "bg-gray-100 text-gray-600"}`}>
-                            {f.fileType}
-                          </span>
-                        </td>
-                        <td className="px-3 py-3 text-gray-500">{fmt(f.createdAt)}</td>
-                        <td className="px-3 py-3 text-gray-500">{f.createdBy.name ?? f.createdBy.email}</td>
-                        <td className="px-3 py-3">
-                          <div className="flex items-center justify-center gap-2">
-                            <a href={f.fileUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-500" title="View">
-                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178Z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
-                            </a>
-                            <a href={f.fileUrl} download={f.fileName} className="text-gray-400 hover:text-blue-500" title="Download">
-                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
-                            </a>
-                            <button
-                              type="button"
-                              onClick={() => { if (confirm(`Delete "${f.fileName}"?`)) deleteProjectFile.mutate({ id: f.id }); }}
-                              className="text-gray-400 hover:text-red-500" title="Delete"
-                            >
-                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>
-                            </button>
-                          </div>
+                          </td>
+                          <td className="px-3 py-3">
+                            <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${typeColors[f.fileType] ?? "bg-gray-100 text-gray-600"}`}>
+                              {f.fileType}
+                            </span>
+                          </td>
+                          <td className="px-3 py-3 text-gray-500">{fmt(f.createdAt)}</td>
+                          <td className="px-3 py-3 text-gray-500">{f.createdBy.name ?? f.createdBy.email}</td>
+                          <td className="px-3 py-3">
+                            <div className="flex items-center justify-center gap-2">
+                              <a href={f.fileUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-500" title="View">
+                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178Z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
+                              </a>
+                              <a href={f.fileUrl} download={f.fileName} className="text-gray-400 hover:text-blue-500" title="Download">
+                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+                              </a>
+                              <button
+                                type="button"
+                                onClick={() => { if (confirm(`Delete "${f.fileName}"?`)) deleteProjectFile.mutate({ id: f.id }); }}
+                                className="text-gray-400 hover:text-red-500" title="Delete"
+                              >
+                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    }) : (
+                      <tr>
+                        <td colSpan={5} className="px-3 py-8 text-center text-gray-400">
+                          No files uploaded yet. Select a file type above and click <strong>Upload File</strong>.
                         </td>
                       </tr>
-                    );
-                  }) : (
-                    <tr>
-                      <td colSpan={5} className="px-3 py-8 text-center text-gray-400">
-                        No files uploaded yet. Select a file type above and click <strong>Upload File</strong>.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
           </SectionCard>

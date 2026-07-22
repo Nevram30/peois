@@ -14,16 +14,6 @@ import {
   type SourceOfFundValue,
 } from "~/lib/fund-constants";
 
-// const STATUS_BADGE: Record<string, string> = {
-//   NOT_YET_STARTED: "bg-gray-500 text-white",
-//   ON_GOING: "bg-orange-500 text-white",
-//   COMPLETED: "bg-green-500 text-white",
-//   SUSPENDED: "bg-red-500 text-white",
-//   FOR_IMPLEMENTATION: "bg-blue-500 text-white",
-//   RE_ALIGNMENT: "bg-amber-500 text-white",
-//   OTHERS: "bg-gray-500 text-white",
-// };
-
 const STATUS_DOT: Record<string, string> = {
   NOT_YET_STARTED: "bg-gray-400",
   ON_GOING: "bg-amber-400",
@@ -57,7 +47,7 @@ const DISTRICT_LABEL: Record<string, string> = {
   DISTRICT_II: "District 2",
 };
 
-function fmt(d: Date | string | null | undefined) {
+const fmt = (d: Date | string | null | undefined) => {
   if (!d) return "—";
   return new Date(d).toLocaleDateString("en-PH", {
     month: "short",
@@ -66,7 +56,7 @@ function fmt(d: Date | string | null | undefined) {
   });
 }
 
-function timeAgo(d: Date | string) {
+const timeAgo = (d: Date | string) => {
   const diff = Date.now() - new Date(d).getTime();
   const mins = Math.floor(diff / 60000);
   if (mins < 60) return `${mins} minute${mins !== 1 ? "s" : ""} ago`;
@@ -76,7 +66,7 @@ function timeAgo(d: Date | string) {
   return `${days} day${days !== 1 ? "s" : ""} ago`;
 }
 
-function peso(n: number | null | undefined) {
+const peso = (n: number | null | undefined) => {
   const v = typeof n === "number" ? n : 0;
   return `₱ ${v.toLocaleString("en-PH", { minimumFractionDigits: 2 })}`;
 }
@@ -91,7 +81,7 @@ interface Props {
   projectId: string;
 }
 
-export function UserProjectDetail({ projectId }: Props) {
+export const UserProjectDetail = ({ projectId }: Props) => {
   const { data: project, isLoading } = api.project.getById.useQuery({ id: projectId });
   const { data: activities } = api.projectActivity.getByProjectId.useQuery({ projectId });
   const { data: disbursements } = api.project.getDisbursements.useQuery({ projectId });

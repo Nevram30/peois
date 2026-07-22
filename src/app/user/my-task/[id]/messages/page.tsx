@@ -10,12 +10,12 @@ type Priority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
 
 const priorityConfig: Record<Priority, { label: string; bg: string }> = {
   URGENT: { label: "URGENT", bg: "bg-red-600" },
-  HIGH:   { label: "HIGH",   bg: "bg-orange-500" },
+  HIGH: { label: "HIGH", bg: "bg-orange-500" },
   MEDIUM: { label: "MEDIUM", bg: "bg-yellow-500" },
-  LOW:    { label: "LOW",    bg: "bg-green-500" },
+  LOW: { label: "LOW", bg: "bg-green-500" },
 };
 
-function timeAgo(date: Date | string): string {
+const timeAgo = (date: Date | string): string => {
   const diff = Date.now() - new Date(date).getTime();
   const mins = Math.floor(diff / 60000);
   if (mins < 1) return "Just now";
@@ -25,14 +25,14 @@ function timeAgo(date: Date | string): string {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
-function formatDate(date: Date | string): string {
+const formatDate = (date: Date | string): string => {
   return new Date(date).toLocaleDateString("en-US", {
     month: "short", day: "numeric", year: "numeric",
     hour: "2-digit", minute: "2-digit",
   });
 }
 
-export default function UserMessagesPage() {
+const UserMessagesPage = () => {
   const params = useParams();
   const id = params.id as string;
 
@@ -266,7 +266,7 @@ export default function UserMessagesPage() {
               const isMe = item.senderId === userId;
               const statusLabel =
                 item.taskStatus === "in-progress" ? "In Progress" :
-                item.taskStatus === "action-taken" ? "Action Taken" : null;
+                  item.taskStatus === "action-taken" ? "Action Taken" : null;
 
               if (isMe) {
                 // My message — right aligned (dark navy)
@@ -443,3 +443,5 @@ export default function UserMessagesPage() {
     </div>
   );
 }
+
+export default UserMessagesPage;

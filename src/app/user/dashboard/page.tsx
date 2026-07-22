@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
 
-export default function UserDashboardPage() {
+const UserDashboardPage = () => {
   redirect("/user/projects");
 }
+
+export default UserDashboardPage;

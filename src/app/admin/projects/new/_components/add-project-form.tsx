@@ -61,23 +61,23 @@ const FILE_TYPE_LABEL: Record<ProjectFileType, string> = {
   OTHER: "Other",
 };
 
-function inferFileType(file: File): ProjectFileType {
+const inferFileType = (file: File): ProjectFileType => {
   if (file.type.startsWith("image/")) return "IMAGE";
   return "OTHER";
-}
+};
 
-function fileIconColor(fileType: ProjectFileType, fileName: string) {
+const fileIconColor = (fileType: ProjectFileType, fileName: string) => {
   if (fileType === "IMAGE") return { bg: "bg-blue-100", text: "text-blue-600" };
   if (fileName.toLowerCase().endsWith(".pdf"))
     return { bg: "bg-red-100", text: "text-red-600" };
   if (/\.(doc|docx)$/.exec(fileName.toLowerCase()))
     return { bg: "bg-emerald-100", text: "text-emerald-600" };
   return { bg: "bg-gray-100", text: "text-gray-600" };
-}
+};
 
-function fmtDate(d: Date) {
+const fmtDate = (d: Date) => {
   return d.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
-}
+};
 
 // ─── Timeline adjustments (queued locally, saved after project create) ────
 type TimelineAdjType = "EXTENSION" | "SUSPENSION" | "RESUMPTION";
@@ -97,26 +97,26 @@ type PendingAdjustment = {
   justification: string;
 };
 
-function fmtInputDate(d: string) {
+const fmtInputDate = (d: string) => {
   return new Date(d).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" });
-}
+};
 
-function fileTypeBadge(fileType: ProjectFileType, fileName: string) {
+const fileTypeBadge = (fileType: ProjectFileType, fileName: string) => {
   if (fileType === "IMAGE") return "IMAGE";
   if (fileName.toLowerCase().endsWith(".pdf")) return "PDF DOCUMENT";
   if (fileName.toLowerCase().endsWith(".docx")) return "DOCX WORD";
   if (fileName.toLowerCase().endsWith(".doc")) return "DOC WORD";
   return FILE_TYPE_LABEL[fileType].toUpperCase();
-}
+};
 
 // ─── Section wrappers ─────────────────────────────────────────────────────
-function SectionHeader({
+const SectionHeader = ({
   icon, title, action,
 }: {
   icon: React.ReactNode;
   title: string;
   action?: React.ReactNode;
-}) {
+}) => {
   return (
     <div className="flex items-center justify-between border-b border-gray-100 px-5 py-3.5">
       <div className="flex items-center gap-2">
@@ -126,7 +126,7 @@ function SectionHeader({
       {action && <div>{action}</div>}
     </div>
   );
-}
+};
 
 // ─── Icons ────────────────────────────────────────────────────────────────
 const InfoIcon = (
@@ -177,7 +177,7 @@ const FolderIcon = (
   </svg>
 );
 
-export function AddProjectForm() {
+export const AddProjectForm = () => {
   const router = useRouter();
   const utils = api.useUtils();
 
@@ -1306,3 +1306,5 @@ export function AddProjectForm() {
     </div>
   );
 }
+
+export default AddProjectForm;

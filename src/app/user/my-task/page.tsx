@@ -9,20 +9,20 @@ type PriorityFilter = Priority | "ALL";
 
 const priorityConfig: Record<Priority, { label: string; bg: string }> = {
   URGENT: { label: "URGENT", bg: "bg-red-600" },
-  HIGH:   { label: "HIGH",   bg: "bg-orange-500" },
+  HIGH: { label: "HIGH", bg: "bg-orange-500" },
   MEDIUM: { label: "MEDIUM", bg: "bg-yellow-500" },
-  LOW:    { label: "LOW",    bg: "bg-green-500" },
+  LOW: { label: "LOW", bg: "bg-green-500" },
 };
 
 const tabs: { key: PriorityFilter; label: string }[] = [
-  { key: "ALL",    label: "All" },
+  { key: "ALL", label: "All" },
   { key: "URGENT", label: "Urgent" },
-  { key: "HIGH",   label: "High" },
+  { key: "HIGH", label: "High" },
   { key: "MEDIUM", label: "Medium" },
-  { key: "LOW",    label: "Low" },
+  { key: "LOW", label: "Low" },
 ];
 
-function timeAgo(date: Date | string): string {
+const timeAgo = (date: Date | string): string => {
   const diff = Date.now() - new Date(date).getTime();
   const mins = Math.floor(diff / 60000);
   if (mins < 1) return "Just now";
@@ -32,7 +32,7 @@ function timeAgo(date: Date | string): string {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
-function formatDate(date: Date | string): string {
+const formatDate = (date: Date | string): string => {
   return new Date(date).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
@@ -42,7 +42,7 @@ function formatDate(date: Date | string): string {
   });
 }
 
-export default function UserMyTaskPage() {
+const UserMyTaskPage = () => {
   const [activeTab, setActiveTab] = useState<PriorityFilter>("ALL");
   const { data: tasks, isLoading } = api.taskNotification.getMyTasks.useQuery();
 
@@ -50,11 +50,11 @@ export default function UserMyTaskPage() {
     activeTab === "ALL" ? (tasks ?? []) : (tasks ?? []).filter((t) => t.priority === activeTab);
 
   const counts = {
-    ALL:    tasks?.length ?? 0,
+    ALL: tasks?.length ?? 0,
     URGENT: tasks?.filter((t) => t.priority === "URGENT").length ?? 0,
-    HIGH:   tasks?.filter((t) => t.priority === "HIGH").length ?? 0,
+    HIGH: tasks?.filter((t) => t.priority === "HIGH").length ?? 0,
     MEDIUM: tasks?.filter((t) => t.priority === "MEDIUM").length ?? 0,
-    LOW:    tasks?.filter((t) => t.priority === "LOW").length ?? 0,
+    LOW: tasks?.filter((t) => t.priority === "LOW").length ?? 0,
   };
 
   return (
@@ -82,24 +82,21 @@ export default function UserMyTaskPage() {
         {/* Summary Strip */}
         <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {(["URGENT", "HIGH", "MEDIUM", "LOW"] as Priority[]).map((p) => (
-            <div key={p} className={`rounded-xl border px-4 py-3 shadow-sm ${
-              p === "URGENT" ? "border-red-100 bg-red-50" :
-              p === "HIGH"   ? "border-orange-100 bg-orange-50" :
-              p === "MEDIUM" ? "border-yellow-100 bg-yellow-50" :
-                               "border-green-100 bg-green-50"
-            }`}>
-              <p className={`text-[10px] font-bold uppercase tracking-widest ${
-                p === "URGENT" ? "text-red-400" :
-                p === "HIGH"   ? "text-orange-400" :
-                p === "MEDIUM" ? "text-yellow-500" :
-                                 "text-green-400"
-              }`}>{p}</p>
-              <p className={`mt-0.5 text-2xl font-bold ${
-                p === "URGENT" ? "text-red-700" :
-                p === "HIGH"   ? "text-orange-700" :
-                p === "MEDIUM" ? "text-yellow-700" :
-                                 "text-green-700"
-              }`}>{counts[p]}</p>
+            <div key={p} className={`rounded-xl border px-4 py-3 shadow-sm ${p === "URGENT" ? "border-red-100 bg-red-50" :
+              p === "HIGH" ? "border-orange-100 bg-orange-50" :
+                p === "MEDIUM" ? "border-yellow-100 bg-yellow-50" :
+                  "border-green-100 bg-green-50"
+              }`}>
+              <p className={`text-[10px] font-bold uppercase tracking-widest ${p === "URGENT" ? "text-red-400" :
+                p === "HIGH" ? "text-orange-400" :
+                  p === "MEDIUM" ? "text-yellow-500" :
+                    "text-green-400"
+                }`}>{p}</p>
+              <p className={`mt-0.5 text-2xl font-bold ${p === "URGENT" ? "text-red-700" :
+                p === "HIGH" ? "text-orange-700" :
+                  p === "MEDIUM" ? "text-yellow-700" :
+                    "text-green-700"
+                }`}>{counts[p]}</p>
             </div>
           ))}
         </div>
@@ -110,16 +107,14 @@ export default function UserMyTaskPage() {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`-mb-px flex flex-1 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap border-b-[3px] px-2 py-2.5 text-xs uppercase tracking-wide transition sm:px-3 ${
-                activeTab === tab.key
-                  ? "border-amber-500 font-semibold text-amber-600"
-                  : "border-transparent font-medium text-gray-600 hover:border-gray-300 hover:text-gray-900"
-              }`}
+              className={`-mb-px flex flex-1 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap border-b-[3px] px-2 py-2.5 text-xs uppercase tracking-wide transition sm:px-3 ${activeTab === tab.key
+                ? "border-amber-500 font-semibold text-amber-600"
+                : "border-transparent font-medium text-gray-600 hover:border-gray-300 hover:text-gray-900"
+                }`}
             >
               {tab.label}
-              <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${
-                activeTab === tab.key ? "bg-amber-500/10 text-amber-600" : "bg-gray-100 text-gray-500"
-              }`}>{counts[tab.key]}</span>
+              <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${activeTab === tab.key ? "bg-amber-500/10 text-amber-600" : "bg-gray-100 text-gray-500"
+                }`}>{counts[tab.key]}</span>
             </button>
           ))}
         </div>
@@ -225,3 +220,5 @@ export default function UserMyTaskPage() {
     </div>
   );
 }
+
+export default UserMyTaskPage;

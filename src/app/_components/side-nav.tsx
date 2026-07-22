@@ -16,6 +16,7 @@ export interface SideNavItem {
  * Collapsible via a toggle button; open state persists in localStorage.
  * Mobile and tablet keep the existing horizontal tab navigation.
  */
+
 export const SideNav = ({
   items,
   storageKey = "sidenav-open",

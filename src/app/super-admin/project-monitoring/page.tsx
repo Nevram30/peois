@@ -4,7 +4,8 @@ import React from 'react';
 import { useState } from "react";
 import { api } from "~/trpc/react";
 
-const ProjectMonitoring: React.FC = () => {
+const ProjectMonitoring = () => {
+
     const { data: budgetYears } = api.project.getBudgetYears.useQuery();
     const [budgetYear, setBudgetYear] = useState<string>("");
     const { data: overview } = api.project.getOverviewStats.useQuery({
@@ -14,6 +15,7 @@ const ProjectMonitoring: React.FC = () => {
     const yearOptions = budgetYears && budgetYears.length > 0
         ? budgetYears
         : [new Date().getFullYear().toString()];
+
     return (
         <>
             <div className="p-4">

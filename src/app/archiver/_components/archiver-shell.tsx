@@ -40,13 +40,13 @@ const navItems = [
   },
 ];
 
-export function ArchiverShell({
+export const ArchiverShell = ({
   user,
   children,
 }: {
   user: User;
   children: React.ReactNode;
-}) {
+}) => {
   const pathname = usePathname();
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
@@ -91,30 +91,30 @@ export function ArchiverShell({
             <div className="flex shrink-0 items-center gap-2 sm:gap-4">
               {/* Profile display — logout lives in the sidebar (desktop) and header icon (mobile) */}
               <div className="flex items-center gap-3 px-2 py-1">
-                  <div className="hidden text-right sm:block">
-                    <p className="text-sm font-medium leading-tight">
-                      {displayName ?? displayEmail}
-                    </p>
-                    <div className="flex items-center justify-end gap-2">
-                      <span className="inline-flex items-center bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-700">
-                        Archiver
-                      </span>
-                    </div>
+                <div className="hidden text-right sm:block">
+                  <p className="text-sm font-medium leading-tight">
+                    {displayName ?? displayEmail}
+                  </p>
+                  <div className="flex items-center justify-end gap-2">
+                    <span className="inline-flex items-center bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-700">
+                      Archiver
+                    </span>
                   </div>
-                  {avatarImage ? (
-                    <div className="relative h-9 w-9 overflow-hidden rounded-full ring-2 ring-gray-200">
-                      <Image
-                        src={avatarImage}
-                        alt={displayName ?? "User avatar"}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-700 transition hover:bg-gray-200">
-                      {(displayName ?? displayEmail ?? "A").charAt(0).toUpperCase()}
-                    </div>
-                  )}
+                </div>
+                {avatarImage ? (
+                  <div className="relative h-9 w-9 overflow-hidden rounded-full ring-2 ring-gray-200">
+                    <Image
+                      src={avatarImage}
+                      alt={displayName ?? "User avatar"}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-700 transition hover:bg-gray-200">
+                    {(displayName ?? displayEmail ?? "A").charAt(0).toUpperCase()}
+                  </div>
+                )}
               </div>
 
               <button
@@ -136,11 +136,10 @@ export function ArchiverShell({
             <Link
               key={item.href}
               href={item.href}
-              className={`-mb-px flex shrink-0 items-center gap-2 whitespace-nowrap border-b-[3px] px-4 py-2.5 text-sm transition ${
-                isActive(item.href, item.exact)
+              className={`-mb-px flex shrink-0 items-center gap-2 whitespace-nowrap border-b-[3px] px-4 py-2.5 text-sm transition ${isActive(item.href, item.exact)
                   ? "border-amber-500 font-medium text-amber-600"
                   : "border-transparent font-normal text-gray-600 hover:border-gray-300 hover:text-gray-900"
-              }`}
+                }`}
             >
               {item.icon}
               {item.label}

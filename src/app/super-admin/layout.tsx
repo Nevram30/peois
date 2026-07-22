@@ -3,11 +3,11 @@ import { auth } from "~/server/auth";
 import { NavHeader } from "./_components/nav-header";
 import { SessionTimeout } from "~/app/_components/session-timeout";
 
-export default async function SuperAdminLayout({
+const SuperAdminLayout = async ({
   children,
 }: {
   children: React.ReactNode;
-}) {
+}) => {
   const session = await auth();
 
   if (!session?.user) {
@@ -27,3 +27,5 @@ export default async function SuperAdminLayout({
     </main>
   );
 }
+
+export default SuperAdminLayout;

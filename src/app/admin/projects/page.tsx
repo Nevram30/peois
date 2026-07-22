@@ -1,7 +1,7 @@
 import { Suspense } from "react";
-import { ProjectsList } from "./_components/projects-list";
+import ProjectsList from "./_components/projects-list";
 
-export default function ProjectsPage() {
+const ProjectsPage = () => {
   return (
     <Suspense fallback={
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3">
@@ -13,3 +13,5 @@ export default function ProjectsPage() {
     </Suspense>
   );
 }
+
+export default ProjectsPage;

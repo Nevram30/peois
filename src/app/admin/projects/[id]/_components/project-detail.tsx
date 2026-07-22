@@ -53,7 +53,7 @@ const ADJUSTMENT_TYPE_PILL: Record<string, string> = {
   REVISION: "bg-amber-50 text-amber-600 border border-amber-200",
 };
 
-function fmt(d: Date | string | null | undefined) {
+const fmt = (d: Date | string | null | undefined) => {
   if (!d) return "—";
   return new Date(d).toLocaleDateString("en-PH", {
     month: "short",
@@ -62,7 +62,7 @@ function fmt(d: Date | string | null | undefined) {
   });
 }
 
-function timeAgo(d: Date | string) {
+const timeAgo = (d: Date | string) => {
   const diff = Date.now() - new Date(d).getTime();
   const mins = Math.floor(diff / 60000);
   if (mins < 60) return `${mins} minute${mins !== 1 ? "s" : ""} ago`;
@@ -72,7 +72,7 @@ function timeAgo(d: Date | string) {
   return `${days} day${days !== 1 ? "s" : ""} ago`;
 }
 
-function initials(name?: string | null, email?: string | null) {
+const initials = (name?: string | null, email?: string | null) => {
   if (name) {
     return name
       .split(" ")
@@ -84,7 +84,7 @@ function initials(name?: string | null, email?: string | null) {
   return (email?.[0] ?? "U").toUpperCase();
 }
 
-function peso(n: number | null | undefined) {
+const peso = (n: number | null | undefined) => {
   const v = typeof n === "number" ? n : 0;
   return `₱ ${v.toLocaleString("en-PH", { minimumFractionDigits: 2 })}`;
 }
@@ -99,7 +99,7 @@ interface Props {
   projectId: string;
 }
 
-export function ProjectDetail({ projectId }: Props) {
+export const ProjectDetail = ({ projectId }: Props) => {
   const { data: project, isLoading } = api.project.getById.useQuery({ id: projectId });
   const { data: activities } = api.projectActivity.getByProjectId.useQuery({ projectId });
   const { data: disbursements } = api.project.getDisbursements.useQuery({ projectId });

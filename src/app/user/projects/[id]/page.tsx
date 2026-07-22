@@ -4,7 +4,9 @@ interface Props {
   params: Promise<{ id: string }>;
 }
 
-export default async function UserProjectViewPage({ params }: Props) {
+const UserProjectViewPage = async ({ params }: Props) => {
   const { id } = await params;
   return <UserProjectDetail projectId={id} />;
 }
+
+export default UserProjectViewPage;

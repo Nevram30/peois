@@ -1,4 +1,4 @@
-export default function ReportsPage() {
+const ReportsPage = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center">
       <div className="rounded-full bg-yellow-100 p-6">
@@ -25,3 +25,4 @@ export default function ReportsPage() {
     </div>
   );
 }
+export default ReportsPage;
