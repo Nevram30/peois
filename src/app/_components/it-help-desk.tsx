@@ -33,12 +33,12 @@ export const ItHelpDesk = () => {
           <p className="mt-1 text-xs text-gray-500">
             Send us a detailed description of your issue.
           </p>
-          <a
+          {/* <a
             href="mailto:it-support@davaodelnorte.gov.ph"
             className="mt-3 inline-block text-sm font-medium text-blue-600 hover:underline"
           >
             it-support@davaodelnorte.gov.ph
-          </a>
+          </a> */}
         </div>
 
         <div className="rounded-sm border border-gray-200 bg-white p-5 shadow-sm">
