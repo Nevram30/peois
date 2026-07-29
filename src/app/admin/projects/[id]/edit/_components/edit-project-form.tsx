@@ -68,7 +68,7 @@ const toInputDate = (d: Date | string | null | undefined) => {
 // ─── Section card wrapper ────────────────────────────────────────────────────
 const SectionCard = ({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) => {
   return (
-    <div className={`rounded-xl border border-gray-200 bg-white shadow-sm ${className}`} style={style}>
+    <div className={`rounded-sm border border-gray-200 bg-white shadow-sm ${className}`} style={style}>
       {children}
     </div>
   );
@@ -1061,19 +1061,19 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
             <div className="p-5">
               {/* Balance tiles */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <div className="rounded-xl border border-gray-200 bg-gray-50/60 px-4 py-3.5">
+                <div className="rounded-sm border border-gray-200 bg-gray-50/60 px-4 py-3.5">
                   <p className="text-sm font-bold text-blue-800">Total Remaining Balance</p>
                   <p className={`mt-1 text-xl font-extrabold ${totalRemainingBalance <= 100000 ? "text-red-700" : "text-blue-900"}`}>
                     ₱ {totalRemainingBalance.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
                   </p>
                 </div>
-                <div className="rounded-xl border border-gray-200 bg-gray-50/60 px-4 py-3.5">
+                <div className="rounded-sm border border-gray-200 bg-gray-50/60 px-4 py-3.5">
                   <p className="text-sm font-bold text-blue-800">Primary Fund Balance</p>
                   <p className="mt-1 text-lg font-extrabold text-gray-900">
                     ₱ {primaryFundBalance.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
                   </p>
                 </div>
-                <div className="rounded-xl border border-gray-200 bg-gray-50/60 px-4 py-3.5">
+                <div className="rounded-sm border border-gray-200 bg-gray-50/60 px-4 py-3.5">
                   <p className="text-sm font-bold text-blue-800">Variation Order Balance</p>
                   <p className="mt-1 text-lg font-extrabold text-gray-900">
                     ₱ {variationOrderBalance.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
@@ -1450,7 +1450,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
               </div>
               <div className="grid grid-cols-1 gap-3 p-5 sm:grid-cols-3">
                 {/* Female */}
-                <div className="rounded-xl border border-gray-200 bg-gray-50 p-3.5">
+                <div className="rounded-sm border border-gray-200 bg-gray-50 p-3.5">
                   <div className="flex items-center justify-between">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Female</p>
                     <span className="text-sm text-pink-400">♀</span>
@@ -1466,7 +1466,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                   </div>
                 </div>
                 {/* Male */}
-                <div className="rounded-xl border border-gray-200 bg-gray-50 p-3.5">
+                <div className="rounded-sm border border-gray-200 bg-gray-50 p-3.5">
                   <div className="flex items-center justify-between">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Male</p>
                     <span className="text-sm text-blue-400">♂</span>
@@ -1482,7 +1482,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                   </div>
                 </div>
                 {/* Total */}
-                <div className="rounded-xl border border-blue-200 bg-blue-50 p-3.5">
+                <div className="rounded-sm border border-blue-200 bg-blue-50 p-3.5">
                   <div className="flex items-center justify-between">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-blue-500">Total</p>
                     <svg className="h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">

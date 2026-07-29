@@ -6,6 +6,7 @@ import { api } from "~/trpc/react";
 import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { SideNav } from "~/app/_components/side-nav";
+import { Footer } from "~/app/_components/footer";
 import { usePollToast } from "~/hooks/use-poll-toast";
 import { LiveToast } from "~/app/_components/live-toast";
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
@@ -335,9 +336,8 @@ export function UserShell({
             badge: item.label === "My Tasks" ? taskCount : 0,
           }))}
           helpHref="/user/it-help-desk"
-          onLogout={() => setLogoutModalOpen(true)}
         />
-        <main className="min-w-0 flex-1">{children}</main>
+        <main className="min-w-0 flex-1 pb-10">{children}</main>
       </div>
 
       {/* Logout Confirmation Modal */}
@@ -380,6 +380,8 @@ export function UserShell({
       )}
 
       <LiveToast message={liveToast} onDismiss={dismissToast} />
+
+      <Footer />
     </div>
   );
 }

@@ -9,6 +9,7 @@ import { api } from "~/trpc/react";
 import { LiveToast } from "~/app/_components/live-toast";
 import { usePollToast } from "~/hooks/use-poll-toast";
 import { SideNav } from "~/app/_components/side-nav";
+import { Footer } from "~/app/_components/footer";
 
 interface User {
   id: string;
@@ -432,9 +433,8 @@ export const AdminShell = ({
                 : 0,
           }))}
           helpHref="/admin/it-help-desk"
-          onLogout={() => setLogoutModalOpen(true)}
         />
-        <main className="min-w-0 flex-1">{children}</main>
+        <main className="min-w-0 flex-1 pb-10">{children}</main>
       </div>
 
       {/* Logout Confirmation Modal */}
@@ -477,6 +477,8 @@ export const AdminShell = ({
       )}
 
       <LiveToast message={liveToast} onDismiss={dismissToast} />
+
+      <Footer />
     </div>
   );
 }

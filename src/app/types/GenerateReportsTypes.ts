@@ -2,6 +2,7 @@ export type ReportProject = {
     projectCode: string;
     title: string;
     subType: string | null;
+    program: string | null;
     modeOfImplementation: string;
     locationImplementation: string;
     sourceOfFund: string;

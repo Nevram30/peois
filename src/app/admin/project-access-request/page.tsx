@@ -116,7 +116,7 @@ const ProjectAccessRequestPage = () => {
   return (
     <div className="px-6 py-8">
       {/* Header */}
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-5 py-3 shadow-sm">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-sm border border-gray-200 bg-white px-5 py-3 shadow-sm">
         <div className="flex items-center gap-2.5">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -141,26 +141,26 @@ const ProjectAccessRequestPage = () => {
 
       {/* Stat Cards */}
       <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <div className="rounded-2xl bg-blue-600 p-4 text-white shadow-sm">
+        <div className="rounded-sm bg-blue-600 p-4 text-white shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-wider opacity-80">Total Requests</p>
           <p className="mt-1 text-3xl font-extrabold leading-none">{counts.total}</p>
         </div>
-        <div className="rounded-2xl bg-amber-500 p-4 text-white shadow-sm">
+        <div className="rounded-sm bg-amber-500 p-4 text-white shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-wider opacity-80">Pending</p>
           <p className="mt-1 text-3xl font-extrabold leading-none">{counts.PENDING}</p>
         </div>
-        <div className="rounded-2xl bg-emerald-500 p-4 text-white shadow-sm">
+        <div className="rounded-sm bg-emerald-500 p-4 text-white shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-wider opacity-80">Approved</p>
           <p className="mt-1 text-3xl font-extrabold leading-none">{counts.APPROVED}</p>
         </div>
-        <div className="rounded-2xl bg-red-500 p-4 text-white shadow-sm">
+        <div className="rounded-sm bg-red-500 p-4 text-white shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-wider opacity-80">Denied</p>
           <p className="mt-1 text-3xl font-extrabold leading-none">{counts.DENIED}</p>
         </div>
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-sm border border-gray-200 bg-white shadow-sm">
         {/* Filter Bar */}
         <div className="flex flex-wrap items-center gap-2 border-b border-gray-100 px-5 py-4">
           <div className="relative min-w-55 flex-1">

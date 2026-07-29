@@ -387,7 +387,7 @@ const ProjectsList = () => {
       </div>
 
       {/* Filter bar */}
-      <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="rounded-sm border border-gray-200 bg-white shadow-sm">
         {/* Mobile filter toggle */}
         <button
           type="button"
@@ -574,7 +574,7 @@ const ProjectsList = () => {
         </div>
       </div>
 
-      <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="rounded-sm border border-gray-200 bg-white shadow-sm">
         {isLoading ? (
           <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 p-8 text-center text-gray-500">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600" />

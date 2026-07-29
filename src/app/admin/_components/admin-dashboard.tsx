@@ -95,12 +95,12 @@ export const AdminDashboardContent = () => {
                     // District admins: big Budget Year card spanning both rows,
                     // six status tiles (incl. OTHERS) in a 3×2 grid beside it.
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                        <div className="col-span-2 sm:col-span-1 sm:row-span-2 bg-white rounded-xl shadow-sm flex flex-col items-center justify-center gap-1 p-3 text-center">
+                        <div className="col-span-2 sm:col-span-1 sm:row-span-2 bg-white rounded-sm shadow-sm flex flex-col items-center justify-center gap-1 p-3 text-center">
                             <p className="text-sm font-bold text-slate-700 leading-tight">Budget Year</p>
                             <p className="text-3xl font-extrabold text-slate-900 leading-none">{dashboardYear || "All"}</p>
                         </div>
                         {statusTiles.map((c) => (
-                            <div key={c.label} className="bg-white rounded-lg shadow-sm p-3 flex items-center justify-between gap-2">
+                            <div key={c.label} className="bg-white rounded-sm shadow-sm p-3 flex items-center justify-between gap-2">
                                 <div className="flex flex-col gap-1">
                                     <div className={`w-6 h-6 rounded-md ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>
                                         {c.icon}
@@ -114,7 +114,7 @@ export const AdminDashboardContent = () => {
                 ) : (
                     <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
                         {statCards.map((c) => (
-                            <div key={c.label} className="bg-white rounded-lg shadow-sm p-3 flex items-center justify-between gap-2">
+                            <div key={c.label} className="bg-white rounded-sm shadow-sm p-3 flex items-center justify-between gap-2">
                                 <div className="flex flex-col gap-1">
                                     <div className={`w-6 h-6 rounded-md ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>
                                         {c.icon}
@@ -197,7 +197,7 @@ export const AdminDashboardContent = () => {
             </div>
 
             {/* Recent Project Updates */}
-            <div className="mt-5 rounded-2xl border border-gray-100 bg-white shadow-sm">
+            <div className="mt-5 rounded-sm border border-gray-100 bg-white shadow-sm">
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-4 py-4 sm:px-6 sm:py-5">
                     <h2 className="text-md font-semibold text-gray-900">
                         Recent Project Updates

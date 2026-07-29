@@ -7,6 +7,7 @@ import { signOut } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import { api } from "~/trpc/react";
 import { SideNav } from "~/app/_components/side-nav";
+import { Footer } from "~/app/_components/footer";
 
 const getInitials = (name?: string | null, email?: string | null): string => {
   if (name) {
@@ -271,9 +272,8 @@ export const NavHeader = ({
                 : 0,
           }))}
           helpHref={`/super-admin/it-help-desk?id=${userId}`}
-          onLogout={() => setLogoutModalOpen(true)}
         />
-        <div className="min-w-0 flex-1 px-4 pb-6 pt-4 sm:px-6">{children}</div>
+        <div className="min-w-0 flex-1 px-4 pb-14 pt-4 sm:px-6">{children}</div>
       </div>
 
       {/* Logout Confirmation Modal */}
@@ -314,6 +314,8 @@ export const NavHeader = ({
           </div>
         </div>
       )}
+
+      <Footer />
     </>
   );
 }

@@ -63,7 +63,7 @@ export const toCardData = (counts: StatusCounts): DistrictCardItem[] => {
 export const DistrictCard = ({ title, data }: DistrictCardProps) => {
     const total = data.reduce((s, d) => s + d.value, 0);
     return (
-        <div className="bg-white rounded-xl overflow-hidden border border-slate-200">
+        <div className="bg-white rounded-sm overflow-hidden border border-slate-200">
             <div className="p-4">
                 <p className="text-[11px] font-extrabold text-[#1e3a8a] tracking-widest uppercase mb-3">
                     {title}
@@ -91,7 +91,7 @@ export const DistrictCard = ({ title, data }: DistrictCardProps) => {
                     </div>
                 </div>
             </div>
-            <div className="bg-[#1e3a8a] text-white px-4 py-[9px] flex justify-between items-center text-[11px] font-bold tracking-widest uppercase">
+            <div className="bg-white text-black border-t border-slate-300 px-4 py-[9px] flex justify-between items-center text-[11px] font-bold tracking-widest uppercase">
                 <span>TOTAL PROJECTS</span>
                 <span>{total}</span>
             </div>
@@ -136,7 +136,7 @@ export const AnnualAllocationCard = ({ bySource, bySubType, variationBySource, v
     const segments: Segment[] = entries.map((e) => ({ value: e.amount, color: e.color }));
 
     return (
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-3 border border-slate-200">
+        <div className="bg-white rounded-sm shadow-sm overflow-hidden mb-3 border border-slate-200">
             <div className="p-4 sm:p-5">
                 <div className="flex items-center justify-between mb-4">
                     <p className="text-[12px] font-extrabold text-slate-800 tracking-widest uppercase">
@@ -199,7 +199,7 @@ export const AnnualAllocationCard = ({ bySource, bySubType, variationBySource, v
                 </div>
             </div>
 
-            <div className="bg-[#1e3a8a] text-white px-6 py-3.5 flex justify-between items-center text-[12px] font-bold tracking-widest uppercase">
+            <div className="bg-white text-black border-t border-slate-300 px-6 py-3.5 flex justify-between items-center text-[12px] font-bold tracking-widest uppercase">
                 <span>Total Combined Allocation</span>
                 <span className="tabular-nums">{formatPeso(total)}</span>
             </div>
@@ -241,7 +241,7 @@ export const SourceBreakdownCard = ({ title, footerLabel, bySource, bySubType, v
         .map((e) => ({ value: e.amount, color: e.color }));
 
     return (
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-200">
+        <div className="bg-white rounded-sm shadow-sm overflow-hidden border border-slate-200">
             <div className="p-4 sm:p-5">
                 <p className="text-[12px] font-extrabold text-slate-800 tracking-widest uppercase mb-4">
                     {title}
@@ -300,7 +300,7 @@ export const SourceBreakdownCard = ({ title, footerLabel, bySource, bySubType, v
                 </div>
             </div>
 
-            <div className="bg-[#1e3a8a] text-white px-6 py-3.5 flex justify-between items-center text-[12px] font-bold tracking-widest uppercase">
+            <div className="bg-white text-black border-t border-slate-300 px-6 py-3.5 flex justify-between items-center text-[12px] font-bold tracking-widest uppercase">
                 <span>{footerLabel}</span>
                 <span className="tabular-nums">{formatPeso(total)}</span>
             </div>

@@ -92,7 +92,7 @@ const peso = (n: number | null | undefined) => {
   return `₱ ${v.toLocaleString("en-PH", { minimumFractionDigits: 2 })}`;
 }
 
-const card = "rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6";
+const card = "rounded-sm border border-gray-200 bg-white p-4 shadow-sm sm:p-6";
 const sectionTitle = "flex items-center gap-2 border-b border-gray-100 pb-4 mb-5";
 const fieldLabel = "text-[11px] font-semibold uppercase tracking-wider text-gray-400";
 const fieldBox =
@@ -248,7 +248,7 @@ export const ProjectDetail = ({ projectId }: Props) => {
 
             <div className="flex flex-col gap-5 sm:flex-row">
               {/* Image */}
-              <div className="relative h-56 w-full shrink-0 self-stretch overflow-hidden rounded-xl border border-gray-200 bg-linear-to-br from-slate-700 to-slate-900 sm:h-auto sm:w-72">
+              <div className="relative h-56 w-full shrink-0 self-stretch overflow-hidden rounded-sm border border-gray-200 bg-linear-to-br from-slate-700 to-slate-900 sm:h-auto sm:w-72">
                 {project.imageUrl ? (
                   <Image
                     src={project.imageUrl}
@@ -488,15 +488,15 @@ export const ProjectDetail = ({ projectId }: Props) => {
 
           {/* Balance tiles */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div className="rounded-xl border border-gray-200 bg-gray-50/60 px-4 py-3.5">
+            <div className="rounded-sm border border-gray-200 bg-gray-50/60 px-4 py-3.5">
               <p className="text-sm font-bold text-blue-800">Total Remaining Balance</p>
               <p className="mt-1 text-xl font-extrabold text-blue-900">{peso(totalRemainingBalance)}</p>
             </div>
-            <div className="rounded-xl border border-gray-200 bg-gray-50/60 px-4 py-3.5">
+            <div className="rounded-sm border border-gray-200 bg-gray-50/60 px-4 py-3.5">
               <p className="text-sm font-bold text-blue-800">Primary Fund Balance</p>
               <p className="mt-1 text-lg font-extrabold text-gray-900">{peso(primaryFundBalance)}</p>
             </div>
-            <div className="rounded-xl border border-gray-200 bg-gray-50/60 px-4 py-3.5">
+            <div className="rounded-sm border border-gray-200 bg-gray-50/60 px-4 py-3.5">
               <p className="text-sm font-bold text-blue-800">Variation Order Balance</p>
               <p className="mt-1 text-lg font-extrabold text-gray-900">{peso(variationOrderBalance)}</p>
             </div>

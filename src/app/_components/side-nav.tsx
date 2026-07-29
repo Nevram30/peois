@@ -47,7 +47,7 @@ export const SideNav = ({
 
   return (
     <aside
-      className={`sticky top-16.25 hidden h-[calc(100vh-65px)] shrink-0 flex-col overflow-hidden border-r border-gray-200 bg-white transition-all duration-200 print:hidden lg:flex ${open ? "w-64" : "w-14"
+      className={`sticky top-16.25 hidden h-[calc(100vh-65px-32px)] shrink-0 flex-col overflow-hidden border-r border-gray-200 bg-white transition-all duration-200 print:hidden lg:flex ${open ? "w-64" : "w-14"
         }`}
     >
       <div
