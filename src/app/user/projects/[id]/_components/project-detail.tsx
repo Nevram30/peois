@@ -74,7 +74,7 @@ const peso = (n: number | null | undefined) => {
   return `₱ ${v.toLocaleString("en-PH", { minimumFractionDigits: 2 })}`;
 }
 
-const card = "rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6";
+const card = "rounded-sm border border-gray-200 bg-white p-4 shadow-sm sm:p-6";
 const sectionTitle = "flex items-center gap-2 border-b border-gray-100 pb-4 mb-5";
 const fieldLabel = "text-[11px] font-semibold uppercase tracking-wider text-gray-400";
 const fieldBox =
@@ -251,7 +251,7 @@ export const UserProjectDetail = ({ projectId }: Props) => {
 
             <div className="flex flex-col gap-5 sm:flex-row">
               {/* Image */}
-              <div className="relative h-56 w-full shrink-0 overflow-hidden rounded-xl border border-gray-200 bg-linear-to-br from-slate-700 to-slate-900 sm:h-auto sm:w-2/5 sm:self-stretch">
+              <div className="relative h-56 w-full shrink-0 overflow-hidden rounded-sm border border-gray-200 bg-linear-to-br from-slate-700 to-slate-900 sm:h-auto sm:w-2/5 sm:self-stretch">
                 {project.imageUrl ? (
                   <Image
                     src={project.imageUrl}
@@ -474,15 +474,15 @@ export const UserProjectDetail = ({ projectId }: Props) => {
 
           {/* Balance tiles */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div className="rounded-xl border border-gray-200 bg-gray-50/60 px-4 py-3.5">
+            <div className="rounded-sm border border-gray-200 bg-gray-50/60 px-4 py-3.5">
               <p className="text-sm font-bold text-blue-800">Total Remaining Balance</p>
               <p className="mt-1 text-xl font-extrabold text-blue-900">{peso(totalRemainingBalance)}</p>
             </div>
-            <div className="rounded-xl border border-gray-200 bg-gray-50/60 px-4 py-3.5">
+            <div className="rounded-sm border border-gray-200 bg-gray-50/60 px-4 py-3.5">
               <p className="text-sm font-bold text-blue-800">Primary Fund Balance</p>
               <p className="mt-1 text-lg font-extrabold text-gray-900">{peso(primaryBalance)}</p>
             </div>
-            <div className="rounded-xl border border-gray-200 bg-gray-50/60 px-4 py-3.5">
+            <div className="rounded-sm border border-gray-200 bg-gray-50/60 px-4 py-3.5">
               <p className="text-sm font-bold text-blue-800">Variation Order Balance</p>
               <p className="mt-1 text-lg font-extrabold text-gray-900">{peso(variationBalance)}</p>
             </div>
@@ -708,7 +708,7 @@ export const UserProjectDetail = ({ projectId }: Props) => {
             </div>
 
             <div className="grid grid-cols-3 gap-3">
-              <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+              <div className="rounded-sm border border-gray-200 bg-gray-50 p-4">
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
                   Female
                 </p>
@@ -717,7 +717,7 @@ export const UserProjectDetail = ({ projectId }: Props) => {
                   <span className="text-lg leading-none text-gray-400">♀</span>
                 </div>
               </div>
-              <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+              <div className="rounded-sm border border-gray-200 bg-gray-50 p-4">
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
                   Male
                 </p>
@@ -726,7 +726,7 @@ export const UserProjectDetail = ({ projectId }: Props) => {
                   <span className="text-lg leading-none text-gray-400">♂</span>
                 </div>
               </div>
-              <div className="rounded-xl border border-gray-300 bg-gray-100 p-4">
+              <div className="rounded-sm border border-gray-300 bg-gray-100 p-4">
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-blue-900">
                   Total
                 </p>
@@ -933,7 +933,7 @@ export const UserProjectDetail = ({ projectId }: Props) => {
           </div>
 
           {activities && activities.length > 0 ? (
-            <div className="rounded-xl border border-gray-100 bg-gray-50/50">
+            <div className="rounded-sm border border-gray-100 bg-gray-50/50">
               {/* Header row */}
               <div className="hidden border-b border-gray-200 px-5 py-3 sm:grid sm:grid-cols-[190px_1fr_200px]">
                 <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">

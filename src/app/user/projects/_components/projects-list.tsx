@@ -241,7 +241,7 @@ const StatCards = ({
       {cards.map((c) => (
         <div
           key={c.label}
-          className={`flex items-center gap-3 rounded-xl border-l-4 bg-white p-4 shadow-sm ${c.borderColor}`}
+          className="flex items-center gap-3 rounded-sm bg-white p-4 shadow-sm"
         >
           <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${c.iconBg} ${c.iconColor}`}>
             {c.icon}
@@ -386,7 +386,7 @@ export const UserProjectsList = () => {
       </h2>
 
       {/* Filter bar */}
-      <div className="rounded-xl border border-gray-200 bg-white px-4 py-4 shadow-sm sm:px-5">
+      <div className="rounded-sm border border-gray-200 bg-white px-4 py-4 shadow-sm sm:px-5">
         <div
           className={`grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5 ${districtScope ? "xl:grid-cols-10" : "xl:grid-cols-11"}`}
         >
@@ -618,7 +618,7 @@ export const UserProjectsList = () => {
       </div>
 
       {/* Projects table */}
-      <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="rounded-sm border border-gray-200 bg-white shadow-sm">
         {isLoading ? (
           <div className="p-8 text-center text-gray-500">
             Loading projects...

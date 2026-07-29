@@ -50,7 +50,7 @@ const UserTaskDetailPage = () => {
         <div className="mx-auto max-w-2xl space-y-4">
           <div className="h-4 w-48 animate-pulse rounded bg-gray-200" />
           <div className="h-8 w-64 animate-pulse rounded bg-gray-200" />
-          <div className="h-64 animate-pulse rounded-xl border border-gray-200 bg-white" />
+          <div className="h-64 animate-pulse rounded-sm border border-gray-200 bg-white" />
         </div>
       </div>
     );
@@ -99,7 +99,7 @@ const UserTaskDetailPage = () => {
         </div>
 
         {/* Main Card */}
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+        <div className="overflow-hidden rounded-sm border border-gray-200 bg-white shadow-sm">
           <div className="p-4 sm:p-6">
 
             {/* Task Header */}
@@ -215,7 +215,7 @@ const UserTaskDetailPage = () => {
 
           <div className="flex flex-col gap-3">
             {/* Task created */}
-            <div className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <div className="flex items-start gap-3 rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1e3a4f] text-sm font-bold text-white">
                 {assignerInitial}
               </div>
@@ -236,7 +236,7 @@ const UserTaskDetailPage = () => {
 
             {/* Acknowledged event */}
             {isAcknowledged && task.acknowledgedAt && (
-              <div className="flex items-start gap-3 rounded-xl border border-emerald-100 bg-emerald-50 p-4 shadow-sm">
+              <div className="flex items-start gap-3 rounded-sm border border-emerald-100 bg-emerald-50 p-4 shadow-sm">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white">
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
@@ -260,7 +260,7 @@ const UserTaskDetailPage = () => {
                 reply.taskStatus === "in-progress" ? "In Progress" :
                   reply.taskStatus === "action-taken" ? "Action Taken" : null;
               return (
-                <div key={reply.id} className="flex items-start gap-3 rounded-xl border border-blue-100 bg-blue-50 p-4 shadow-sm">
+                <div key={reply.id} className="flex items-start gap-3 rounded-sm border border-blue-100 bg-blue-50 p-4 shadow-sm">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-500 text-sm font-bold text-white">
                     {replyInitial}
                   </div>
