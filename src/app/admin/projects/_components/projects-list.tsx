@@ -14,7 +14,12 @@ import {
   PROJECT_STATUS_LABEL,
   PROJECT_STATUS_ORDER,
   SOURCE_TO_SUB_TYPES,
+  FUNDING_PROGRAM_LABEL,
+  FUNDING_PROGRAM_VALUES,
+  SOURCE_TO_PROGRAMS,
+  PROGRAM_TO_PROJECTS,
   type SourceOfFundValue,
+  type FundingProgramValue,
 } from "~/lib/fund-constants";
 
 const STATUS_LABELS: Record<string, { label: string; className: string }> = {
@@ -209,6 +214,7 @@ const ProjectsList = () => {
   const [search, setSearch] = useState("");
   const [modeFilter, setModeFilter] = useState("");
   const [sourceOfFundFilter, setSourceOfFundFilter] = useState("");
+  const [programFilter, setProgramFilter] = useState("");
   const [subTypeFilter, setSubTypeFilter] = useState("");
   const [districtFilter, setDistrictFilter] = useState("");
   const [cityFilter, setCityFilter] = useState("");
@@ -220,9 +226,15 @@ const ProjectsList = () => {
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 20;
 
-  const availableSubTypes = sourceOfFundFilter
-    ? SOURCE_TO_SUB_TYPES[sourceOfFundFilter as SourceOfFundValue] ?? []
-    : PROJECT_SUB_TYPE_VALUES;
+  const availablePrograms = sourceOfFundFilter
+    ? SOURCE_TO_PROGRAMS[sourceOfFundFilter as SourceOfFundValue] ?? []
+    : [];
+
+  const availableSubTypes = programFilter
+    ? PROGRAM_TO_PROJECTS[programFilter as FundingProgramValue] ?? []
+    : sourceOfFundFilter
+      ? SOURCE_TO_SUB_TYPES[sourceOfFundFilter as SourceOfFundValue] ?? []
+      : [];
 
   const { data: projects, isLoading } = api.project.getAll.useQuery();
   const { data: budgetYears } = api.project.getBudgetYears.useQuery();
@@ -261,6 +273,7 @@ const ProjectsList = () => {
     if (barangayFilter && p.barangay !== barangayFilter) return false;
     if (sourceOfFundFilter && p.sourceOfFund !== sourceOfFundFilter)
       return false;
+    if (programFilter && p.program !== programFilter) return false;
     if (subTypeFilter && p.subType !== subTypeFilter) return false;
     if (yearFilter && p.budgetYear !== yearFilter) return false;
     if (search) {
@@ -291,6 +304,7 @@ const ProjectsList = () => {
     search ||
     modeFilter ||
     sourceOfFundFilter ||
+    programFilter ||
     subTypeFilter ||
     districtFilter ||
     cityFilter ||
@@ -303,6 +317,7 @@ const ProjectsList = () => {
     setSearch("");
     setModeFilter("");
     setSourceOfFundFilter("");
+    setProgramFilter("");
     setSubTypeFilter("");
     setDistrictFilter("");
     setCityFilter("");
@@ -416,7 +431,7 @@ const ProjectsList = () => {
 
         <div className={`${filtersOpen ? "block" : "hidden"} border-t border-gray-100 px-4 py-4 sm:px-5 lg:block lg:border-t-0`}>
           <div
-            className={`grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 ${districtScope ? "xl:grid-cols-8" : "xl:grid-cols-9"}`}
+            className={`grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 ${districtScope ? "xl:grid-cols-9" : "xl:grid-cols-10"}`}
           >
             {/* Mode */}
             <div>
@@ -441,7 +456,7 @@ const ProjectsList = () => {
               </p>
               <select
                 value={sourceOfFundFilter}
-                onChange={(e) => { setSourceOfFundFilter(e.target.value); setSubTypeFilter(""); setPage(1); }}
+                onChange={(e) => { setSourceOfFundFilter(e.target.value); setProgramFilter(""); setSubTypeFilter(""); setPage(1); }}
                 className={selectClass}
               >
                 <option value="">All</option>
@@ -451,19 +466,39 @@ const ProjectsList = () => {
               </select>
             </div>
 
-            {/* Sub-Category */}
+            {/* Program */}
             <div>
               <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
-                Sub-Category
+                Program
+              </p>
+              <select
+                value={programFilter}
+                onChange={(e) => { setProgramFilter(e.target.value); setSubTypeFilter(""); setPage(1); }}
+                disabled={!sourceOfFundFilter || availablePrograms.length === 0}
+                className={`${selectClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
+              >
+                <option value="">
+                  {sourceOfFundFilter && availablePrograms.length === 0 ? "None" : "All"}
+                </option>
+                {availablePrograms.map((k) => (
+                  <option key={k} value={k}>{FUNDING_PROGRAM_LABEL[k]}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Project */}
+            <div>
+              <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                Project
               </p>
               <select
                 value={subTypeFilter}
                 onChange={(e) => { setSubTypeFilter(e.target.value); setPage(1); }}
-                disabled={!!sourceOfFundFilter && availableSubTypes.length === 0}
+                disabled={!sourceOfFundFilter || availableSubTypes.length === 0}
                 className={`${selectClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
               >
                 <option value="">
-                  {sourceOfFundFilter && availableSubTypes.length === 0 ? "None" : "All"}
+                  {(sourceOfFundFilter || programFilter) && availableSubTypes.length === 0 ? "None" : "All"}
                 </option>
                 {availableSubTypes.map((k) => (
                   <option key={k} value={k}>{PROJECT_SUB_TYPE_LABEL[k]}</option>
