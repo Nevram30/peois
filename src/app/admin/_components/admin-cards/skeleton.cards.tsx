@@ -1,22 +1,51 @@
 // ── Skeletons ──────────────────────────────────────────────────
-export const StatCardsSkeleton = () => {
-    return (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 content-start">
-            {Array.from({ length: 7 }).map((_, i) => (
-                <div key={i} className="bg-white rounded-sm shadow-sm p-3 flex flex-col gap-1 border-t-[3px] border-slate-200 animate-pulse">
-                    <div className="w-6 h-6 rounded-md bg-slate-200 mb-1" />
-                    <div className="h-2.5 w-16 rounded bg-slate-200" />
-                    <div className="h-6 w-10 rounded bg-slate-200 mt-1" />
+
+// Single stat tile placeholder — matches the real tile's
+// "icon+label on the left, value on the right" layout.
+const StatTileSkeleton = () => (
+    <div className="bg-white rounded-sm shadow-sm p-3 flex items-center justify-between gap-2 animate-pulse">
+        <div className="flex flex-col gap-1">
+            <div className="w-6 h-6 rounded-md bg-slate-200 mb-1" />
+            <div className="h-2 w-14 rounded bg-slate-200" />
+        </div>
+        <div className="h-6 w-8 rounded bg-slate-200" />
+    </div>
+);
+
+// The stat card region has two shapes:
+//  • Office divisions (SMAD/PDPM/EPM/QACD): seven tiles in a single row.
+//  • Engineering-district admins (1ST/2ND ENGR DIST): a tall Budget Year
+//    card + six status tiles in a 3×2 grid beside it.
+export const StatCardsSkeleton = ({ districtOnSide = false }: { districtOnSide?: boolean }) => {
+    if (districtOnSide) {
+        return (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <div className="col-span-2 sm:col-span-1 sm:row-span-2 bg-white rounded-sm shadow-sm flex flex-col items-center justify-center gap-2 p-3 animate-pulse">
+                    <div className="h-3 w-20 rounded bg-slate-200" />
+                    <div className="h-8 w-14 rounded bg-slate-200" />
                 </div>
+                {Array.from({ length: 6 }).map((_, i) => (
+                    <StatTileSkeleton key={i} />
+                ))}
+            </div>
+        );
+    }
+    return (
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+            {Array.from({ length: 7 }).map((_, i) => (
+                <StatTileSkeleton key={i} />
             ))}
         </div>
     );
 }
 
-export const DistrictCardsSkeleton = () => {
+// District status cards: office divisions see both districts (count 2) in a
+// grid; engineering-district admins see only their own district (count 1)
+// stacked beside the stats.
+export const DistrictCardsSkeleton = ({ count = 2, onSide = false }: { count?: number; onSide?: boolean }) => {
     return (
-        <div className="flex flex-col gap-4">
-            {Array.from({ length: 2 }).map((_, i) => (
+        <div className={onSide ? "flex flex-col gap-4" : "grid grid-cols-1 lg:grid-cols-2 gap-4 items-start"}>
+            {Array.from({ length: count }).map((_, i) => (
                 <div key={i} className="bg-white rounded-sm overflow-hidden border border-slate-200">
                     <div className="p-4 animate-pulse">
                         <div className="h-2.5 w-40 rounded bg-slate-200 mb-3" />

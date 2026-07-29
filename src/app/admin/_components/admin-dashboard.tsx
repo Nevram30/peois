@@ -24,8 +24,9 @@ export const AdminDashboardContent = () => {
 
     // Engineering-district admins (1ST/2ND ENGR DIST) keep the district status
     // card beside the stat cards; office divisions (SMAD/PDPM/EPM/QACD) see
-    // both district cards below the stat cards instead.
-    const districtOnSide = scopeLoading || districtScope != null;
+    // both district cards below the stat cards instead. Only meaningful once
+    // the scope query has resolved (guarded by scopeLoading below).
+    const districtOnSide = districtScope != null;
     const { data: projectAllocationData, isLoading: allocationLoading } = api.project.getFinancialOverview.useQuery(yearInput);
     const { data: districtData, isLoading: districtLoading } = api.project.getDistrictData.useQuery(yearInput);
     const { data: remainingBalanceData, isLoading: remainingLoading } = api.project.getRemainingBalance.useQuery(yearInput);
@@ -87,10 +88,18 @@ export const AdminDashboardContent = () => {
                 <YearFilter value={dashboardYear} onChange={setDashboardYear} years={budgetYears ?? []} />
             </div>
 
-            {/* Stat cards + district project status (beside for ENGR DIST divisions, below otherwise) */}
+            {/* Stat cards + district project status (beside for ENGR DIST divisions, below otherwise).
+                While the scope query is in flight we can't yet know which layout
+                applies, so show a neutral full-width skeleton to avoid a layout jump. */}
+            {scopeLoading ? (
+                <div className="grid grid-cols-1 gap-4 pb-5">
+                    <StatCardsSkeleton />
+                    <DistrictCardsSkeleton />
+                </div>
+            ) : (
             <div className={`grid grid-cols-1 ${districtOnSide ? "lg:grid-cols-2" : ""} gap-4 pb-5`}>
                 {statsLoading ? (
-                    <StatCardsSkeleton />
+                    <StatCardsSkeleton districtOnSide={districtOnSide} />
                 ) : districtOnSide ? (
                     // District admins: big Budget Year card spanning both rows,
                     // six status tiles (incl. OTHERS) in a 3×2 grid beside it.
@@ -127,8 +136,8 @@ export const AdminDashboardContent = () => {
                     </div>
                 )}
 
-                {districtLoading || scopeLoading ? (
-                    <DistrictCardsSkeleton />
+                {districtLoading ? (
+                    <DistrictCardsSkeleton onSide={districtOnSide} count={districtOnSide ? 1 : 2} />
                 ) : (
                     <div className={districtOnSide ? "flex flex-col gap-4" : "grid grid-cols-1 lg:grid-cols-2 gap-4 items-start"}>
                         {districtData?.map((d) => (
@@ -141,6 +150,7 @@ export const AdminDashboardContent = () => {
                     </div>
                 )}
             </div>
+            )}
 
             {/* Financial Overview Header */}
             <div className="flex items-start justify-between mb-3">

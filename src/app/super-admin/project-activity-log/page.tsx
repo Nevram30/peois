@@ -111,7 +111,7 @@ const ProjectActivityLogPage = () => {
   return (
     <>
       {/* Header */}
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-5 py-3 shadow-sm">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-sm border border-gray-200 bg-white px-5 py-3 shadow-sm">
         <div className="flex items-center gap-2.5">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -136,34 +136,64 @@ const ProjectActivityLogPage = () => {
 
       {/* Stat Cards */}
       <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-        <div className="rounded-2xl bg-blue-600 p-4 text-white shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wider opacity-80">Total Entries</p>
-          <p className="mt-1 text-3xl font-extrabold leading-none">{counts.total}</p>
+        <div className="rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">Total Entries</p>
+            <svg className="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+          </div>
+          <p className="mt-1 text-3xl font-extrabold leading-none text-gray-900">{counts.total}</p>
         </div>
-        <div className="rounded-2xl bg-indigo-500 p-4 text-white shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wider opacity-80">Created</p>
-          <p className="mt-1 text-3xl font-extrabold leading-none">{counts.Created}</p>
+        <div className="rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">Created</p>
+            <svg className="h-4 w-4 text-indigo-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+          </div>
+          <p className="mt-1 text-3xl font-extrabold leading-none text-gray-900">{counts.Created}</p>
         </div>
-        <div className="rounded-2xl bg-emerald-500 p-4 text-white shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wider opacity-80">Disbursements</p>
-          <p className="mt-1 text-3xl font-extrabold leading-none">{counts.Disbursement}</p>
+        <div className="rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">Disbursements</p>
+            <svg className="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
+            </svg>
+          </div>
+          <p className="mt-1 text-3xl font-extrabold leading-none text-gray-900">{counts.Disbursement}</p>
         </div>
-        <div className="rounded-2xl bg-sky-500 p-4 text-white shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wider opacity-80">Documents</p>
-          <p className="mt-1 text-3xl font-extrabold leading-none">{counts.Document}</p>
+        <div className="rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">Documents</p>
+            <svg className="h-4 w-4 text-sky-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+            </svg>
+          </div>
+          <p className="mt-1 text-3xl font-extrabold leading-none text-gray-900">{counts.Document}</p>
         </div>
-        <div className="rounded-2xl bg-amber-500 p-4 text-white shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wider opacity-80">Overrides</p>
-          <p className="mt-1 text-3xl font-extrabold leading-none">{counts.Override}</p>
+        <div className="rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">Overrides</p>
+            <svg className="h-4 w-4 text-amber-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125" />
+            </svg>
+          </div>
+          <p className="mt-1 text-3xl font-extrabold leading-none text-gray-900">{counts.Override}</p>
         </div>
-        <div className="rounded-2xl bg-slate-500 p-4 text-white shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wider opacity-80">Comments</p>
-          <p className="mt-1 text-3xl font-extrabold leading-none">{counts.Comment}</p>
+        <div className="rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">Comments</p>
+            <svg className="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+            </svg>
+          </div>
+          <p className="mt-1 text-3xl font-extrabold leading-none text-gray-900">{counts.Comment}</p>
         </div>
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-sm border border-gray-200 bg-white shadow-sm">
         {/* Filter Bar */}
         <div className="flex flex-wrap items-center gap-2 border-b border-gray-100 px-5 py-4">
           <div className="relative min-w-55 flex-1">
