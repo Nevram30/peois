@@ -497,7 +497,7 @@ export const GenerateReportModal = ({
       />
 
       {/* Modal */}
-      <div className="relative flex max-h-[92vh] w-full max-w-6xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
+      <div className="relative flex max-h-[92vh] w-full max-w-6xl flex-col overflow-hidden rounded-sm bg-white shadow-2xl">
         {/* Header */}
         <div className="flex items-start justify-between border-b border-gray-100 px-8 pb-5 pt-7">
           <div>
