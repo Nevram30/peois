@@ -131,7 +131,7 @@ export const SettingsForm = () => {
         </p>
       </div>
 
-      <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+      <section className="rounded-sm border border-gray-200 bg-white p-6 shadow-sm">
         <h2 className="text-base font-semibold text-gray-900">Profile</h2>
         <p className="mt-0.5 text-xs text-gray-500">
           Update your display name, email, and profile photo.
@@ -248,7 +248,7 @@ export const SettingsForm = () => {
       </section>
 
       {canChangePassword && (
-        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <section className="rounded-sm border border-gray-200 bg-white p-6 shadow-sm">
           <h2 className="text-base font-semibold text-gray-900">Password</h2>
           <p className="mt-0.5 text-xs text-gray-500">
             Use a strong password that you don&apos;t use elsewhere.
@@ -305,7 +305,7 @@ export const SettingsForm = () => {
         </section>
       )}
 
-      <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+      <section className="rounded-sm border border-gray-200 bg-white p-6 shadow-sm">
         <h2 className="text-base font-semibold text-gray-900">Sign out</h2>
         <p className="mt-0.5 text-xs text-gray-500">
           Sign out of your account on this device.

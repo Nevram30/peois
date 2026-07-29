@@ -34,7 +34,7 @@ const inputClass =
   "block w-full rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none";
 const labelClass =
   "mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-gray-500";
-const cardClass = "rounded-xl border border-gray-200 bg-white shadow-sm";
+const cardClass = "rounded-sm border border-gray-200 bg-white shadow-sm";
 const errorRingClass =
   "border-red-400 focus:border-red-500 focus:ring-red-500/20";
 
@@ -989,15 +989,15 @@ export const AddProjectForm = () => {
           <div className="space-y-6 p-5">
             {/* Balance tiles — no data until project initialization */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <div className="rounded-xl border border-gray-200 bg-gray-50/60 px-4 py-3.5">
+              <div className="rounded-sm border border-gray-200 bg-gray-50/60 px-4 py-3.5">
                 <p className="text-sm font-bold text-blue-800">Total Remaining Balance</p>
                 <p className="mt-1 text-lg font-extrabold text-gray-300">—</p>
               </div>
-              <div className="rounded-xl border border-gray-200 bg-gray-50/60 px-4 py-3.5">
+              <div className="rounded-sm border border-gray-200 bg-gray-50/60 px-4 py-3.5">
                 <p className="text-sm font-bold text-blue-800">Primary Fund Balance</p>
                 <p className="mt-1 text-lg font-extrabold text-gray-300">—</p>
               </div>
-              <div className="rounded-xl border border-gray-200 bg-gray-50/60 px-4 py-3.5">
+              <div className="rounded-sm border border-gray-200 bg-gray-50/60 px-4 py-3.5">
                 <p className="text-sm font-bold text-blue-800">Variation Order Balance</p>
                 <p className="mt-1 text-lg font-extrabold text-gray-300">—</p>
               </div>
@@ -1006,7 +1006,7 @@ export const AddProjectForm = () => {
             {/* Tracking placeholders (available after project init) */}
             <div>
               <p className={labelClass}>Recent Disbursements</p>
-              <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-200 bg-gray-50/60 px-6 py-10 text-center">
+              <div className="flex flex-col items-center justify-center rounded-sm border border-dashed border-gray-200 bg-gray-50/60 px-6 py-10 text-center">
                 <span className="text-gray-300">{ClipboardClockIcon}</span>
                 <p className="mt-3 text-sm font-semibold text-gray-500">
                   Disbursement tracking will be available after project initialization.
@@ -1018,7 +1018,7 @@ export const AddProjectForm = () => {
             </div>
             <div>
               <p className={labelClass}>Revised Contract Cost History</p>
-              <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-200 bg-gray-50/60 px-6 py-10 text-center">
+              <div className="flex flex-col items-center justify-center rounded-sm border border-dashed border-gray-200 bg-gray-50/60 px-6 py-10 text-center">
                 <span className="text-gray-300">{WalletIcon}</span>
                 <p className="mt-3 text-sm font-semibold text-gray-500">
                   Revised Contract tracking will be available after project initialization.
@@ -1169,7 +1169,7 @@ export const AddProjectForm = () => {
             />
             <div className="grid grid-cols-3 gap-3 p-5">
               {/* Female */}
-              <div className="rounded-xl border border-gray-200 bg-gray-50 p-3.5">
+              <div className="rounded-sm border border-gray-200 bg-gray-50 p-3.5">
                 <div className="flex items-center justify-between">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Female</p>
                   <span className="text-sm text-pink-400">♀</span>
@@ -1185,7 +1185,7 @@ export const AddProjectForm = () => {
                 </div>
               </div>
               {/* Male */}
-              <div className="rounded-xl border border-gray-200 bg-gray-50 p-3.5">
+              <div className="rounded-sm border border-gray-200 bg-gray-50 p-3.5">
                 <div className="flex items-center justify-between">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Male</p>
                   <span className="text-sm text-blue-400">♂</span>
@@ -1201,7 +1201,7 @@ export const AddProjectForm = () => {
                 </div>
               </div>
               {/* Total */}
-              <div className="rounded-xl border border-blue-200 bg-blue-50 p-3.5">
+              <div className="rounded-sm border border-blue-200 bg-blue-50 p-3.5">
                 <div className="flex items-center justify-between">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-blue-500">Total</p>
                   <svg className="h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
