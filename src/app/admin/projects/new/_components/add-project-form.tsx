@@ -7,7 +7,7 @@ import { api } from "~/trpc/react";
 import { useUploadThing } from "~/lib/uploadthing";
 import {
   SOURCE_OF_FUND_LABEL,
-  SOURCE_OF_FUND_ORDER,
+  SOURCE_OF_FUND_SELECTABLE,
   PROJECT_SUB_TYPE_LABEL,
   PROJECT_STATUS_LABEL,
   PROJECT_STATUS_ORDER,
@@ -903,7 +903,7 @@ export const AddProjectForm = () => {
                 className={`${inputClass} ${showErrors && fieldErrors.sourceOfFund ? errorRingClass : ""}`}
               >
                 <option value="">Select Source</option>
-                {SOURCE_OF_FUND_ORDER.map((k) => (
+                {SOURCE_OF_FUND_SELECTABLE.map((k) => (
                   <option key={k} value={k}>{SOURCE_OF_FUND_LABEL[k]}</option>
                 ))}
               </select>

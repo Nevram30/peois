@@ -665,7 +665,8 @@ const ProjectsList = () => {
               <table className="w-full min-w-275 text-left text-sm">
                 <thead>
                   <tr className="border-b border-gray-200 bg-gray-50 text-gray-500 uppercase text-xs tracking-wider">
-                    <th className="px-4 py-3 font-medium">Project Title & Project Cost</th>
+                    <th className="px-4 py-3 font-medium">Project ID</th>
+                    <th className="px-4 py-3 font-medium">Project Title & Cost</th>
                     <th className="px-4 py-3 font-medium">Mode</th>
                     <th className="px-4 py-3 font-medium">District</th>
                     <th className="px-4 py-3 font-medium">Source / Sub</th>
@@ -683,6 +684,9 @@ const ProjectsList = () => {
                       key={p.id}
                       className="border-b border-gray-100 hover:bg-gray-50"
                     >
+                      <td className="whitespace-nowrap px-4 py-3 font-mono text-gray-600">
+                        {p.projectCode}
+                      </td>
                       <td className="px-4 py-3">
                         <p className="font-medium text-gray-900">{p.title}</p>
                         <p className="text-xs text-gray-500 mt-0.5">

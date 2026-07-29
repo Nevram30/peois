@@ -275,6 +275,19 @@ export const SOURCE_OF_FUND_ORDER: SourceOfFundValue[] = [
   "MIADP",
 ];
 
+// Sources selectable when creating a new project (Funding Information).
+export const SOURCE_OF_FUND_SELECTABLE: SourceOfFundValue[] = [
+  "TWENTY_PERCENT_DEV_FUND",
+  "GENERAL_FUND",
+  "FIVE_PERCENT_CALAMITY_FUND",
+  "SEF",
+  "MOOE",
+  "TRUST_FUND",
+  "NCDC",
+  "PRDP",
+  "MIADP",
+];
+
 // ─── Funding Information cascade (Source of Fund → Program → Project) ────
 // Selecting a Source of Fund filters its Programs; selecting a Program then
 // filters its related Projects. Programs are uniquely tied to a Source of
