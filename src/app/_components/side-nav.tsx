@@ -55,8 +55,8 @@ export const SideNav = ({
           }`}
       >
         {open && (
-          <span className="text-xs font-semibold uppercase tracking-wide text-gray-400">
-            Navigation
+          <span className="text-xs font-semibold tracking-wide text-gray-400">
+            Main Navigation
           </span>
         )}
         <button
@@ -67,11 +67,11 @@ export const SideNav = ({
         >
           {open ? (
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="m18.75 4.5-7.5 7.5 7.5 7.5m-6-15L5.25 12l7.5 7.5" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
             </svg>
           ) : (
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
             </svg>
           )}
         </button>

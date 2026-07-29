@@ -43,7 +43,7 @@ export const AdminDashboardContent = () => {
         { label: "OTHERS", value: statsData?.others ?? "0", borderColor: "border-slate-400", iconBg: "bg-slate-100", iconColor: "text-slate-500", icon: "⋯" },
     ];
 
-    const budgetYearTile: StatCard = { label: "BUDGET YEAR", value: dashboardYear || "All", borderColor: "border-blue-600", iconBg: "bg-blue-100", iconColor: "text-blue-600", icon: "📅" };
+    const budgetYearTile: StatCard = { label: "BUDGET YEAR", value: dashboardYear || "All", borderColor: "border-transparent", iconBg: "bg-blue-100", iconColor: "text-blue-600", icon: "📅" };
 
     // Office divisions keep the original single-row layout: small Budget Year
     // tile + six status tiles (incl. OTHERS).
@@ -95,16 +95,18 @@ export const AdminDashboardContent = () => {
                     // District admins: big Budget Year card spanning both rows,
                     // six status tiles (incl. OTHERS) in a 3×2 grid beside it.
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 content-start">
-                        <div className="col-span-2 sm:col-span-1 sm:row-span-2 bg-white rounded-xl shadow-sm border-2 border-blue-600 flex flex-col items-center justify-center gap-1 p-3 text-center">
+                        <div className="col-span-2 sm:col-span-1 sm:row-span-2 bg-white rounded-xl shadow-sm flex flex-col items-center justify-center gap-1 p-3 text-center">
                             <p className="text-sm font-bold text-slate-700 leading-tight">Budget Year</p>
                             <p className="text-3xl font-extrabold text-slate-900 leading-none">{dashboardYear || "All"}</p>
                         </div>
                         {statusTiles.map((c) => (
-                            <div key={c.label} className={`bg-white rounded-lg shadow-sm p-3 flex flex-col gap-1 border-t-[3px] ${c.borderColor}`}>
-                                <div className={`w-6 h-6 rounded-md ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>
-                                    {c.icon}
+                            <div key={c.label} className="bg-white rounded-lg shadow-sm p-3 flex items-center justify-between gap-2">
+                                <div className="flex flex-col gap-1">
+                                    <div className={`w-6 h-6 rounded-md ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>
+                                        {c.icon}
+                                    </div>
+                                    <p className="text-[9px] font-bold text-slate-500 leading-tight tracking-wide">{c.label}</p>
                                 </div>
-                                <p className="text-[9px] font-bold text-slate-500 leading-tight tracking-wide">{c.label}</p>
                                 <p className="text-2xl font-extrabold text-slate-900 leading-none">{c.value}</p>
                             </div>
                         ))}
@@ -112,11 +114,13 @@ export const AdminDashboardContent = () => {
                 ) : (
                     <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 content-start">
                         {statCards.map((c) => (
-                            <div key={c.label} className={`bg-white rounded-lg shadow-sm p-3 flex flex-col gap-1 border-t-[3px] ${c.borderColor}`}>
-                                <div className={`w-6 h-6 rounded-md ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>
-                                    {c.icon}
+                            <div key={c.label} className="bg-white rounded-lg shadow-sm p-3 flex items-center justify-between gap-2">
+                                <div className="flex flex-col gap-1">
+                                    <div className={`w-6 h-6 rounded-md ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>
+                                        {c.icon}
+                                    </div>
+                                    <p className="text-[9px] font-bold text-slate-500 leading-tight tracking-wide">{c.label}</p>
                                 </div>
-                                <p className="text-[9px] font-bold text-slate-500 leading-tight tracking-wide">{c.label}</p>
                                 <p className="text-2xl font-extrabold text-slate-900 leading-none">{c.value}</p>
                             </div>
                         ))}
