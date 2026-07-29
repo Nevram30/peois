@@ -230,7 +230,9 @@ export const AdminShell = ({
                   <p className="text-sm font-medium leading-tight">
                     {displayName ?? displayEmail}
                   </p>
-                  <p className="text-xs text-gray-500">{user.designation ?? "Administrator"}</p>
+                  <p className="text-xs text-gray-500">
+                    {`${user.designation ?? "Administrator"}${me?.division ? ` - ${me.division}` : ""}`}
+                  </p>
                 </div>
                 {avatarImage ? (
                   <div className="relative h-9 w-9 overflow-hidden rounded-full ring-2 ring-gray-200">
