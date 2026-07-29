@@ -94,7 +94,7 @@ export const AdminDashboardContent = () => {
                 ) : districtOnSide ? (
                     // District admins: big Budget Year card spanning both rows,
                     // six status tiles (incl. OTHERS) in a 3×2 grid beside it.
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 content-start">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                         <div className="col-span-2 sm:col-span-1 sm:row-span-2 bg-white rounded-xl shadow-sm flex flex-col items-center justify-center gap-1 p-3 text-center">
                             <p className="text-sm font-bold text-slate-700 leading-tight">Budget Year</p>
                             <p className="text-3xl font-extrabold text-slate-900 leading-none">{dashboardYear || "All"}</p>
@@ -112,7 +112,7 @@ export const AdminDashboardContent = () => {
                         ))}
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 content-start">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
                         {statCards.map((c) => (
                             <div key={c.label} className="bg-white rounded-lg shadow-sm p-3 flex items-center justify-between gap-2">
                                 <div className="flex flex-col gap-1">

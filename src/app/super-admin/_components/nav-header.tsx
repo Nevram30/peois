@@ -149,7 +149,7 @@ export const NavHeader = ({
                 />
               </div>
               <div className="min-w-0">
-                <h1 className="text-sm font-bold text-gray-900 sm:text-lg">PEO MIS</h1>
+                <h1 className="text-sm font-bold text-gray-900 sm:text-lg">PEO - MIS</h1>
                 <p className="hidden text-xs text-gray-500 sm:block">Super Admin Console</p>
               </div>
             </div>
@@ -160,10 +160,10 @@ export const NavHeader = ({
                 className="flex items-center gap-3 px-2 py-1"
                 title={user.name ?? user.email ?? "Account"}
               >
-                  <span className="hidden text-sm font-medium text-gray-700 sm:block">{user.name ?? user.email}</span>
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-sm font-medium text-white ring-2 ring-blue-200 transition hover:ring-blue-300">
-                    {getInitials(user.name, user.email)}
-                  </div>
+                <span className="hidden text-sm font-medium text-gray-700 sm:block">{user.name ?? user.email}</span>
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-sm font-medium text-white ring-2 ring-blue-200 transition hover:ring-blue-300">
+                  {getInitials(user.name, user.email)}
+                </div>
               </div>
 
               <Link

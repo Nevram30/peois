@@ -217,12 +217,9 @@ export const AdminShell = ({
                 <h1 className="text-sm font-semibold leading-tight sm:text-lg">
                   <span className="sm:hidden">PEO - PMIS</span>
                   <span className="hidden sm:inline">
-                    PEO - Project Management Information System
+                    PEO - PMIS
                   </span>
                 </h1>
-                <p className="hidden text-xs text-gray-500 sm:block">
-                  Provincial Government of Davao del Norte
-                </p>
               </div>
             </div>
             <div className="flex shrink-0 items-center gap-2 sm:gap-4">

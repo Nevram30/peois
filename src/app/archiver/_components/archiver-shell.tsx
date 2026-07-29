@@ -80,12 +80,9 @@ export const ArchiverShell = ({
                 <h1 className="text-sm font-semibold leading-tight sm:text-lg">
                   <span className="sm:hidden">PEO - PMIS</span>
                   <span className="hidden sm:inline">
-                    PEO - Project Management Information System
+                    PEO - PMIS
                   </span>
                 </h1>
-                <p className="hidden text-xs text-gray-500 sm:block">
-                  Provincial Government of Davao del Norte
-                </p>
               </div>
             </div>
             <div className="flex shrink-0 items-center gap-2 sm:gap-4">
@@ -137,8 +134,8 @@ export const ArchiverShell = ({
               key={item.href}
               href={item.href}
               className={`-mb-px flex shrink-0 items-center gap-2 whitespace-nowrap border-b-[3px] px-4 py-2.5 text-sm transition ${isActive(item.href, item.exact)
-                  ? "border-amber-500 font-medium text-amber-600"
-                  : "border-transparent font-normal text-gray-600 hover:border-gray-300 hover:text-gray-900"
+                ? "border-amber-500 font-medium text-amber-600"
+                : "border-transparent font-normal text-gray-600 hover:border-gray-300 hover:text-gray-900"
                 }`}
             >
               {item.icon}
