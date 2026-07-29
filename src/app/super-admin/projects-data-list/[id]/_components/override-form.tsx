@@ -106,7 +106,7 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+    <div className="rounded-sm border border-gray-200 bg-white shadow-sm">
       <div className="flex items-center justify-between border-b border-gray-100 px-5 py-3.5">
         <div className="flex items-center gap-2">
           {icon}
@@ -1191,7 +1191,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
             }
           >
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <div className="rounded-xl border border-gray-200 p-4">
+              <div className="rounded-sm border border-gray-200 p-4">
                 <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-400">Female</p>
                 <div className="mt-1 flex items-center justify-between">
                   <input
@@ -1204,7 +1204,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                   <span className="text-2xl text-gray-300">♀</span>
                 </div>
               </div>
-              <div className="rounded-xl border border-gray-200 p-4">
+              <div className="rounded-sm border border-gray-200 p-4">
                 <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-400">Male</p>
                 <div className="mt-1 flex items-center justify-between">
                   <input
@@ -1217,7 +1217,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                   <span className="text-2xl text-gray-300">♂</span>
                 </div>
               </div>
-              <div className="rounded-xl border border-gray-200 p-4">
+              <div className="rounded-sm border border-gray-200 p-4">
                 <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-400">Total</p>
                 <div className="mt-1 flex items-center justify-between">
                   <span className="text-4xl font-bold text-blue-900">{form.numFemale + form.numMale}</span>
@@ -1429,7 +1429,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                         key={p.value}
                         type="button"
                         onClick={() => setNotifPriority(p.value)}
-                        className={`relative flex flex-col items-center justify-center gap-1 rounded-xl border-2 px-2 py-3 transition ${selected ? p.selectedCard : "border-gray-200 bg-white hover:border-gray-300"}`}
+                        className={`relative flex flex-col items-center justify-center gap-1 rounded-sm border-2 px-2 py-3 transition ${selected ? p.selectedCard : "border-gray-200 bg-white hover:border-gray-300"}`}
                       >
                         {selected && (
                           <span className={`absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full text-white ${p.checkBg}`}>
@@ -1484,7 +1484,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
         </SectionCard>
 
         {/* ADMINISTRATIVE AUTHORIZATION */}
-        <div className="rounded-xl bg-gray-900 px-6 py-5 shadow-sm">
+        <div className="rounded-sm bg-gray-900 px-6 py-5 shadow-sm">
           <div className="mb-3 flex items-center gap-2">
             <svg className="h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 4.556-3.04 8.4-7.2 9.6a.75.75 0 0 1-.6 0C9.04 20.4 6 16.556 6 12V6.741a.75.75 0 0 1 .53-.717A11.21 11.21 0 0 0 12 3.74a11.21 11.21 0 0 0 5.47 2.284.75.75 0 0 1 .53.717V12Z" />
@@ -1511,7 +1511,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
         </div>
 
         {/* ADMINISTRATIVE UPDATE HISTORY AUDIT TRAIL */}
-        <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+        <div className="rounded-sm border border-gray-200 bg-white shadow-sm">
           <div className="border-b border-gray-100 px-6 py-4">
             <div className="flex items-center gap-2">
               <svg className="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">

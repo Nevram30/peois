@@ -312,7 +312,7 @@ export default function ProjectsDataListPage() {
   return (
     <>
       {/* Project Cards Year Filter */}
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-5 py-3 shadow-sm">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-sm border border-gray-200 bg-white px-5 py-3 shadow-sm">
         <div className="flex items-center gap-2.5">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -368,102 +368,102 @@ export default function ProjectsDataListPage() {
       {/* Colored Summary Cards */}
       <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8 xl:grid-cols-8">
         {/* Budget Year */}
-        <div className="flex flex-col rounded-2xl bg-blue-600 p-4 text-white shadow-sm">
+        <div className="flex flex-col rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
           <div className="mb-2 flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">
+            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
               Budget Year
             </span>
-            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <svg className="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
             </svg>
           </div>
-          <p className="text-3xl font-extrabold leading-none">
+          <p className="text-3xl font-extrabold leading-none text-gray-900">
             {financial?.budgetYear ?? new Date().getFullYear()}
           </p>
         </div>
 
         {/* Number of Projects */}
-        <div className="flex flex-col rounded-2xl bg-indigo-500 p-4 text-white shadow-sm">
+        <div className="flex flex-col rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
           <div className="mb-2 flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">No. of Projects</span>
-            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">No. of Projects</span>
+            <svg className="h-4 w-4 text-indigo-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
             </svg>
           </div>
-          <p className="text-3xl font-extrabold leading-none">{stats?.total ?? 0}</p>
-          <p className="mt-1 text-xs opacity-70">Projects</p>
+          <p className="text-3xl font-extrabold leading-none text-gray-900">{stats?.total ?? 0}</p>
+          <p className="mt-1 text-xs text-gray-400">Projects</p>
         </div>
 
         {/* Completed */}
-        <div className="flex flex-col rounded-2xl bg-teal-500 p-4 text-white shadow-sm">
+        <div className="flex flex-col rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
           <div className="mb-2 flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Completed</span>
-            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Completed</span>
+            <svg className="h-4 w-4 text-teal-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
           </div>
-          <p className="text-3xl font-extrabold leading-none">{stats?.completed ?? 0}</p>
-          <p className="mt-1 text-xs opacity-70">Projects</p>
+          <p className="text-3xl font-extrabold leading-none text-gray-900">{stats?.completed ?? 0}</p>
+          <p className="mt-1 text-xs text-gray-400">Projects</p>
         </div>
 
         {/* Suspended */}
-        <div className="flex flex-col rounded-2xl bg-red-500 p-4 text-white shadow-sm">
+        <div className="flex flex-col rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
           <div className="mb-2 flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Suspended</span>
-            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Suspended</span>
+            <svg className="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
             </svg>
           </div>
-          <p className="text-3xl font-extrabold leading-none">{stats?.suspended ?? 0}</p>
-          <p className="mt-1 text-xs opacity-70">Projects</p>
+          <p className="text-3xl font-extrabold leading-none text-gray-900">{stats?.suspended ?? 0}</p>
+          <p className="mt-1 text-xs text-gray-400">Projects</p>
         </div>
 
         {/* For Implementation */}
-        <div className="flex flex-col rounded-2xl bg-amber-500 p-4 text-white shadow-sm">
+        <div className="flex flex-col rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
           <div className="mb-2 flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">For Implementation</span>
-            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">For Implementation</span>
+            <svg className="h-4 w-4 text-amber-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
           </div>
-          <p className="text-3xl font-extrabold leading-none">{stats?.forImplementation ?? 0}</p>
-          <p className="mt-1 text-xs opacity-70">Projects</p>
+          <p className="text-3xl font-extrabold leading-none text-gray-900">{stats?.forImplementation ?? 0}</p>
+          <p className="mt-1 text-xs text-gray-400">Projects</p>
         </div>
 
         {/* On-Going */}
-        <div className="flex flex-col rounded-2xl bg-orange-400 p-4 text-white shadow-sm">
+        <div className="flex flex-col rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
           <div className="mb-2 flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">On-going</span>
-            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">On-going</span>
+            <svg className="h-4 w-4 text-orange-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
             </svg>
           </div>
-          <p className="text-3xl font-extrabold leading-none">{stats?.ongoing ?? 0}</p>
-          <p className="mt-1 text-xs opacity-70">Projects</p>
+          <p className="text-3xl font-extrabold leading-none text-gray-900">{stats?.ongoing ?? 0}</p>
+          <p className="mt-1 text-xs text-gray-400">Projects</p>
         </div>
 
         {/* Re-alignment */}
-        <div className="flex flex-col rounded-2xl bg-purple-500 p-4 text-white shadow-sm">
+        <div className="flex flex-col rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
           <div className="mb-2 flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Re-alignment</span>
-            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Re-alignment</span>
+            <svg className="h-4 w-4 text-purple-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
             </svg>
           </div>
-          <p className="text-3xl font-extrabold leading-none">{stats?.reAlignment ?? 0}</p>
-          <p className="mt-1 text-xs opacity-70">Projects</p>
+          <p className="text-3xl font-extrabold leading-none text-gray-900">{stats?.reAlignment ?? 0}</p>
+          <p className="mt-1 text-xs text-gray-400">Projects</p>
         </div>
 
         {/* Others */}
-        <div className="flex flex-col rounded-2xl bg-slate-500 p-4 text-white shadow-sm">
+        <div className="flex flex-col rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
           <div className="mb-2 flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Others</span>
-            <svg className="h-4 w-4 opacity-70" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Others</span>
+            <svg className="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
             </svg>
           </div>
-          <p className="text-3xl font-extrabold leading-none">{stats?.others ?? 0}</p>
-          <p className="mt-1 text-xs opacity-70">Projects</p>
+          <p className="text-3xl font-extrabold leading-none text-gray-900">{stats?.others ?? 0}</p>
+          <p className="mt-1 text-xs text-gray-400">Projects</p>
         </div>
 
       </div>
@@ -523,7 +523,7 @@ export default function ProjectsDataListPage() {
         });
 
         return (
-          <div className="mb-8 rounded-2xl border border-gray-100 bg-white shadow-sm">
+          <div className="mb-8 rounded-sm border border-gray-100 bg-white shadow-sm">
             {/* Header */}
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-4 py-4 sm:px-6">
               <div>
@@ -719,7 +719,7 @@ export default function ProjectsDataListPage() {
       })()}
 
       {/* Filter bar */}
-      <div className="mb-4 rounded-xl border border-gray-200 bg-white px-5 py-4 shadow-sm">
+      <div className="mb-4 rounded-sm border border-gray-200 bg-white px-5 py-4 shadow-sm">
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-9">
           {/* Mode */}
           <div>
@@ -875,7 +875,7 @@ export default function ProjectsDataListPage() {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-sm border border-gray-200 bg-white shadow-sm">
         {/* Table Header — title + inline filters */}
         <div className="flex flex-wrap items-center gap-2 border-b border-gray-100 px-5 py-4">
           {/* Title */}

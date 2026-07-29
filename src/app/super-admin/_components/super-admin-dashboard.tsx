@@ -1289,7 +1289,7 @@ export function UserManagementContent() {
       </div>
 
       {/* Users Table */}
-      <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="rounded-sm border border-gray-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full min-w-250 text-left text-sm">
             <thead>
