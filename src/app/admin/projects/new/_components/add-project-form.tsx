@@ -9,12 +9,20 @@ import {
   SOURCE_OF_FUND_LABEL,
   SOURCE_OF_FUND_ORDER,
   PROJECT_SUB_TYPE_LABEL,
-  SOURCE_TO_SUB_TYPES,
   PROJECT_STATUS_LABEL,
   PROJECT_STATUS_ORDER,
+  FUNDING_PROGRAM_LABEL,
+  SOURCE_TO_PROGRAMS,
+  PROGRAM_TO_PROJECTS,
+  PROJECT_ACCOUNT_VALUES,
+  PROJECT_ACCOUNT_LABEL,
+  SUPPLEMENTAL_BUDGET_YEARS,
+  SUPPLEMENTAL_BUDGET_NUMBERS,
   type SourceOfFundValue,
   type ProjectSubTypeValue,
   type ProjectStatusValue,
+  type FundingProgramValue,
+  type ProjectAccountValue,
 } from "~/lib/fund-constants";
 import {
   getMunicipalitiesByDistrict,
@@ -145,6 +153,11 @@ const BillIcon = (
     <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
   </svg>
 );
+const WalletSmallIcon = (
+  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a2.25 2.25 0 0 0-2.25-2.25H15a3 3 0 1 1-6 0H5.25A2.25 2.25 0 0 0 3 12m18 0v6a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 9m18 0V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v3" />
+  </svg>
+);
 const ClipboardClockIcon = (
   <svg className="h-9 w-9" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h.008m-3.008 9h11.25a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125H9.75M8.25 8.25h6.75" />
@@ -199,10 +212,15 @@ export const AddProjectForm = () => {
   const [purok, setPurok] = useState("");
   const [sitio, setSitio] = useState("");
 
-  // ── Funding & Disbursement Tracking ──────────────────────────────────
+  // ── Funding Information ──────────────────────────────────────────────
   const [sourceOfFund, setSourceOfFund] = useState<SourceOfFundValue | "">("");
+  const [program, setProgram] = useState<FundingProgramValue | "">("");
   const [subType, setSubType] = useState("");
+  const [projectAccount, setProjectAccount] = useState<ProjectAccountValue | "">("");
   const [budgetYear, setBudgetYear] = useState(String(new Date().getFullYear()));
+  const [landbankNumber, setLandbankNumber] = useState("");
+  const [supplementalBudgetYear, setSupplementalBudgetYear] = useState("");
+  const [supplementalBudgetNumber, setSupplementalBudgetNumber] = useState("");
 
   // ── Project Timeline ─────────────────────────────────────────────────
   const [dateStarted, setDateStarted] = useState("");
@@ -269,9 +287,14 @@ export const AddProjectForm = () => {
     () => getBarangaysByMunicipality(cityMunicipality),
     [cityMunicipality],
   );
-  const availableSubTypes = useMemo(
-    () => (sourceOfFund ? SOURCE_TO_SUB_TYPES[sourceOfFund] : []),
+  // Cascade: Source of Fund → Program → Project
+  const availablePrograms = useMemo(
+    () => (sourceOfFund ? SOURCE_TO_PROGRAMS[sourceOfFund] : []),
     [sourceOfFund],
+  );
+  const availableSubTypes = useMemo(
+    () => (program ? PROGRAM_TO_PROJECTS[program] : []),
+    [program],
   );
 
   // ── Handlers ─────────────────────────────────────────────────────────
@@ -426,7 +449,9 @@ export const AddProjectForm = () => {
       purok: !purok.trim(),
       sitio: !sitio.trim(),
       sourceOfFund: !sourceOfFund,
+      program: availablePrograms.length > 0 && !program,
       subType: availableSubTypes.length > 0 && !subType,
+      projectAccount: !projectAccount,
       budgetYear: !budgetYear,
       dateStarted: !dateStarted,
       targetCompletionDate: !targetCompletionDate,
@@ -451,8 +476,11 @@ export const AddProjectForm = () => {
       purok,
       sitio,
       sourceOfFund,
+      program,
+      availablePrograms,
       subType,
       availableSubTypes,
+      projectAccount,
       budgetYear,
       dateStarted,
       targetCompletionDate,
@@ -474,6 +502,11 @@ export const AddProjectForm = () => {
     createProject.mutate({
       title,
       subType: subType ? (subType as ProjectSubTypeValue) : null,
+      program: program || null,
+      projectAccount: projectAccount || null,
+      landbankNumber: landbankNumber.trim() || null,
+      supplementalBudgetYear: supplementalBudgetYear || null,
+      supplementalBudgetNumber: supplementalBudgetNumber || null,
       modeOfImplementation: modeOfImplementation as "BY_ADMINISTRATION" | "BY_CONTRACT",
       locationImplementation: district as "DISTRICT_I" | "DISTRICT_II",
       sourceOfFund: sourceOfFund as SourceOfFundValue,
@@ -812,94 +845,187 @@ export const AddProjectForm = () => {
           </section>
         </div>
 
-        {/* ── Funding & Disbursement Tracking ───────────────────────── */}
+        {/* ── Funding Information ───────────────────────────────────── */}
         <section className={cardClass}>
-          <SectionHeader icon={BillIcon} title="Funding & Disbursement Tracking" />
-          <div className="grid grid-cols-1 gap-6 p-5 lg:grid-cols-[minmax(0,320px)_1fr]">
-            {/* Left column — funding selects */}
-            <div className="space-y-4">
-              <div>
-                <label className={labelClass}>Source of Fund <span className="text-red-500">*</span></label>
-                <select
-                  required
-                  value={sourceOfFund}
-                  onChange={(e) => {
-                    const next = e.target.value as SourceOfFundValue | "";
-                    setSourceOfFund(next);
-                    const allowed = next ? SOURCE_TO_SUB_TYPES[next] : [];
-                    if (!allowed.includes(subType as ProjectSubTypeValue)) setSubType("");
-                  }}
-                  className={`${inputClass} ${showErrors && fieldErrors.sourceOfFund ? errorRingClass : ""}`}
-                >
-                  <option value="">Select Source</option>
-                  {SOURCE_OF_FUND_ORDER.map((k) => (
-                    <option key={k} value={k}>{SOURCE_OF_FUND_LABEL[k]}</option>
-                  ))}
-                </select>
-                <FieldError show={showErrors && fieldErrors.sourceOfFund} />
+          <SectionHeader icon={BillIcon} title="Funding Information" />
+          <div className="grid grid-cols-1 gap-x-6 gap-y-4 p-5 lg:grid-cols-2">
+            <div>
+              <label className={labelClass}>Budget Year <span className="text-red-500">*</span></label>
+              <select
+                value={budgetYear}
+                onChange={(e) => setBudgetYear(e.target.value)}
+                className={`${inputClass} ${showErrors && fieldErrors.budgetYear ? errorRingClass : ""}`}
+              >
+                <option value="">Select year</option>
+                {Array.from({ length: 10 }, (_, i) => String(new Date().getFullYear() - i)).map((y) => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
+              </select>
+              <FieldError show={showErrors && fieldErrors.budgetYear} />
+            </div>
+            <div>
+              <label className={labelClass}>Program <span className="text-red-500">*</span></label>
+              <select
+                value={program}
+                onChange={(e) => {
+                  const next = e.target.value as FundingProgramValue | "";
+                  setProgram(next);
+                  const allowed = next ? PROGRAM_TO_PROJECTS[next] : [];
+                  if (!allowed.includes(subType as ProjectSubTypeValue)) setSubType("");
+                }}
+                disabled={!sourceOfFund || availablePrograms.length === 0}
+                className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400 ${showErrors && fieldErrors.program ? errorRingClass : ""}`}
+              >
+                <option value="">
+                  {!sourceOfFund
+                    ? "Select Source first"
+                    : availablePrograms.length === 0
+                      ? "No programs available"
+                      : "Select Program"}
+                </option>
+                {availablePrograms.map((k) => (
+                  <option key={k} value={k}>{FUNDING_PROGRAM_LABEL[k]}</option>
+                ))}
+              </select>
+              <FieldError show={showErrors && fieldErrors.program} />
+            </div>
+            <div>
+              <label className={labelClass}>Source of Fund <span className="text-red-500">*</span></label>
+              <select
+                required
+                value={sourceOfFund}
+                onChange={(e) => {
+                  const next = e.target.value as SourceOfFundValue | "";
+                  setSourceOfFund(next);
+                  setProgram("");
+                  setSubType("");
+                }}
+                className={`${inputClass} ${showErrors && fieldErrors.sourceOfFund ? errorRingClass : ""}`}
+              >
+                <option value="">Select Source</option>
+                {SOURCE_OF_FUND_ORDER.map((k) => (
+                  <option key={k} value={k}>{SOURCE_OF_FUND_LABEL[k]}</option>
+                ))}
+              </select>
+              <FieldError show={showErrors && fieldErrors.sourceOfFund} />
+            </div>
+            <div>
+              <label className={labelClass}>Project <span className="text-red-500">*</span></label>
+              <select
+                value={subType}
+                onChange={(e) => setSubType(e.target.value)}
+                disabled={!program || availableSubTypes.length === 0}
+                className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400 ${showErrors && fieldErrors.subType ? errorRingClass : ""}`}
+              >
+                <option value="">
+                  {!program
+                    ? "Select Program first"
+                    : availableSubTypes.length === 0
+                      ? "No projects available"
+                      : "Select Project"}
+                </option>
+                {availableSubTypes.map((k) => (
+                  <option key={k} value={k}>{PROJECT_SUB_TYPE_LABEL[k]}</option>
+                ))}
+              </select>
+              <FieldError show={showErrors && fieldErrors.subType} />
+            </div>
+            <div>
+              <label className={labelClass}>Supplemental Budget Year</label>
+              <select
+                value={supplementalBudgetYear}
+                onChange={(e) => setSupplementalBudgetYear(e.target.value)}
+                className={inputClass}
+              >
+                <option value="">Optional</option>
+                {SUPPLEMENTAL_BUDGET_YEARS.map((y) => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className={labelClass}>Project Account <span className="text-red-500">*</span></label>
+              <select
+                value={projectAccount}
+                onChange={(e) => setProjectAccount(e.target.value as ProjectAccountValue | "")}
+                className={`${inputClass} ${showErrors && fieldErrors.projectAccount ? errorRingClass : ""}`}
+              >
+                <option value="">Select Project Account</option>
+                {PROJECT_ACCOUNT_VALUES.map((k) => (
+                  <option key={k} value={k}>{PROJECT_ACCOUNT_LABEL[k]}</option>
+                ))}
+              </select>
+              <FieldError show={showErrors && fieldErrors.projectAccount} />
+            </div>
+            <div>
+              <label className={labelClass}>Supplemental Budget Number</label>
+              <select
+                value={supplementalBudgetNumber}
+                onChange={(e) => setSupplementalBudgetNumber(e.target.value)}
+                className={inputClass}
+              >
+                <option value="">Optional</option>
+                {SUPPLEMENTAL_BUDGET_NUMBERS.map((n) => (
+                  <option key={n} value={n}>{n}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className={labelClass}>*LANDBANK [LBP-TL#]</label>
+              <input
+                type="text"
+                value={landbankNumber}
+                onChange={(e) => setLandbankNumber(e.target.value)}
+                placeholder="Optional — e.g. 28"
+                className={inputClass}
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* ── Financial Summary ─────────────────────────────────────── */}
+        <section className={cardClass}>
+          <SectionHeader icon={WalletSmallIcon} title="Financial Summary" />
+          <div className="space-y-6 p-5">
+            {/* Balance tiles — no data until project initialization */}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <div className="rounded-xl border border-gray-200 bg-gray-50/60 px-4 py-3.5">
+                <p className="text-sm font-bold text-blue-800">Total Remaining Balance</p>
+                <p className="mt-1 text-lg font-extrabold text-gray-300">—</p>
               </div>
-              <div>
-                <label className={labelClass}>Fund Category <span className="text-red-500">*</span></label>
-                <select
-                  value={subType}
-                  onChange={(e) => setSubType(e.target.value)}
-                  disabled={!sourceOfFund || availableSubTypes.length === 0}
-                  className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400 ${showErrors && fieldErrors.subType ? errorRingClass : ""}`}
-                >
-                  <option value="">
-                    {!sourceOfFund
-                      ? "Select Source first"
-                      : availableSubTypes.length === 0
-                        ? "No sub-categories available"
-                        : "Select Sub-Category"}
-                  </option>
-                  {availableSubTypes.map((k) => (
-                    <option key={k} value={k}>{PROJECT_SUB_TYPE_LABEL[k]}</option>
-                  ))}
-                </select>
-                <FieldError show={showErrors && fieldErrors.subType} />
+              <div className="rounded-xl border border-gray-200 bg-gray-50/60 px-4 py-3.5">
+                <p className="text-sm font-bold text-blue-800">Primary Fund Balance</p>
+                <p className="mt-1 text-lg font-extrabold text-gray-300">—</p>
               </div>
-              <div>
-                <label className={labelClass}>Budget Year <span className="text-red-500">*</span></label>
-                <select
-                  value={budgetYear}
-                  onChange={(e) => setBudgetYear(e.target.value)}
-                  className={`${inputClass} ${showErrors && fieldErrors.budgetYear ? errorRingClass : ""}`}
-                >
-                  <option value="">Select year</option>
-                  {Array.from({ length: 10 }, (_, i) => String(new Date().getFullYear() - i)).map((y) => (
-                    <option key={y} value={y}>{y}</option>
-                  ))}
-                </select>
-                <FieldError show={showErrors && fieldErrors.budgetYear} />
+              <div className="rounded-xl border border-gray-200 bg-gray-50/60 px-4 py-3.5">
+                <p className="text-sm font-bold text-blue-800">Variation Order Balance</p>
+                <p className="mt-1 text-lg font-extrabold text-gray-300">—</p>
               </div>
             </div>
 
-            {/* Right column — tracking placeholders (available after project init) */}
-            <div className="space-y-6">
-              <div>
-                <p className={labelClass}>Recent Disbursements</p>
-                <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-200 bg-gray-50/60 px-6 py-10 text-center">
-                  <span className="text-gray-300">{ClipboardClockIcon}</span>
-                  <p className="mt-3 text-sm font-semibold text-gray-500">
-                    Disbursement tracking will be available after project initialization.
-                  </p>
-                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
-                    Awaiting system activation of financial module
-                  </p>
-                </div>
+            {/* Tracking placeholders (available after project init) */}
+            <div>
+              <p className={labelClass}>Recent Disbursements</p>
+              <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-200 bg-gray-50/60 px-6 py-10 text-center">
+                <span className="text-gray-300">{ClipboardClockIcon}</span>
+                <p className="mt-3 text-sm font-semibold text-gray-500">
+                  Disbursement tracking will be available after project initialization.
+                </p>
+                <p className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                  Awaiting system activation of financial module
+                </p>
               </div>
-              <div>
-                <p className={labelClass}>Revised Contract Cost History</p>
-                <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-200 bg-gray-50/60 px-6 py-10 text-center">
-                  <span className="text-gray-300">{WalletIcon}</span>
-                  <p className="mt-3 text-sm font-semibold text-gray-500">
-                    Revised Contract tracking will be available after project initialization.
-                  </p>
-                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
-                    Awaiting system activation of financial module
-                  </p>
-                </div>
+            </div>
+            <div>
+              <p className={labelClass}>Revised Contract Cost History</p>
+              <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-200 bg-gray-50/60 px-6 py-10 text-center">
+                <span className="text-gray-300">{WalletIcon}</span>
+                <p className="mt-3 text-sm font-semibold text-gray-500">
+                  Revised Contract tracking will be available after project initialization.
+                </p>
+                <p className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                  Awaiting system activation of financial module
+                </p>
               </div>
             </div>
           </div>

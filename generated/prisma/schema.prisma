@@ -48,6 +48,7 @@ enum SourceOfFund {
   PRDP
   MIADP
   CONFIDENTIAL
+  FIVE_PERCENT_CALAMITY_FUND
 }
 
 enum District {
@@ -80,6 +81,57 @@ enum ProjectSubType {
   PDRRMO_DISASTER_PREPAREDNESS
   PAMANA
   NCDC
+  REPAIR_PROV_ROADS_DISTRICT_I
+  REPAIR_PROV_ROADS_DISTRICT_II
+  ROAD_OPENING
+  PRDP_PROVINCIAL_COUNTERPART
+  BARANGAY_PROJECTS_DISTRICT_I
+  BARANGAY_PROJECTS_DISTRICT_II
+  STIMULUS_BARANGAYS_DISTRICT_I
+  STIMULUS_BARANGAYS_DISTRICT_II
+  CONFLICT_INSURGENCY_ANTI_TERRORISM
+  ANTI_CRIMINALITY_LAWLESSNESS
+  FLOOD_CONTROL_SLOPE_PROTECTION_MOOE
+  FLOOD_CONTROL_SLOPE_PROTECTION_PPE
+  DRR_CCA_PROMOTION_AWARENESS_ADVOCACY
+  BUILDING_BACK_BETTER
+  QUICK_RESPONSE_FUND
+  CONST_CHILD_DEV_CENTERS
+  CONST_IMPVT_COMPL_SCHOOL_BLDGS
+  CONSTRUCTION_SCHOOL_BUILDINGS
+  CONSTRUCTION_SCHOOL_BUILDINGS_FACILITIES
+  REPAIR_MAINT_BUILDINGS_STRUCTURES
+  OTHER_MAINT_OPERATING_EXPENSES
+}
+
+// Funding Information cascade: Source of Fund → Program → Project (subType)
+enum FundingProgram {
+  INFRA_DEV_PROGRAM_3918
+  PEACE_ORDER_PROGRAM_3918
+  INFRA_DEV_PROGRAM_8918
+  PEACE_ORDER_PROGRAM_8918
+  HEALTH_DEV_PROGRAM_4918
+  INFRA_DEV_PROGRAM_1999
+  PEACE_ORDER_PROGRAM_1999
+  INFRA_DEV_PROGRAM_4918
+  DISASTER_PREVENTION_MITIGATION_9943
+  DISASTER_PREVENTION_MITIGATION_9942
+  DISASTER_PREPAREDNESS_9942
+  DISASTER_REHAB_RECOVERY_9941
+  ELEM_SECONDARY_EDUCATION_3311
+  ALL_OFFICES
+  PAMANA
+  DOH
+  NCDC
+  LGSF
+  PRDP
+  MIADP
+  LDRRM
+}
+
+enum ProjectAccount {
+  MOOE
+  PPE
 }
 
 enum NotificationPriority {
@@ -205,37 +257,42 @@ model UserSession {
 }
 
 model Project {
-  id                     String               @id @default(cuid())
-  projectCode            String               @unique
-  title                  String
-  subType                ProjectSubType?
-  modeOfImplementation   ModeOfImplementation
-  locationImplementation District
-  sourceOfFund           SourceOfFund
-  projectCost            Float                @default(0)
-  contractCost           Float                @default(0)
-  contractorName         String?
-  projectEngineer        String?
-  budgetYear             String?
-  dateStarted            DateTime?
-  targetCompletionDate   DateTime?
-  duration               Int                  @default(0)
-  revisedCompletionDate  DateTime?
-  dateCompleted          DateTime?
-  daysSuspended          Int                  @default(0)
-  daysExtended           Int                  @default(0)
-  numFemale              Int                  @default(0)
-  numMale                Int                  @default(0)
-  numPersons             Int                  @default(0)
-  numManDays             Int                  @default(0)
-  district               District?
-  cityMunicipality       String?
-  barangay               String?
-  purok                  String?
-  sitio                  String?
-  description            String?
-  status                 ProjectStatus        @default(NOT_YET_STARTED)
-  completionPercentage   Int                  @default(0)
+  id                       String               @id @default(cuid())
+  projectCode              String               @unique
+  title                    String
+  subType                  ProjectSubType?
+  program                  FundingProgram?
+  projectAccount           ProjectAccount?
+  modeOfImplementation     ModeOfImplementation
+  locationImplementation   District
+  sourceOfFund             SourceOfFund
+  projectCost              Float                @default(0)
+  contractCost             Float                @default(0)
+  contractorName           String?
+  projectEngineer          String?
+  budgetYear               String?
+  landbankNumber           String?
+  supplementalBudgetYear   String?
+  supplementalBudgetNumber String?
+  dateStarted              DateTime?
+  targetCompletionDate     DateTime?
+  duration                 Int                  @default(0)
+  revisedCompletionDate    DateTime?
+  dateCompleted            DateTime?
+  daysSuspended            Int                  @default(0)
+  daysExtended             Int                  @default(0)
+  numFemale                Int                  @default(0)
+  numMale                  Int                  @default(0)
+  numPersons               Int                  @default(0)
+  numManDays               Int                  @default(0)
+  district                 District?
+  cityMunicipality         String?
+  barangay                 String?
+  purok                    String?
+  sitio                    String?
+  description              String?
+  status                   ProjectStatus        @default(NOT_YET_STARTED)
+  completionPercentage     Int                  @default(0)
 
   imageUrl     String?
   documentUrl  String?
@@ -312,15 +369,17 @@ model Disbursement {
 }
 
 model VariationOrder {
-  id           String        @id @default(cuid())
+  id           String          @id @default(cuid())
   projectId    String
-  project      Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  date         DateTime      @default(now())
+  project      Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  date         DateTime        @default(now())
   sourceOfFund SourceOfFund?
+  program      FundingProgram?
+  subType      ProjectSubType?
   amount       Float
-  createdBy    User          @relation(fields: [createdById], references: [id])
+  createdBy    User            @relation(fields: [createdById], references: [id])
   createdById  String
-  createdAt    DateTime      @default(now())
+  createdAt    DateTime        @default(now())
 
   @@index([projectId])
   @@index([createdById])

@@ -13,6 +13,8 @@ import {
   PROJECT_SUB_TYPE_VALUES,
   PROJECT_STATUS_VALUES,
   DISBURSEMENT_TYPE_VALUES,
+  FUNDING_PROGRAM_VALUES,
+  PROJECT_ACCOUNT_VALUES,
 } from "~/lib/fund-constants";
 
 // Where-clause fragment limiting projects to the caller's district scope
@@ -51,6 +53,11 @@ export const projectRouter = createTRPCRouter({
       z.object({
         title: z.string().min(1, "Project title is required"),
         subType: z.enum(PROJECT_SUB_TYPE_VALUES).optional().nullable(),
+        program: z.enum(FUNDING_PROGRAM_VALUES).optional().nullable(),
+        projectAccount: z.enum(PROJECT_ACCOUNT_VALUES).optional().nullable(),
+        landbankNumber: z.string().optional().nullable(),
+        supplementalBudgetYear: z.string().optional().nullable(),
+        supplementalBudgetNumber: z.string().optional().nullable(),
         modeOfImplementation: z.enum(["BY_ADMINISTRATION", "BY_CONTRACT"]),
         locationImplementation: z.enum(["DISTRICT_I", "DISTRICT_II"]),
         sourceOfFund: z.enum(SOURCE_OF_FUND_VALUES),
@@ -99,6 +106,11 @@ export const projectRouter = createTRPCRouter({
           projectCode: input.projectCode ?? "",
           title: input.title,
           subType: input.subType,
+          program: input.program,
+          projectAccount: input.projectAccount,
+          landbankNumber: input.landbankNumber,
+          supplementalBudgetYear: input.supplementalBudgetYear,
+          supplementalBudgetNumber: input.supplementalBudgetNumber,
           modeOfImplementation: input.modeOfImplementation,
           locationImplementation: input.locationImplementation,
           sourceOfFund: input.sourceOfFund,
@@ -151,6 +163,11 @@ export const projectRouter = createTRPCRouter({
         id: z.string(),
         title: z.string().min(1, "Project title is required"),
         subType: z.enum(PROJECT_SUB_TYPE_VALUES).optional().nullable(),
+        program: z.enum(FUNDING_PROGRAM_VALUES).optional().nullable(),
+        projectAccount: z.enum(PROJECT_ACCOUNT_VALUES).optional().nullable(),
+        landbankNumber: z.string().optional().nullable(),
+        supplementalBudgetYear: z.string().optional().nullable(),
+        supplementalBudgetNumber: z.string().optional().nullable(),
         modeOfImplementation: z.enum(["BY_ADMINISTRATION", "BY_CONTRACT"]),
         locationImplementation: z.enum(["DISTRICT_I", "DISTRICT_II"]),
         sourceOfFund: z.enum(SOURCE_OF_FUND_VALUES),
@@ -323,6 +340,8 @@ export const projectRouter = createTRPCRouter({
         projectId: z.string(),
         amount: z.number().min(0),
         sourceOfFund: z.enum(SOURCE_OF_FUND_VALUES).optional(),
+        program: z.enum(FUNDING_PROGRAM_VALUES).optional().nullable(),
+        subType: z.enum(PROJECT_SUB_TYPE_VALUES).optional().nullable(),
         date: z.date().optional(),
       }),
     )
@@ -332,8 +351,32 @@ export const projectRouter = createTRPCRouter({
           projectId: input.projectId,
           amount: input.amount,
           sourceOfFund: input.sourceOfFund,
+          program: input.program,
+          subType: input.subType,
           date: input.date ?? new Date(),
           createdById: ctx.session.user.id,
+        },
+      });
+    }),
+
+  updateVariationOrder: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        amount: z.number().min(0),
+        sourceOfFund: z.enum(SOURCE_OF_FUND_VALUES).optional().nullable(),
+        program: z.enum(FUNDING_PROGRAM_VALUES).optional().nullable(),
+        subType: z.enum(PROJECT_SUB_TYPE_VALUES).optional().nullable(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.variationOrder.update({
+        where: { id: input.id },
+        data: {
+          amount: input.amount,
+          sourceOfFund: input.sourceOfFund,
+          program: input.program,
+          subType: input.subType,
         },
       });
     }),

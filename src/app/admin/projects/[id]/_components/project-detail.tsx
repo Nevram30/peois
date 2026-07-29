@@ -8,9 +8,12 @@ import {
   PROJECT_SUB_TYPE_LABEL,
   SOURCE_OF_FUND_LABEL,
   DISBURSEMENT_TYPE_LABEL,
+  FUNDING_PROGRAM_LABEL,
+  PROJECT_ACCOUNT_LABEL,
   type ProjectStatusValue,
   type ProjectSubTypeValue,
   type SourceOfFundValue,
+  type FundingProgramValue,
 } from "~/lib/fund-constants";
 
 const STATUS_PILL: Record<string, string> = {
@@ -138,6 +141,12 @@ export const ProjectDetail = ({ projectId }: Props) => {
     : "—";
   const subTypeLabel = project.subType
     ? (PROJECT_SUB_TYPE_LABEL[project.subType as ProjectSubTypeValue] ?? project.subType)
+    : "—";
+  const programLabel = project.program
+    ? (FUNDING_PROGRAM_LABEL[project.program as FundingProgramValue] ?? project.program)
+    : "—";
+  const projectAccountLabel = project.projectAccount
+    ? (PROJECT_ACCOUNT_LABEL[project.projectAccount] ?? project.projectAccount)
     : "—";
 
   const districtLabel = project.district
@@ -399,7 +408,7 @@ export const ProjectDetail = ({ projectId }: Props) => {
           </section>
         </div>
 
-        {/* ── Funding & Disbursement Tracking ── */}
+        {/* ── Funding Information ── */}
         <section className={card}>
           <div className={sectionTitle}>
             <svg
@@ -416,156 +425,193 @@ export const ProjectDetail = ({ projectId }: Props) => {
               />
             </svg>
             <h2 className="text-sm font-bold uppercase tracking-wider text-gray-700">
-              Funding &amp; Disbursement Tracking
+              Funding Information
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            {/* Left: fields + balances */}
-            <div className="space-y-3 lg:col-span-1">
-              <div>
-                <label className={fieldLabel}>Source of Fund</label>
-                <div className={fieldBox}>{sourceLabel}</div>
-              </div>
-              <div>
-                <label className={fieldLabel}>Fund Category</label>
-                <div className={fieldBox}>{subTypeLabel}</div>
-              </div>
-              <div>
-                <label className={fieldLabel}>Budget Year</label>
-                <div className={fieldBox}>{project.budgetYear ?? "—"}</div>
-              </div>
-              <div className="rounded-lg border border-blue-100 bg-blue-50 px-3.5 py-3">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-blue-500">
-                  Total Remaining Balance
-                </p>
-                <p className="mt-1 text-lg font-extrabold text-blue-700">
-                  {peso(totalRemainingBalance)}
-                </p>
-              </div>
-              <div className="rounded-lg border border-gray-200 bg-gray-50 px-3.5 py-2.5">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                  Primary Fund Balance (General Fund)
-                </p>
-                <p className="mt-0.5 text-sm font-bold text-gray-800">{peso(primaryFundBalance)}</p>
-              </div>
-              <div className="rounded-lg border border-gray-200 bg-gray-50 px-3.5 py-2.5">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                  Variation Order Balance (20% DF)
-                </p>
-                <p className="mt-0.5 text-sm font-bold text-gray-800">{peso(variationOrderBalance)}</p>
-              </div>
-              <p className="text-[10px] italic text-gray-400">
-                * Calculated based on Total Cost vs Recorded Disbursements + Variation Order
-              </p>
+          <div className="grid grid-cols-1 gap-x-6 gap-y-4 lg:grid-cols-2">
+            <div>
+              <label className={fieldLabel}>Budget Year</label>
+              <div className={fieldBox}>{project.budgetYear ?? "\u2014"}</div>
+            </div>
+            <div>
+              <label className={fieldLabel}>Program</label>
+              <div className={fieldBox}>{programLabel}</div>
+            </div>
+            <div>
+              <label className={fieldLabel}>Source of Fund</label>
+              <div className={fieldBox}>{sourceLabel}</div>
+            </div>
+            <div>
+              <label className={fieldLabel}>Project</label>
+              <div className={fieldBox}>{subTypeLabel}</div>
+            </div>
+            <div>
+              <label className={fieldLabel}>Supplemental Budget Year</label>
+              <div className={fieldBox}>{project.supplementalBudgetYear ?? "\u2014"}</div>
+            </div>
+            <div>
+              <label className={fieldLabel}>Project Account</label>
+              <div className={fieldBox}>{projectAccountLabel}</div>
+            </div>
+            <div>
+              <label className={fieldLabel}>Supplemental Budget Number</label>
+              <div className={fieldBox}>{project.supplementalBudgetNumber ?? "\u2014"}</div>
+            </div>
+            <div>
+              <label className={fieldLabel}>* LANDBANK [LBP-TL#]</label>
+              <div className={fieldBox}>{project.landbankNumber ?? "\u2014"}</div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Financial Summary ── */}
+        <section className={card}>
+          <div className={sectionTitle}>
+            <svg
+              className="h-5 w-5 text-blue-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3"
+              />
+            </svg>
+            <h2 className="text-sm font-bold uppercase tracking-wider text-gray-700">
+              Financial Summary
+            </h2>
+          </div>
+
+          {/* Balance tiles */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div className="rounded-xl border border-gray-200 bg-gray-50/60 px-4 py-3.5">
+              <p className="text-sm font-bold text-blue-800">Total Remaining Balance</p>
+              <p className="mt-1 text-xl font-extrabold text-blue-900">{peso(totalRemainingBalance)}</p>
+            </div>
+            <div className="rounded-xl border border-gray-200 bg-gray-50/60 px-4 py-3.5">
+              <p className="text-sm font-bold text-blue-800">Primary Fund Balance</p>
+              <p className="mt-1 text-lg font-extrabold text-gray-900">{peso(primaryFundBalance)}</p>
+            </div>
+            <div className="rounded-xl border border-gray-200 bg-gray-50/60 px-4 py-3.5">
+              <p className="text-sm font-bold text-blue-800">Variation Order Balance</p>
+              <p className="mt-1 text-lg font-extrabold text-gray-900">{peso(variationOrderBalance)}</p>
+            </div>
+          </div>
+
+          {/* Recent Disbursements */}
+          <div className="mt-6">
+            <p className={`${fieldLabel} mb-2`}>Recent Disbursements</p>
+            <div
+              className="overflow-y-auto rounded-lg border border-gray-200"
+              style={{ maxHeight: "268px" }}
+            >
+              <table className="w-full min-w-150 border-separate border-spacing-0 text-sm">
+                <thead className="sticky top-0 z-10 bg-gray-50">
+                  <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 [&>th]:border-b [&>th]:border-gray-200">
+                    <th className="px-4 py-3">Date</th>
+                    <th className="px-4 py-3">Reference #</th>
+                    <th className="px-4 py-3">Source of Fund</th>
+                    <th className="px-4 py-3">Type</th>
+                    <th className="px-4 py-3 text-right">Amount (₱)</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {disbursements && disbursements.length > 0 ? (
+                    disbursements.map((d) => (
+                      <tr key={d.id} className="text-gray-700">
+                        <td className="px-4 py-3 text-gray-500">{fmt(d.date)}</td>
+                        <td className="px-4 py-3 font-mono text-xs">{d.referenceNumber ?? "—"}</td>
+                        <td className="px-4 py-3 text-gray-500">{sourceLabel}</td>
+                        <td className="px-4 py-3 text-gray-500">
+                          {d.type ? DISBURSEMENT_TYPE_LABEL[d.type] : "—"}
+                        </td>
+                        <td className="px-4 py-3 text-right font-semibold">
+                          {d.amount.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={5} className="px-4 py-8 text-center text-sm text-gray-400">
+                        No disbursements recorded yet.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
 
-            {/* Right: Recent Disbursements + Revised Contract Cost History */}
-            <div className="space-y-5 lg:col-span-2">
-              <div>
-                <p className={fieldLabel}>Recent Disbursements</p>
-                <div
-                  className="mt-1.5 overflow-y-auto rounded-lg border border-gray-200"
-                  style={{ maxHeight: "268px" }}
-                >
-                  <table className="w-full min-w-150 border-separate border-spacing-0 text-sm">
-                    <thead className="sticky top-0 z-10 bg-gray-50">
-                      <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500 [&>th]:border-b [&>th]:border-gray-200">
-                        <th className="px-4 py-3">Date</th>
-                        <th className="px-4 py-3">Reference / Check #</th>
-                        <th className="px-4 py-3">Type</th>
-                        <th className="px-4 py-3 text-right">Amount (₱)</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                      {disbursements && disbursements.length > 0 ? (
-                        disbursements.map((d) => (
-                          <tr key={d.id} className="text-gray-700">
-                            <td className="px-4 py-3 text-gray-500">{fmt(d.date)}</td>
-                            <td className="px-4 py-3 font-mono text-xs">
-                              {d.referenceNumber ?? "—"}
+          </div>
+
+          {/* Revised Contract Cost History */}
+          <div className="mt-6">
+            <p className={`${fieldLabel} mb-2`}>Revised Contract Cost History</p>
+            <div className="overflow-x-auto rounded-lg border border-gray-200">
+              <table className="w-full min-w-200 text-sm">
+                <thead className="bg-gray-50">
+                  <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                    <th className="px-4 py-3">Date</th>
+                    <th className="px-4 py-3">Original Cost</th>
+                    <th className="px-4 py-3">Source of Fund</th>
+                    <th className="px-4 py-3">Program</th>
+                    <th className="px-4 py-3">Project</th>
+                    <th className="px-4 py-3">Variation Order</th>
+                    <th className="px-4 py-3 text-right">Revised Total</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {variationOrders && variationOrders.length > 0 ? (
+                    (() => {
+                      let running = project.projectCost ?? 0;
+                      return variationOrders.map((v) => {
+                        const original = running;
+                        running += v.amount;
+                        return (
+                          <tr key={v.id} className="text-gray-700">
+                            <td className="px-4 py-3 text-gray-500">{fmt(v.date)}</td>
+                            <td className="px-4 py-3">
+                              {original.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
                             </td>
-                            <td className="px-4 py-3 text-gray-500">
-                              {d.type ? DISBURSEMENT_TYPE_LABEL[d.type] : "—"}
+                            <td className="px-4 py-3">
+                              {v.sourceOfFund
+                                ? (SOURCE_OF_FUND_LABEL[v.sourceOfFund] ?? v.sourceOfFund)
+                                : "—"}
+                            </td>
+                            <td className="px-4 py-3">
+                              {v.program
+                                ? (FUNDING_PROGRAM_LABEL[v.program as FundingProgramValue] ?? v.program)
+                                : "—"}
+                            </td>
+                            <td className="px-4 py-3">
+                              {v.subType
+                                ? (PROJECT_SUB_TYPE_LABEL[v.subType as ProjectSubTypeValue] ?? v.subType)
+                                : "—"}
+                            </td>
+                            <td className="px-4 py-3">
+                              {v.amount.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
                             </td>
                             <td className="px-4 py-3 text-right font-semibold">
-                              {d.amount.toLocaleString("en-PH", {
-                                minimumFractionDigits: 2,
-                              })}
+                              {running.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
                             </td>
                           </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td
-                            colSpan={4}
-                            className="px-4 py-8 text-center text-sm text-gray-400"
-                          >
-                            No disbursements recorded yet.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div>
-                <p className={fieldLabel}>Revised Contract Cost History</p>
-                <div className="mt-1.5 overflow-x-auto rounded-lg border border-gray-200">
-                  <table className="w-full min-w-160 text-sm">
-                    <thead className="bg-gray-50">
-                      <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
-                        <th className="px-4 py-3">Date</th>
-                        <th className="px-4 py-3">Original Cost</th>
-                        <th className="px-4 py-3">Source of Fund</th>
-                        <th className="px-4 py-3">Variation Order</th>
-                        <th className="px-4 py-3 text-right">Revised Total</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                      {variationOrders && variationOrders.length > 0 ? (
-                        (() => {
-                          let running = project.projectCost ?? 0;
-                          return variationOrders.map((v) => {
-                            const original = running;
-                            running += v.amount;
-                            return (
-                              <tr key={v.id} className="text-gray-700">
-                                <td className="px-4 py-3 text-gray-500">{fmt(v.date)}</td>
-                                <td className="px-4 py-3">
-                                  {original.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
-                                </td>
-                                <td className="px-4 py-3">
-                                  {v.sourceOfFund
-                                    ? (SOURCE_OF_FUND_LABEL[v.sourceOfFund] ?? v.sourceOfFund)
-                                    : "—"}
-                                </td>
-                                <td className="px-4 py-3">
-                                  {v.amount.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
-                                </td>
-                                <td className="px-4 py-3 text-right font-semibold">
-                                  {running.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
-                                </td>
-                              </tr>
-                            );
-                          });
-                        })()
-                      ) : (
-                        <tr>
-                          <td
-                            colSpan={5}
-                            className="px-4 py-8 text-center text-sm text-gray-400"
-                          >
-                            No variation orders recorded yet.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+                        );
+                      });
+                    })()
+                  ) : (
+                    <tr>
+                      <td colSpan={7} className="px-4 py-8 text-center text-sm text-gray-400">
+                        No variation orders recorded yet.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
+
           </div>
         </section>
 
@@ -981,9 +1027,20 @@ export const ProjectDetail = ({ projectId }: Props) => {
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2.5">
-                            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1e3a8a] text-[10px] font-bold text-white">
-                              {initials(a.createdBy.name, a.createdBy.email)}
-                            </span>
+                            {a.createdBy.image ? (
+                              <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full">
+                                <Image
+                                  src={a.createdBy.image}
+                                  alt={a.createdBy.name ?? a.createdBy.email ?? "User"}
+                                  fill
+                                  className="object-cover"
+                                />
+                              </div>
+                            ) : (
+                              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1e3a8a] text-[10px] font-bold text-white">
+                                {initials(a.createdBy.name, a.createdBy.email)}
+                              </span>
+                            )}
                             <span className="font-semibold text-gray-800">
                               {a.createdBy.name ?? a.createdBy.email}
                             </span>

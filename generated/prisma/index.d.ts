@@ -143,7 +143,8 @@ export const SourceOfFund: {
   NCDC: 'NCDC',
   PRDP: 'PRDP',
   MIADP: 'MIADP',
-  CONFIDENTIAL: 'CONFIDENTIAL'
+  CONFIDENTIAL: 'CONFIDENTIAL',
+  FIVE_PERCENT_CALAMITY_FUND: 'FIVE_PERCENT_CALAMITY_FUND'
 };
 
 export type SourceOfFund = (typeof SourceOfFund)[keyof typeof SourceOfFund]
@@ -181,10 +182,66 @@ export const ProjectSubType: {
   PDRRMO_PREVENTION_MITIGATION: 'PDRRMO_PREVENTION_MITIGATION',
   PDRRMO_DISASTER_PREPAREDNESS: 'PDRRMO_DISASTER_PREPAREDNESS',
   PAMANA: 'PAMANA',
-  NCDC: 'NCDC'
+  NCDC: 'NCDC',
+  REPAIR_PROV_ROADS_DISTRICT_I: 'REPAIR_PROV_ROADS_DISTRICT_I',
+  REPAIR_PROV_ROADS_DISTRICT_II: 'REPAIR_PROV_ROADS_DISTRICT_II',
+  ROAD_OPENING: 'ROAD_OPENING',
+  PRDP_PROVINCIAL_COUNTERPART: 'PRDP_PROVINCIAL_COUNTERPART',
+  BARANGAY_PROJECTS_DISTRICT_I: 'BARANGAY_PROJECTS_DISTRICT_I',
+  BARANGAY_PROJECTS_DISTRICT_II: 'BARANGAY_PROJECTS_DISTRICT_II',
+  STIMULUS_BARANGAYS_DISTRICT_I: 'STIMULUS_BARANGAYS_DISTRICT_I',
+  STIMULUS_BARANGAYS_DISTRICT_II: 'STIMULUS_BARANGAYS_DISTRICT_II',
+  CONFLICT_INSURGENCY_ANTI_TERRORISM: 'CONFLICT_INSURGENCY_ANTI_TERRORISM',
+  ANTI_CRIMINALITY_LAWLESSNESS: 'ANTI_CRIMINALITY_LAWLESSNESS',
+  FLOOD_CONTROL_SLOPE_PROTECTION_MOOE: 'FLOOD_CONTROL_SLOPE_PROTECTION_MOOE',
+  FLOOD_CONTROL_SLOPE_PROTECTION_PPE: 'FLOOD_CONTROL_SLOPE_PROTECTION_PPE',
+  DRR_CCA_PROMOTION_AWARENESS_ADVOCACY: 'DRR_CCA_PROMOTION_AWARENESS_ADVOCACY',
+  BUILDING_BACK_BETTER: 'BUILDING_BACK_BETTER',
+  QUICK_RESPONSE_FUND: 'QUICK_RESPONSE_FUND',
+  CONST_CHILD_DEV_CENTERS: 'CONST_CHILD_DEV_CENTERS',
+  CONST_IMPVT_COMPL_SCHOOL_BLDGS: 'CONST_IMPVT_COMPL_SCHOOL_BLDGS',
+  CONSTRUCTION_SCHOOL_BUILDINGS: 'CONSTRUCTION_SCHOOL_BUILDINGS',
+  CONSTRUCTION_SCHOOL_BUILDINGS_FACILITIES: 'CONSTRUCTION_SCHOOL_BUILDINGS_FACILITIES',
+  REPAIR_MAINT_BUILDINGS_STRUCTURES: 'REPAIR_MAINT_BUILDINGS_STRUCTURES',
+  OTHER_MAINT_OPERATING_EXPENSES: 'OTHER_MAINT_OPERATING_EXPENSES'
 };
 
 export type ProjectSubType = (typeof ProjectSubType)[keyof typeof ProjectSubType]
+
+
+export const FundingProgram: {
+  INFRA_DEV_PROGRAM_3918: 'INFRA_DEV_PROGRAM_3918',
+  PEACE_ORDER_PROGRAM_3918: 'PEACE_ORDER_PROGRAM_3918',
+  INFRA_DEV_PROGRAM_8918: 'INFRA_DEV_PROGRAM_8918',
+  PEACE_ORDER_PROGRAM_8918: 'PEACE_ORDER_PROGRAM_8918',
+  HEALTH_DEV_PROGRAM_4918: 'HEALTH_DEV_PROGRAM_4918',
+  INFRA_DEV_PROGRAM_1999: 'INFRA_DEV_PROGRAM_1999',
+  PEACE_ORDER_PROGRAM_1999: 'PEACE_ORDER_PROGRAM_1999',
+  INFRA_DEV_PROGRAM_4918: 'INFRA_DEV_PROGRAM_4918',
+  DISASTER_PREVENTION_MITIGATION_9943: 'DISASTER_PREVENTION_MITIGATION_9943',
+  DISASTER_PREVENTION_MITIGATION_9942: 'DISASTER_PREVENTION_MITIGATION_9942',
+  DISASTER_PREPAREDNESS_9942: 'DISASTER_PREPAREDNESS_9942',
+  DISASTER_REHAB_RECOVERY_9941: 'DISASTER_REHAB_RECOVERY_9941',
+  ELEM_SECONDARY_EDUCATION_3311: 'ELEM_SECONDARY_EDUCATION_3311',
+  ALL_OFFICES: 'ALL_OFFICES',
+  PAMANA: 'PAMANA',
+  DOH: 'DOH',
+  NCDC: 'NCDC',
+  LGSF: 'LGSF',
+  PRDP: 'PRDP',
+  MIADP: 'MIADP',
+  LDRRM: 'LDRRM'
+};
+
+export type FundingProgram = (typeof FundingProgram)[keyof typeof FundingProgram]
+
+
+export const ProjectAccount: {
+  MOOE: 'MOOE',
+  PPE: 'PPE'
+};
+
+export type ProjectAccount = (typeof ProjectAccount)[keyof typeof ProjectAccount]
 
 
 export const NotificationPriority: {
@@ -321,6 +378,14 @@ export const District: typeof $Enums.District
 export type ProjectSubType = $Enums.ProjectSubType
 
 export const ProjectSubType: typeof $Enums.ProjectSubType
+
+export type FundingProgram = $Enums.FundingProgram
+
+export const FundingProgram: typeof $Enums.FundingProgram
+
+export type ProjectAccount = $Enums.ProjectAccount
+
+export const ProjectAccount: typeof $Enums.ProjectAccount
 
 export type NotificationPriority = $Enums.NotificationPriority
 
@@ -5483,6 +5548,8 @@ export namespace Prisma {
     projectCode: string | null
     title: string | null
     subType: $Enums.ProjectSubType | null
+    program: $Enums.FundingProgram | null
+    projectAccount: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation | null
     locationImplementation: $Enums.District | null
     sourceOfFund: $Enums.SourceOfFund | null
@@ -5491,6 +5558,9 @@ export namespace Prisma {
     contractorName: string | null
     projectEngineer: string | null
     budgetYear: string | null
+    landbankNumber: string | null
+    supplementalBudgetYear: string | null
+    supplementalBudgetNumber: string | null
     dateStarted: Date | null
     targetCompletionDate: Date | null
     duration: number | null
@@ -5523,6 +5593,8 @@ export namespace Prisma {
     projectCode: string | null
     title: string | null
     subType: $Enums.ProjectSubType | null
+    program: $Enums.FundingProgram | null
+    projectAccount: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation | null
     locationImplementation: $Enums.District | null
     sourceOfFund: $Enums.SourceOfFund | null
@@ -5531,6 +5603,9 @@ export namespace Prisma {
     contractorName: string | null
     projectEngineer: string | null
     budgetYear: string | null
+    landbankNumber: string | null
+    supplementalBudgetYear: string | null
+    supplementalBudgetNumber: string | null
     dateStarted: Date | null
     targetCompletionDate: Date | null
     duration: number | null
@@ -5563,6 +5638,8 @@ export namespace Prisma {
     projectCode: number
     title: number
     subType: number
+    program: number
+    projectAccount: number
     modeOfImplementation: number
     locationImplementation: number
     sourceOfFund: number
@@ -5571,6 +5648,9 @@ export namespace Prisma {
     contractorName: number
     projectEngineer: number
     budgetYear: number
+    landbankNumber: number
+    supplementalBudgetYear: number
+    supplementalBudgetNumber: number
     dateStarted: number
     targetCompletionDate: number
     duration: number
@@ -5631,6 +5711,8 @@ export namespace Prisma {
     projectCode?: true
     title?: true
     subType?: true
+    program?: true
+    projectAccount?: true
     modeOfImplementation?: true
     locationImplementation?: true
     sourceOfFund?: true
@@ -5639,6 +5721,9 @@ export namespace Prisma {
     contractorName?: true
     projectEngineer?: true
     budgetYear?: true
+    landbankNumber?: true
+    supplementalBudgetYear?: true
+    supplementalBudgetNumber?: true
     dateStarted?: true
     targetCompletionDate?: true
     duration?: true
@@ -5671,6 +5756,8 @@ export namespace Prisma {
     projectCode?: true
     title?: true
     subType?: true
+    program?: true
+    projectAccount?: true
     modeOfImplementation?: true
     locationImplementation?: true
     sourceOfFund?: true
@@ -5679,6 +5766,9 @@ export namespace Prisma {
     contractorName?: true
     projectEngineer?: true
     budgetYear?: true
+    landbankNumber?: true
+    supplementalBudgetYear?: true
+    supplementalBudgetNumber?: true
     dateStarted?: true
     targetCompletionDate?: true
     duration?: true
@@ -5711,6 +5801,8 @@ export namespace Prisma {
     projectCode?: true
     title?: true
     subType?: true
+    program?: true
+    projectAccount?: true
     modeOfImplementation?: true
     locationImplementation?: true
     sourceOfFund?: true
@@ -5719,6 +5811,9 @@ export namespace Prisma {
     contractorName?: true
     projectEngineer?: true
     budgetYear?: true
+    landbankNumber?: true
+    supplementalBudgetYear?: true
+    supplementalBudgetNumber?: true
     dateStarted?: true
     targetCompletionDate?: true
     duration?: true
@@ -5838,6 +5933,8 @@ export namespace Prisma {
     projectCode: string
     title: string
     subType: $Enums.ProjectSubType | null
+    program: $Enums.FundingProgram | null
+    projectAccount: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
@@ -5846,6 +5943,9 @@ export namespace Prisma {
     contractorName: string | null
     projectEngineer: string | null
     budgetYear: string | null
+    landbankNumber: string | null
+    supplementalBudgetYear: string | null
+    supplementalBudgetNumber: string | null
     dateStarted: Date | null
     targetCompletionDate: Date | null
     duration: number
@@ -5897,6 +5997,8 @@ export namespace Prisma {
     projectCode?: boolean
     title?: boolean
     subType?: boolean
+    program?: boolean
+    projectAccount?: boolean
     modeOfImplementation?: boolean
     locationImplementation?: boolean
     sourceOfFund?: boolean
@@ -5905,6 +6007,9 @@ export namespace Prisma {
     contractorName?: boolean
     projectEngineer?: boolean
     budgetYear?: boolean
+    landbankNumber?: boolean
+    supplementalBudgetYear?: boolean
+    supplementalBudgetNumber?: boolean
     dateStarted?: boolean
     targetCompletionDate?: boolean
     duration?: boolean
@@ -5947,6 +6052,8 @@ export namespace Prisma {
     projectCode?: boolean
     title?: boolean
     subType?: boolean
+    program?: boolean
+    projectAccount?: boolean
     modeOfImplementation?: boolean
     locationImplementation?: boolean
     sourceOfFund?: boolean
@@ -5955,6 +6062,9 @@ export namespace Prisma {
     contractorName?: boolean
     projectEngineer?: boolean
     budgetYear?: boolean
+    landbankNumber?: boolean
+    supplementalBudgetYear?: boolean
+    supplementalBudgetNumber?: boolean
     dateStarted?: boolean
     targetCompletionDate?: boolean
     duration?: boolean
@@ -5988,6 +6098,8 @@ export namespace Prisma {
     projectCode?: boolean
     title?: boolean
     subType?: boolean
+    program?: boolean
+    projectAccount?: boolean
     modeOfImplementation?: boolean
     locationImplementation?: boolean
     sourceOfFund?: boolean
@@ -5996,6 +6108,9 @@ export namespace Prisma {
     contractorName?: boolean
     projectEngineer?: boolean
     budgetYear?: boolean
+    landbankNumber?: boolean
+    supplementalBudgetYear?: boolean
+    supplementalBudgetNumber?: boolean
     dateStarted?: boolean
     targetCompletionDate?: boolean
     duration?: boolean
@@ -6029,6 +6144,8 @@ export namespace Prisma {
     projectCode?: boolean
     title?: boolean
     subType?: boolean
+    program?: boolean
+    projectAccount?: boolean
     modeOfImplementation?: boolean
     locationImplementation?: boolean
     sourceOfFund?: boolean
@@ -6037,6 +6154,9 @@ export namespace Prisma {
     contractorName?: boolean
     projectEngineer?: boolean
     budgetYear?: boolean
+    landbankNumber?: boolean
+    supplementalBudgetYear?: boolean
+    supplementalBudgetNumber?: boolean
     dateStarted?: boolean
     targetCompletionDate?: boolean
     duration?: boolean
@@ -6064,7 +6184,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectCode" | "title" | "subType" | "modeOfImplementation" | "locationImplementation" | "sourceOfFund" | "projectCost" | "contractCost" | "contractorName" | "projectEngineer" | "budgetYear" | "dateStarted" | "targetCompletionDate" | "duration" | "revisedCompletionDate" | "dateCompleted" | "daysSuspended" | "daysExtended" | "numFemale" | "numMale" | "numPersons" | "numManDays" | "district" | "cityMunicipality" | "barangay" | "purok" | "sitio" | "description" | "status" | "completionPercentage" | "imageUrl" | "documentUrl" | "documentName" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
+  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectCode" | "title" | "subType" | "program" | "projectAccount" | "modeOfImplementation" | "locationImplementation" | "sourceOfFund" | "projectCost" | "contractCost" | "contractorName" | "projectEngineer" | "budgetYear" | "landbankNumber" | "supplementalBudgetYear" | "supplementalBudgetNumber" | "dateStarted" | "targetCompletionDate" | "duration" | "revisedCompletionDate" | "dateCompleted" | "daysSuspended" | "daysExtended" | "numFemale" | "numMale" | "numPersons" | "numManDays" | "district" | "cityMunicipality" | "barangay" | "purok" | "sitio" | "description" | "status" | "completionPercentage" | "imageUrl" | "documentUrl" | "documentName" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
   export type ProjectInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
     activities?: boolean | Project$activitiesArgs<ExtArgs>
@@ -6102,6 +6222,8 @@ export namespace Prisma {
       projectCode: string
       title: string
       subType: $Enums.ProjectSubType | null
+      program: $Enums.FundingProgram | null
+      projectAccount: $Enums.ProjectAccount | null
       modeOfImplementation: $Enums.ModeOfImplementation
       locationImplementation: $Enums.District
       sourceOfFund: $Enums.SourceOfFund
@@ -6110,6 +6232,9 @@ export namespace Prisma {
       contractorName: string | null
       projectEngineer: string | null
       budgetYear: string | null
+      landbankNumber: string | null
+      supplementalBudgetYear: string | null
+      supplementalBudgetNumber: string | null
       dateStarted: Date | null
       targetCompletionDate: Date | null
       duration: number
@@ -6571,6 +6696,8 @@ export namespace Prisma {
     readonly projectCode: FieldRef<"Project", 'String'>
     readonly title: FieldRef<"Project", 'String'>
     readonly subType: FieldRef<"Project", 'ProjectSubType'>
+    readonly program: FieldRef<"Project", 'FundingProgram'>
+    readonly projectAccount: FieldRef<"Project", 'ProjectAccount'>
     readonly modeOfImplementation: FieldRef<"Project", 'ModeOfImplementation'>
     readonly locationImplementation: FieldRef<"Project", 'District'>
     readonly sourceOfFund: FieldRef<"Project", 'SourceOfFund'>
@@ -6579,6 +6706,9 @@ export namespace Prisma {
     readonly contractorName: FieldRef<"Project", 'String'>
     readonly projectEngineer: FieldRef<"Project", 'String'>
     readonly budgetYear: FieldRef<"Project", 'String'>
+    readonly landbankNumber: FieldRef<"Project", 'String'>
+    readonly supplementalBudgetYear: FieldRef<"Project", 'String'>
+    readonly supplementalBudgetNumber: FieldRef<"Project", 'String'>
     readonly dateStarted: FieldRef<"Project", 'DateTime'>
     readonly targetCompletionDate: FieldRef<"Project", 'DateTime'>
     readonly duration: FieldRef<"Project", 'Int'>
@@ -10575,6 +10705,8 @@ export namespace Prisma {
     projectId: string | null
     date: Date | null
     sourceOfFund: $Enums.SourceOfFund | null
+    program: $Enums.FundingProgram | null
+    subType: $Enums.ProjectSubType | null
     amount: number | null
     createdById: string | null
     createdAt: Date | null
@@ -10585,6 +10717,8 @@ export namespace Prisma {
     projectId: string | null
     date: Date | null
     sourceOfFund: $Enums.SourceOfFund | null
+    program: $Enums.FundingProgram | null
+    subType: $Enums.ProjectSubType | null
     amount: number | null
     createdById: string | null
     createdAt: Date | null
@@ -10595,6 +10729,8 @@ export namespace Prisma {
     projectId: number
     date: number
     sourceOfFund: number
+    program: number
+    subType: number
     amount: number
     createdById: number
     createdAt: number
@@ -10615,6 +10751,8 @@ export namespace Prisma {
     projectId?: true
     date?: true
     sourceOfFund?: true
+    program?: true
+    subType?: true
     amount?: true
     createdById?: true
     createdAt?: true
@@ -10625,6 +10763,8 @@ export namespace Prisma {
     projectId?: true
     date?: true
     sourceOfFund?: true
+    program?: true
+    subType?: true
     amount?: true
     createdById?: true
     createdAt?: true
@@ -10635,6 +10775,8 @@ export namespace Prisma {
     projectId?: true
     date?: true
     sourceOfFund?: true
+    program?: true
+    subType?: true
     amount?: true
     createdById?: true
     createdAt?: true
@@ -10732,6 +10874,8 @@ export namespace Prisma {
     projectId: string
     date: Date
     sourceOfFund: $Enums.SourceOfFund | null
+    program: $Enums.FundingProgram | null
+    subType: $Enums.ProjectSubType | null
     amount: number
     createdById: string
     createdAt: Date
@@ -10761,6 +10905,8 @@ export namespace Prisma {
     projectId?: boolean
     date?: boolean
     sourceOfFund?: boolean
+    program?: boolean
+    subType?: boolean
     amount?: boolean
     createdById?: boolean
     createdAt?: boolean
@@ -10773,6 +10919,8 @@ export namespace Prisma {
     projectId?: boolean
     date?: boolean
     sourceOfFund?: boolean
+    program?: boolean
+    subType?: boolean
     amount?: boolean
     createdById?: boolean
     createdAt?: boolean
@@ -10785,6 +10933,8 @@ export namespace Prisma {
     projectId?: boolean
     date?: boolean
     sourceOfFund?: boolean
+    program?: boolean
+    subType?: boolean
     amount?: boolean
     createdById?: boolean
     createdAt?: boolean
@@ -10797,12 +10947,14 @@ export namespace Prisma {
     projectId?: boolean
     date?: boolean
     sourceOfFund?: boolean
+    program?: boolean
+    subType?: boolean
     amount?: boolean
     createdById?: boolean
     createdAt?: boolean
   }
 
-  export type VariationOrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "date" | "sourceOfFund" | "amount" | "createdById" | "createdAt", ExtArgs["result"]["variationOrder"]>
+  export type VariationOrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "date" | "sourceOfFund" | "program" | "subType" | "amount" | "createdById" | "createdAt", ExtArgs["result"]["variationOrder"]>
   export type VariationOrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
@@ -10827,6 +10979,8 @@ export namespace Prisma {
       projectId: string
       date: Date
       sourceOfFund: $Enums.SourceOfFund | null
+      program: $Enums.FundingProgram | null
+      subType: $Enums.ProjectSubType | null
       amount: number
       createdById: string
       createdAt: Date
@@ -11259,6 +11413,8 @@ export namespace Prisma {
     readonly projectId: FieldRef<"VariationOrder", 'String'>
     readonly date: FieldRef<"VariationOrder", 'DateTime'>
     readonly sourceOfFund: FieldRef<"VariationOrder", 'SourceOfFund'>
+    readonly program: FieldRef<"VariationOrder", 'FundingProgram'>
+    readonly subType: FieldRef<"VariationOrder", 'ProjectSubType'>
     readonly amount: FieldRef<"VariationOrder", 'Float'>
     readonly createdById: FieldRef<"VariationOrder", 'String'>
     readonly createdAt: FieldRef<"VariationOrder", 'DateTime'>
@@ -20970,6 +21126,8 @@ export namespace Prisma {
     projectCode: 'projectCode',
     title: 'title',
     subType: 'subType',
+    program: 'program',
+    projectAccount: 'projectAccount',
     modeOfImplementation: 'modeOfImplementation',
     locationImplementation: 'locationImplementation',
     sourceOfFund: 'sourceOfFund',
@@ -20978,6 +21136,9 @@ export namespace Prisma {
     contractorName: 'contractorName',
     projectEngineer: 'projectEngineer',
     budgetYear: 'budgetYear',
+    landbankNumber: 'landbankNumber',
+    supplementalBudgetYear: 'supplementalBudgetYear',
+    supplementalBudgetNumber: 'supplementalBudgetNumber',
     dateStarted: 'dateStarted',
     targetCompletionDate: 'targetCompletionDate',
     duration: 'duration',
@@ -21054,6 +21215,8 @@ export namespace Prisma {
     projectId: 'projectId',
     date: 'date',
     sourceOfFund: 'sourceOfFund',
+    program: 'program',
+    subType: 'subType',
     amount: 'amount',
     createdById: 'createdById',
     createdAt: 'createdAt'
@@ -21293,6 +21456,34 @@ export namespace Prisma {
    * Reference to a field of type 'ProjectSubType[]'
    */
   export type ListEnumProjectSubTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProjectSubType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'FundingProgram'
+   */
+  export type EnumFundingProgramFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FundingProgram'>
+    
+
+
+  /**
+   * Reference to a field of type 'FundingProgram[]'
+   */
+  export type ListEnumFundingProgramFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FundingProgram[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'ProjectAccount'
+   */
+  export type EnumProjectAccountFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProjectAccount'>
+    
+
+
+  /**
+   * Reference to a field of type 'ProjectAccount[]'
+   */
+  export type ListEnumProjectAccountFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProjectAccount[]'>
     
 
 
@@ -21741,6 +21932,8 @@ export namespace Prisma {
     projectCode?: StringFilter<"Project"> | string
     title?: StringFilter<"Project"> | string
     subType?: EnumProjectSubTypeNullableFilter<"Project"> | $Enums.ProjectSubType | null
+    program?: EnumFundingProgramNullableFilter<"Project"> | $Enums.FundingProgram | null
+    projectAccount?: EnumProjectAccountNullableFilter<"Project"> | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFilter<"Project"> | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFilter<"Project"> | $Enums.District
     sourceOfFund?: EnumSourceOfFundFilter<"Project"> | $Enums.SourceOfFund
@@ -21749,6 +21942,9 @@ export namespace Prisma {
     contractorName?: StringNullableFilter<"Project"> | string | null
     projectEngineer?: StringNullableFilter<"Project"> | string | null
     budgetYear?: StringNullableFilter<"Project"> | string | null
+    landbankNumber?: StringNullableFilter<"Project"> | string | null
+    supplementalBudgetYear?: StringNullableFilter<"Project"> | string | null
+    supplementalBudgetNumber?: StringNullableFilter<"Project"> | string | null
     dateStarted?: DateTimeNullableFilter<"Project"> | Date | string | null
     targetCompletionDate?: DateTimeNullableFilter<"Project"> | Date | string | null
     duration?: IntFilter<"Project"> | number
@@ -21790,6 +21986,8 @@ export namespace Prisma {
     projectCode?: SortOrder
     title?: SortOrder
     subType?: SortOrderInput | SortOrder
+    program?: SortOrderInput | SortOrder
+    projectAccount?: SortOrderInput | SortOrder
     modeOfImplementation?: SortOrder
     locationImplementation?: SortOrder
     sourceOfFund?: SortOrder
@@ -21798,6 +21996,9 @@ export namespace Prisma {
     contractorName?: SortOrderInput | SortOrder
     projectEngineer?: SortOrderInput | SortOrder
     budgetYear?: SortOrderInput | SortOrder
+    landbankNumber?: SortOrderInput | SortOrder
+    supplementalBudgetYear?: SortOrderInput | SortOrder
+    supplementalBudgetNumber?: SortOrderInput | SortOrder
     dateStarted?: SortOrderInput | SortOrder
     targetCompletionDate?: SortOrderInput | SortOrder
     duration?: SortOrder
@@ -21842,6 +22043,8 @@ export namespace Prisma {
     NOT?: ProjectWhereInput | ProjectWhereInput[]
     title?: StringFilter<"Project"> | string
     subType?: EnumProjectSubTypeNullableFilter<"Project"> | $Enums.ProjectSubType | null
+    program?: EnumFundingProgramNullableFilter<"Project"> | $Enums.FundingProgram | null
+    projectAccount?: EnumProjectAccountNullableFilter<"Project"> | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFilter<"Project"> | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFilter<"Project"> | $Enums.District
     sourceOfFund?: EnumSourceOfFundFilter<"Project"> | $Enums.SourceOfFund
@@ -21850,6 +22053,9 @@ export namespace Prisma {
     contractorName?: StringNullableFilter<"Project"> | string | null
     projectEngineer?: StringNullableFilter<"Project"> | string | null
     budgetYear?: StringNullableFilter<"Project"> | string | null
+    landbankNumber?: StringNullableFilter<"Project"> | string | null
+    supplementalBudgetYear?: StringNullableFilter<"Project"> | string | null
+    supplementalBudgetNumber?: StringNullableFilter<"Project"> | string | null
     dateStarted?: DateTimeNullableFilter<"Project"> | Date | string | null
     targetCompletionDate?: DateTimeNullableFilter<"Project"> | Date | string | null
     duration?: IntFilter<"Project"> | number
@@ -21891,6 +22097,8 @@ export namespace Prisma {
     projectCode?: SortOrder
     title?: SortOrder
     subType?: SortOrderInput | SortOrder
+    program?: SortOrderInput | SortOrder
+    projectAccount?: SortOrderInput | SortOrder
     modeOfImplementation?: SortOrder
     locationImplementation?: SortOrder
     sourceOfFund?: SortOrder
@@ -21899,6 +22107,9 @@ export namespace Prisma {
     contractorName?: SortOrderInput | SortOrder
     projectEngineer?: SortOrderInput | SortOrder
     budgetYear?: SortOrderInput | SortOrder
+    landbankNumber?: SortOrderInput | SortOrder
+    supplementalBudgetYear?: SortOrderInput | SortOrder
+    supplementalBudgetNumber?: SortOrderInput | SortOrder
     dateStarted?: SortOrderInput | SortOrder
     targetCompletionDate?: SortOrderInput | SortOrder
     duration?: SortOrder
@@ -21939,6 +22150,8 @@ export namespace Prisma {
     projectCode?: StringWithAggregatesFilter<"Project"> | string
     title?: StringWithAggregatesFilter<"Project"> | string
     subType?: EnumProjectSubTypeNullableWithAggregatesFilter<"Project"> | $Enums.ProjectSubType | null
+    program?: EnumFundingProgramNullableWithAggregatesFilter<"Project"> | $Enums.FundingProgram | null
+    projectAccount?: EnumProjectAccountNullableWithAggregatesFilter<"Project"> | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationWithAggregatesFilter<"Project"> | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictWithAggregatesFilter<"Project"> | $Enums.District
     sourceOfFund?: EnumSourceOfFundWithAggregatesFilter<"Project"> | $Enums.SourceOfFund
@@ -21947,6 +22160,9 @@ export namespace Prisma {
     contractorName?: StringNullableWithAggregatesFilter<"Project"> | string | null
     projectEngineer?: StringNullableWithAggregatesFilter<"Project"> | string | null
     budgetYear?: StringNullableWithAggregatesFilter<"Project"> | string | null
+    landbankNumber?: StringNullableWithAggregatesFilter<"Project"> | string | null
+    supplementalBudgetYear?: StringNullableWithAggregatesFilter<"Project"> | string | null
+    supplementalBudgetNumber?: StringNullableWithAggregatesFilter<"Project"> | string | null
     dateStarted?: DateTimeNullableWithAggregatesFilter<"Project"> | Date | string | null
     targetCompletionDate?: DateTimeNullableWithAggregatesFilter<"Project"> | Date | string | null
     duration?: IntWithAggregatesFilter<"Project"> | number
@@ -22198,6 +22414,8 @@ export namespace Prisma {
     projectId?: StringFilter<"VariationOrder"> | string
     date?: DateTimeFilter<"VariationOrder"> | Date | string
     sourceOfFund?: EnumSourceOfFundNullableFilter<"VariationOrder"> | $Enums.SourceOfFund | null
+    program?: EnumFundingProgramNullableFilter<"VariationOrder"> | $Enums.FundingProgram | null
+    subType?: EnumProjectSubTypeNullableFilter<"VariationOrder"> | $Enums.ProjectSubType | null
     amount?: FloatFilter<"VariationOrder"> | number
     createdById?: StringFilter<"VariationOrder"> | string
     createdAt?: DateTimeFilter<"VariationOrder"> | Date | string
@@ -22210,6 +22428,8 @@ export namespace Prisma {
     projectId?: SortOrder
     date?: SortOrder
     sourceOfFund?: SortOrderInput | SortOrder
+    program?: SortOrderInput | SortOrder
+    subType?: SortOrderInput | SortOrder
     amount?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
@@ -22225,6 +22445,8 @@ export namespace Prisma {
     projectId?: StringFilter<"VariationOrder"> | string
     date?: DateTimeFilter<"VariationOrder"> | Date | string
     sourceOfFund?: EnumSourceOfFundNullableFilter<"VariationOrder"> | $Enums.SourceOfFund | null
+    program?: EnumFundingProgramNullableFilter<"VariationOrder"> | $Enums.FundingProgram | null
+    subType?: EnumProjectSubTypeNullableFilter<"VariationOrder"> | $Enums.ProjectSubType | null
     amount?: FloatFilter<"VariationOrder"> | number
     createdById?: StringFilter<"VariationOrder"> | string
     createdAt?: DateTimeFilter<"VariationOrder"> | Date | string
@@ -22237,6 +22459,8 @@ export namespace Prisma {
     projectId?: SortOrder
     date?: SortOrder
     sourceOfFund?: SortOrderInput | SortOrder
+    program?: SortOrderInput | SortOrder
+    subType?: SortOrderInput | SortOrder
     amount?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
@@ -22255,6 +22479,8 @@ export namespace Prisma {
     projectId?: StringWithAggregatesFilter<"VariationOrder"> | string
     date?: DateTimeWithAggregatesFilter<"VariationOrder"> | Date | string
     sourceOfFund?: EnumSourceOfFundNullableWithAggregatesFilter<"VariationOrder"> | $Enums.SourceOfFund | null
+    program?: EnumFundingProgramNullableWithAggregatesFilter<"VariationOrder"> | $Enums.FundingProgram | null
+    subType?: EnumProjectSubTypeNullableWithAggregatesFilter<"VariationOrder"> | $Enums.ProjectSubType | null
     amount?: FloatWithAggregatesFilter<"VariationOrder"> | number
     createdById?: StringWithAggregatesFilter<"VariationOrder"> | string
     createdAt?: DateTimeWithAggregatesFilter<"VariationOrder"> | Date | string
@@ -23175,6 +23401,8 @@ export namespace Prisma {
     projectCode: string
     title: string
     subType?: $Enums.ProjectSubType | null
+    program?: $Enums.FundingProgram | null
+    projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
@@ -23183,6 +23411,9 @@ export namespace Prisma {
     contractorName?: string | null
     projectEngineer?: string | null
     budgetYear?: string | null
+    landbankNumber?: string | null
+    supplementalBudgetYear?: string | null
+    supplementalBudgetNumber?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
     duration?: number
@@ -23223,6 +23454,8 @@ export namespace Prisma {
     projectCode: string
     title: string
     subType?: $Enums.ProjectSubType | null
+    program?: $Enums.FundingProgram | null
+    projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
@@ -23231,6 +23464,9 @@ export namespace Prisma {
     contractorName?: string | null
     projectEngineer?: string | null
     budgetYear?: string | null
+    landbankNumber?: string | null
+    supplementalBudgetYear?: string | null
+    supplementalBudgetNumber?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
     duration?: number
@@ -23271,6 +23507,8 @@ export namespace Prisma {
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
@@ -23279,6 +23517,9 @@ export namespace Prisma {
     contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     duration?: IntFieldUpdateOperationsInput | number
@@ -23319,6 +23560,8 @@ export namespace Prisma {
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
@@ -23327,6 +23570,9 @@ export namespace Prisma {
     contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     duration?: IntFieldUpdateOperationsInput | number
@@ -23367,6 +23613,8 @@ export namespace Prisma {
     projectCode: string
     title: string
     subType?: $Enums.ProjectSubType | null
+    program?: $Enums.FundingProgram | null
+    projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
@@ -23375,6 +23623,9 @@ export namespace Prisma {
     contractorName?: string | null
     projectEngineer?: string | null
     budgetYear?: string | null
+    landbankNumber?: string | null
+    supplementalBudgetYear?: string | null
+    supplementalBudgetNumber?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
     duration?: number
@@ -23407,6 +23658,8 @@ export namespace Prisma {
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
@@ -23415,6 +23668,9 @@ export namespace Prisma {
     contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     duration?: IntFieldUpdateOperationsInput | number
@@ -23446,6 +23702,8 @@ export namespace Prisma {
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
@@ -23454,6 +23712,9 @@ export namespace Prisma {
     contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     duration?: IntFieldUpdateOperationsInput | number
@@ -23703,6 +23964,8 @@ export namespace Prisma {
     id?: string
     date?: Date | string
     sourceOfFund?: $Enums.SourceOfFund | null
+    program?: $Enums.FundingProgram | null
+    subType?: $Enums.ProjectSubType | null
     amount: number
     createdAt?: Date | string
     project: ProjectCreateNestedOneWithoutVariationOrdersInput
@@ -23714,6 +23977,8 @@ export namespace Prisma {
     projectId: string
     date?: Date | string
     sourceOfFund?: $Enums.SourceOfFund | null
+    program?: $Enums.FundingProgram | null
+    subType?: $Enums.ProjectSubType | null
     amount: number
     createdById: string
     createdAt?: Date | string
@@ -23723,6 +23988,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutVariationOrdersNestedInput
@@ -23734,6 +24001,8 @@ export namespace Prisma {
     projectId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23744,6 +24013,8 @@ export namespace Prisma {
     projectId: string
     date?: Date | string
     sourceOfFund?: $Enums.SourceOfFund | null
+    program?: $Enums.FundingProgram | null
+    subType?: $Enums.ProjectSubType | null
     amount: number
     createdById: string
     createdAt?: Date | string
@@ -23753,6 +24024,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -23762,6 +24035,8 @@ export namespace Prisma {
     projectId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24840,6 +25115,20 @@ export namespace Prisma {
     not?: NestedEnumProjectSubTypeNullableFilter<$PrismaModel> | $Enums.ProjectSubType | null
   }
 
+  export type EnumFundingProgramNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.FundingProgram | EnumFundingProgramFieldRefInput<$PrismaModel> | null
+    in?: $Enums.FundingProgram[] | ListEnumFundingProgramFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.FundingProgram[] | ListEnumFundingProgramFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumFundingProgramNullableFilter<$PrismaModel> | $Enums.FundingProgram | null
+  }
+
+  export type EnumProjectAccountNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProjectAccount | EnumProjectAccountFieldRefInput<$PrismaModel> | null
+    in?: $Enums.ProjectAccount[] | ListEnumProjectAccountFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.ProjectAccount[] | ListEnumProjectAccountFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumProjectAccountNullableFilter<$PrismaModel> | $Enums.ProjectAccount | null
+  }
+
   export type EnumModeOfImplementationFilter<$PrismaModel = never> = {
     equals?: $Enums.ModeOfImplementation | EnumModeOfImplementationFieldRefInput<$PrismaModel>
     in?: $Enums.ModeOfImplementation[] | ListEnumModeOfImplementationFieldRefInput<$PrismaModel>
@@ -24902,6 +25191,8 @@ export namespace Prisma {
     projectCode?: SortOrder
     title?: SortOrder
     subType?: SortOrder
+    program?: SortOrder
+    projectAccount?: SortOrder
     modeOfImplementation?: SortOrder
     locationImplementation?: SortOrder
     sourceOfFund?: SortOrder
@@ -24910,6 +25201,9 @@ export namespace Prisma {
     contractorName?: SortOrder
     projectEngineer?: SortOrder
     budgetYear?: SortOrder
+    landbankNumber?: SortOrder
+    supplementalBudgetYear?: SortOrder
+    supplementalBudgetNumber?: SortOrder
     dateStarted?: SortOrder
     targetCompletionDate?: SortOrder
     duration?: SortOrder
@@ -24955,6 +25249,8 @@ export namespace Prisma {
     projectCode?: SortOrder
     title?: SortOrder
     subType?: SortOrder
+    program?: SortOrder
+    projectAccount?: SortOrder
     modeOfImplementation?: SortOrder
     locationImplementation?: SortOrder
     sourceOfFund?: SortOrder
@@ -24963,6 +25259,9 @@ export namespace Prisma {
     contractorName?: SortOrder
     projectEngineer?: SortOrder
     budgetYear?: SortOrder
+    landbankNumber?: SortOrder
+    supplementalBudgetYear?: SortOrder
+    supplementalBudgetNumber?: SortOrder
     dateStarted?: SortOrder
     targetCompletionDate?: SortOrder
     duration?: SortOrder
@@ -24995,6 +25294,8 @@ export namespace Prisma {
     projectCode?: SortOrder
     title?: SortOrder
     subType?: SortOrder
+    program?: SortOrder
+    projectAccount?: SortOrder
     modeOfImplementation?: SortOrder
     locationImplementation?: SortOrder
     sourceOfFund?: SortOrder
@@ -25003,6 +25304,9 @@ export namespace Prisma {
     contractorName?: SortOrder
     projectEngineer?: SortOrder
     budgetYear?: SortOrder
+    landbankNumber?: SortOrder
+    supplementalBudgetYear?: SortOrder
+    supplementalBudgetNumber?: SortOrder
     dateStarted?: SortOrder
     targetCompletionDate?: SortOrder
     duration?: SortOrder
@@ -25051,6 +25355,26 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedEnumProjectSubTypeNullableFilter<$PrismaModel>
     _max?: NestedEnumProjectSubTypeNullableFilter<$PrismaModel>
+  }
+
+  export type EnumFundingProgramNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FundingProgram | EnumFundingProgramFieldRefInput<$PrismaModel> | null
+    in?: $Enums.FundingProgram[] | ListEnumFundingProgramFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.FundingProgram[] | ListEnumFundingProgramFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumFundingProgramNullableWithAggregatesFilter<$PrismaModel> | $Enums.FundingProgram | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumFundingProgramNullableFilter<$PrismaModel>
+    _max?: NestedEnumFundingProgramNullableFilter<$PrismaModel>
+  }
+
+  export type EnumProjectAccountNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProjectAccount | EnumProjectAccountFieldRefInput<$PrismaModel> | null
+    in?: $Enums.ProjectAccount[] | ListEnumProjectAccountFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.ProjectAccount[] | ListEnumProjectAccountFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumProjectAccountNullableWithAggregatesFilter<$PrismaModel> | $Enums.ProjectAccount | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumProjectAccountNullableFilter<$PrismaModel>
+    _max?: NestedEnumProjectAccountNullableFilter<$PrismaModel>
   }
 
   export type EnumModeOfImplementationWithAggregatesFilter<$PrismaModel = never> = {
@@ -25319,6 +25643,8 @@ export namespace Prisma {
     projectId?: SortOrder
     date?: SortOrder
     sourceOfFund?: SortOrder
+    program?: SortOrder
+    subType?: SortOrder
     amount?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
@@ -25333,6 +25659,8 @@ export namespace Prisma {
     projectId?: SortOrder
     date?: SortOrder
     sourceOfFund?: SortOrder
+    program?: SortOrder
+    subType?: SortOrder
     amount?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
@@ -25343,6 +25671,8 @@ export namespace Prisma {
     projectId?: SortOrder
     date?: SortOrder
     sourceOfFund?: SortOrder
+    program?: SortOrder
+    subType?: SortOrder
     amount?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
@@ -26678,6 +27008,14 @@ export namespace Prisma {
     set?: $Enums.ProjectSubType | null
   }
 
+  export type NullableEnumFundingProgramFieldUpdateOperationsInput = {
+    set?: $Enums.FundingProgram | null
+  }
+
+  export type NullableEnumProjectAccountFieldUpdateOperationsInput = {
+    set?: $Enums.ProjectAccount | null
+  }
+
   export type EnumModeOfImplementationFieldUpdateOperationsInput = {
     set?: $Enums.ModeOfImplementation
   }
@@ -27662,6 +28000,20 @@ export namespace Prisma {
     not?: NestedEnumProjectSubTypeNullableFilter<$PrismaModel> | $Enums.ProjectSubType | null
   }
 
+  export type NestedEnumFundingProgramNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.FundingProgram | EnumFundingProgramFieldRefInput<$PrismaModel> | null
+    in?: $Enums.FundingProgram[] | ListEnumFundingProgramFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.FundingProgram[] | ListEnumFundingProgramFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumFundingProgramNullableFilter<$PrismaModel> | $Enums.FundingProgram | null
+  }
+
+  export type NestedEnumProjectAccountNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProjectAccount | EnumProjectAccountFieldRefInput<$PrismaModel> | null
+    in?: $Enums.ProjectAccount[] | ListEnumProjectAccountFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.ProjectAccount[] | ListEnumProjectAccountFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumProjectAccountNullableFilter<$PrismaModel> | $Enums.ProjectAccount | null
+  }
+
   export type NestedEnumModeOfImplementationFilter<$PrismaModel = never> = {
     equals?: $Enums.ModeOfImplementation | EnumModeOfImplementationFieldRefInput<$PrismaModel>
     in?: $Enums.ModeOfImplementation[] | ListEnumModeOfImplementationFieldRefInput<$PrismaModel>
@@ -27716,6 +28068,26 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedEnumProjectSubTypeNullableFilter<$PrismaModel>
     _max?: NestedEnumProjectSubTypeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumFundingProgramNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FundingProgram | EnumFundingProgramFieldRefInput<$PrismaModel> | null
+    in?: $Enums.FundingProgram[] | ListEnumFundingProgramFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.FundingProgram[] | ListEnumFundingProgramFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumFundingProgramNullableWithAggregatesFilter<$PrismaModel> | $Enums.FundingProgram | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumFundingProgramNullableFilter<$PrismaModel>
+    _max?: NestedEnumFundingProgramNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumProjectAccountNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProjectAccount | EnumProjectAccountFieldRefInput<$PrismaModel> | null
+    in?: $Enums.ProjectAccount[] | ListEnumProjectAccountFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.ProjectAccount[] | ListEnumProjectAccountFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumProjectAccountNullableWithAggregatesFilter<$PrismaModel> | $Enums.ProjectAccount | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumProjectAccountNullableFilter<$PrismaModel>
+    _max?: NestedEnumProjectAccountNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumModeOfImplementationWithAggregatesFilter<$PrismaModel = never> = {
@@ -28054,6 +28426,8 @@ export namespace Prisma {
     projectCode: string
     title: string
     subType?: $Enums.ProjectSubType | null
+    program?: $Enums.FundingProgram | null
+    projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
@@ -28062,6 +28436,9 @@ export namespace Prisma {
     contractorName?: string | null
     projectEngineer?: string | null
     budgetYear?: string | null
+    landbankNumber?: string | null
+    supplementalBudgetYear?: string | null
+    supplementalBudgetNumber?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
     duration?: number
@@ -28101,6 +28478,8 @@ export namespace Prisma {
     projectCode: string
     title: string
     subType?: $Enums.ProjectSubType | null
+    program?: $Enums.FundingProgram | null
+    projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
@@ -28109,6 +28488,9 @@ export namespace Prisma {
     contractorName?: string | null
     projectEngineer?: string | null
     budgetYear?: string | null
+    landbankNumber?: string | null
+    supplementalBudgetYear?: string | null
+    supplementalBudgetNumber?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
     duration?: number
@@ -28291,6 +28673,8 @@ export namespace Prisma {
     id?: string
     date?: Date | string
     sourceOfFund?: $Enums.SourceOfFund | null
+    program?: $Enums.FundingProgram | null
+    subType?: $Enums.ProjectSubType | null
     amount: number
     createdAt?: Date | string
     project: ProjectCreateNestedOneWithoutVariationOrdersInput
@@ -28301,6 +28685,8 @@ export namespace Prisma {
     projectId: string
     date?: Date | string
     sourceOfFund?: $Enums.SourceOfFund | null
+    program?: $Enums.FundingProgram | null
+    subType?: $Enums.ProjectSubType | null
     amount: number
     createdAt?: Date | string
   }
@@ -28630,6 +29016,8 @@ export namespace Prisma {
     projectCode?: StringFilter<"Project"> | string
     title?: StringFilter<"Project"> | string
     subType?: EnumProjectSubTypeNullableFilter<"Project"> | $Enums.ProjectSubType | null
+    program?: EnumFundingProgramNullableFilter<"Project"> | $Enums.FundingProgram | null
+    projectAccount?: EnumProjectAccountNullableFilter<"Project"> | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFilter<"Project"> | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFilter<"Project"> | $Enums.District
     sourceOfFund?: EnumSourceOfFundFilter<"Project"> | $Enums.SourceOfFund
@@ -28638,6 +29026,9 @@ export namespace Prisma {
     contractorName?: StringNullableFilter<"Project"> | string | null
     projectEngineer?: StringNullableFilter<"Project"> | string | null
     budgetYear?: StringNullableFilter<"Project"> | string | null
+    landbankNumber?: StringNullableFilter<"Project"> | string | null
+    supplementalBudgetYear?: StringNullableFilter<"Project"> | string | null
+    supplementalBudgetNumber?: StringNullableFilter<"Project"> | string | null
     dateStarted?: DateTimeNullableFilter<"Project"> | Date | string | null
     targetCompletionDate?: DateTimeNullableFilter<"Project"> | Date | string | null
     duration?: IntFilter<"Project"> | number
@@ -28816,6 +29207,8 @@ export namespace Prisma {
     projectId?: StringFilter<"VariationOrder"> | string
     date?: DateTimeFilter<"VariationOrder"> | Date | string
     sourceOfFund?: EnumSourceOfFundNullableFilter<"VariationOrder"> | $Enums.SourceOfFund | null
+    program?: EnumFundingProgramNullableFilter<"VariationOrder"> | $Enums.FundingProgram | null
+    subType?: EnumProjectSubTypeNullableFilter<"VariationOrder"> | $Enums.ProjectSubType | null
     amount?: FloatFilter<"VariationOrder"> | number
     createdById?: StringFilter<"VariationOrder"> | string
     createdAt?: DateTimeFilter<"VariationOrder"> | Date | string
@@ -29316,6 +29709,8 @@ export namespace Prisma {
     id?: string
     date?: Date | string
     sourceOfFund?: $Enums.SourceOfFund | null
+    program?: $Enums.FundingProgram | null
+    subType?: $Enums.ProjectSubType | null
     amount: number
     createdAt?: Date | string
     createdBy: UserCreateNestedOneWithoutVariationOrdersInput
@@ -29325,6 +29720,8 @@ export namespace Prisma {
     id?: string
     date?: Date | string
     sourceOfFund?: $Enums.SourceOfFund | null
+    program?: $Enums.FundingProgram | null
+    subType?: $Enums.ProjectSubType | null
     amount: number
     createdById: string
     createdAt?: Date | string
@@ -29716,6 +30113,8 @@ export namespace Prisma {
     projectCode: string
     title: string
     subType?: $Enums.ProjectSubType | null
+    program?: $Enums.FundingProgram | null
+    projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
@@ -29724,6 +30123,9 @@ export namespace Prisma {
     contractorName?: string | null
     projectEngineer?: string | null
     budgetYear?: string | null
+    landbankNumber?: string | null
+    supplementalBudgetYear?: string | null
+    supplementalBudgetNumber?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
     duration?: number
@@ -29763,6 +30165,8 @@ export namespace Prisma {
     projectCode: string
     title: string
     subType?: $Enums.ProjectSubType | null
+    program?: $Enums.FundingProgram | null
+    projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
@@ -29771,6 +30175,9 @@ export namespace Prisma {
     contractorName?: string | null
     projectEngineer?: string | null
     budgetYear?: string | null
+    landbankNumber?: string | null
+    supplementalBudgetYear?: string | null
+    supplementalBudgetNumber?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
     duration?: number
@@ -29897,6 +30304,8 @@ export namespace Prisma {
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
@@ -29905,6 +30314,9 @@ export namespace Prisma {
     contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     duration?: IntFieldUpdateOperationsInput | number
@@ -29944,6 +30356,8 @@ export namespace Prisma {
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
@@ -29952,6 +30366,9 @@ export namespace Prisma {
     contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     duration?: IntFieldUpdateOperationsInput | number
@@ -30068,6 +30485,8 @@ export namespace Prisma {
     projectCode: string
     title: string
     subType?: $Enums.ProjectSubType | null
+    program?: $Enums.FundingProgram | null
+    projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
@@ -30076,6 +30495,9 @@ export namespace Prisma {
     contractorName?: string | null
     projectEngineer?: string | null
     budgetYear?: string | null
+    landbankNumber?: string | null
+    supplementalBudgetYear?: string | null
+    supplementalBudgetNumber?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
     duration?: number
@@ -30115,6 +30537,8 @@ export namespace Prisma {
     projectCode: string
     title: string
     subType?: $Enums.ProjectSubType | null
+    program?: $Enums.FundingProgram | null
+    projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
@@ -30123,6 +30547,9 @@ export namespace Prisma {
     contractorName?: string | null
     projectEngineer?: string | null
     budgetYear?: string | null
+    landbankNumber?: string | null
+    supplementalBudgetYear?: string | null
+    supplementalBudgetNumber?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
     duration?: number
@@ -30249,6 +30676,8 @@ export namespace Prisma {
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
@@ -30257,6 +30686,9 @@ export namespace Prisma {
     contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     duration?: IntFieldUpdateOperationsInput | number
@@ -30296,6 +30728,8 @@ export namespace Prisma {
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
@@ -30304,6 +30738,9 @@ export namespace Prisma {
     contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     duration?: IntFieldUpdateOperationsInput | number
@@ -30420,6 +30857,8 @@ export namespace Prisma {
     projectCode: string
     title: string
     subType?: $Enums.ProjectSubType | null
+    program?: $Enums.FundingProgram | null
+    projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
@@ -30428,6 +30867,9 @@ export namespace Prisma {
     contractorName?: string | null
     projectEngineer?: string | null
     budgetYear?: string | null
+    landbankNumber?: string | null
+    supplementalBudgetYear?: string | null
+    supplementalBudgetNumber?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
     duration?: number
@@ -30467,6 +30909,8 @@ export namespace Prisma {
     projectCode: string
     title: string
     subType?: $Enums.ProjectSubType | null
+    program?: $Enums.FundingProgram | null
+    projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
@@ -30475,6 +30919,9 @@ export namespace Prisma {
     contractorName?: string | null
     projectEngineer?: string | null
     budgetYear?: string | null
+    landbankNumber?: string | null
+    supplementalBudgetYear?: string | null
+    supplementalBudgetNumber?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
     duration?: number
@@ -30601,6 +31048,8 @@ export namespace Prisma {
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
@@ -30609,6 +31058,9 @@ export namespace Prisma {
     contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     duration?: IntFieldUpdateOperationsInput | number
@@ -30648,6 +31100,8 @@ export namespace Prisma {
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
@@ -30656,6 +31110,9 @@ export namespace Prisma {
     contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     duration?: IntFieldUpdateOperationsInput | number
@@ -30772,6 +31229,8 @@ export namespace Prisma {
     projectCode: string
     title: string
     subType?: $Enums.ProjectSubType | null
+    program?: $Enums.FundingProgram | null
+    projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
@@ -30780,6 +31239,9 @@ export namespace Prisma {
     contractorName?: string | null
     projectEngineer?: string | null
     budgetYear?: string | null
+    landbankNumber?: string | null
+    supplementalBudgetYear?: string | null
+    supplementalBudgetNumber?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
     duration?: number
@@ -30819,6 +31281,8 @@ export namespace Prisma {
     projectCode: string
     title: string
     subType?: $Enums.ProjectSubType | null
+    program?: $Enums.FundingProgram | null
+    projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
@@ -30827,6 +31291,9 @@ export namespace Prisma {
     contractorName?: string | null
     projectEngineer?: string | null
     budgetYear?: string | null
+    landbankNumber?: string | null
+    supplementalBudgetYear?: string | null
+    supplementalBudgetNumber?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
     duration?: number
@@ -30953,6 +31420,8 @@ export namespace Prisma {
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
@@ -30961,6 +31430,9 @@ export namespace Prisma {
     contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     duration?: IntFieldUpdateOperationsInput | number
@@ -31000,6 +31472,8 @@ export namespace Prisma {
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
@@ -31008,6 +31482,9 @@ export namespace Prisma {
     contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     duration?: IntFieldUpdateOperationsInput | number
@@ -31124,6 +31601,8 @@ export namespace Prisma {
     projectCode: string
     title: string
     subType?: $Enums.ProjectSubType | null
+    program?: $Enums.FundingProgram | null
+    projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
@@ -31132,6 +31611,9 @@ export namespace Prisma {
     contractorName?: string | null
     projectEngineer?: string | null
     budgetYear?: string | null
+    landbankNumber?: string | null
+    supplementalBudgetYear?: string | null
+    supplementalBudgetNumber?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
     duration?: number
@@ -31171,6 +31653,8 @@ export namespace Prisma {
     projectCode: string
     title: string
     subType?: $Enums.ProjectSubType | null
+    program?: $Enums.FundingProgram | null
+    projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
@@ -31179,6 +31663,9 @@ export namespace Prisma {
     contractorName?: string | null
     projectEngineer?: string | null
     budgetYear?: string | null
+    landbankNumber?: string | null
+    supplementalBudgetYear?: string | null
+    supplementalBudgetNumber?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
     duration?: number
@@ -31305,6 +31792,8 @@ export namespace Prisma {
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
@@ -31313,6 +31802,9 @@ export namespace Prisma {
     contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     duration?: IntFieldUpdateOperationsInput | number
@@ -31352,6 +31844,8 @@ export namespace Prisma {
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
@@ -31360,6 +31854,9 @@ export namespace Prisma {
     contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     duration?: IntFieldUpdateOperationsInput | number
@@ -31476,6 +31973,8 @@ export namespace Prisma {
     projectCode: string
     title: string
     subType?: $Enums.ProjectSubType | null
+    program?: $Enums.FundingProgram | null
+    projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
@@ -31484,6 +31983,9 @@ export namespace Prisma {
     contractorName?: string | null
     projectEngineer?: string | null
     budgetYear?: string | null
+    landbankNumber?: string | null
+    supplementalBudgetYear?: string | null
+    supplementalBudgetNumber?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
     duration?: number
@@ -31523,6 +32025,8 @@ export namespace Prisma {
     projectCode: string
     title: string
     subType?: $Enums.ProjectSubType | null
+    program?: $Enums.FundingProgram | null
+    projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
@@ -31531,6 +32035,9 @@ export namespace Prisma {
     contractorName?: string | null
     projectEngineer?: string | null
     budgetYear?: string | null
+    landbankNumber?: string | null
+    supplementalBudgetYear?: string | null
+    supplementalBudgetNumber?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
     duration?: number
@@ -31756,6 +32263,8 @@ export namespace Prisma {
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
@@ -31764,6 +32273,9 @@ export namespace Prisma {
     contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     duration?: IntFieldUpdateOperationsInput | number
@@ -31803,6 +32315,8 @@ export namespace Prisma {
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
@@ -31811,6 +32325,9 @@ export namespace Prisma {
     contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     duration?: IntFieldUpdateOperationsInput | number
@@ -32489,6 +33006,8 @@ export namespace Prisma {
     projectCode: string
     title: string
     subType?: $Enums.ProjectSubType | null
+    program?: $Enums.FundingProgram | null
+    projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
@@ -32497,6 +33016,9 @@ export namespace Prisma {
     contractorName?: string | null
     projectEngineer?: string | null
     budgetYear?: string | null
+    landbankNumber?: string | null
+    supplementalBudgetYear?: string | null
+    supplementalBudgetNumber?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
     duration?: number
@@ -32536,6 +33058,8 @@ export namespace Prisma {
     projectCode: string
     title: string
     subType?: $Enums.ProjectSubType | null
+    program?: $Enums.FundingProgram | null
+    projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
@@ -32544,6 +33068,9 @@ export namespace Prisma {
     contractorName?: string | null
     projectEngineer?: string | null
     budgetYear?: string | null
+    landbankNumber?: string | null
+    supplementalBudgetYear?: string | null
+    supplementalBudgetNumber?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
     duration?: number
@@ -32706,6 +33233,8 @@ export namespace Prisma {
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
@@ -32714,6 +33243,9 @@ export namespace Prisma {
     contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     duration?: IntFieldUpdateOperationsInput | number
@@ -32753,6 +33285,8 @@ export namespace Prisma {
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
@@ -32761,6 +33295,9 @@ export namespace Prisma {
     contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     duration?: IntFieldUpdateOperationsInput | number
@@ -32893,6 +33430,8 @@ export namespace Prisma {
     projectCode: string
     title: string
     subType?: $Enums.ProjectSubType | null
+    program?: $Enums.FundingProgram | null
+    projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
@@ -32901,6 +33440,9 @@ export namespace Prisma {
     contractorName?: string | null
     projectEngineer?: string | null
     budgetYear?: string | null
+    landbankNumber?: string | null
+    supplementalBudgetYear?: string | null
+    supplementalBudgetNumber?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
     duration?: number
@@ -32940,6 +33482,8 @@ export namespace Prisma {
     projectCode: string
     title: string
     subType?: $Enums.ProjectSubType | null
+    program?: $Enums.FundingProgram | null
+    projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
@@ -32948,6 +33492,9 @@ export namespace Prisma {
     contractorName?: string | null
     projectEngineer?: string | null
     budgetYear?: string | null
+    landbankNumber?: string | null
+    supplementalBudgetYear?: string | null
+    supplementalBudgetNumber?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
     duration?: number
@@ -33172,6 +33719,8 @@ export namespace Prisma {
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
@@ -33180,6 +33729,9 @@ export namespace Prisma {
     contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     duration?: IntFieldUpdateOperationsInput | number
@@ -33219,6 +33771,8 @@ export namespace Prisma {
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
@@ -33227,6 +33781,9 @@ export namespace Prisma {
     contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     duration?: IntFieldUpdateOperationsInput | number
@@ -33608,6 +34165,8 @@ export namespace Prisma {
     projectCode: string
     title: string
     subType?: $Enums.ProjectSubType | null
+    program?: $Enums.FundingProgram | null
+    projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
     sourceOfFund: $Enums.SourceOfFund
@@ -33616,6 +34175,9 @@ export namespace Prisma {
     contractorName?: string | null
     projectEngineer?: string | null
     budgetYear?: string | null
+    landbankNumber?: string | null
+    supplementalBudgetYear?: string | null
+    supplementalBudgetNumber?: string | null
     dateStarted?: Date | string | null
     targetCompletionDate?: Date | string | null
     duration?: number
@@ -33694,6 +34256,8 @@ export namespace Prisma {
     projectId: string
     date?: Date | string
     sourceOfFund?: $Enums.SourceOfFund | null
+    program?: $Enums.FundingProgram | null
+    subType?: $Enums.ProjectSubType | null
     amount: number
     createdAt?: Date | string
   }
@@ -33811,6 +34375,8 @@ export namespace Prisma {
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
@@ -33819,6 +34385,9 @@ export namespace Prisma {
     contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     duration?: IntFieldUpdateOperationsInput | number
@@ -33858,6 +34427,8 @@ export namespace Prisma {
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
@@ -33866,6 +34437,9 @@ export namespace Prisma {
     contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     duration?: IntFieldUpdateOperationsInput | number
@@ -33905,6 +34479,8 @@ export namespace Prisma {
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
     sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
@@ -33913,6 +34489,9 @@ export namespace Prisma {
     contractorName?: NullableStringFieldUpdateOperationsInput | string | null
     projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
     budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
     dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     duration?: IntFieldUpdateOperationsInput | number
@@ -34084,6 +34663,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutVariationOrdersNestedInput
@@ -34094,6 +34675,8 @@ export namespace Prisma {
     projectId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -34103,6 +34686,8 @@ export namespace Prisma {
     projectId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -34401,6 +34986,8 @@ export namespace Prisma {
     id?: string
     date?: Date | string
     sourceOfFund?: $Enums.SourceOfFund | null
+    program?: $Enums.FundingProgram | null
+    subType?: $Enums.ProjectSubType | null
     amount: number
     createdById: string
     createdAt?: Date | string
@@ -34520,6 +35107,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneRequiredWithoutVariationOrdersNestedInput
@@ -34529,6 +35118,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34538,6 +35129,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
+    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
