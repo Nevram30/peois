@@ -108,7 +108,7 @@ const toCardData = (counts: StatusCounts): DistrictCardItem[] => {
 const DistrictCard = ({ title, data }: DistrictCardProps) => {
     const total = data.reduce((s, d) => s + d.value, 0);
     return (
-        <div className="bg-white rounded-xl overflow-hidden border border-slate-200">
+        <div className="bg-white rounded-sm overflow-hidden border border-slate-200">
             <div className="p-4">
                 <p className="text-[11px] font-extrabold text-[#1e3a8a] tracking-widest uppercase mb-3">
                     {title}
@@ -136,7 +136,7 @@ const DistrictCard = ({ title, data }: DistrictCardProps) => {
                     </div>
                 </div>
             </div>
-            <div className="bg-[#1e3a8a] text-white px-4 py-[9px] flex justify-between items-center text-[11px] font-bold tracking-widest uppercase">
+            <div className="bg-white text-black border-t border-slate-300 px-4 py-[9px] flex justify-between items-center text-[11px] font-bold tracking-widest uppercase">
                 <span>TOTAL PROJECTS</span>
                 <span>{total}</span>
             </div>
@@ -217,7 +217,7 @@ const AnnualAllocationCard = ({ bySource, bySubType, variationBySource, variatio
     const segments: Segment[] = entries.map((e) => ({ value: e.amount, color: e.color }));
 
     return (
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-3 border border-slate-200">
+        <div className="bg-white rounded-sm shadow-sm overflow-hidden mb-3 border border-slate-200">
             <div className="p-5">
                 <div className="flex items-center justify-between mb-4">
                     <p className="text-[12px] font-extrabold text-slate-800 tracking-widest uppercase">
@@ -281,7 +281,7 @@ const AnnualAllocationCard = ({ bySource, bySubType, variationBySource, variatio
                 </div>
             </div>
 
-            <div className="bg-[#1e3a8a] text-white px-6 py-3.5 flex justify-between items-center text-[12px] font-bold tracking-widest uppercase">
+            <div className="bg-white text-black border-t border-slate-300 px-6 py-3.5 flex justify-between items-center text-[12px] font-bold tracking-widest uppercase">
                 <span>Total Combined Allocation</span>
                 <span className="tabular-nums">{formatPeso(total)}</span>
             </div>
@@ -343,7 +343,7 @@ const SourceBreakdownCard = ({ title, footerLabel, bySource, bySubType, variatio
         .map((e) => ({ value: e.amount, color: e.color }));
 
     return (
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-200">
+        <div className="bg-white rounded-sm shadow-sm overflow-hidden border border-slate-200">
             <div className="p-5">
                 <p className="text-[12px] font-extrabold text-slate-800 tracking-widest uppercase mb-4">
                     {title}
@@ -402,7 +402,7 @@ const SourceBreakdownCard = ({ title, footerLabel, bySource, bySubType, variatio
                 </div>
             </div>
 
-            <div className="bg-[#1e3a8a] text-white px-6 py-3.5 flex justify-between items-center text-[12px] font-bold tracking-widest uppercase">
+            <div className="bg-white text-black border-t border-slate-300 px-6 py-3.5 flex justify-between items-center text-[12px] font-bold tracking-widest uppercase">
                 <span>{footerLabel}</span>
                 <span className="tabular-nums">{formatPeso(total)}</span>
             </div>
@@ -517,7 +517,7 @@ const PEOISDashboard = () => {
             {/* User Cards */}
             <div className="grid grid-cols-2 gap-2 mb-5 md:grid-cols-4">
                 {userCards.map((c) => (
-                    <div key={c.label} className={`bg-white rounded-lg shadow-sm p-3 flex items-center gap-3 border-l-4 ${c.border}`}>
+                    <div key={c.label} className="bg-white rounded-sm shadow-sm p-3 flex items-center gap-3">
                         <div className={`w-9 h-9 rounded-full ${c.iconBg} flex items-center justify-center shrink-0`}>
                             <UserIcon type={c.type} color={c.iconColor} />
                         </div>
@@ -541,7 +541,7 @@ const PEOISDashboard = () => {
             {/* Stat Cards */}
             <div className="grid grid-cols-2 gap-2 mb-3 sm:grid-cols-4 xl:grid-cols-7">
                 {statCards.map((c) => (
-                    <div key={c.label} className={`bg-white rounded-lg shadow-sm p-3 flex flex-col gap-1 border-t-[3px] ${c.borderColor}`}>
+                    <div key={c.label} className="bg-white rounded-sm shadow-sm p-3 flex flex-col gap-1">
                         <div className={`w-6 h-6 rounded-md ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>
                             {c.icon}
                         </div>
@@ -549,6 +549,13 @@ const PEOISDashboard = () => {
                         <p className="text-2xl font-extrabold text-slate-900 leading-none">{c.value}</p>
                     </div>
                 ))}
+            </div>
+
+            <div className="flex items-start justify-between mb-3">
+                <div>
+                    <p className="text-[15px] font-extrabold text-blue-900 tracking-wide">PROJECT STATUS DISTRICT I AND II OVERVIEW</p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Project Status Information of Districts</p>
+                </div>
             </div>
 
             {/* DISTRICT I and DISTRICT II Tracker */}
