@@ -1296,6 +1296,7 @@ export function UserManagementContent() {
               <tr className="border-b border-gray-200 bg-gray-50/50">
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">User Name</th>
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Employee ID</th>
+                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Phone Number</th>
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Role</th>
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Designation</th>
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Division</th>
@@ -1309,7 +1310,7 @@ export function UserManagementContent() {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={10} className="px-4 py-12 text-center text-gray-500">
+                  <td colSpan={11} className="px-4 py-12 text-center text-gray-500">
                     <div className="flex flex-col items-center gap-2">
                       <svg className="h-6 w-6 animate-spin text-blue-600" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
@@ -1321,7 +1322,7 @@ export function UserManagementContent() {
                 </tr>
               ) : users.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="px-4 py-12 text-center text-gray-500">No users found.</td>
+                  <td colSpan={11} className="px-4 py-12 text-center text-gray-500">No users found.</td>
                 </tr>
               ) : (
                 users.map((u) => {
@@ -1351,6 +1352,7 @@ export function UserManagementContent() {
                         </div>
                       </td>
                       <td className="px-4 py-3"><span className="font-mono text-xs text-gray-600">{u.employeeId ?? "—"}</span></td>
+                      <td className="px-4 py-3 whitespace-nowrap text-gray-600">{u.contactNumber ?? "—"}</td>
                       <td className="px-4 py-3">
                         <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${u.role === "SUPER_ADMIN"
                           ? "bg-purple-50 text-purple-700"
