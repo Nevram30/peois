@@ -1,539 +1,589 @@
 generator client {
-    provider      = "prisma-client-js"
-    output        = "../generated/prisma"
-    binaryTargets = ["native", "rhel-openssl-3.0.x"]
+  provider      = "prisma-client-js"
+  output        = "../generated/prisma"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum UserRole {
-    SUPER_ADMIN
-    ADMIN
-    USER
-    ARCHIVER
+  SUPER_ADMIN
+  ADMIN
+  USER
+  ARCHIVER
 }
 
 enum UserStatus {
-    ACTIVE
-    INACTIVE
-    PENDING
+  ACTIVE
+  INACTIVE
+  PENDING
 }
 
 enum Sex {
-    MALE
-    FEMALE
+  MALE
+  FEMALE
 }
 
 enum ModeOfImplementation {
-    BY_ADMINISTRATION
-    BY_CONTRACT
+  BY_ADMINISTRATION
+  BY_CONTRACT
 }
 
 enum SourceOfFund {
-    GENERAL_FUND
-    SEF
-    TRUST_FUND
-    TWENTY_PERCENT_DEV_FUND
-    AID
-    LOAN
-    OTHERS
-    FIVE_PERCENT_CONFIDENTIAL_FUND
-    PPOC
-    LDRRM
-    MOOE
-    NCDC
-    PRDP
-    MIADP
-    CONFIDENTIAL
-    FIVE_PERCENT_CALAMITY_FUND
+  GENERAL_FUND
+  SEF
+  TRUST_FUND
+  TWENTY_PERCENT_DEV_FUND
+  AID
+  LOAN
+  OTHERS
+  FIVE_PERCENT_CONFIDENTIAL_FUND
+  PPOC
+  LDRRM
+  MOOE
+  NCDC
+  PRDP
+  MIADP
+  CONFIDENTIAL
+  FIVE_PERCENT_CALAMITY_FUND
 }
 
 enum District {
-    DISTRICT_I
-    DISTRICT_II
+  DISTRICT_I
+  DISTRICT_II
 }
 
 enum ProjectSubType {
-    WATER_SYSTEMS
-    GOVERNMENT_BUILDINGS
-    ELECTRIFICATION
-    RESPONSE_CAMP_MGMT
-    SUPPLEMENTAL_BUDGET_2
-    PARK_AND_DEVELOPMENT
-    DOH
-    PROVINCIAL_GOVT_OFFICE
-    VARIOUS_WATER_SYSTEM_DEV
-    RURAL_ELECTRIFICATION
-    SLOPE_PROTECTION_LAND_DEV
-    INFRA_DEV_GOVT_BUILDINGS
-    LOCAL_ROADS_DRAINAGE
-    PROVINCIAL_ROADS_BRIDGES
-    SUPPLEMENTAL_BUDGET_1
-    SUPPLEMENTAL_BUDGET_3
-    SUPPLEMENTAL_BUDGET_4
-    SUPPLEMENTAL_BUDGET_5
-    PDRRMO_RESPONSE_CAMP_MGMT
-    PDRRMO_REHAB_RECOVERY
-    PDRRMO_PREVENTION_MITIGATION
-    PDRRMO_DISASTER_PREPAREDNESS
-    PAMANA
-    NCDC
-    REPAIR_PROV_ROADS_DISTRICT_I
-    REPAIR_PROV_ROADS_DISTRICT_II
-    ROAD_OPENING
-    PRDP_PROVINCIAL_COUNTERPART
-    BARANGAY_PROJECTS_DISTRICT_I
-    BARANGAY_PROJECTS_DISTRICT_II
-    STIMULUS_BARANGAYS_DISTRICT_I
-    STIMULUS_BARANGAYS_DISTRICT_II
-    CONFLICT_INSURGENCY_ANTI_TERRORISM
-    ANTI_CRIMINALITY_LAWLESSNESS
-    FLOOD_CONTROL_SLOPE_PROTECTION_MOOE
-    FLOOD_CONTROL_SLOPE_PROTECTION_PPE
-    DRR_CCA_PROMOTION_AWARENESS_ADVOCACY
-    BUILDING_BACK_BETTER
-    QUICK_RESPONSE_FUND
-    CONST_CHILD_DEV_CENTERS
-    CONST_IMPVT_COMPL_SCHOOL_BLDGS
-    CONSTRUCTION_SCHOOL_BUILDINGS
-    CONSTRUCTION_SCHOOL_BUILDINGS_FACILITIES
-    REPAIR_MAINT_BUILDINGS_STRUCTURES
-    OTHER_MAINT_OPERATING_EXPENSES
+  WATER_SYSTEMS
+  GOVERNMENT_BUILDINGS
+  ELECTRIFICATION
+  RESPONSE_CAMP_MGMT
+  SUPPLEMENTAL_BUDGET_2
+  PARK_AND_DEVELOPMENT
+  DOH
+  PROVINCIAL_GOVT_OFFICE
+  VARIOUS_WATER_SYSTEM_DEV
+  RURAL_ELECTRIFICATION
+  SLOPE_PROTECTION_LAND_DEV
+  INFRA_DEV_GOVT_BUILDINGS
+  LOCAL_ROADS_DRAINAGE
+  PROVINCIAL_ROADS_BRIDGES
+  SUPPLEMENTAL_BUDGET_1
+  SUPPLEMENTAL_BUDGET_3
+  SUPPLEMENTAL_BUDGET_4
+  SUPPLEMENTAL_BUDGET_5
+  PDRRMO_RESPONSE_CAMP_MGMT
+  PDRRMO_REHAB_RECOVERY
+  PDRRMO_PREVENTION_MITIGATION
+  PDRRMO_DISASTER_PREPAREDNESS
+  PAMANA
+  NCDC
+  REPAIR_PROV_ROADS_DISTRICT_I
+  REPAIR_PROV_ROADS_DISTRICT_II
+  ROAD_OPENING
+  PRDP_PROVINCIAL_COUNTERPART
+  BARANGAY_PROJECTS_DISTRICT_I
+  BARANGAY_PROJECTS_DISTRICT_II
+  STIMULUS_BARANGAYS_DISTRICT_I
+  STIMULUS_BARANGAYS_DISTRICT_II
+  CONFLICT_INSURGENCY_ANTI_TERRORISM
+  ANTI_CRIMINALITY_LAWLESSNESS
+  FLOOD_CONTROL_SLOPE_PROTECTION_MOOE
+  FLOOD_CONTROL_SLOPE_PROTECTION_PPE
+  DRR_CCA_PROMOTION_AWARENESS_ADVOCACY
+  BUILDING_BACK_BETTER
+  QUICK_RESPONSE_FUND
+  CONST_CHILD_DEV_CENTERS
+  CONST_IMPVT_COMPL_SCHOOL_BLDGS
+  CONSTRUCTION_SCHOOL_BUILDINGS
+  CONSTRUCTION_SCHOOL_BUILDINGS_FACILITIES
+  REPAIR_MAINT_BUILDINGS_STRUCTURES
+  OTHER_MAINT_OPERATING_EXPENSES
 }
 
 // Funding Information cascade: Source of Fund → Program → Project (subType)
 enum FundingProgram {
-    INFRA_DEV_PROGRAM_3918
-    PEACE_ORDER_PROGRAM_3918
-    INFRA_DEV_PROGRAM_8918
-    PEACE_ORDER_PROGRAM_8918
-    HEALTH_DEV_PROGRAM_4918
-    INFRA_DEV_PROGRAM_1999
-    PEACE_ORDER_PROGRAM_1999
-    INFRA_DEV_PROGRAM_4918
-    DISASTER_PREVENTION_MITIGATION_9943
-    DISASTER_PREVENTION_MITIGATION_9942
-    DISASTER_PREPAREDNESS_9942
-    DISASTER_REHAB_RECOVERY_9941
-    ELEM_SECONDARY_EDUCATION_3311
-    ALL_OFFICES
-    PAMANA
-    DOH
-    NCDC
-    LGSF
-    PRDP
-    MIADP
-    LDRRM
+  INFRA_DEV_PROGRAM_3918
+  PEACE_ORDER_PROGRAM_3918
+  INFRA_DEV_PROGRAM_8918
+  PEACE_ORDER_PROGRAM_8918
+  HEALTH_DEV_PROGRAM_4918
+  INFRA_DEV_PROGRAM_1999
+  PEACE_ORDER_PROGRAM_1999
+  INFRA_DEV_PROGRAM_4918
+  DISASTER_PREVENTION_MITIGATION_9943
+  DISASTER_PREVENTION_MITIGATION_9942
+  DISASTER_PREPAREDNESS_9942
+  DISASTER_REHAB_RECOVERY_9941
+  ELEM_SECONDARY_EDUCATION_3311
+  ALL_OFFICES
+  PAMANA
+  DOH
+  NCDC
+  LGSF
+  PRDP
+  MIADP
+  LDRRM
 }
 
 enum ProjectAccount {
-    MOOE
-    PPE
+  MOOE
+  PPE
 }
 
 enum NotificationPriority {
-    LOW
-    MEDIUM
-    HIGH
-    URGENT
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
 }
 
 enum ProjectStatus {
-    NOT_YET_STARTED
-    ON_GOING
-    COMPLETED
-    SUSPENDED
-    FOR_IMPLEMENTATION
-    RE_ALIGNMENT
-    OTHERS
+  NOT_YET_STARTED
+  ON_GOING
+  COMPLETED
+  SUSPENDED
+  FOR_IMPLEMENTATION
+  RE_ALIGNMENT
+  OTHERS
 }
 
 enum DocumentType {
-    POW
-    PURCHASE_REQUEST
+  POW
+  PURCHASE_REQUEST
 }
 
 enum ProjectFileType {
-    IMAGE
-    BLUEPRINT
-    REPORT
-    CONTRACT
-    PERMIT
-    OTHER
+  IMAGE
+  BLUEPRINT
+  REPORT
+  CONTRACT
+  PERMIT
+  OTHER
 }
 
 enum DisbursementType {
-    // By Administration
-    BILL_OF_LADING
-    CONTINGENCIES
-    EQUIPMENT_MAINTENANCE
-    EQUIPMENT_POL
-    EQUIPMENT_RENTAL
-    FERRY_LADING
-    LABOR
-    MATERIALS
-    MOBILIZATION_DEMOBILIZATION
-    // By Contract
-    BILLING_ACCOMPLISHMENT
-    MOBILIZATION_15_PERCENT
-    // Legacy value kept for existing records; not selectable in the UI.
-    FUEL
+  // By Administration
+  BILL_OF_LADING
+  CONTINGENCIES
+  EQUIPMENT_MAINTENANCE
+  EQUIPMENT_POL
+  EQUIPMENT_RENTAL
+  FERRY_LADING
+  LABOR
+  MATERIALS
+  MOBILIZATION_DEMOBILIZATION
+  // By Contract
+  BILLING_ACCOMPLISHMENT
+  MOBILIZATION_15_PERCENT
+  // Legacy value kept for existing records; not selectable in the UI.
+  FUEL
 }
 
 enum TimelineAdjustmentType {
-    EXTENSION
-    SUSPENSION
-    RESUMPTION
-    REVISION
+  EXTENSION
+  SUSPENSION
+  RESUMPTION
+  REVISION
 }
 
 enum DocumentStatus {
-    DRAFT
-    FOR_REVIEW
-    REVISION
-    RELEASED
+  DRAFT
+  FOR_REVIEW
+  REVISION
+  RELEASED
 }
 
 enum AccessRequestAction {
-    VIEW
-    DOWNLOAD
+  VIEW
+  DOWNLOAD
 }
 
 enum AccessRequestStatus {
-    PENDING
-    APPROVED
-    DENIED
+  PENDING
+  APPROVED
+  DENIED
 }
 
 model User {
-    id                        String             @id @default(cuid())
-    name                      String?
-    email                     String             @unique
-    password                  String
-    role                      UserRole           @default(ADMIN)
-    employeeId                String?            @unique
-    designation               String?
-    division                  String?
-    contactNumber             String?
-    birthday                  DateTime?
-    sex                       Sex?
-    status                    UserStatus         @default(PENDING)
-    emailVerified             DateTime?
-    image                     String?
-    createdAt                 DateTime           @default(now())
-    updatedAt                 DateTime           @updatedAt
-    posts                     Post[]
-    projects                  Project[]
-    sessions                  UserSession[]
-    documents                 Document[]
-    projectActivities         ProjectActivity[]
-    disbursements             Disbursement[]
-    variationOrders           VariationOrder[]
-    taskNotificationsReceived TaskNotification[] @relation("UserNotificationsReceived")
-    taskNotificationsCreated  TaskNotification[] @relation("UserNotificationsCreated")
-    taskReplies               TaskReply[]
-    projectFiles              ProjectFile[]
-    timelineAdjustments       TimelineAdjustment[]
-    accessRequestsMade        ProjectAccessRequest[] @relation("AccessRequestsMade")
-    accessRequestsReviewed    ProjectAccessRequest[] @relation("AccessRequestsReviewed")
-    archiveLocations          PhysicalArchiveLocation[]
+  id                        String                    @id @default(cuid())
+  name                      String?
+  email                     String                    @unique
+  password                  String
+  role                      UserRole                  @default(ADMIN)
+  employeeId                String?                   @unique
+  designation               String?
+  division                  String?
+  contactNumber             String?
+  birthday                  DateTime?
+  sex                       Sex?
+  status                    UserStatus                @default(PENDING)
+  emailVerified             DateTime?
+  image                     String?
+  createdAt                 DateTime                  @default(now())
+  updatedAt                 DateTime                  @updatedAt
+  posts                     Post[]
+  projects                  Project[]
+  sessions                  UserSession[]
+  documents                 Document[]
+  projectActivities         ProjectActivity[]
+  disbursements             Disbursement[]
+  variationOrders           VariationOrder[]
+  taskNotificationsReceived TaskNotification[]        @relation("UserNotificationsReceived")
+  taskNotificationsCreated  TaskNotification[]        @relation("UserNotificationsCreated")
+  taskReplies               TaskReply[]
+  projectFiles              ProjectFile[]
+  timelineAdjustments       TimelineAdjustment[]
+  accessRequestsMade        ProjectAccessRequest[]    @relation("AccessRequestsMade")
+  accessRequestsReviewed    ProjectAccessRequest[]    @relation("AccessRequestsReviewed")
+  archiveLocations          PhysicalArchiveLocation[]
+  fundingProgramOptions     FundingProgramOption[]
+  fundingProjectOptions     FundingProjectOption[]
+  landbankLoanOptions       LandbankLoanOption[]
 }
 
 model UserSession {
-    id         String   @id @default(cuid())
-    userId     String
-    user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    ipAddress  String?
-    userAgent  String?
-    createdAt  DateTime @default(now())
-    expiresAt  DateTime
-    lastActive DateTime @default(now())
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+  expiresAt  DateTime
+  lastActive DateTime @default(now())
 
-    @@index([userId])
-    @@index([expiresAt])
+  @@index([userId])
+  @@index([expiresAt])
 }
 
 model Project {
-    id                     String               @id @default(cuid())
-    projectCode            String               @unique
-    title                  String
-    subType                ProjectSubType?
-    program                FundingProgram?
-    projectAccount         ProjectAccount?
-    modeOfImplementation   ModeOfImplementation
-    locationImplementation District
-    sourceOfFund           SourceOfFund
-    projectCost            Float                @default(0)
-    contractCost           Float                @default(0)
-    contractorName         String?
-    projectEngineer        String?
-    budgetYear             String?
-    landbankNumber           String?
-    supplementalBudgetYear   String?
-    supplementalBudgetNumber String?
-    dateStarted            DateTime?
-    targetCompletionDate   DateTime?
-    duration               Int                  @default(0)
-    revisedCompletionDate  DateTime?
-    dateCompleted          DateTime?
-    daysSuspended          Int                  @default(0)
-    daysExtended           Int                  @default(0)
-    numFemale              Int                  @default(0)
-    numMale                Int                  @default(0)
-    numPersons             Int                  @default(0)
-    numManDays             Int                  @default(0)
-    district               District?
-    cityMunicipality       String?
-    barangay               String?
-    purok                  String?
-    sitio                  String?
-    description            String?
-    status                 ProjectStatus        @default(NOT_YET_STARTED)
-    completionPercentage   Int                  @default(0)
+  id                       String               @id @default(cuid())
+  projectCode              String               @unique
+  title                    String
+  // Free text, not an enum: the built-in keys in ~/lib/fund-constants are the
+  // defaults, but super admins can add their own Programs/Projects at runtime
+  // (see FundingProgramOption / FundingProjectOption) and those values land here.
+  subType                  String?
+  program                  String?
+  projectAccount           ProjectAccount?
+  modeOfImplementation     ModeOfImplementation
+  locationImplementation   District
+  sourceOfFund             SourceOfFund
+  projectCost              Float                @default(0)
+  contractCost             Float                @default(0)
+  contractorName           String?
+  projectEngineer          String?
+  budgetYear               String?
+  landbankNumber           String?
+  supplementalBudgetYear   String?
+  supplementalBudgetNumber String?
+  dateStarted              DateTime?
+  targetCompletionDate     DateTime?
+  duration                 Int                  @default(0)
+  revisedCompletionDate    DateTime?
+  dateCompleted            DateTime?
+  daysSuspended            Int                  @default(0)
+  daysExtended             Int                  @default(0)
+  numFemale                Int                  @default(0)
+  numMale                  Int                  @default(0)
+  numPersons               Int                  @default(0)
+  numManDays               Int                  @default(0)
+  district                 District?
+  cityMunicipality         String?
+  barangay                 String?
+  purok                    String?
+  sitio                    String?
+  description              String?
+  status                   ProjectStatus        @default(NOT_YET_STARTED)
+  completionPercentage     Int                  @default(0)
 
-    imageUrl     String?
-    documentUrl  String?
-    documentName String?
-    createdBy    User     @relation(fields: [createdById], references: [id])
-    createdById  String
-    createdAt    DateTime @default(now())
-    updatedAt    DateTime @updatedAt
+  imageUrl     String?
+  documentUrl  String?
+  documentName String?
+  createdBy    User     @relation(fields: [createdById], references: [id])
+  createdById  String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-    activities          ProjectActivity[]
-    disbursements       Disbursement[]
-    variationOrders     VariationOrder[]
-    taskNotifications   TaskNotification[]
-    files               ProjectFile[]
-    timelineAdjustments TimelineAdjustment[]
-    accessRequests      ProjectAccessRequest[]
-    archiveLocations    PhysicalArchiveLocation[]
+  activities          ProjectActivity[]
+  disbursements       Disbursement[]
+  variationOrders     VariationOrder[]
+  taskNotifications   TaskNotification[]
+  files               ProjectFile[]
+  timelineAdjustments TimelineAdjustment[]
+  accessRequests      ProjectAccessRequest[]
+  archiveLocations    PhysicalArchiveLocation[]
 
-    @@index([title])
-    @@index([status])
-    @@index([createdById])
+  @@index([title])
+  @@index([status])
+  @@index([createdById])
 }
 
 enum BoxLabel {
-    COMPLETED
-    OTHERS
+  COMPLETED
+  OTHERS
 }
 
 model PhysicalArchiveLocation {
-    id          String   @id @default(cuid())
-    boxLabel    BoxLabel
-    boxRange    String
-    boxNumbers  String?
-    remarks     String?
-    project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-    projectId   String
-    createdBy   User     @relation(fields: [createdById], references: [id])
-    createdById String
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+  id          String   @id @default(cuid())
+  boxLabel    BoxLabel
+  boxRange    String
+  boxNumbers  String?
+  remarks     String?
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-    @@index([projectId])
-    @@index([createdById])
+  @@index([projectId])
+  @@index([createdById])
 }
 
 model ProjectActivity {
-    id          String   @id @default(cuid())
-    projectId   String
-    project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-    description String
-    createdBy   User     @relation(fields: [createdById], references: [id])
-    createdById String
-    createdAt   DateTime @default(now())
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  description String
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime @default(now())
 
-    @@index([projectId])
-    @@index([createdById])
+  @@index([projectId])
+  @@index([createdById])
 }
 
 model Disbursement {
-    id              String            @id @default(cuid())
-    projectId       String
-    project         Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
-    date            DateTime          @default(now())
-    referenceNumber String?
-    type            DisbursementType?
-    percentage      Float?
-    amount          Float
-    createdBy       User              @relation(fields: [createdById], references: [id])
-    createdById     String
-    createdAt       DateTime          @default(now())
+  id              String            @id @default(cuid())
+  projectId       String
+  project         Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  date            DateTime          @default(now())
+  referenceNumber String?
+  type            DisbursementType?
+  percentage      Float?
+  remarks         String?
+  amount          Float
+  createdBy       User              @relation(fields: [createdById], references: [id])
+  createdById     String
+  createdAt       DateTime          @default(now())
 
-    @@index([projectId])
-    @@index([createdById])
+  @@index([projectId])
+  @@index([createdById])
 }
 
 model VariationOrder {
-    id           String        @id @default(cuid())
-    projectId    String
-    project      Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
-    date         DateTime      @default(now())
-    sourceOfFund SourceOfFund?
-    program      FundingProgram?
-    subType      ProjectSubType?
-    amount       Float
-    createdBy    User          @relation(fields: [createdById], references: [id])
-    createdById  String
-    createdAt    DateTime      @default(now())
+  id           String        @id @default(cuid())
+  projectId    String
+  project      Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  date         DateTime      @default(now())
+  sourceOfFund SourceOfFund?
+  // Free text for the same reason as Project.program / Project.subType.
+  program      String?
+  subType      String?
+  amount       Float
+  createdBy    User          @relation(fields: [createdById], references: [id])
+  createdById  String
+  createdAt    DateTime      @default(now())
 
-    @@index([projectId])
-    @@index([createdById])
+  @@index([projectId])
+  @@index([createdById])
+}
+
+// ─── Super-admin managed funding option lists ────────────────────────────────
+// The Funding Information dropdowns are seeded from the built-in constants in
+// ~/lib/fund-constants and extended at runtime with the rows below, which super
+// admins create from the Manual Entry card on the project override page. The
+// stored option `name` / `number` is exactly what gets written to
+// Project.program, Project.subType and Project.landbankNumber.
+
+model FundingProgramOption {
+  id           String       @id @default(cuid())
+  name         String
+  sourceOfFund SourceOfFund
+  createdBy    User         @relation(fields: [createdById], references: [id])
+  createdById  String
+  createdAt    DateTime     @default(now())
+
+  @@unique([sourceOfFund, name])
+  @@index([createdById])
+}
+
+model FundingProjectOption {
+  id          String   @id @default(cuid())
+  name        String
+  // Built-in FUNDING_PROGRAM_VALUES key, or a FundingProgramOption name.
+  program     String
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime @default(now())
+
+  @@unique([program, name])
+  @@index([createdById])
+}
+
+model LandbankLoanOption {
+  id          String   @id @default(cuid())
+  number      String   @unique
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime @default(now())
+
+  @@index([createdById])
 }
 
 model TimelineAdjustment {
-    id            String                 @id @default(cuid())
-    projectId     String
-    project       Project                @relation(fields: [projectId], references: [id], onDelete: Cascade)
-    startDate     DateTime
-    endDate       DateTime
-    duration      Int
-    type          TimelineAdjustmentType
-    justification String?
-    createdBy     User                   @relation(fields: [createdById], references: [id])
-    createdById   String
-    createdAt     DateTime               @default(now())
+  id            String                 @id @default(cuid())
+  projectId     String
+  project       Project                @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  startDate     DateTime
+  endDate       DateTime
+  duration      Int
+  type          TimelineAdjustmentType
+  justification String?
+  createdBy     User                   @relation(fields: [createdById], references: [id])
+  createdById   String
+  createdAt     DateTime               @default(now())
 
-    @@index([projectId])
-    @@index([createdById])
+  @@index([projectId])
+  @@index([createdById])
 }
 
 model TaskNotification {
-    id             String               @id @default(cuid())
-    projectId      String
-    project        Project              @relation(fields: [projectId], references: [id], onDelete: Cascade)
-    notifyUserId   String
-    notifyUser     User                 @relation("UserNotificationsReceived", fields: [notifyUserId], references: [id])
-    priority       NotificationPriority @default(MEDIUM)
-    description    String
-    acknowledged   Boolean              @default(false)
-    acknowledgedAt DateTime?
-    createdById    String
-    createdBy      User                 @relation("UserNotificationsCreated", fields: [createdById], references: [id])
-    createdAt      DateTime             @default(now())
-    replies        TaskReply[]
+  id             String               @id @default(cuid())
+  projectId      String
+  project        Project              @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  notifyUserId   String
+  notifyUser     User                 @relation("UserNotificationsReceived", fields: [notifyUserId], references: [id])
+  priority       NotificationPriority @default(MEDIUM)
+  description    String
+  acknowledged   Boolean              @default(false)
+  acknowledgedAt DateTime?
+  createdById    String
+  createdBy      User                 @relation("UserNotificationsCreated", fields: [createdById], references: [id])
+  createdAt      DateTime             @default(now())
+  replies        TaskReply[]
 
-    @@index([projectId])
-    @@index([notifyUserId])
-    @@index([createdById])
+  @@index([projectId])
+  @@index([notifyUserId])
+  @@index([createdById])
 }
 
 model TaskReply {
-    id                 String              @id @default(cuid())
-    taskNotificationId String
-    taskNotification   TaskNotification    @relation(fields: [taskNotificationId], references: [id], onDelete: Cascade)
-    message            String
-    taskStatus         String?
-    createdById        String
-    createdBy          User                @relation(fields: [createdById], references: [id])
-    createdAt          DateTime            @default(now())
-    documents          TaskReplyDocument[]
+  id                 String              @id @default(cuid())
+  taskNotificationId String
+  taskNotification   TaskNotification    @relation(fields: [taskNotificationId], references: [id], onDelete: Cascade)
+  message            String
+  taskStatus         String?
+  createdById        String
+  createdBy          User                @relation(fields: [createdById], references: [id])
+  createdAt          DateTime            @default(now())
+  documents          TaskReplyDocument[]
 
-    @@index([taskNotificationId])
-    @@index([createdById])
+  @@index([taskNotificationId])
+  @@index([createdById])
 }
 
 model TaskReplyDocument {
-    id        String    @id @default(cuid())
-    replyId   String
-    reply     TaskReply @relation(fields: [replyId], references: [id], onDelete: Cascade)
-    fileName  String
-    fileUrl   String
-    fileSize  Int?
-    fileType  String?
-    createdAt DateTime  @default(now())
+  id        String    @id @default(cuid())
+  replyId   String
+  reply     TaskReply @relation(fields: [replyId], references: [id], onDelete: Cascade)
+  fileName  String
+  fileUrl   String
+  fileSize  Int?
+  fileType  String?
+  createdAt DateTime  @default(now())
 
-    @@index([replyId])
+  @@index([replyId])
 }
 
 model Document {
-    id           String         @id @default(cuid())
-    documentCode String         @unique
-    type         DocumentType
-    title        String
-    description  String?
-    status       DocumentStatus @default(DRAFT)
+  id           String         @id @default(cuid())
+  documentCode String         @unique
+  type         DocumentType
+  title        String
+  description  String?
+  status       DocumentStatus @default(DRAFT)
 
-    filePath String?
-    fileName String?
-    fileSize Int?
+  filePath String?
+  fileName String?
+  fileSize Int?
 
-    amount  Float?
-    purpose String?
+  amount  Float?
+  purpose String?
 
-    district   District
-    projectRef String?
+  district   District
+  projectRef String?
 
-    releasedAt DateTime?
-    releasedTo String?
+  releasedAt DateTime?
+  releasedTo String?
 
-    createdBy   User     @relation(fields: [createdById], references: [id])
-    createdById String
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-    @@index([type])
-    @@index([status])
-    @@index([district])
-    @@index([createdById])
+  @@index([type])
+  @@index([status])
+  @@index([district])
+  @@index([createdById])
 }
 
 model ProjectFile {
-    id          String          @id @default(cuid())
-    projectId   String
-    project     Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
-    fileName    String
-    fileUrl     String
-    fileType    ProjectFileType @default(OTHER)
-    fileSize    Int?
-    createdBy   User            @relation(fields: [createdById], references: [id])
-    createdById String
-    createdAt   DateTime        @default(now())
+  id          String          @id @default(cuid())
+  projectId   String
+  project     Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  fileName    String
+  fileUrl     String
+  fileType    ProjectFileType @default(OTHER)
+  fileSize    Int?
+  createdBy   User            @relation(fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime        @default(now())
 
-    accessRequests ProjectAccessRequest[]
+  accessRequests ProjectAccessRequest[]
 
-    @@index([projectId])
-    @@index([createdById])
+  @@index([projectId])
+  @@index([createdById])
 }
 
 model ProjectAccessRequest {
-    id            String              @id @default(cuid())
-    projectId     String
-    project       Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
-    projectFileId String
-    projectFile   ProjectFile         @relation(fields: [projectFileId], references: [id], onDelete: Cascade)
-    action        AccessRequestAction
-    status        AccessRequestStatus @default(PENDING)
-    note          String?
+  id            String              @id @default(cuid())
+  projectId     String
+  project       Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectFileId String
+  projectFile   ProjectFile         @relation(fields: [projectFileId], references: [id], onDelete: Cascade)
+  action        AccessRequestAction
+  status        AccessRequestStatus @default(PENDING)
+  note          String?
 
-    requestedById String
-    requestedBy   User    @relation("AccessRequestsMade", fields: [requestedById], references: [id])
+  requestedById String
+  requestedBy   User   @relation("AccessRequestsMade", fields: [requestedById], references: [id])
 
-    reviewedById String?
-    reviewedBy   User?     @relation("AccessRequestsReviewed", fields: [reviewedById], references: [id])
-    reviewedAt   DateTime?
+  reviewedById String?
+  reviewedBy   User?     @relation("AccessRequestsReviewed", fields: [reviewedById], references: [id])
+  reviewedAt   DateTime?
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@index([projectId])
-    @@index([projectFileId])
-    @@index([requestedById])
-    @@index([status])
+  @@index([projectId])
+  @@index([projectFileId])
+  @@index([requestedById])
+  @@index([status])
 }
 
 model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    createdBy   User   @relation(fields: [createdById], references: [id])
-    createdById String
+  createdBy   User   @relation(fields: [createdById], references: [id])
+  createdById String
 
-    @@index([name])
+  @@index([name])
 }

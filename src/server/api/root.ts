@@ -1,5 +1,6 @@
 import { archiveRouter } from "~/server/api/routers/archive";
 import { documentRouter } from "~/server/api/routers/document";
+import { fundingOptionRouter } from "~/server/api/routers/fundingOption";
 import { postRouter } from "~/server/api/routers/post";
 import { projectRouter } from "~/server/api/routers/project";
 import { projectAccessRequestRouter } from "~/server/api/routers/projectAccessRequest";
@@ -12,6 +13,7 @@ import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 export const appRouter = createTRPCRouter({
   archive: archiveRouter,
   document: documentRouter,
+  fundingOption: fundingOptionRouter,
   post: postRouter,
   project: projectRouter,
   projectAccessRequest: projectAccessRequestRouter,

@@ -8,22 +8,21 @@ import { useUploadThing } from "~/lib/uploadthing";
 import {
   SOURCE_OF_FUND_LABEL,
   SOURCE_OF_FUND_SELECTABLE,
-  PROJECT_SUB_TYPE_LABEL,
   PROJECT_STATUS_LABEL,
   PROJECT_STATUS_ORDER,
-  FUNDING_PROGRAM_LABEL,
-  SOURCE_TO_PROGRAMS,
-  PROGRAM_TO_PROJECTS,
   PROJECT_ACCOUNT_VALUES,
   PROJECT_ACCOUNT_LABEL,
   SUPPLEMENTAL_BUDGET_YEARS,
   SUPPLEMENTAL_BUDGET_NUMBERS,
   type SourceOfFundValue,
-  type ProjectSubTypeValue,
   type ProjectStatusValue,
-  type FundingProgramValue,
   type ProjectAccountValue,
 } from "~/lib/fund-constants";
+import {
+  landbankOptions,
+  programOptions,
+  projectOptions,
+} from "~/lib/funding-options";
 import {
   getMunicipalitiesByDistrict,
   getBarangaysByMunicipality,
@@ -214,7 +213,7 @@ export const AddProjectForm = () => {
 
   // ── Funding Information ──────────────────────────────────────────────
   const [sourceOfFund, setSourceOfFund] = useState<SourceOfFundValue | "">("");
-  const [program, setProgram] = useState<FundingProgramValue | "">("");
+  const [program, setProgram] = useState("");
   const [subType, setSubType] = useState("");
   const [projectAccount, setProjectAccount] = useState<ProjectAccountValue | "">("");
   const [budgetYear, setBudgetYear] = useState(String(new Date().getFullYear()));
@@ -287,14 +286,21 @@ export const AddProjectForm = () => {
     () => getBarangaysByMunicipality(cityMunicipality),
     [cityMunicipality],
   );
-  // Cascade: Source of Fund → Program → Project
+  // Programs / Projects / LBP-TL numbers registered by a super admin.
+  const { data: customOptions } = api.fundingOption.getAll.useQuery();
+  // Cascade: Source of Fund → Program → Project. Both lists are the built-in
+  // constants plus the entries a super admin added from the override page.
   const availablePrograms = useMemo(
-    () => (sourceOfFund ? SOURCE_TO_PROGRAMS[sourceOfFund] : []),
-    [sourceOfFund],
+    () => programOptions(sourceOfFund, customOptions),
+    [sourceOfFund, customOptions],
   );
   const availableSubTypes = useMemo(
-    () => (program ? PROGRAM_TO_PROJECTS[program] : []),
-    [program],
+    () => projectOptions(program, customOptions),
+    [program, customOptions],
+  );
+  const availableLandbankNumbers = useMemo(
+    () => landbankOptions(customOptions),
+    [customOptions],
   );
 
   // ── Handlers ─────────────────────────────────────────────────────────
@@ -501,7 +507,7 @@ export const AddProjectForm = () => {
     }
     createProject.mutate({
       title,
-      subType: subType ? (subType as ProjectSubTypeValue) : null,
+      subType: subType || null,
       program: program || null,
       projectAccount: projectAccount || null,
       landbankNumber: landbankNumber.trim() || null,
@@ -868,10 +874,10 @@ export const AddProjectForm = () => {
               <select
                 value={program}
                 onChange={(e) => {
-                  const next = e.target.value as FundingProgramValue | "";
+                  const next = e.target.value;
                   setProgram(next);
-                  const allowed = next ? PROGRAM_TO_PROJECTS[next] : [];
-                  if (!allowed.includes(subType as ProjectSubTypeValue)) setSubType("");
+                  const allowed = projectOptions(next, customOptions);
+                  if (!allowed.some((o) => o.value === subType)) setSubType("");
                 }}
                 disabled={!sourceOfFund || availablePrograms.length === 0}
                 className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400 ${showErrors && fieldErrors.program ? errorRingClass : ""}`}
@@ -883,8 +889,10 @@ export const AddProjectForm = () => {
                       ? "No programs available"
                       : "Select Program"}
                 </option>
-                {availablePrograms.map((k) => (
-                  <option key={k} value={k}>{FUNDING_PROGRAM_LABEL[k]}</option>
+                {availablePrograms.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}{o.custom ? " (added)" : ""}
+                  </option>
                 ))}
               </select>
               <FieldError show={showErrors && fieldErrors.program} />
@@ -924,8 +932,10 @@ export const AddProjectForm = () => {
                       ? "No projects available"
                       : "Select Project"}
                 </option>
-                {availableSubTypes.map((k) => (
-                  <option key={k} value={k}>{PROJECT_SUB_TYPE_LABEL[k]}</option>
+                {availableSubTypes.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}{o.custom ? " (added)" : ""}
+                  </option>
                 ))}
               </select>
               <FieldError show={showErrors && fieldErrors.subType} />
@@ -972,13 +982,21 @@ export const AddProjectForm = () => {
             </div>
             <div>
               <label className={labelClass}>*LANDBANK [LBP-TL#]</label>
-              <input
-                type="text"
+              <select
                 value={landbankNumber}
                 onChange={(e) => setLandbankNumber(e.target.value)}
-                placeholder="Optional — e.g. 28"
-                className={inputClass}
-              />
+                disabled={availableLandbankNumbers.length === 0}
+                className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
+              >
+                <option value="">
+                  {availableLandbankNumbers.length === 0
+                    ? "No LBP-TL numbers yet"
+                    : "Optional — select reference"}
+                </option>
+                {availableLandbankNumbers.map((n) => (
+                  <option key={n} value={n}>{n}</option>
+                ))}
+              </select>
             </div>
           </div>
         </section>

@@ -8,25 +8,27 @@ import { useUploadThing } from "~/lib/uploadthing";
 import {
   SOURCE_OF_FUND_LABEL,
   SOURCE_OF_FUND_ORDER,
-  PROJECT_SUB_TYPE_LABEL,
   PROJECT_STATUS_LABEL,
   PROJECT_STATUS_ORDER,
   DISBURSEMENT_TYPE_LABEL,
   MODE_TO_DISBURSEMENT_TYPES,
-  FUNDING_PROGRAM_LABEL,
   PROJECT_ACCOUNT_LABEL,
   PROJECT_ACCOUNT_VALUES,
-  SOURCE_TO_PROGRAMS,
-  PROGRAM_TO_PROJECTS,
   SUPPLEMENTAL_BUDGET_YEARS,
   SUPPLEMENTAL_BUDGET_NUMBERS,
   type SourceOfFundValue,
   type ProjectStatusValue,
-  type ProjectSubTypeValue,
-  type FundingProgramValue,
   type ProjectAccountValue,
   type DisbursementTypeValue,
 } from "~/lib/fund-constants";
+import {
+  landbankOptions,
+  programLabel,
+  programOptions,
+  projectLabel,
+  projectOptions,
+  withSelected,
+} from "~/lib/funding-options";
 import {
   getMunicipalitiesByDistrict,
   getBarangaysByMunicipality,
@@ -149,6 +151,9 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   const { data: projectFiles, refetch: refetchFiles } = api.projectFile.getByProjectId.useQuery({ projectId });
   const { startUpload } = useUploadThing("projectFileUploader");
   const { data: usersForSelect } = api.user.getForSelect.useQuery();
+  // Programs / Projects / LBP-TL numbers a super admin registered from the
+  // project override page, merged into the Funding Information dropdowns below.
+  const { data: customOptions } = api.fundingOption.getAll.useQuery();
 
   // ─ Identity & Status ───────────────────────────────────────────────────
   const [completion, setCompletion] = useState(0);
@@ -165,7 +170,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
 
   // ─ Funding ─────────────────────────────────────────────────────────────
   const [sourceOfFund, setSourceOfFund] = useState<SourceOfFundValue | "">("");
-  const [program, setProgram] = useState<FundingProgramValue | "">("");
+  const [program, setProgram] = useState("");
   const [subType, setSubType] = useState("");
   const [projectAccount, setProjectAccount] = useState<ProjectAccountValue | "">("");
   const [budgetYear, setBudgetYear] = useState("");
@@ -212,7 +217,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
 
   // ─ Variation Order (backup fund) ────────────────────────────────────────
   const [revisedSourceOfFund, setRevisedSourceOfFund] = useState<SourceOfFundValue | "">("");
-  const [revisedProgram, setRevisedProgram] = useState<FundingProgramValue | "">("");
+  const [revisedProgram, setRevisedProgram] = useState("");
   const [revisedProject, setRevisedProject] = useState("");
   const [revisedVariation, setRevisedVariation] = useState("");
   const [variationError, setVariationError] = useState<string | null>(null);
@@ -240,7 +245,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     setPurok(project.purok ?? "");
     setSitio(project.sitio ?? "");
     setSourceOfFund(project.sourceOfFund);
-    setProgram((project.program as FundingProgramValue | null) ?? "");
+    setProgram(project.program ?? "");
     setSubType(project.subType ?? "");
     setProjectAccount((project.projectAccount as ProjectAccountValue | null) ?? "");
     setBudgetYear(project.budgetYear ?? "");
@@ -429,7 +434,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
 
     const fundingFields: string[] = [];
     if (sourceOfFund !== project.sourceOfFund) fundingFields.push("Source of Fund");
-    if (program !== ((project.program as FundingProgramValue | null) ?? "")) fundingFields.push("Program");
+    if (program !== (project.program ?? "")) fundingFields.push("Program");
     if (subType !== (project.subType ?? "")) fundingFields.push("Project");
     if (projectAccount !== ((project.projectAccount as ProjectAccountValue | null) ?? "")) fundingFields.push("Project Account");
     if (budgetYear !== (project.budgetYear ?? "")) fundingFields.push("Budget Year");
@@ -486,7 +491,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
         contractorName: contractorName || undefined,
         projectEngineer: engineers.join(", ") || undefined,
         budgetYear: budgetYear || undefined,
-        subType: (subType || null) as Parameters<typeof updateProject.mutate>[0]["subType"],
+        subType: subType || null,
         program: program || null,
         projectAccount: projectAccount || null,
         landbankNumber: landbankNumber.trim() || null,
@@ -558,7 +563,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
         amount,
         sourceOfFund: revisedSourceOfFund || null,
         program: revisedProgram || null,
-        subType: revisedProject ? (revisedProject as ProjectSubTypeValue) : null,
+        subType: revisedProject || null,
       });
     } else {
       recordVariationOrder.mutate({
@@ -566,7 +571,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
         amount,
         sourceOfFund: revisedSourceOfFund || undefined,
         program: revisedProgram || null,
-        subType: revisedProject ? (revisedProject as ProjectSubTypeValue) : null,
+        subType: revisedProject || null,
       });
     }
   };
@@ -575,8 +580,8 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     id: string;
     amount: number;
     sourceOfFund: SourceOfFundValue | null;
-    program: FundingProgramValue | null;
-    subType: ProjectSubTypeValue | null;
+    program: string | null;
+    subType: string | null;
   }) => {
     setEditingVoId(v.id);
     setRevisedVariation(String(v.amount));
@@ -653,12 +658,24 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   const totalRemainingBalance = primaryFundBalance + variationOrderBalance;
   const currentRevisedTotal = (project.projectCost ?? 0) + totalVariationOrder;
 
-  // Funding Information cascade: Source of Fund → Program → Project
-  const fundingPrograms = sourceOfFund ? SOURCE_TO_PROGRAMS[sourceOfFund] : [];
-  const fundingProjects = program ? PROGRAM_TO_PROJECTS[program] : [];
+  // Funding Information cascade: Source of Fund → Program → Project. Each list is
+  // the built-in constants plus whatever a super admin added via Manual Entry.
+  const fundingPrograms = withSelected(
+    programOptions(sourceOfFund, customOptions),
+    program,
+    programLabel,
+  );
+  const fundingProjects = withSelected(
+    projectOptions(program, customOptions),
+    subType,
+    projectLabel,
+  );
+  const availableLandbankNumbers = landbankNumber
+    ? Array.from(new Set([...landbankOptions(customOptions), landbankNumber]))
+    : landbankOptions(customOptions);
   // Same cascade for the variation-order record form
-  const voPrograms = revisedSourceOfFund ? SOURCE_TO_PROGRAMS[revisedSourceOfFund] : [];
-  const voProjects = revisedProgram ? PROGRAM_TO_PROJECTS[revisedProgram] : [];
+  const voPrograms = programOptions(revisedSourceOfFund, customOptions);
+  const voProjects = projectOptions(revisedProgram, customOptions);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -946,10 +963,10 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                 <Select
                   value={program}
                   onChange={(e) => {
-                    const next = e.target.value as FundingProgramValue | "";
+                    const next = e.target.value;
                     setProgram(next);
-                    const allowed = next ? PROGRAM_TO_PROJECTS[next] : [];
-                    if (!allowed.includes(subType as ProjectSubTypeValue)) setSubType("");
+                    const allowed = projectOptions(next, customOptions);
+                    if (!allowed.some((o) => o.value === subType)) setSubType("");
                   }}
                   disabled={!sourceOfFund || fundingPrograms.length === 0}
                 >
@@ -960,8 +977,10 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                         ? "No programs available"
                         : "Select Program"}
                   </option>
-                  {fundingPrograms.map((k) => (
-                    <option key={k} value={k}>{FUNDING_PROGRAM_LABEL[k]}</option>
+                  {fundingPrograms.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}{o.custom ? " (added)" : ""}
+                    </option>
                   ))}
                 </Select>
               </div>
@@ -998,8 +1017,10 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                         ? "No projects available"
                         : "Select Project"}
                   </option>
-                  {fundingProjects.map((k) => (
-                    <option key={k} value={k}>{PROJECT_SUB_TYPE_LABEL[k]}</option>
+                  {fundingProjects.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}{o.custom ? " (added)" : ""}
+                    </option>
                   ))}
                 </Select>
               </div>
@@ -1041,12 +1062,20 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
               </div>
               <div>
                 <p className="mb-1.5 text-sm font-bold text-blue-900">* LANDBANK [LBP-TL#]</p>
-                <Input
-                  type="text"
+                <Select
                   value={landbankNumber}
                   onChange={(e) => setLandbankNumber(e.target.value)}
-                  placeholder="Reference — e.g. 28"
-                />
+                  disabled={availableLandbankNumbers.length === 0}
+                >
+                  <option value="">
+                    {availableLandbankNumbers.length === 0
+                      ? "No LBP-TL numbers yet"
+                      : "Select Reference"}
+                  </option>
+                  {availableLandbankNumbers.map((n) => (
+                    <option key={n} value={n}>{n}</option>
+                  ))}
+                </Select>
               </div>
             </div>
           </SectionCard>
@@ -1205,14 +1234,10 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                               <td className="px-3 py-2.5 text-gray-700">{original.toLocaleString("en-PH", { minimumFractionDigits: 2 })}</td>
                               <td className="px-3 py-2.5 text-gray-700">{v.sourceOfFund ? SOURCE_OF_FUND_LABEL[v.sourceOfFund] : "—"}</td>
                               <td className="px-3 py-2.5 text-gray-700">
-                                {v.program
-                                  ? (FUNDING_PROGRAM_LABEL[v.program as FundingProgramValue] ?? v.program)
-                                  : "—"}
+                                {programLabel(v.program)}
                               </td>
                               <td className="px-3 py-2.5 text-gray-700">
-                                {v.subType
-                                  ? (PROJECT_SUB_TYPE_LABEL[v.subType as ProjectSubTypeValue] ?? v.subType)
-                                  : "—"}
+                                {projectLabel(v.subType)}
                               </td>
                               <td className="px-3 py-2.5 text-gray-700">{v.amount.toLocaleString("en-PH", { minimumFractionDigits: 2 })}</td>
                               <td className="px-3 py-2.5 text-right font-semibold text-gray-900">{running.toLocaleString("en-PH", { minimumFractionDigits: 2 })}</td>
@@ -1224,8 +1249,8 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                                       id: v.id,
                                       amount: v.amount,
                                       sourceOfFund: (v.sourceOfFund as SourceOfFundValue | null) ?? null,
-                                      program: (v.program as FundingProgramValue | null) ?? null,
-                                      subType: (v.subType as ProjectSubTypeValue | null) ?? null,
+                                      program: v.program,
+                                      subType: v.subType,
                                     })
                                   }
                                   className="text-gray-400 transition hover:text-blue-600"
@@ -1277,14 +1302,16 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                     <Select
                       value={revisedProgram}
                       onChange={(e) => {
-                        setRevisedProgram(e.target.value as FundingProgramValue | "");
+                        setRevisedProgram(e.target.value);
                         setRevisedProject("");
                       }}
                       disabled={!revisedSourceOfFund || voPrograms.length === 0}
                     >
                       <option value="">Select Program</option>
-                      {voPrograms.map((k) => (
-                        <option key={k} value={k}>{FUNDING_PROGRAM_LABEL[k]}</option>
+                      {voPrograms.map((o) => (
+                        <option key={o.value} value={o.value}>
+                          {o.label}{o.custom ? " (added)" : ""}
+                        </option>
                       ))}
                     </Select>
                   </div>
@@ -1295,8 +1322,10 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                       disabled={!revisedProgram || voProjects.length === 0}
                     >
                       <option value="">Select Project</option>
-                      {voProjects.map((k) => (
-                        <option key={k} value={k}>{PROJECT_SUB_TYPE_LABEL[k]}</option>
+                      {voProjects.map((o) => (
+                        <option key={o.value} value={o.value}>
+                          {o.label}{o.custom ? " (added)" : ""}
+                        </option>
                       ))}
                     </Select>
                   </div>

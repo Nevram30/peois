@@ -21,6 +21,7 @@ import {
   type SourceOfFundValue,
   type FundingProgramValue,
 } from "~/lib/fund-constants";
+import { projectLabel } from "~/lib/funding-options";
 
 const STATUS_LABELS: Record<string, { label: string; className: string }> = {
   NOT_YET_STARTED: {
@@ -662,7 +663,7 @@ const ProjectsList = () => {
                         {p.sourceOfFund ? SOURCE_OF_FUND_LABEL[p.sourceOfFund] : "—"}
                       </dd>
                       {p.subType && (
-                        <dd className="text-xs text-gray-400">{PROJECT_SUB_TYPE_LABEL[p.subType]}</dd>
+                        <dd className="text-xs text-gray-400">{projectLabel(p.subType)}</dd>
                       )}
                     </div>
                     <div>
@@ -740,7 +741,7 @@ const ProjectsList = () => {
                       <td className="px-4 py-3 text-gray-600">
                         <p>{p.sourceOfFund ? SOURCE_OF_FUND_LABEL[p.sourceOfFund] : "—"}</p>
                         {p.subType && (
-                          <p className="text-xs text-gray-400">{PROJECT_SUB_TYPE_LABEL[p.subType]}</p>
+                          <p className="text-xs text-gray-400">{projectLabel(p.subType)}</p>
                         )}
                       </td>
                       <td className="px-4 py-3">

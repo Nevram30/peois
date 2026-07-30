@@ -6,17 +6,28 @@ import { api } from "~/trpc/react";
 import {
   SOURCE_OF_FUND_LABEL,
   SOURCE_OF_FUND_ORDER,
-  PROJECT_SUB_TYPE_LABEL,
-  SOURCE_TO_SUB_TYPES,
   PROJECT_STATUS_LABEL,
   PROJECT_STATUS_ORDER,
   DISBURSEMENT_TYPE_LABEL,
   MODE_TO_DISBURSEMENT_TYPES,
+  PROJECT_ACCOUNT_LABEL,
+  PROJECT_ACCOUNT_VALUES,
+  SUPPLEMENTAL_BUDGET_YEARS,
+  SUPPLEMENTAL_BUDGET_NUMBERS,
   type SourceOfFundValue,
-  type ProjectSubTypeValue,
   type ProjectStatusValue,
+  type ProjectAccountValue,
   type DisbursementTypeValue,
 } from "~/lib/fund-constants";
+import {
+  allProgramOptions,
+  landbankOptions,
+  programLabel,
+  programOptions,
+  projectLabel,
+  projectOptions,
+  withSelected,
+} from "~/lib/funding-options";
 
 const STATUS_STYLES: Record<string, string> = {
   ON_GOING: "bg-green-100 text-green-700",
@@ -165,6 +176,44 @@ function TextInput({
   );
 }
 
+// Funding Information / Financial Summary use the heavier blue field labels and
+// chevron selects of the admin update-project page, so the two screens read the
+// same. The compact grey FieldLabel above stays with the other override cards.
+function FundLabel({ children }: { children: React.ReactNode }) {
+  return <p className="mb-1.5 text-sm font-bold text-blue-900">{children}</p>;
+}
+
+function FundSelect(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
+  const { className = "", ...rest } = props;
+  return (
+    <div className="relative">
+      <select
+        {...rest}
+        className={`block w-full appearance-none rounded-lg border border-gray-200 bg-white px-3 py-2 pr-8 text-sm text-gray-800 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400 ${className}`}
+      />
+      <svg
+        className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={2.5}
+        stroke="currentColor"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+      </svg>
+    </div>
+  );
+}
+
+function FundInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
+  const { className = "", ...rest } = props;
+  return (
+    <input
+      {...rest}
+      className={`block w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 placeholder:text-gray-300 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20 ${className}`}
+    />
+  );
+}
+
 export function OverrideForm({ projectId }: { projectId: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -178,6 +227,9 @@ export function OverrideForm({ projectId }: { projectId: string }) {
   const { data: timelineAdjustmentsData, refetch: refetchTimelineAdjustments } = api.project.getTimelineAdjustments.useQuery({ projectId });
   const { data: projectFilesData, refetch: refetchProjectFiles } = api.projectFile.getByProjectId.useQuery({ projectId });
   const { data: users } = api.user.getForSelect.useQuery();
+  // Programs / Projects / LBP-TL numbers this super admin (or another) added via
+  // the Manual Entry card — merged into the Funding Information dropdowns.
+  const { data: customOptions } = api.fundingOption.getAll.useQuery();
 
   const override = api.project.superAdminOverride.useMutation({
     onSuccess: async () => {
@@ -195,8 +247,41 @@ export function OverrideForm({ projectId }: { projectId: string }) {
       setNewDisbAmt("");
       setNewDisbRef("");
       setNewDisbType("");
-      setNewDisbPct("");
+      setNewDisbRemarks("");
     },
+  });
+
+  // ── Manual Entry: the added option must show up in the selects immediately,
+  // so each create invalidates the shared option list.
+  const invalidateOptions = async () => {
+    await utils.fundingOption.getAll.invalidate();
+  };
+
+  const addProgram = api.fundingOption.createProgram.useMutation({
+    onSuccess: async () => {
+      await invalidateOptions();
+      setNewProgramName("");
+      setManualError(null);
+    },
+    onError: (e) => setManualError(e.message),
+  });
+
+  const addProjectOption = api.fundingOption.createProject.useMutation({
+    onSuccess: async () => {
+      await invalidateOptions();
+      setNewProjectName("");
+      setManualError(null);
+    },
+    onError: (e) => setManualError(e.message),
+  });
+
+  const addLandbankNumber = api.fundingOption.createLandbankNumber.useMutation({
+    onSuccess: async () => {
+      await invalidateOptions();
+      setNewLandbankNumber("");
+      setManualError(null);
+    },
+    onError: (e) => setManualError(e.message),
   });
 
   const deleteDisbursement = api.project.deleteDisbursement.useMutation({
@@ -259,6 +344,11 @@ export function OverrideForm({ projectId }: { projectId: string }) {
     status: "ON_GOING" as ProjectStatusValue,
     sourceOfFund: "GENERAL_FUND" as SourceOfFundValue,
     subType: "" as string,
+    program: "" as string,
+    projectAccount: "" as "" | ProjectAccountValue,
+    landbankNumber: "",
+    supplementalBudgetYear: "",
+    supplementalBudgetNumber: "",
     budgetYear: "",
     contractCost: 0,
     contractorName: "",
@@ -285,11 +375,21 @@ export function OverrideForm({ projectId }: { projectId: string }) {
   const [newDisbAmt, setNewDisbAmt] = useState("");
   const [newDisbRef, setNewDisbRef] = useState("");
   const [newDisbType, setNewDisbType] = useState<"" | DisbursementTypeValue>("");
-  const [newDisbPct, setNewDisbPct] = useState("");
+  const [newDisbRemarks, setNewDisbRemarks] = useState("");
 
   // Revised contract cost / variation order inputs
   const [newVoAmt, setNewVoAmt] = useState("");
   const [newVoSource, setNewVoSource] = useState("");
+  const [newVoProgram, setNewVoProgram] = useState("");
+  const [newVoProject, setNewVoProject] = useState("");
+
+  // Manual Entry (Funding Information) inputs
+  const [newProgramName, setNewProgramName] = useState("");
+  const [newProgramSource, setNewProgramSource] = useState<"" | SourceOfFundValue>("");
+  const [newProjectName, setNewProjectName] = useState("");
+  const [newProjectProgram, setNewProjectProgram] = useState("");
+  const [newLandbankNumber, setNewLandbankNumber] = useState("");
+  const [manualError, setManualError] = useState<string | null>(null);
 
   // Timeline adjustment inputs
   const [newTlStart, setNewTlStart] = useState("");
@@ -314,6 +414,11 @@ export function OverrideForm({ projectId }: { projectId: string }) {
       status: project.status,
       sourceOfFund: project.sourceOfFund,
       subType: project.subType ?? "",
+      program: project.program ?? "",
+      projectAccount: (project.projectAccount as ProjectAccountValue | null) ?? "",
+      landbankNumber: project.landbankNumber ?? "",
+      supplementalBudgetYear: project.supplementalBudgetYear ?? "",
+      supplementalBudgetNumber: project.supplementalBudgetNumber ?? "",
       budgetYear: project.budgetYear ?? "",
       contractCost: project.contractCost,
       contractorName: project.contractorName ?? "",
@@ -352,12 +457,12 @@ export function OverrideForm({ projectId }: { projectId: string }) {
     e.preventDefault();
     if (!reason.trim() || !project) return;
 
-    // "Commit & Save Updates" only persists edits made in the Project Identity &
-    // Status, Project Location, Workforce Distribution, and Project In-Charge &
-    // Profile cards. Every other field is sent at its saved value so the commit
-    // can never alter data owned by the other cards (Funding & Disbursement,
-    // Timeline, Documentation, Task Notification), which save through their own
-    // record/delete/send actions.
+    // "Commit & Save Updates" persists edits made in the Project Identity &
+    // Status, Project Location, Funding Information, Workforce Distribution, and
+    // Project In-Charge & Profile cards. Every other field is sent at its saved
+    // value so the commit can never alter data owned by the other cards
+    // (Financial Summary, Timeline, Documentation, Task Notification), which save
+    // through their own record/delete/send actions.
     override.mutate({
       id: projectId,
       reason,
@@ -379,10 +484,16 @@ export function OverrideForm({ projectId }: { projectId: string }) {
       // Project In-Charge & Profile
       projectEngineer: form.projectEngineer || undefined,
       description: form.description || undefined,
+      // Funding Information
+      sourceOfFund: form.sourceOfFund,
+      program: form.program || null,
+      subType: form.subType || null,
+      projectAccount: form.projectAccount || null,
+      landbankNumber: form.landbankNumber || null,
+      supplementalBudgetYear: form.supplementalBudgetYear || null,
+      supplementalBudgetNumber: form.supplementalBudgetNumber || null,
+      budgetYear: form.budgetYear || undefined,
       // Preserved (owned by other cards / not editable here)
-      sourceOfFund: project.sourceOfFund,
-      subType: project.subType ?? null,
-      budgetYear: project.budgetYear ?? undefined,
       contractCost: project.contractCost,
       dateStarted: project.dateStarted ?? null,
       targetCompletionDate: project.targetCompletionDate ?? null,
@@ -422,9 +533,60 @@ export function OverrideForm({ projectId }: { projectId: string }) {
     : "Variation Orders";
 
   const currentYear = new Date().getFullYear();
-  const budgetYearOptions = Array.from({ length: 8 }, (_, i) => String(currentYear + 1 - i));
+  const budgetYearOptions = Array.from({ length: 10 }, (_, i) => String(currentYear - i));
   if (form.budgetYear && !budgetYearOptions.includes(form.budgetYear)) {
     budgetYearOptions.unshift(form.budgetYear);
+  }
+
+  // Funding Information cascade: Source of Fund → Program → Project, each list
+  // being the built-in constants plus the super admin's Manual Entry additions.
+  const availablePrograms = withSelected(
+    programOptions(form.sourceOfFund, customOptions),
+    form.program,
+    programLabel,
+  );
+  const availableProjects = withSelected(
+    projectOptions(form.program, customOptions),
+    form.subType,
+    projectLabel,
+  );
+  const availableLandbankNumbers = form.landbankNumber
+    ? Array.from(new Set([...landbankOptions(customOptions), form.landbankNumber]))
+    : landbankOptions(customOptions);
+  const manualEntryPrograms = allProgramOptions(customOptions);
+
+  // Same cascade for the Revised Contract Cost record row.
+  const voPrograms = programOptions(newVoSource as SourceOfFundValue | "", customOptions);
+  const voProjects = projectOptions(newVoProgram, customOptions);
+
+  const isAddingOption =
+    addProgram.isPending || addProjectOption.isPending || addLandbankNumber.isPending;
+  const canAddOption =
+    (!!newProgramName.trim() && !!newProgramSource) ||
+    (!!newProjectName.trim() && !!newProjectProgram) ||
+    !!newLandbankNumber.trim();
+
+  // One ADD button commits whichever of the three Manual Entry rows were filled.
+  function handleManualAdd() {
+    setManualError(null);
+    let submitted = false;
+    if (newProgramName.trim() && newProgramSource) {
+      addProgram.mutate({ name: newProgramName.trim(), sourceOfFund: newProgramSource });
+      submitted = true;
+    }
+    if (newProjectName.trim() && newProjectProgram) {
+      addProjectOption.mutate({ name: newProjectName.trim(), program: newProjectProgram });
+      submitted = true;
+    }
+    if (newLandbankNumber.trim()) {
+      addLandbankNumber.mutate({ number: newLandbankNumber.trim() });
+      submitted = true;
+    }
+    if (!submitted) {
+      setManualError(
+        "Enter a program with its source, a project with its program, or an LBP-TL number.",
+      );
+    }
   }
 
   const timelineAdjustments = timelineAdjustmentsData ?? [];
@@ -677,289 +839,445 @@ export function OverrideForm({ projectId }: { projectId: string }) {
           </SectionCard>
         </div>
 
-        {/* FUNDING & DISBURSEMENT TRACKING */}
+        {/* FUNDING INFORMATION */}
         <SectionCard
           icon={
-            <svg className="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
+            <svg className="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
             </svg>
           }
-          title="Funding & Disbursement Tracking"
+          title="Funding Information"
         >
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            {/* Left — fund fields & balances */}
-            <div className="space-y-3">
+          <div className="grid grid-cols-1 gap-x-8 gap-y-4 lg:grid-cols-3">
+            {/* Column 1 — budget & supplemental budget */}
+            <div className="space-y-4">
               <div>
-                <FieldLabel required>Source of Fund</FieldLabel>
-                <select
-                  value={form.sourceOfFund}
-                  onChange={(e) => {
-                    const next = e.target.value as SourceOfFundValue;
-                    set("sourceOfFund", next);
-                    const allowed = SOURCE_TO_SUB_TYPES[next];
-                    if (!allowed.includes(form.subType as ProjectSubTypeValue)) {
-                      set("subType", "");
-                    }
-                  }}
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  {SOURCE_OF_FUND_ORDER.map((k) => (
-                    <option key={k} value={k}>
-                      {SOURCE_OF_FUND_LABEL[k]}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <FieldLabel>Fund Category</FieldLabel>
-                <select
-                  value={form.subType}
-                  onChange={(e) => set("subType", e.target.value)}
-                  disabled={
-                    (SOURCE_TO_SUB_TYPES[form.sourceOfFund]?.length ?? 0) === 0
-                  }
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400"
-                >
-                  <option value="">
-                    {(SOURCE_TO_SUB_TYPES[form.sourceOfFund]?.length ?? 0) === 0
-                      ? "No sub-categories available"
-                      : "-- None --"}
-                  </option>
-                  {SOURCE_TO_SUB_TYPES[form.sourceOfFund].map((k) => (
-                    <option key={k} value={k}>
-                      {PROJECT_SUB_TYPE_LABEL[k]}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <FieldLabel>Budget Year</FieldLabel>
-                <select
+                <FundLabel>Budget Year</FundLabel>
+                <FundSelect
                   value={form.budgetYear}
                   onChange={(e) => set("budgetYear", e.target.value)}
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="">-- Select year --</option>
+                  <option value="">Select Year</option>
                   {budgetYearOptions.map((y) => (
-                    <option key={y} value={y}>
-                      {y}
-                    </option>
+                    <option key={y} value={y}>{y}</option>
                   ))}
-                </select>
-              </div>
-
-              <div className="border-t border-gray-100 pt-3">
-                <FieldLabel>Total Remaining Balance</FieldLabel>
-                <div className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
-                  <p className="text-lg font-bold text-blue-900">
-                    ₱ {formatCurrency(totalRemainingBalance)}
-                  </p>
-                </div>
+                </FundSelect>
               </div>
               <div>
-                <FieldLabel>Primary Fund Balance ({primaryFundLabel})</FieldLabel>
-                <div className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
-                  <p className="text-sm font-semibold text-gray-700">
-                    ₱ {formatCurrency(primaryBalance)}
-                  </p>
-                </div>
+                <FundLabel>Source of Fund</FundLabel>
+                <FundSelect
+                  value={form.sourceOfFund}
+                  onChange={(e) => {
+                    // Program and Project hang off the source, so a new source
+                    // clears both rather than leaving an impossible pairing.
+                    set("sourceOfFund", e.target.value as SourceOfFundValue);
+                    set("program", "");
+                    set("subType", "");
+                  }}
+                >
+                  {SOURCE_OF_FUND_ORDER.map((k) => (
+                    <option key={k} value={k}>{SOURCE_OF_FUND_LABEL[k]}</option>
+                  ))}
+                </FundSelect>
               </div>
               <div>
-                <FieldLabel>Variation Order Balance ({variationFundLabel})</FieldLabel>
-                <div className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
-                  <p className="text-sm font-semibold text-gray-700">
-                    ₱ {formatCurrency(variationBalance)}
-                  </p>
-                </div>
+                <FundLabel>Supplemental Budget Year</FundLabel>
+                <FundSelect
+                  value={form.supplementalBudgetYear}
+                  onChange={(e) => set("supplementalBudgetYear", e.target.value)}
+                >
+                  <option value="">Select Year</option>
+                  {SUPPLEMENTAL_BUDGET_YEARS.map((y) => (
+                    <option key={y} value={y}>{y}</option>
+                  ))}
+                </FundSelect>
               </div>
-              <p className="text-[10px] italic uppercase tracking-wide text-gray-400">
-                * Calculated based on total cost vs recorded disbursements + variation order
-              </p>
+              <div>
+                <FundLabel>Supplemental Budget Number</FundLabel>
+                <FundSelect
+                  value={form.supplementalBudgetNumber}
+                  onChange={(e) => set("supplementalBudgetNumber", e.target.value)}
+                >
+                  <option value="">Select SB No.</option>
+                  {SUPPLEMENTAL_BUDGET_NUMBERS.map((n) => (
+                    <option key={n} value={n}>{n}</option>
+                  ))}
+                </FundSelect>
+              </div>
             </div>
 
-            {/* Right — disbursements & revised contract cost history */}
-            <div className="col-span-2 space-y-6">
-              {/* Recent Disbursements */}
+            {/* Column 2 — program cascade, account & LANDBANK reference */}
+            <div className="space-y-4">
               <div>
-                <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-gray-400">
-                  Recent Disbursements
-                </p>
-                <div className="overflow-x-auto rounded-lg border border-gray-100">
-                  <table className="w-full min-w-150 text-sm">
-                    <thead>
-                      <tr className="border-b border-gray-100 bg-gray-50">
-                        <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-gray-400">Date</th>
-                        <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-gray-400">Reference #</th>
-                        <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-gray-400">Source of Fund</th>
-                        <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-gray-400">Type</th>
-                        <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-gray-400">%</th>
-                        <th className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-wide text-gray-400">Amount (₱)</th>
-                        <th className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-wide text-gray-400">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-50">
-                      {disbursements.length === 0 ? (
-                        <tr>
-                          <td colSpan={7} className="py-6 text-center text-xs text-gray-400">
-                            No disbursements recorded yet.
-                          </td>
-                        </tr>
-                      ) : (
-                        disbursements.map((d) => (
-                          <tr key={d.id} className="hover:bg-gray-50">
-                            <td className="px-3 py-2 text-xs text-gray-600">
-                              {new Date(d.date).toLocaleDateString("en-PH", {
-                                month: "short",
-                                day: "2-digit",
-                                year: "numeric",
-                              })}
-                            </td>
-                            <td className="px-3 py-2 font-mono text-xs text-gray-600">
-                              {d.referenceNumber ?? "—"}
-                            </td>
-                            <td className="px-3 py-2 text-xs text-gray-600">
-                              {primaryFundLabel}
-                            </td>
-                            <td className="px-3 py-2 text-xs text-gray-600">
-                              {d.type ? DISBURSEMENT_TYPE_LABEL[d.type] : "—"}
-                            </td>
-                            <td className="px-3 py-2 text-xs font-medium text-gray-700">
-                              {d.percentage != null ? `${d.percentage}%` : "—"}
-                            </td>
-                            <td className="px-3 py-2 text-right text-xs font-medium text-gray-800">
-                              {formatCurrency(d.amount)}
-                            </td>
-                            <td className="px-3 py-2 text-right">
-                              <button
-                                type="button"
-                                disabled={deleteDisbursement.isPending}
-                                onClick={() => deleteDisbursement.mutate({ id: d.id })}
-                                className="rounded p-1 text-red-500 transition hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
-                                aria-label="Delete disbursement"
-                              >
-                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                </svg>
-                              </button>
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+                <FundLabel>Program</FundLabel>
+                <FundSelect
+                  value={form.program}
+                  onChange={(e) => {
+                    const next = e.target.value;
+                    set("program", next);
+                    // Drop a Project that this Program does not offer.
+                    const allowed = projectOptions(next, customOptions);
+                    if (!allowed.some((o) => o.value === form.subType)) set("subType", "");
+                  }}
+                  disabled={availablePrograms.length === 0}
+                >
+                  <option value="">
+                    {availablePrograms.length === 0 ? "No programs available" : "Select Program"}
+                  </option>
+                  {availablePrograms.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}{o.custom ? " (added)" : ""}
+                    </option>
+                  ))}
+                </FundSelect>
+              </div>
+              <div>
+                <FundLabel>Project</FundLabel>
+                <FundSelect
+                  value={form.subType}
+                  onChange={(e) => set("subType", e.target.value)}
+                  disabled={!form.program || availableProjects.length === 0}
+                >
+                  <option value="">
+                    {!form.program
+                      ? "Select Program first"
+                      : availableProjects.length === 0
+                        ? "No projects available"
+                        : "Select Project"}
+                  </option>
+                  {availableProjects.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}{o.custom ? " (added)" : ""}
+                    </option>
+                  ))}
+                </FundSelect>
+              </div>
+              <div>
+                <FundLabel>Project Account</FundLabel>
+                <FundSelect
+                  value={form.projectAccount}
+                  onChange={(e) => set("projectAccount", e.target.value as "" | ProjectAccountValue)}
+                >
+                  <option value="">Select Classification</option>
+                  {PROJECT_ACCOUNT_VALUES.map((k) => (
+                    <option key={k} value={k}>{PROJECT_ACCOUNT_LABEL[k]}</option>
+                  ))}
+                </FundSelect>
+              </div>
+              <div>
+                <FundLabel>* LANDBANK [LBP-TL#]</FundLabel>
+                <FundSelect
+                  value={form.landbankNumber}
+                  onChange={(e) => set("landbankNumber", e.target.value)}
+                  disabled={availableLandbankNumbers.length === 0}
+                >
+                  <option value="">
+                    {availableLandbankNumbers.length === 0
+                      ? "No LBP-TL numbers yet"
+                      : "Select Reference"}
+                  </option>
+                  {availableLandbankNumbers.map((n) => (
+                    <option key={n} value={n}>{n}</option>
+                  ))}
+                </FundSelect>
+              </div>
+            </div>
 
-                {/* Record new disbursement */}
-                <div className="mt-3 flex items-center gap-2 rounded-lg bg-gray-50 p-3">
-                  <div className="flex flex-1 items-center rounded-lg border border-gray-200 bg-white focus-within:ring-2 focus-within:ring-blue-500">
-                    <span className="pl-3 text-sm text-gray-400">₱</span>
-                    <input
-                      type="text"
-                      value={newDisbAmt}
-                      onChange={(e) => setNewDisbAmt(e.target.value)}
-                      placeholder="Amount"
-                      className="w-full flex-1 rounded-r-lg py-2 px-2 text-sm text-gray-800 focus:outline-none"
-                    />
-                  </div>
-                  <input
-                    type="text"
-                    value={newDisbRef}
-                    onChange={(e) => setNewDisbRef(e.target.value)}
-                    placeholder="Ref #"
-                    className="w-28 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <select
-                    value={newDisbType}
-                    onChange={(e) => setNewDisbType(e.target.value as typeof newDisbType)}
-                    className="w-28 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">Type</option>
-                    {MODE_TO_DISBURSEMENT_TYPES[
-                      form.modeOfImplementation === "BY_ADMINISTRATION" ? "BY_ADMINISTRATION" : "BY_CONTRACT"
-                    ].map((t) => (
-                      <option key={t} value={t}>{DISBURSEMENT_TYPE_LABEL[t]}</option>
-                    ))}
-                  </select>
-                  <div className="flex w-20 items-center rounded-lg border border-gray-200 bg-white focus-within:ring-2 focus-within:ring-blue-500">
-                    <input
-                      type="text"
-                      value={newDisbPct}
-                      onChange={(e) => setNewDisbPct(e.target.value)}
-                      placeholder="%"
-                      className="w-full rounded-lg py-2 px-3 text-sm text-gray-800 focus:outline-none"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    disabled={!newDisbAmt || createDisbursement.isPending}
-                    onClick={() => {
-                      const amount = parseFloat(newDisbAmt.replace(/,/g, ""));
-                      if (!amount || isNaN(amount)) return;
-                      const pct = parseFloat(newDisbPct.replace(/%/g, "").trim());
-                      createDisbursement.mutate({
-                        projectId,
-                        amount,
-                        referenceNumber: newDisbRef || undefined,
-                        type: newDisbType || undefined,
-                        percentage: !isNaN(pct) ? pct : undefined,
-                      });
-                    }}
-                    className="rounded-lg bg-blue-900 px-5 py-2 text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-blue-800 disabled:opacity-50"
-                  >
-                    {createDisbursement.isPending ? "..." : "Record"}
-                  </button>
-                </div>
+            {/* Column 3 — Manual Entry: super admins extend the lists above */}
+            <div className="rounded-lg border border-gray-200 bg-gray-50/60 p-4">
+              <p className="mb-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                Manual Entry
+              </p>
+
+              <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                Add Program
+              </p>
+              <div className="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <FundInput
+                  type="text"
+                  value={newProgramName}
+                  onChange={(e) => setNewProgramName(e.target.value)}
+                  placeholder="Enter program name..."
+                />
+                <FundSelect
+                  value={newProgramSource}
+                  onChange={(e) => setNewProgramSource(e.target.value as "" | SourceOfFundValue)}
+                >
+                  <option value="">Select Source</option>
+                  {SOURCE_OF_FUND_ORDER.map((k) => (
+                    <option key={k} value={k}>{SOURCE_OF_FUND_LABEL[k]}</option>
+                  ))}
+                </FundSelect>
               </div>
 
-              {/* Revised Contract Cost History */}
-              <div className="border-t border-gray-100 pt-5">
-                <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-gray-400">
-                  Revised Contract Cost History
-                </p>
-                <div className="overflow-x-auto rounded-lg border border-gray-100">
-                  <table className="w-full min-w-150 text-sm">
-                    <thead>
-                      <tr className="border-b border-gray-100 bg-gray-50">
-                        <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-gray-400">Date</th>
-                        <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-gray-400">Original Cost</th>
-                        <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-gray-400">Source of Fund</th>
-                        <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wide text-gray-400">Variation Order</th>
-                        <th className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-wide text-gray-400">Revised Total</th>
-                        <th className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-wide text-gray-400">Actions</th>
+              <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                Add Project
+              </p>
+              <div className="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <FundInput
+                  type="text"
+                  value={newProjectName}
+                  onChange={(e) => setNewProjectName(e.target.value)}
+                  placeholder="Enter project name..."
+                />
+                <FundSelect
+                  value={newProjectProgram}
+                  onChange={(e) => setNewProjectProgram(e.target.value)}
+                >
+                  <option value="">Select Program</option>
+                  {manualEntryPrograms.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}{o.custom ? " (added)" : ""}
+                    </option>
+                  ))}
+                </FundSelect>
+              </div>
+
+              <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                Add LBP-Term Loan No.
+              </p>
+              <FundInput
+                type="text"
+                value={newLandbankNumber}
+                onChange={(e) => setNewLandbankNumber(e.target.value)}
+                placeholder="e.g. 28"
+                className="mb-4 bg-white"
+              />
+
+              <button
+                type="button"
+                onClick={handleManualAdd}
+                disabled={isAddingOption || !canAddOption}
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-900 px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-blue-800 disabled:opacity-50"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+                {isAddingOption ? "Adding…" : "Add"}
+              </button>
+              {manualError && <p className="mt-2 text-xs text-red-500">{manualError}</p>}
+              <p className="mt-2 text-[10px] leading-relaxed text-gray-400">
+                Added entries appear in the Program, Project and LANDBANK dropdowns
+                here and on the admin create/update project forms.
+              </p>
+            </div>
+          </div>
+        </SectionCard>
+
+        {/* FINANCIAL SUMMARY */}
+        <SectionCard
+          icon={
+            <svg className="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a2.25 2.25 0 0 0-2.25-2.25H15a3 3 0 1 1-6 0H5.25A2.25 2.25 0 0 0 3 12m18 0v6a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 9m18 0V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v3" />
+            </svg>
+          }
+          title="Financial Summary"
+        >
+          {/* Balance tiles */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div className="rounded-lg border border-gray-200 bg-gray-50/60 px-4 py-3.5">
+              <p className="text-sm font-bold text-blue-800">Total Remaining Balance</p>
+              <p className={`mt-1 text-xl font-extrabold ${totalRemainingBalance <= 100000 ? "text-red-700" : "text-blue-900"}`}>
+                ₱ {formatCurrency(totalRemainingBalance)}
+              </p>
+            </div>
+            <div className="rounded-lg border border-gray-200 bg-gray-50/60 px-4 py-3.5">
+              <p className="text-sm font-bold text-blue-800">Primary Fund Balance</p>
+              <p className="mt-1 text-lg font-extrabold text-gray-900">
+                ₱ {formatCurrency(primaryBalance)}
+              </p>
+            </div>
+            <div className="rounded-lg border border-gray-200 bg-gray-50/60 px-4 py-3.5">
+              <p className="text-sm font-bold text-blue-800">Variation Order Balance</p>
+              <p className="mt-1 text-lg font-extrabold text-gray-900">
+                ₱ {formatCurrency(variationBalance)}
+              </p>
+            </div>
+          </div>
+          <p className="mt-2 text-[10px] italic uppercase tracking-wide text-gray-400">
+            * Calculated from {primaryFundLabel} project cost vs recorded disbursements, plus {variationFundLabel}
+          </p>
+
+          {/* Recent Disbursements */}
+          <div className="mt-6">
+            <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+              Recent Disbursements
+            </p>
+            <div className="overflow-auto rounded-lg border border-gray-200" style={{ maxHeight: "268px" }}>
+              <table className="w-full min-w-175 border-separate border-spacing-0 text-xs">
+                <thead className="sticky top-0 z-10 bg-gray-50">
+                  <tr className="[&>th]:border-b [&>th]:border-gray-100">
+                    <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Date</th>
+                    <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Reference #</th>
+                    <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Source of Fund</th>
+                    <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Type</th>
+                    <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Remarks</th>
+                    <th className="px-3 py-2 text-right text-[10px] font-bold uppercase tracking-wider text-gray-400">Amount (₱)</th>
+                    <th className="px-3 py-2 text-right text-[10px] font-bold uppercase tracking-wider text-gray-400">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {disbursements.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="px-3 py-6 text-center text-gray-400">
+                        No disbursements recorded yet.
+                      </td>
+                    </tr>
+                  ) : (
+                    disbursements.map((d) => (
+                      <tr key={d.id} className="hover:bg-gray-50/50">
+                        <td className="px-3 py-2.5 text-gray-600">
+                          {new Date(d.date).toLocaleDateString("en-PH", {
+                            month: "short",
+                            day: "2-digit",
+                            year: "numeric",
+                          })}
+                        </td>
+                        <td className="px-3 py-2.5 font-mono text-gray-700">{d.referenceNumber ?? "—"}</td>
+                        <td className="px-3 py-2.5 text-gray-700">{primaryFundLabel}</td>
+                        <td className="px-3 py-2.5 text-gray-700">
+                          {d.type ? DISBURSEMENT_TYPE_LABEL[d.type] : "—"}
+                        </td>
+                        <td className="max-w-50 px-3 py-2.5 text-gray-600">{d.remarks ?? "—"}</td>
+                        <td className="px-3 py-2.5 text-right font-semibold text-gray-900">
+                          {formatCurrency(d.amount)}
+                        </td>
+                        <td className="px-3 py-2.5 text-right">
+                          <button
+                            type="button"
+                            disabled={deleteDisbursement.isPending}
+                            onClick={() => deleteDisbursement.mutate({ id: d.id })}
+                            className="rounded p-1 text-red-500 transition hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
+                            aria-label="Delete disbursement"
+                          >
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                            </svg>
+                          </button>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-50">
-                      {variationOrders.length === 0 ? (
-                        <tr>
-                          <td colSpan={6} className="py-6 text-center text-xs text-gray-400">
-                            No revised contract cost history yet.
-                          </td>
-                        </tr>
-                      ) : (
-                        variationOrders.map((vo) => (
-                          <tr key={vo.id} className="hover:bg-gray-50">
-                            <td className="px-3 py-2 font-mono text-xs text-gray-600">
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Record new disbursement */}
+            <div className="mt-3 flex flex-wrap gap-2 rounded-lg border border-gray-200 p-3">
+              <div className="relative w-full shrink-0 sm:w-36">
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">₱</span>
+                <FundInput
+                  type="text"
+                  value={newDisbAmt}
+                  onChange={(e) => setNewDisbAmt(e.target.value)}
+                  placeholder="Amount"
+                  className="pl-7"
+                />
+              </div>
+              <FundInput
+                type="text"
+                value={newDisbRef}
+                onChange={(e) => setNewDisbRef(e.target.value)}
+                placeholder="Ref #"
+                className="w-full shrink-0 sm:w-32"
+              />
+              <div className="w-full shrink-0 sm:w-52">
+                <FundSelect
+                  value={newDisbType}
+                  onChange={(e) => setNewDisbType(e.target.value as typeof newDisbType)}
+                >
+                  <option value="">Select Type</option>
+                  {MODE_TO_DISBURSEMENT_TYPES[
+                    form.modeOfImplementation === "BY_ADMINISTRATION" ? "BY_ADMINISTRATION" : "BY_CONTRACT"
+                  ].map((t) => (
+                    <option key={t} value={t}>{DISBURSEMENT_TYPE_LABEL[t]}</option>
+                  ))}
+                </FundSelect>
+              </div>
+              <FundInput
+                type="text"
+                value={newDisbRemarks}
+                onChange={(e) => setNewDisbRemarks(e.target.value)}
+                placeholder="Remarks"
+                className="min-w-40 flex-1"
+              />
+              <button
+                type="button"
+                disabled={!newDisbAmt || createDisbursement.isPending}
+                onClick={() => {
+                  const amount = parseFloat(newDisbAmt.replace(/,/g, ""));
+                  if (!amount || isNaN(amount)) return;
+                  createDisbursement.mutate({
+                    projectId,
+                    amount,
+                    referenceNumber: newDisbRef || undefined,
+                    type: newDisbType || undefined,
+                    remarks: newDisbRemarks || undefined,
+                  });
+                }}
+                className="rounded-lg bg-blue-900 px-8 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-blue-800 disabled:opacity-50"
+              >
+                {createDisbursement.isPending ? "..." : "Record"}
+              </button>
+            </div>
+          </div>
+
+          {/* Revised Contract Cost History */}
+          <div className="mt-6">
+            <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+              Revised Contract Cost History
+            </p>
+            <div className="overflow-auto rounded-lg border border-gray-200" style={{ maxHeight: "268px" }}>
+              <table className="w-full min-w-200 border-separate border-spacing-0 text-xs">
+                <thead className="sticky top-0 z-10 bg-gray-50">
+                  <tr className="[&>th]:border-b [&>th]:border-gray-100">
+                    <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Date</th>
+                    <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Original Cost</th>
+                    <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Source of Fund</th>
+                    <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Program</th>
+                    <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Project</th>
+                    <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Variation Order</th>
+                    <th className="px-3 py-2 text-right text-[10px] font-bold uppercase tracking-wider text-gray-400">Revised Total</th>
+                    <th className="px-3 py-2 text-right text-[10px] font-bold uppercase tracking-wider text-gray-400">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {variationOrders.length === 0 ? (
+                    <tr>
+                      <td colSpan={8} className="px-3 py-6 text-center text-gray-400">
+                        No revised contract cost history yet.
+                      </td>
+                    </tr>
+                  ) : (
+                    (() => {
+                      // Each order revises the running total, so the "Original Cost"
+                      // of a row is the revised total of the row before it.
+                      let running = form.projectCost;
+                      return variationOrders.map((vo) => {
+                        const original = running;
+                        running += vo.amount;
+                        return (
+                          <tr key={vo.id} className="hover:bg-gray-50/50">
+                            <td className="px-3 py-2.5 text-gray-600">
                               {new Date(vo.date).toLocaleDateString("en-PH", {
                                 month: "short",
                                 day: "2-digit",
                                 year: "numeric",
                               })}
                             </td>
-                            <td className="px-3 py-2 text-xs text-gray-600">
-                              {formatCurrency(form.contractCost)}
-                            </td>
-                            <td className="px-3 py-2 text-xs text-gray-600">
+                            <td className="px-3 py-2.5 text-gray-700">{formatCurrency(original)}</td>
+                            <td className="px-3 py-2.5 text-gray-700">
                               {vo.sourceOfFund
                                 ? (SOURCE_OF_FUND_LABEL[vo.sourceOfFund] ?? vo.sourceOfFund)
                                 : primaryFundLabel}
                             </td>
-                            <td className="px-3 py-2 text-xs text-gray-600">
-                              {formatCurrency(vo.amount)}
+                            <td className="px-3 py-2.5 text-gray-700">{programLabel(vo.program)}</td>
+                            <td className="px-3 py-2.5 text-gray-700">{projectLabel(vo.subType)}</td>
+                            <td className="px-3 py-2.5 text-gray-700">{formatCurrency(vo.amount)}</td>
+                            <td className="px-3 py-2.5 text-right font-semibold text-gray-900">
+                              {formatCurrency(running)}
                             </td>
-                            <td className="px-3 py-2 text-right text-xs font-medium text-gray-800">
-                              {formatCurrency(form.contractCost + vo.amount)}
-                            </td>
-                            <td className="px-3 py-2 text-right">
+                            <td className="px-3 py-2.5 text-right">
                               <button
                                 type="button"
                                 disabled={deleteVariationOrder.isPending}
@@ -973,64 +1291,96 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                               </button>
                             </td>
                           </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Record new variation order */}
-                <div className="mt-3 flex items-center gap-2 rounded-lg bg-gray-50 p-3">
-                  <div className="flex flex-1 items-center rounded-lg border border-gray-200 bg-gray-100 focus-within:ring-2 focus-within:ring-blue-500">
-                    <span className="pl-3 text-sm text-gray-400">₱</span>
-                    <input
-                      type="text"
-                      value={formatCurrency(form.contractCost)}
-                      disabled
-                      placeholder="Contract Cost"
-                      className="w-full flex-1 rounded-r-lg bg-transparent py-2 px-2 text-sm text-gray-500 focus:outline-none"
-                    />
-                  </div>
-                  <select
-                    value={newVoSource}
-                    onChange={(e) => setNewVoSource(e.target.value)}
-                    className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">Source of Fund</option>
-                    {SOURCE_OF_FUND_ORDER.map((k) => (
-                      <option key={k} value={k}>
-                        {SOURCE_OF_FUND_LABEL[k]}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="flex flex-1 items-center rounded-lg border border-gray-200 bg-white focus-within:ring-2 focus-within:ring-blue-500">
-                    <span className="pl-3 text-sm text-gray-400">₱</span>
-                    <input
-                      type="text"
-                      value={newVoAmt}
-                      onChange={(e) => setNewVoAmt(e.target.value)}
-                      placeholder="Variation"
-                      className="w-full flex-1 rounded-r-lg py-2 px-2 text-sm text-gray-800 focus:outline-none"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    disabled={!newVoAmt || createVariationOrder.isPending}
-                    onClick={() => {
-                      const amount = parseFloat(newVoAmt.replace(/,/g, ""));
-                      if (!amount || isNaN(amount)) return;
-                      createVariationOrder.mutate({
-                        projectId,
-                        amount,
-                        sourceOfFund: newVoSource ? (newVoSource as SourceOfFundValue) : undefined,
+                        );
                       });
-                    }}
-                    className="rounded-lg bg-blue-900 px-5 py-2 text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-blue-800 disabled:opacity-50"
-                  >
-                    {createVariationOrder.isPending ? "..." : "Record"}
-                  </button>
+                    })()
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Record new variation order */}
+            <div className="mt-3 grid grid-cols-1 items-end gap-3 rounded-lg border border-gray-200 p-3 lg:grid-cols-[1fr_1fr_1fr_1fr_auto]">
+              <div>
+                <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-500">Source of Fund</p>
+                <FundSelect
+                  value={newVoSource}
+                  onChange={(e) => {
+                    setNewVoSource(e.target.value);
+                    setNewVoProgram("");
+                    setNewVoProject("");
+                  }}
+                >
+                  <option value="">Select Source</option>
+                  {SOURCE_OF_FUND_ORDER.map((k) => (
+                    <option key={k} value={k}>{SOURCE_OF_FUND_LABEL[k]}</option>
+                  ))}
+                </FundSelect>
+              </div>
+              <div>
+                <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-500">Program</p>
+                <FundSelect
+                  value={newVoProgram}
+                  onChange={(e) => {
+                    setNewVoProgram(e.target.value);
+                    setNewVoProject("");
+                  }}
+                  disabled={!newVoSource || voPrograms.length === 0}
+                >
+                  <option value="">Select Program</option>
+                  {voPrograms.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}{o.custom ? " (added)" : ""}
+                    </option>
+                  ))}
+                </FundSelect>
+              </div>
+              <div>
+                <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-500">Project</p>
+                <FundSelect
+                  value={newVoProject}
+                  onChange={(e) => setNewVoProject(e.target.value)}
+                  disabled={!newVoProgram || voProjects.length === 0}
+                >
+                  <option value="">Select Project</option>
+                  {voProjects.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}{o.custom ? " (added)" : ""}
+                    </option>
+                  ))}
+                </FundSelect>
+              </div>
+              <div>
+                <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-500">Amount</p>
+                <div className="relative">
+                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">₱</span>
+                  <FundInput
+                    type="text"
+                    value={newVoAmt}
+                    onChange={(e) => setNewVoAmt(e.target.value)}
+                    placeholder="0.00"
+                    className="pl-7"
+                  />
                 </div>
               </div>
+              <button
+                type="button"
+                disabled={!newVoAmt || createVariationOrder.isPending}
+                onClick={() => {
+                  const amount = parseFloat(newVoAmt.replace(/,/g, ""));
+                  if (!amount || isNaN(amount)) return;
+                  createVariationOrder.mutate({
+                    projectId,
+                    amount,
+                    sourceOfFund: newVoSource ? (newVoSource as SourceOfFundValue) : undefined,
+                    program: newVoProgram || null,
+                    subType: newVoProject || null,
+                  });
+                }}
+                className="h-9.5 rounded-lg bg-blue-900 px-8 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-blue-800 disabled:opacity-50"
+              >
+                {createVariationOrder.isPending ? "..." : "Record"}
+              </button>
             </div>
           </div>
         </SectionCard>

@@ -49,6 +49,21 @@ export type Disbursement = $Result.DefaultSelection<Prisma.$DisbursementPayload>
  */
 export type VariationOrder = $Result.DefaultSelection<Prisma.$VariationOrderPayload>
 /**
+ * Model FundingProgramOption
+ * 
+ */
+export type FundingProgramOption = $Result.DefaultSelection<Prisma.$FundingProgramOptionPayload>
+/**
+ * Model FundingProjectOption
+ * 
+ */
+export type FundingProjectOption = $Result.DefaultSelection<Prisma.$FundingProjectOptionPayload>
+/**
+ * Model LandbankLoanOption
+ * 
+ */
+export type LandbankLoanOption = $Result.DefaultSelection<Prisma.$LandbankLoanOptionPayload>
+/**
  * Model TimelineAdjustment
  * 
  */
@@ -616,6 +631,36 @@ export class PrismaClient<
   get variationOrder(): Prisma.VariationOrderDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.fundingProgramOption`: Exposes CRUD operations for the **FundingProgramOption** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more FundingProgramOptions
+    * const fundingProgramOptions = await prisma.fundingProgramOption.findMany()
+    * ```
+    */
+  get fundingProgramOption(): Prisma.FundingProgramOptionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.fundingProjectOption`: Exposes CRUD operations for the **FundingProjectOption** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more FundingProjectOptions
+    * const fundingProjectOptions = await prisma.fundingProjectOption.findMany()
+    * ```
+    */
+  get fundingProjectOption(): Prisma.FundingProjectOptionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.landbankLoanOption`: Exposes CRUD operations for the **LandbankLoanOption** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more LandbankLoanOptions
+    * const landbankLoanOptions = await prisma.landbankLoanOption.findMany()
+    * ```
+    */
+  get landbankLoanOption(): Prisma.LandbankLoanOptionDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.timelineAdjustment`: Exposes CRUD operations for the **TimelineAdjustment** model.
     * Example usage:
     * ```ts
@@ -1142,6 +1187,9 @@ export namespace Prisma {
     ProjectActivity: 'ProjectActivity',
     Disbursement: 'Disbursement',
     VariationOrder: 'VariationOrder',
+    FundingProgramOption: 'FundingProgramOption',
+    FundingProjectOption: 'FundingProjectOption',
+    LandbankLoanOption: 'LandbankLoanOption',
     TimelineAdjustment: 'TimelineAdjustment',
     TaskNotification: 'TaskNotification',
     TaskReply: 'TaskReply',
@@ -1168,7 +1216,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "userSession" | "project" | "physicalArchiveLocation" | "projectActivity" | "disbursement" | "variationOrder" | "timelineAdjustment" | "taskNotification" | "taskReply" | "taskReplyDocument" | "document" | "projectFile" | "projectAccessRequest" | "post"
+      modelProps: "user" | "userSession" | "project" | "physicalArchiveLocation" | "projectActivity" | "disbursement" | "variationOrder" | "fundingProgramOption" | "fundingProjectOption" | "landbankLoanOption" | "timelineAdjustment" | "taskNotification" | "taskReply" | "taskReplyDocument" | "document" | "projectFile" | "projectAccessRequest" | "post"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1687,6 +1735,228 @@ export namespace Prisma {
           count: {
             args: Prisma.VariationOrderCountArgs<ExtArgs>
             result: $Utils.Optional<VariationOrderCountAggregateOutputType> | number
+          }
+        }
+      }
+      FundingProgramOption: {
+        payload: Prisma.$FundingProgramOptionPayload<ExtArgs>
+        fields: Prisma.FundingProgramOptionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.FundingProgramOptionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FundingProgramOptionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.FundingProgramOptionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FundingProgramOptionPayload>
+          }
+          findFirst: {
+            args: Prisma.FundingProgramOptionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FundingProgramOptionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.FundingProgramOptionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FundingProgramOptionPayload>
+          }
+          findMany: {
+            args: Prisma.FundingProgramOptionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FundingProgramOptionPayload>[]
+          }
+          create: {
+            args: Prisma.FundingProgramOptionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FundingProgramOptionPayload>
+          }
+          createMany: {
+            args: Prisma.FundingProgramOptionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.FundingProgramOptionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FundingProgramOptionPayload>[]
+          }
+          delete: {
+            args: Prisma.FundingProgramOptionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FundingProgramOptionPayload>
+          }
+          update: {
+            args: Prisma.FundingProgramOptionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FundingProgramOptionPayload>
+          }
+          deleteMany: {
+            args: Prisma.FundingProgramOptionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.FundingProgramOptionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.FundingProgramOptionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FundingProgramOptionPayload>[]
+          }
+          upsert: {
+            args: Prisma.FundingProgramOptionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FundingProgramOptionPayload>
+          }
+          aggregate: {
+            args: Prisma.FundingProgramOptionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateFundingProgramOption>
+          }
+          groupBy: {
+            args: Prisma.FundingProgramOptionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<FundingProgramOptionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.FundingProgramOptionCountArgs<ExtArgs>
+            result: $Utils.Optional<FundingProgramOptionCountAggregateOutputType> | number
+          }
+        }
+      }
+      FundingProjectOption: {
+        payload: Prisma.$FundingProjectOptionPayload<ExtArgs>
+        fields: Prisma.FundingProjectOptionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.FundingProjectOptionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FundingProjectOptionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.FundingProjectOptionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FundingProjectOptionPayload>
+          }
+          findFirst: {
+            args: Prisma.FundingProjectOptionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FundingProjectOptionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.FundingProjectOptionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FundingProjectOptionPayload>
+          }
+          findMany: {
+            args: Prisma.FundingProjectOptionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FundingProjectOptionPayload>[]
+          }
+          create: {
+            args: Prisma.FundingProjectOptionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FundingProjectOptionPayload>
+          }
+          createMany: {
+            args: Prisma.FundingProjectOptionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.FundingProjectOptionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FundingProjectOptionPayload>[]
+          }
+          delete: {
+            args: Prisma.FundingProjectOptionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FundingProjectOptionPayload>
+          }
+          update: {
+            args: Prisma.FundingProjectOptionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FundingProjectOptionPayload>
+          }
+          deleteMany: {
+            args: Prisma.FundingProjectOptionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.FundingProjectOptionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.FundingProjectOptionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FundingProjectOptionPayload>[]
+          }
+          upsert: {
+            args: Prisma.FundingProjectOptionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FundingProjectOptionPayload>
+          }
+          aggregate: {
+            args: Prisma.FundingProjectOptionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateFundingProjectOption>
+          }
+          groupBy: {
+            args: Prisma.FundingProjectOptionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<FundingProjectOptionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.FundingProjectOptionCountArgs<ExtArgs>
+            result: $Utils.Optional<FundingProjectOptionCountAggregateOutputType> | number
+          }
+        }
+      }
+      LandbankLoanOption: {
+        payload: Prisma.$LandbankLoanOptionPayload<ExtArgs>
+        fields: Prisma.LandbankLoanOptionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.LandbankLoanOptionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LandbankLoanOptionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.LandbankLoanOptionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LandbankLoanOptionPayload>
+          }
+          findFirst: {
+            args: Prisma.LandbankLoanOptionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LandbankLoanOptionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.LandbankLoanOptionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LandbankLoanOptionPayload>
+          }
+          findMany: {
+            args: Prisma.LandbankLoanOptionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LandbankLoanOptionPayload>[]
+          }
+          create: {
+            args: Prisma.LandbankLoanOptionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LandbankLoanOptionPayload>
+          }
+          createMany: {
+            args: Prisma.LandbankLoanOptionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.LandbankLoanOptionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LandbankLoanOptionPayload>[]
+          }
+          delete: {
+            args: Prisma.LandbankLoanOptionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LandbankLoanOptionPayload>
+          }
+          update: {
+            args: Prisma.LandbankLoanOptionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LandbankLoanOptionPayload>
+          }
+          deleteMany: {
+            args: Prisma.LandbankLoanOptionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.LandbankLoanOptionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.LandbankLoanOptionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LandbankLoanOptionPayload>[]
+          }
+          upsert: {
+            args: Prisma.LandbankLoanOptionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LandbankLoanOptionPayload>
+          }
+          aggregate: {
+            args: Prisma.LandbankLoanOptionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateLandbankLoanOption>
+          }
+          groupBy: {
+            args: Prisma.LandbankLoanOptionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<LandbankLoanOptionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.LandbankLoanOptionCountArgs<ExtArgs>
+            result: $Utils.Optional<LandbankLoanOptionCountAggregateOutputType> | number
           }
         }
       }
@@ -2385,6 +2655,9 @@ export namespace Prisma {
     projectActivity?: ProjectActivityOmit
     disbursement?: DisbursementOmit
     variationOrder?: VariationOrderOmit
+    fundingProgramOption?: FundingProgramOptionOmit
+    fundingProjectOption?: FundingProjectOptionOmit
+    landbankLoanOption?: LandbankLoanOptionOmit
     timelineAdjustment?: TimelineAdjustmentOmit
     taskNotification?: TaskNotificationOmit
     taskReply?: TaskReplyOmit
@@ -2488,6 +2761,9 @@ export namespace Prisma {
     accessRequestsMade: number
     accessRequestsReviewed: number
     archiveLocations: number
+    fundingProgramOptions: number
+    fundingProjectOptions: number
+    landbankLoanOptions: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2506,6 +2782,9 @@ export namespace Prisma {
     accessRequestsMade?: boolean | UserCountOutputTypeCountAccessRequestsMadeArgs
     accessRequestsReviewed?: boolean | UserCountOutputTypeCountAccessRequestsReviewedArgs
     archiveLocations?: boolean | UserCountOutputTypeCountArchiveLocationsArgs
+    fundingProgramOptions?: boolean | UserCountOutputTypeCountFundingProgramOptionsArgs
+    fundingProjectOptions?: boolean | UserCountOutputTypeCountFundingProjectOptionsArgs
+    landbankLoanOptions?: boolean | UserCountOutputTypeCountLandbankLoanOptionsArgs
   }
 
   // Custom InputTypes
@@ -2622,6 +2901,27 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountArchiveLocationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: PhysicalArchiveLocationWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountFundingProgramOptionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FundingProgramOptionWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountFundingProjectOptionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FundingProjectOptionWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountLandbankLoanOptionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LandbankLoanOptionWhereInput
   }
 
 
@@ -3083,6 +3383,9 @@ export namespace Prisma {
     accessRequestsMade?: boolean | User$accessRequestsMadeArgs<ExtArgs>
     accessRequestsReviewed?: boolean | User$accessRequestsReviewedArgs<ExtArgs>
     archiveLocations?: boolean | User$archiveLocationsArgs<ExtArgs>
+    fundingProgramOptions?: boolean | User$fundingProgramOptionsArgs<ExtArgs>
+    fundingProjectOptions?: boolean | User$fundingProjectOptionsArgs<ExtArgs>
+    landbankLoanOptions?: boolean | User$landbankLoanOptionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -3160,6 +3463,9 @@ export namespace Prisma {
     accessRequestsMade?: boolean | User$accessRequestsMadeArgs<ExtArgs>
     accessRequestsReviewed?: boolean | User$accessRequestsReviewedArgs<ExtArgs>
     archiveLocations?: boolean | User$archiveLocationsArgs<ExtArgs>
+    fundingProgramOptions?: boolean | User$fundingProgramOptionsArgs<ExtArgs>
+    fundingProjectOptions?: boolean | User$fundingProjectOptionsArgs<ExtArgs>
+    landbankLoanOptions?: boolean | User$landbankLoanOptionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -3183,6 +3489,9 @@ export namespace Prisma {
       accessRequestsMade: Prisma.$ProjectAccessRequestPayload<ExtArgs>[]
       accessRequestsReviewed: Prisma.$ProjectAccessRequestPayload<ExtArgs>[]
       archiveLocations: Prisma.$PhysicalArchiveLocationPayload<ExtArgs>[]
+      fundingProgramOptions: Prisma.$FundingProgramOptionPayload<ExtArgs>[]
+      fundingProjectOptions: Prisma.$FundingProjectOptionPayload<ExtArgs>[]
+      landbankLoanOptions: Prisma.$LandbankLoanOptionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3610,6 +3919,9 @@ export namespace Prisma {
     accessRequestsMade<T extends User$accessRequestsMadeArgs<ExtArgs> = {}>(args?: Subset<T, User$accessRequestsMadeArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     accessRequestsReviewed<T extends User$accessRequestsReviewedArgs<ExtArgs> = {}>(args?: Subset<T, User$accessRequestsReviewedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     archiveLocations<T extends User$archiveLocationsArgs<ExtArgs> = {}>(args?: Subset<T, User$archiveLocationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhysicalArchiveLocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    fundingProgramOptions<T extends User$fundingProgramOptionsArgs<ExtArgs> = {}>(args?: Subset<T, User$fundingProgramOptionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FundingProgramOptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    fundingProjectOptions<T extends User$fundingProjectOptionsArgs<ExtArgs> = {}>(args?: Subset<T, User$fundingProjectOptionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FundingProjectOptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    landbankLoanOptions<T extends User$landbankLoanOptionsArgs<ExtArgs> = {}>(args?: Subset<T, User$landbankLoanOptionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LandbankLoanOptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4400,6 +4712,78 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: PhysicalArchiveLocationScalarFieldEnum | PhysicalArchiveLocationScalarFieldEnum[]
+  }
+
+  /**
+   * User.fundingProgramOptions
+   */
+  export type User$fundingProgramOptionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProgramOption
+     */
+    select?: FundingProgramOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProgramOption
+     */
+    omit?: FundingProgramOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProgramOptionInclude<ExtArgs> | null
+    where?: FundingProgramOptionWhereInput
+    orderBy?: FundingProgramOptionOrderByWithRelationInput | FundingProgramOptionOrderByWithRelationInput[]
+    cursor?: FundingProgramOptionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FundingProgramOptionScalarFieldEnum | FundingProgramOptionScalarFieldEnum[]
+  }
+
+  /**
+   * User.fundingProjectOptions
+   */
+  export type User$fundingProjectOptionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProjectOption
+     */
+    select?: FundingProjectOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProjectOption
+     */
+    omit?: FundingProjectOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProjectOptionInclude<ExtArgs> | null
+    where?: FundingProjectOptionWhereInput
+    orderBy?: FundingProjectOptionOrderByWithRelationInput | FundingProjectOptionOrderByWithRelationInput[]
+    cursor?: FundingProjectOptionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FundingProjectOptionScalarFieldEnum | FundingProjectOptionScalarFieldEnum[]
+  }
+
+  /**
+   * User.landbankLoanOptions
+   */
+  export type User$landbankLoanOptionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LandbankLoanOption
+     */
+    select?: LandbankLoanOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LandbankLoanOption
+     */
+    omit?: LandbankLoanOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LandbankLoanOptionInclude<ExtArgs> | null
+    where?: LandbankLoanOptionWhereInput
+    orderBy?: LandbankLoanOptionOrderByWithRelationInput | LandbankLoanOptionOrderByWithRelationInput[]
+    cursor?: LandbankLoanOptionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: LandbankLoanOptionScalarFieldEnum | LandbankLoanOptionScalarFieldEnum[]
   }
 
   /**
@@ -5547,8 +5931,8 @@ export namespace Prisma {
     id: string | null
     projectCode: string | null
     title: string | null
-    subType: $Enums.ProjectSubType | null
-    program: $Enums.FundingProgram | null
+    subType: string | null
+    program: string | null
     projectAccount: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation | null
     locationImplementation: $Enums.District | null
@@ -5592,8 +5976,8 @@ export namespace Prisma {
     id: string | null
     projectCode: string | null
     title: string | null
-    subType: $Enums.ProjectSubType | null
-    program: $Enums.FundingProgram | null
+    subType: string | null
+    program: string | null
     projectAccount: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation | null
     locationImplementation: $Enums.District | null
@@ -5932,8 +6316,8 @@ export namespace Prisma {
     id: string
     projectCode: string
     title: string
-    subType: $Enums.ProjectSubType | null
-    program: $Enums.FundingProgram | null
+    subType: string | null
+    program: string | null
     projectAccount: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
@@ -6221,8 +6605,8 @@ export namespace Prisma {
       id: string
       projectCode: string
       title: string
-      subType: $Enums.ProjectSubType | null
-      program: $Enums.FundingProgram | null
+      subType: string | null
+      program: string | null
       projectAccount: $Enums.ProjectAccount | null
       modeOfImplementation: $Enums.ModeOfImplementation
       locationImplementation: $Enums.District
@@ -6695,8 +7079,8 @@ export namespace Prisma {
     readonly id: FieldRef<"Project", 'String'>
     readonly projectCode: FieldRef<"Project", 'String'>
     readonly title: FieldRef<"Project", 'String'>
-    readonly subType: FieldRef<"Project", 'ProjectSubType'>
-    readonly program: FieldRef<"Project", 'FundingProgram'>
+    readonly subType: FieldRef<"Project", 'String'>
+    readonly program: FieldRef<"Project", 'String'>
     readonly projectAccount: FieldRef<"Project", 'ProjectAccount'>
     readonly modeOfImplementation: FieldRef<"Project", 'ModeOfImplementation'>
     readonly locationImplementation: FieldRef<"Project", 'District'>
@@ -9553,6 +9937,7 @@ export namespace Prisma {
     referenceNumber: string | null
     type: $Enums.DisbursementType | null
     percentage: number | null
+    remarks: string | null
     amount: number | null
     createdById: string | null
     createdAt: Date | null
@@ -9565,6 +9950,7 @@ export namespace Prisma {
     referenceNumber: string | null
     type: $Enums.DisbursementType | null
     percentage: number | null
+    remarks: string | null
     amount: number | null
     createdById: string | null
     createdAt: Date | null
@@ -9577,6 +9963,7 @@ export namespace Prisma {
     referenceNumber: number
     type: number
     percentage: number
+    remarks: number
     amount: number
     createdById: number
     createdAt: number
@@ -9601,6 +9988,7 @@ export namespace Prisma {
     referenceNumber?: true
     type?: true
     percentage?: true
+    remarks?: true
     amount?: true
     createdById?: true
     createdAt?: true
@@ -9613,6 +10001,7 @@ export namespace Prisma {
     referenceNumber?: true
     type?: true
     percentage?: true
+    remarks?: true
     amount?: true
     createdById?: true
     createdAt?: true
@@ -9625,6 +10014,7 @@ export namespace Prisma {
     referenceNumber?: true
     type?: true
     percentage?: true
+    remarks?: true
     amount?: true
     createdById?: true
     createdAt?: true
@@ -9724,6 +10114,7 @@ export namespace Prisma {
     referenceNumber: string | null
     type: $Enums.DisbursementType | null
     percentage: number | null
+    remarks: string | null
     amount: number
     createdById: string
     createdAt: Date
@@ -9755,6 +10146,7 @@ export namespace Prisma {
     referenceNumber?: boolean
     type?: boolean
     percentage?: boolean
+    remarks?: boolean
     amount?: boolean
     createdById?: boolean
     createdAt?: boolean
@@ -9769,6 +10161,7 @@ export namespace Prisma {
     referenceNumber?: boolean
     type?: boolean
     percentage?: boolean
+    remarks?: boolean
     amount?: boolean
     createdById?: boolean
     createdAt?: boolean
@@ -9783,6 +10176,7 @@ export namespace Prisma {
     referenceNumber?: boolean
     type?: boolean
     percentage?: boolean
+    remarks?: boolean
     amount?: boolean
     createdById?: boolean
     createdAt?: boolean
@@ -9797,12 +10191,13 @@ export namespace Prisma {
     referenceNumber?: boolean
     type?: boolean
     percentage?: boolean
+    remarks?: boolean
     amount?: boolean
     createdById?: boolean
     createdAt?: boolean
   }
 
-  export type DisbursementOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "date" | "referenceNumber" | "type" | "percentage" | "amount" | "createdById" | "createdAt", ExtArgs["result"]["disbursement"]>
+  export type DisbursementOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "date" | "referenceNumber" | "type" | "percentage" | "remarks" | "amount" | "createdById" | "createdAt", ExtArgs["result"]["disbursement"]>
   export type DisbursementInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
@@ -9829,6 +10224,7 @@ export namespace Prisma {
       referenceNumber: string | null
       type: $Enums.DisbursementType | null
       percentage: number | null
+      remarks: string | null
       amount: number
       createdById: string
       createdAt: Date
@@ -10263,6 +10659,7 @@ export namespace Prisma {
     readonly referenceNumber: FieldRef<"Disbursement", 'String'>
     readonly type: FieldRef<"Disbursement", 'DisbursementType'>
     readonly percentage: FieldRef<"Disbursement", 'Float'>
+    readonly remarks: FieldRef<"Disbursement", 'String'>
     readonly amount: FieldRef<"Disbursement", 'Float'>
     readonly createdById: FieldRef<"Disbursement", 'String'>
     readonly createdAt: FieldRef<"Disbursement", 'DateTime'>
@@ -10705,8 +11102,8 @@ export namespace Prisma {
     projectId: string | null
     date: Date | null
     sourceOfFund: $Enums.SourceOfFund | null
-    program: $Enums.FundingProgram | null
-    subType: $Enums.ProjectSubType | null
+    program: string | null
+    subType: string | null
     amount: number | null
     createdById: string | null
     createdAt: Date | null
@@ -10717,8 +11114,8 @@ export namespace Prisma {
     projectId: string | null
     date: Date | null
     sourceOfFund: $Enums.SourceOfFund | null
-    program: $Enums.FundingProgram | null
-    subType: $Enums.ProjectSubType | null
+    program: string | null
+    subType: string | null
     amount: number | null
     createdById: string | null
     createdAt: Date | null
@@ -10874,8 +11271,8 @@ export namespace Prisma {
     projectId: string
     date: Date
     sourceOfFund: $Enums.SourceOfFund | null
-    program: $Enums.FundingProgram | null
-    subType: $Enums.ProjectSubType | null
+    program: string | null
+    subType: string | null
     amount: number
     createdById: string
     createdAt: Date
@@ -10979,8 +11376,8 @@ export namespace Prisma {
       projectId: string
       date: Date
       sourceOfFund: $Enums.SourceOfFund | null
-      program: $Enums.FundingProgram | null
-      subType: $Enums.ProjectSubType | null
+      program: string | null
+      subType: string | null
       amount: number
       createdById: string
       createdAt: Date
@@ -11413,8 +11810,8 @@ export namespace Prisma {
     readonly projectId: FieldRef<"VariationOrder", 'String'>
     readonly date: FieldRef<"VariationOrder", 'DateTime'>
     readonly sourceOfFund: FieldRef<"VariationOrder", 'SourceOfFund'>
-    readonly program: FieldRef<"VariationOrder", 'FundingProgram'>
-    readonly subType: FieldRef<"VariationOrder", 'ProjectSubType'>
+    readonly program: FieldRef<"VariationOrder", 'String'>
+    readonly subType: FieldRef<"VariationOrder", 'String'>
     readonly amount: FieldRef<"VariationOrder", 'Float'>
     readonly createdById: FieldRef<"VariationOrder", 'String'>
     readonly createdAt: FieldRef<"VariationOrder", 'DateTime'>
@@ -11829,6 +12226,3167 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: VariationOrderInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model FundingProgramOption
+   */
+
+  export type AggregateFundingProgramOption = {
+    _count: FundingProgramOptionCountAggregateOutputType | null
+    _min: FundingProgramOptionMinAggregateOutputType | null
+    _max: FundingProgramOptionMaxAggregateOutputType | null
+  }
+
+  export type FundingProgramOptionMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    sourceOfFund: $Enums.SourceOfFund | null
+    createdById: string | null
+    createdAt: Date | null
+  }
+
+  export type FundingProgramOptionMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    sourceOfFund: $Enums.SourceOfFund | null
+    createdById: string | null
+    createdAt: Date | null
+  }
+
+  export type FundingProgramOptionCountAggregateOutputType = {
+    id: number
+    name: number
+    sourceOfFund: number
+    createdById: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type FundingProgramOptionMinAggregateInputType = {
+    id?: true
+    name?: true
+    sourceOfFund?: true
+    createdById?: true
+    createdAt?: true
+  }
+
+  export type FundingProgramOptionMaxAggregateInputType = {
+    id?: true
+    name?: true
+    sourceOfFund?: true
+    createdById?: true
+    createdAt?: true
+  }
+
+  export type FundingProgramOptionCountAggregateInputType = {
+    id?: true
+    name?: true
+    sourceOfFund?: true
+    createdById?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type FundingProgramOptionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FundingProgramOption to aggregate.
+     */
+    where?: FundingProgramOptionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FundingProgramOptions to fetch.
+     */
+    orderBy?: FundingProgramOptionOrderByWithRelationInput | FundingProgramOptionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: FundingProgramOptionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FundingProgramOptions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FundingProgramOptions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned FundingProgramOptions
+    **/
+    _count?: true | FundingProgramOptionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: FundingProgramOptionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: FundingProgramOptionMaxAggregateInputType
+  }
+
+  export type GetFundingProgramOptionAggregateType<T extends FundingProgramOptionAggregateArgs> = {
+        [P in keyof T & keyof AggregateFundingProgramOption]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateFundingProgramOption[P]>
+      : GetScalarType<T[P], AggregateFundingProgramOption[P]>
+  }
+
+
+
+
+  export type FundingProgramOptionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FundingProgramOptionWhereInput
+    orderBy?: FundingProgramOptionOrderByWithAggregationInput | FundingProgramOptionOrderByWithAggregationInput[]
+    by: FundingProgramOptionScalarFieldEnum[] | FundingProgramOptionScalarFieldEnum
+    having?: FundingProgramOptionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: FundingProgramOptionCountAggregateInputType | true
+    _min?: FundingProgramOptionMinAggregateInputType
+    _max?: FundingProgramOptionMaxAggregateInputType
+  }
+
+  export type FundingProgramOptionGroupByOutputType = {
+    id: string
+    name: string
+    sourceOfFund: $Enums.SourceOfFund
+    createdById: string
+    createdAt: Date
+    _count: FundingProgramOptionCountAggregateOutputType | null
+    _min: FundingProgramOptionMinAggregateOutputType | null
+    _max: FundingProgramOptionMaxAggregateOutputType | null
+  }
+
+  type GetFundingProgramOptionGroupByPayload<T extends FundingProgramOptionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<FundingProgramOptionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof FundingProgramOptionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], FundingProgramOptionGroupByOutputType[P]>
+            : GetScalarType<T[P], FundingProgramOptionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type FundingProgramOptionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    sourceOfFund?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["fundingProgramOption"]>
+
+  export type FundingProgramOptionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    sourceOfFund?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["fundingProgramOption"]>
+
+  export type FundingProgramOptionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    sourceOfFund?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["fundingProgramOption"]>
+
+  export type FundingProgramOptionSelectScalar = {
+    id?: boolean
+    name?: boolean
+    sourceOfFund?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+  }
+
+  export type FundingProgramOptionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "sourceOfFund" | "createdById" | "createdAt", ExtArgs["result"]["fundingProgramOption"]>
+  export type FundingProgramOptionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type FundingProgramOptionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type FundingProgramOptionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $FundingProgramOptionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "FundingProgramOption"
+    objects: {
+      createdBy: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      sourceOfFund: $Enums.SourceOfFund
+      createdById: string
+      createdAt: Date
+    }, ExtArgs["result"]["fundingProgramOption"]>
+    composites: {}
+  }
+
+  type FundingProgramOptionGetPayload<S extends boolean | null | undefined | FundingProgramOptionDefaultArgs> = $Result.GetResult<Prisma.$FundingProgramOptionPayload, S>
+
+  type FundingProgramOptionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<FundingProgramOptionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: FundingProgramOptionCountAggregateInputType | true
+    }
+
+  export interface FundingProgramOptionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['FundingProgramOption'], meta: { name: 'FundingProgramOption' } }
+    /**
+     * Find zero or one FundingProgramOption that matches the filter.
+     * @param {FundingProgramOptionFindUniqueArgs} args - Arguments to find a FundingProgramOption
+     * @example
+     * // Get one FundingProgramOption
+     * const fundingProgramOption = await prisma.fundingProgramOption.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends FundingProgramOptionFindUniqueArgs>(args: SelectSubset<T, FundingProgramOptionFindUniqueArgs<ExtArgs>>): Prisma__FundingProgramOptionClient<$Result.GetResult<Prisma.$FundingProgramOptionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one FundingProgramOption that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {FundingProgramOptionFindUniqueOrThrowArgs} args - Arguments to find a FundingProgramOption
+     * @example
+     * // Get one FundingProgramOption
+     * const fundingProgramOption = await prisma.fundingProgramOption.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends FundingProgramOptionFindUniqueOrThrowArgs>(args: SelectSubset<T, FundingProgramOptionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__FundingProgramOptionClient<$Result.GetResult<Prisma.$FundingProgramOptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FundingProgramOption that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FundingProgramOptionFindFirstArgs} args - Arguments to find a FundingProgramOption
+     * @example
+     * // Get one FundingProgramOption
+     * const fundingProgramOption = await prisma.fundingProgramOption.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends FundingProgramOptionFindFirstArgs>(args?: SelectSubset<T, FundingProgramOptionFindFirstArgs<ExtArgs>>): Prisma__FundingProgramOptionClient<$Result.GetResult<Prisma.$FundingProgramOptionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FundingProgramOption that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FundingProgramOptionFindFirstOrThrowArgs} args - Arguments to find a FundingProgramOption
+     * @example
+     * // Get one FundingProgramOption
+     * const fundingProgramOption = await prisma.fundingProgramOption.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends FundingProgramOptionFindFirstOrThrowArgs>(args?: SelectSubset<T, FundingProgramOptionFindFirstOrThrowArgs<ExtArgs>>): Prisma__FundingProgramOptionClient<$Result.GetResult<Prisma.$FundingProgramOptionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more FundingProgramOptions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FundingProgramOptionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all FundingProgramOptions
+     * const fundingProgramOptions = await prisma.fundingProgramOption.findMany()
+     * 
+     * // Get first 10 FundingProgramOptions
+     * const fundingProgramOptions = await prisma.fundingProgramOption.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const fundingProgramOptionWithIdOnly = await prisma.fundingProgramOption.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends FundingProgramOptionFindManyArgs>(args?: SelectSubset<T, FundingProgramOptionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FundingProgramOptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a FundingProgramOption.
+     * @param {FundingProgramOptionCreateArgs} args - Arguments to create a FundingProgramOption.
+     * @example
+     * // Create one FundingProgramOption
+     * const FundingProgramOption = await prisma.fundingProgramOption.create({
+     *   data: {
+     *     // ... data to create a FundingProgramOption
+     *   }
+     * })
+     * 
+     */
+    create<T extends FundingProgramOptionCreateArgs>(args: SelectSubset<T, FundingProgramOptionCreateArgs<ExtArgs>>): Prisma__FundingProgramOptionClient<$Result.GetResult<Prisma.$FundingProgramOptionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many FundingProgramOptions.
+     * @param {FundingProgramOptionCreateManyArgs} args - Arguments to create many FundingProgramOptions.
+     * @example
+     * // Create many FundingProgramOptions
+     * const fundingProgramOption = await prisma.fundingProgramOption.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends FundingProgramOptionCreateManyArgs>(args?: SelectSubset<T, FundingProgramOptionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many FundingProgramOptions and returns the data saved in the database.
+     * @param {FundingProgramOptionCreateManyAndReturnArgs} args - Arguments to create many FundingProgramOptions.
+     * @example
+     * // Create many FundingProgramOptions
+     * const fundingProgramOption = await prisma.fundingProgramOption.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many FundingProgramOptions and only return the `id`
+     * const fundingProgramOptionWithIdOnly = await prisma.fundingProgramOption.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends FundingProgramOptionCreateManyAndReturnArgs>(args?: SelectSubset<T, FundingProgramOptionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FundingProgramOptionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a FundingProgramOption.
+     * @param {FundingProgramOptionDeleteArgs} args - Arguments to delete one FundingProgramOption.
+     * @example
+     * // Delete one FundingProgramOption
+     * const FundingProgramOption = await prisma.fundingProgramOption.delete({
+     *   where: {
+     *     // ... filter to delete one FundingProgramOption
+     *   }
+     * })
+     * 
+     */
+    delete<T extends FundingProgramOptionDeleteArgs>(args: SelectSubset<T, FundingProgramOptionDeleteArgs<ExtArgs>>): Prisma__FundingProgramOptionClient<$Result.GetResult<Prisma.$FundingProgramOptionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one FundingProgramOption.
+     * @param {FundingProgramOptionUpdateArgs} args - Arguments to update one FundingProgramOption.
+     * @example
+     * // Update one FundingProgramOption
+     * const fundingProgramOption = await prisma.fundingProgramOption.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends FundingProgramOptionUpdateArgs>(args: SelectSubset<T, FundingProgramOptionUpdateArgs<ExtArgs>>): Prisma__FundingProgramOptionClient<$Result.GetResult<Prisma.$FundingProgramOptionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more FundingProgramOptions.
+     * @param {FundingProgramOptionDeleteManyArgs} args - Arguments to filter FundingProgramOptions to delete.
+     * @example
+     * // Delete a few FundingProgramOptions
+     * const { count } = await prisma.fundingProgramOption.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends FundingProgramOptionDeleteManyArgs>(args?: SelectSubset<T, FundingProgramOptionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FundingProgramOptions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FundingProgramOptionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many FundingProgramOptions
+     * const fundingProgramOption = await prisma.fundingProgramOption.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends FundingProgramOptionUpdateManyArgs>(args: SelectSubset<T, FundingProgramOptionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FundingProgramOptions and returns the data updated in the database.
+     * @param {FundingProgramOptionUpdateManyAndReturnArgs} args - Arguments to update many FundingProgramOptions.
+     * @example
+     * // Update many FundingProgramOptions
+     * const fundingProgramOption = await prisma.fundingProgramOption.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more FundingProgramOptions and only return the `id`
+     * const fundingProgramOptionWithIdOnly = await prisma.fundingProgramOption.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends FundingProgramOptionUpdateManyAndReturnArgs>(args: SelectSubset<T, FundingProgramOptionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FundingProgramOptionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one FundingProgramOption.
+     * @param {FundingProgramOptionUpsertArgs} args - Arguments to update or create a FundingProgramOption.
+     * @example
+     * // Update or create a FundingProgramOption
+     * const fundingProgramOption = await prisma.fundingProgramOption.upsert({
+     *   create: {
+     *     // ... data to create a FundingProgramOption
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the FundingProgramOption we want to update
+     *   }
+     * })
+     */
+    upsert<T extends FundingProgramOptionUpsertArgs>(args: SelectSubset<T, FundingProgramOptionUpsertArgs<ExtArgs>>): Prisma__FundingProgramOptionClient<$Result.GetResult<Prisma.$FundingProgramOptionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of FundingProgramOptions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FundingProgramOptionCountArgs} args - Arguments to filter FundingProgramOptions to count.
+     * @example
+     * // Count the number of FundingProgramOptions
+     * const count = await prisma.fundingProgramOption.count({
+     *   where: {
+     *     // ... the filter for the FundingProgramOptions we want to count
+     *   }
+     * })
+    **/
+    count<T extends FundingProgramOptionCountArgs>(
+      args?: Subset<T, FundingProgramOptionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], FundingProgramOptionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a FundingProgramOption.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FundingProgramOptionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends FundingProgramOptionAggregateArgs>(args: Subset<T, FundingProgramOptionAggregateArgs>): Prisma.PrismaPromise<GetFundingProgramOptionAggregateType<T>>
+
+    /**
+     * Group by FundingProgramOption.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FundingProgramOptionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends FundingProgramOptionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: FundingProgramOptionGroupByArgs['orderBy'] }
+        : { orderBy?: FundingProgramOptionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, FundingProgramOptionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFundingProgramOptionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the FundingProgramOption model
+   */
+  readonly fields: FundingProgramOptionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for FundingProgramOption.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__FundingProgramOptionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the FundingProgramOption model
+   */
+  interface FundingProgramOptionFieldRefs {
+    readonly id: FieldRef<"FundingProgramOption", 'String'>
+    readonly name: FieldRef<"FundingProgramOption", 'String'>
+    readonly sourceOfFund: FieldRef<"FundingProgramOption", 'SourceOfFund'>
+    readonly createdById: FieldRef<"FundingProgramOption", 'String'>
+    readonly createdAt: FieldRef<"FundingProgramOption", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * FundingProgramOption findUnique
+   */
+  export type FundingProgramOptionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProgramOption
+     */
+    select?: FundingProgramOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProgramOption
+     */
+    omit?: FundingProgramOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProgramOptionInclude<ExtArgs> | null
+    /**
+     * Filter, which FundingProgramOption to fetch.
+     */
+    where: FundingProgramOptionWhereUniqueInput
+  }
+
+  /**
+   * FundingProgramOption findUniqueOrThrow
+   */
+  export type FundingProgramOptionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProgramOption
+     */
+    select?: FundingProgramOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProgramOption
+     */
+    omit?: FundingProgramOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProgramOptionInclude<ExtArgs> | null
+    /**
+     * Filter, which FundingProgramOption to fetch.
+     */
+    where: FundingProgramOptionWhereUniqueInput
+  }
+
+  /**
+   * FundingProgramOption findFirst
+   */
+  export type FundingProgramOptionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProgramOption
+     */
+    select?: FundingProgramOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProgramOption
+     */
+    omit?: FundingProgramOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProgramOptionInclude<ExtArgs> | null
+    /**
+     * Filter, which FundingProgramOption to fetch.
+     */
+    where?: FundingProgramOptionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FundingProgramOptions to fetch.
+     */
+    orderBy?: FundingProgramOptionOrderByWithRelationInput | FundingProgramOptionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FundingProgramOptions.
+     */
+    cursor?: FundingProgramOptionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FundingProgramOptions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FundingProgramOptions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FundingProgramOptions.
+     */
+    distinct?: FundingProgramOptionScalarFieldEnum | FundingProgramOptionScalarFieldEnum[]
+  }
+
+  /**
+   * FundingProgramOption findFirstOrThrow
+   */
+  export type FundingProgramOptionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProgramOption
+     */
+    select?: FundingProgramOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProgramOption
+     */
+    omit?: FundingProgramOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProgramOptionInclude<ExtArgs> | null
+    /**
+     * Filter, which FundingProgramOption to fetch.
+     */
+    where?: FundingProgramOptionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FundingProgramOptions to fetch.
+     */
+    orderBy?: FundingProgramOptionOrderByWithRelationInput | FundingProgramOptionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FundingProgramOptions.
+     */
+    cursor?: FundingProgramOptionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FundingProgramOptions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FundingProgramOptions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FundingProgramOptions.
+     */
+    distinct?: FundingProgramOptionScalarFieldEnum | FundingProgramOptionScalarFieldEnum[]
+  }
+
+  /**
+   * FundingProgramOption findMany
+   */
+  export type FundingProgramOptionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProgramOption
+     */
+    select?: FundingProgramOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProgramOption
+     */
+    omit?: FundingProgramOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProgramOptionInclude<ExtArgs> | null
+    /**
+     * Filter, which FundingProgramOptions to fetch.
+     */
+    where?: FundingProgramOptionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FundingProgramOptions to fetch.
+     */
+    orderBy?: FundingProgramOptionOrderByWithRelationInput | FundingProgramOptionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing FundingProgramOptions.
+     */
+    cursor?: FundingProgramOptionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FundingProgramOptions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FundingProgramOptions.
+     */
+    skip?: number
+    distinct?: FundingProgramOptionScalarFieldEnum | FundingProgramOptionScalarFieldEnum[]
+  }
+
+  /**
+   * FundingProgramOption create
+   */
+  export type FundingProgramOptionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProgramOption
+     */
+    select?: FundingProgramOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProgramOption
+     */
+    omit?: FundingProgramOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProgramOptionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a FundingProgramOption.
+     */
+    data: XOR<FundingProgramOptionCreateInput, FundingProgramOptionUncheckedCreateInput>
+  }
+
+  /**
+   * FundingProgramOption createMany
+   */
+  export type FundingProgramOptionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many FundingProgramOptions.
+     */
+    data: FundingProgramOptionCreateManyInput | FundingProgramOptionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * FundingProgramOption createManyAndReturn
+   */
+  export type FundingProgramOptionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProgramOption
+     */
+    select?: FundingProgramOptionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProgramOption
+     */
+    omit?: FundingProgramOptionOmit<ExtArgs> | null
+    /**
+     * The data used to create many FundingProgramOptions.
+     */
+    data: FundingProgramOptionCreateManyInput | FundingProgramOptionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProgramOptionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FundingProgramOption update
+   */
+  export type FundingProgramOptionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProgramOption
+     */
+    select?: FundingProgramOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProgramOption
+     */
+    omit?: FundingProgramOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProgramOptionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a FundingProgramOption.
+     */
+    data: XOR<FundingProgramOptionUpdateInput, FundingProgramOptionUncheckedUpdateInput>
+    /**
+     * Choose, which FundingProgramOption to update.
+     */
+    where: FundingProgramOptionWhereUniqueInput
+  }
+
+  /**
+   * FundingProgramOption updateMany
+   */
+  export type FundingProgramOptionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update FundingProgramOptions.
+     */
+    data: XOR<FundingProgramOptionUpdateManyMutationInput, FundingProgramOptionUncheckedUpdateManyInput>
+    /**
+     * Filter which FundingProgramOptions to update
+     */
+    where?: FundingProgramOptionWhereInput
+    /**
+     * Limit how many FundingProgramOptions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * FundingProgramOption updateManyAndReturn
+   */
+  export type FundingProgramOptionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProgramOption
+     */
+    select?: FundingProgramOptionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProgramOption
+     */
+    omit?: FundingProgramOptionOmit<ExtArgs> | null
+    /**
+     * The data used to update FundingProgramOptions.
+     */
+    data: XOR<FundingProgramOptionUpdateManyMutationInput, FundingProgramOptionUncheckedUpdateManyInput>
+    /**
+     * Filter which FundingProgramOptions to update
+     */
+    where?: FundingProgramOptionWhereInput
+    /**
+     * Limit how many FundingProgramOptions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProgramOptionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FundingProgramOption upsert
+   */
+  export type FundingProgramOptionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProgramOption
+     */
+    select?: FundingProgramOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProgramOption
+     */
+    omit?: FundingProgramOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProgramOptionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the FundingProgramOption to update in case it exists.
+     */
+    where: FundingProgramOptionWhereUniqueInput
+    /**
+     * In case the FundingProgramOption found by the `where` argument doesn't exist, create a new FundingProgramOption with this data.
+     */
+    create: XOR<FundingProgramOptionCreateInput, FundingProgramOptionUncheckedCreateInput>
+    /**
+     * In case the FundingProgramOption was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<FundingProgramOptionUpdateInput, FundingProgramOptionUncheckedUpdateInput>
+  }
+
+  /**
+   * FundingProgramOption delete
+   */
+  export type FundingProgramOptionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProgramOption
+     */
+    select?: FundingProgramOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProgramOption
+     */
+    omit?: FundingProgramOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProgramOptionInclude<ExtArgs> | null
+    /**
+     * Filter which FundingProgramOption to delete.
+     */
+    where: FundingProgramOptionWhereUniqueInput
+  }
+
+  /**
+   * FundingProgramOption deleteMany
+   */
+  export type FundingProgramOptionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FundingProgramOptions to delete
+     */
+    where?: FundingProgramOptionWhereInput
+    /**
+     * Limit how many FundingProgramOptions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * FundingProgramOption without action
+   */
+  export type FundingProgramOptionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProgramOption
+     */
+    select?: FundingProgramOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProgramOption
+     */
+    omit?: FundingProgramOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProgramOptionInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model FundingProjectOption
+   */
+
+  export type AggregateFundingProjectOption = {
+    _count: FundingProjectOptionCountAggregateOutputType | null
+    _min: FundingProjectOptionMinAggregateOutputType | null
+    _max: FundingProjectOptionMaxAggregateOutputType | null
+  }
+
+  export type FundingProjectOptionMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    program: string | null
+    createdById: string | null
+    createdAt: Date | null
+  }
+
+  export type FundingProjectOptionMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    program: string | null
+    createdById: string | null
+    createdAt: Date | null
+  }
+
+  export type FundingProjectOptionCountAggregateOutputType = {
+    id: number
+    name: number
+    program: number
+    createdById: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type FundingProjectOptionMinAggregateInputType = {
+    id?: true
+    name?: true
+    program?: true
+    createdById?: true
+    createdAt?: true
+  }
+
+  export type FundingProjectOptionMaxAggregateInputType = {
+    id?: true
+    name?: true
+    program?: true
+    createdById?: true
+    createdAt?: true
+  }
+
+  export type FundingProjectOptionCountAggregateInputType = {
+    id?: true
+    name?: true
+    program?: true
+    createdById?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type FundingProjectOptionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FundingProjectOption to aggregate.
+     */
+    where?: FundingProjectOptionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FundingProjectOptions to fetch.
+     */
+    orderBy?: FundingProjectOptionOrderByWithRelationInput | FundingProjectOptionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: FundingProjectOptionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FundingProjectOptions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FundingProjectOptions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned FundingProjectOptions
+    **/
+    _count?: true | FundingProjectOptionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: FundingProjectOptionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: FundingProjectOptionMaxAggregateInputType
+  }
+
+  export type GetFundingProjectOptionAggregateType<T extends FundingProjectOptionAggregateArgs> = {
+        [P in keyof T & keyof AggregateFundingProjectOption]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateFundingProjectOption[P]>
+      : GetScalarType<T[P], AggregateFundingProjectOption[P]>
+  }
+
+
+
+
+  export type FundingProjectOptionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FundingProjectOptionWhereInput
+    orderBy?: FundingProjectOptionOrderByWithAggregationInput | FundingProjectOptionOrderByWithAggregationInput[]
+    by: FundingProjectOptionScalarFieldEnum[] | FundingProjectOptionScalarFieldEnum
+    having?: FundingProjectOptionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: FundingProjectOptionCountAggregateInputType | true
+    _min?: FundingProjectOptionMinAggregateInputType
+    _max?: FundingProjectOptionMaxAggregateInputType
+  }
+
+  export type FundingProjectOptionGroupByOutputType = {
+    id: string
+    name: string
+    program: string
+    createdById: string
+    createdAt: Date
+    _count: FundingProjectOptionCountAggregateOutputType | null
+    _min: FundingProjectOptionMinAggregateOutputType | null
+    _max: FundingProjectOptionMaxAggregateOutputType | null
+  }
+
+  type GetFundingProjectOptionGroupByPayload<T extends FundingProjectOptionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<FundingProjectOptionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof FundingProjectOptionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], FundingProjectOptionGroupByOutputType[P]>
+            : GetScalarType<T[P], FundingProjectOptionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type FundingProjectOptionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    program?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["fundingProjectOption"]>
+
+  export type FundingProjectOptionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    program?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["fundingProjectOption"]>
+
+  export type FundingProjectOptionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    program?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["fundingProjectOption"]>
+
+  export type FundingProjectOptionSelectScalar = {
+    id?: boolean
+    name?: boolean
+    program?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+  }
+
+  export type FundingProjectOptionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "program" | "createdById" | "createdAt", ExtArgs["result"]["fundingProjectOption"]>
+  export type FundingProjectOptionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type FundingProjectOptionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type FundingProjectOptionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $FundingProjectOptionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "FundingProjectOption"
+    objects: {
+      createdBy: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      program: string
+      createdById: string
+      createdAt: Date
+    }, ExtArgs["result"]["fundingProjectOption"]>
+    composites: {}
+  }
+
+  type FundingProjectOptionGetPayload<S extends boolean | null | undefined | FundingProjectOptionDefaultArgs> = $Result.GetResult<Prisma.$FundingProjectOptionPayload, S>
+
+  type FundingProjectOptionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<FundingProjectOptionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: FundingProjectOptionCountAggregateInputType | true
+    }
+
+  export interface FundingProjectOptionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['FundingProjectOption'], meta: { name: 'FundingProjectOption' } }
+    /**
+     * Find zero or one FundingProjectOption that matches the filter.
+     * @param {FundingProjectOptionFindUniqueArgs} args - Arguments to find a FundingProjectOption
+     * @example
+     * // Get one FundingProjectOption
+     * const fundingProjectOption = await prisma.fundingProjectOption.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends FundingProjectOptionFindUniqueArgs>(args: SelectSubset<T, FundingProjectOptionFindUniqueArgs<ExtArgs>>): Prisma__FundingProjectOptionClient<$Result.GetResult<Prisma.$FundingProjectOptionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one FundingProjectOption that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {FundingProjectOptionFindUniqueOrThrowArgs} args - Arguments to find a FundingProjectOption
+     * @example
+     * // Get one FundingProjectOption
+     * const fundingProjectOption = await prisma.fundingProjectOption.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends FundingProjectOptionFindUniqueOrThrowArgs>(args: SelectSubset<T, FundingProjectOptionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__FundingProjectOptionClient<$Result.GetResult<Prisma.$FundingProjectOptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FundingProjectOption that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FundingProjectOptionFindFirstArgs} args - Arguments to find a FundingProjectOption
+     * @example
+     * // Get one FundingProjectOption
+     * const fundingProjectOption = await prisma.fundingProjectOption.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends FundingProjectOptionFindFirstArgs>(args?: SelectSubset<T, FundingProjectOptionFindFirstArgs<ExtArgs>>): Prisma__FundingProjectOptionClient<$Result.GetResult<Prisma.$FundingProjectOptionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FundingProjectOption that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FundingProjectOptionFindFirstOrThrowArgs} args - Arguments to find a FundingProjectOption
+     * @example
+     * // Get one FundingProjectOption
+     * const fundingProjectOption = await prisma.fundingProjectOption.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends FundingProjectOptionFindFirstOrThrowArgs>(args?: SelectSubset<T, FundingProjectOptionFindFirstOrThrowArgs<ExtArgs>>): Prisma__FundingProjectOptionClient<$Result.GetResult<Prisma.$FundingProjectOptionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more FundingProjectOptions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FundingProjectOptionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all FundingProjectOptions
+     * const fundingProjectOptions = await prisma.fundingProjectOption.findMany()
+     * 
+     * // Get first 10 FundingProjectOptions
+     * const fundingProjectOptions = await prisma.fundingProjectOption.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const fundingProjectOptionWithIdOnly = await prisma.fundingProjectOption.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends FundingProjectOptionFindManyArgs>(args?: SelectSubset<T, FundingProjectOptionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FundingProjectOptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a FundingProjectOption.
+     * @param {FundingProjectOptionCreateArgs} args - Arguments to create a FundingProjectOption.
+     * @example
+     * // Create one FundingProjectOption
+     * const FundingProjectOption = await prisma.fundingProjectOption.create({
+     *   data: {
+     *     // ... data to create a FundingProjectOption
+     *   }
+     * })
+     * 
+     */
+    create<T extends FundingProjectOptionCreateArgs>(args: SelectSubset<T, FundingProjectOptionCreateArgs<ExtArgs>>): Prisma__FundingProjectOptionClient<$Result.GetResult<Prisma.$FundingProjectOptionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many FundingProjectOptions.
+     * @param {FundingProjectOptionCreateManyArgs} args - Arguments to create many FundingProjectOptions.
+     * @example
+     * // Create many FundingProjectOptions
+     * const fundingProjectOption = await prisma.fundingProjectOption.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends FundingProjectOptionCreateManyArgs>(args?: SelectSubset<T, FundingProjectOptionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many FundingProjectOptions and returns the data saved in the database.
+     * @param {FundingProjectOptionCreateManyAndReturnArgs} args - Arguments to create many FundingProjectOptions.
+     * @example
+     * // Create many FundingProjectOptions
+     * const fundingProjectOption = await prisma.fundingProjectOption.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many FundingProjectOptions and only return the `id`
+     * const fundingProjectOptionWithIdOnly = await prisma.fundingProjectOption.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends FundingProjectOptionCreateManyAndReturnArgs>(args?: SelectSubset<T, FundingProjectOptionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FundingProjectOptionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a FundingProjectOption.
+     * @param {FundingProjectOptionDeleteArgs} args - Arguments to delete one FundingProjectOption.
+     * @example
+     * // Delete one FundingProjectOption
+     * const FundingProjectOption = await prisma.fundingProjectOption.delete({
+     *   where: {
+     *     // ... filter to delete one FundingProjectOption
+     *   }
+     * })
+     * 
+     */
+    delete<T extends FundingProjectOptionDeleteArgs>(args: SelectSubset<T, FundingProjectOptionDeleteArgs<ExtArgs>>): Prisma__FundingProjectOptionClient<$Result.GetResult<Prisma.$FundingProjectOptionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one FundingProjectOption.
+     * @param {FundingProjectOptionUpdateArgs} args - Arguments to update one FundingProjectOption.
+     * @example
+     * // Update one FundingProjectOption
+     * const fundingProjectOption = await prisma.fundingProjectOption.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends FundingProjectOptionUpdateArgs>(args: SelectSubset<T, FundingProjectOptionUpdateArgs<ExtArgs>>): Prisma__FundingProjectOptionClient<$Result.GetResult<Prisma.$FundingProjectOptionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more FundingProjectOptions.
+     * @param {FundingProjectOptionDeleteManyArgs} args - Arguments to filter FundingProjectOptions to delete.
+     * @example
+     * // Delete a few FundingProjectOptions
+     * const { count } = await prisma.fundingProjectOption.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends FundingProjectOptionDeleteManyArgs>(args?: SelectSubset<T, FundingProjectOptionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FundingProjectOptions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FundingProjectOptionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many FundingProjectOptions
+     * const fundingProjectOption = await prisma.fundingProjectOption.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends FundingProjectOptionUpdateManyArgs>(args: SelectSubset<T, FundingProjectOptionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FundingProjectOptions and returns the data updated in the database.
+     * @param {FundingProjectOptionUpdateManyAndReturnArgs} args - Arguments to update many FundingProjectOptions.
+     * @example
+     * // Update many FundingProjectOptions
+     * const fundingProjectOption = await prisma.fundingProjectOption.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more FundingProjectOptions and only return the `id`
+     * const fundingProjectOptionWithIdOnly = await prisma.fundingProjectOption.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends FundingProjectOptionUpdateManyAndReturnArgs>(args: SelectSubset<T, FundingProjectOptionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FundingProjectOptionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one FundingProjectOption.
+     * @param {FundingProjectOptionUpsertArgs} args - Arguments to update or create a FundingProjectOption.
+     * @example
+     * // Update or create a FundingProjectOption
+     * const fundingProjectOption = await prisma.fundingProjectOption.upsert({
+     *   create: {
+     *     // ... data to create a FundingProjectOption
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the FundingProjectOption we want to update
+     *   }
+     * })
+     */
+    upsert<T extends FundingProjectOptionUpsertArgs>(args: SelectSubset<T, FundingProjectOptionUpsertArgs<ExtArgs>>): Prisma__FundingProjectOptionClient<$Result.GetResult<Prisma.$FundingProjectOptionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of FundingProjectOptions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FundingProjectOptionCountArgs} args - Arguments to filter FundingProjectOptions to count.
+     * @example
+     * // Count the number of FundingProjectOptions
+     * const count = await prisma.fundingProjectOption.count({
+     *   where: {
+     *     // ... the filter for the FundingProjectOptions we want to count
+     *   }
+     * })
+    **/
+    count<T extends FundingProjectOptionCountArgs>(
+      args?: Subset<T, FundingProjectOptionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], FundingProjectOptionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a FundingProjectOption.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FundingProjectOptionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends FundingProjectOptionAggregateArgs>(args: Subset<T, FundingProjectOptionAggregateArgs>): Prisma.PrismaPromise<GetFundingProjectOptionAggregateType<T>>
+
+    /**
+     * Group by FundingProjectOption.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FundingProjectOptionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends FundingProjectOptionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: FundingProjectOptionGroupByArgs['orderBy'] }
+        : { orderBy?: FundingProjectOptionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, FundingProjectOptionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFundingProjectOptionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the FundingProjectOption model
+   */
+  readonly fields: FundingProjectOptionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for FundingProjectOption.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__FundingProjectOptionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the FundingProjectOption model
+   */
+  interface FundingProjectOptionFieldRefs {
+    readonly id: FieldRef<"FundingProjectOption", 'String'>
+    readonly name: FieldRef<"FundingProjectOption", 'String'>
+    readonly program: FieldRef<"FundingProjectOption", 'String'>
+    readonly createdById: FieldRef<"FundingProjectOption", 'String'>
+    readonly createdAt: FieldRef<"FundingProjectOption", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * FundingProjectOption findUnique
+   */
+  export type FundingProjectOptionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProjectOption
+     */
+    select?: FundingProjectOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProjectOption
+     */
+    omit?: FundingProjectOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProjectOptionInclude<ExtArgs> | null
+    /**
+     * Filter, which FundingProjectOption to fetch.
+     */
+    where: FundingProjectOptionWhereUniqueInput
+  }
+
+  /**
+   * FundingProjectOption findUniqueOrThrow
+   */
+  export type FundingProjectOptionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProjectOption
+     */
+    select?: FundingProjectOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProjectOption
+     */
+    omit?: FundingProjectOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProjectOptionInclude<ExtArgs> | null
+    /**
+     * Filter, which FundingProjectOption to fetch.
+     */
+    where: FundingProjectOptionWhereUniqueInput
+  }
+
+  /**
+   * FundingProjectOption findFirst
+   */
+  export type FundingProjectOptionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProjectOption
+     */
+    select?: FundingProjectOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProjectOption
+     */
+    omit?: FundingProjectOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProjectOptionInclude<ExtArgs> | null
+    /**
+     * Filter, which FundingProjectOption to fetch.
+     */
+    where?: FundingProjectOptionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FundingProjectOptions to fetch.
+     */
+    orderBy?: FundingProjectOptionOrderByWithRelationInput | FundingProjectOptionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FundingProjectOptions.
+     */
+    cursor?: FundingProjectOptionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FundingProjectOptions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FundingProjectOptions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FundingProjectOptions.
+     */
+    distinct?: FundingProjectOptionScalarFieldEnum | FundingProjectOptionScalarFieldEnum[]
+  }
+
+  /**
+   * FundingProjectOption findFirstOrThrow
+   */
+  export type FundingProjectOptionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProjectOption
+     */
+    select?: FundingProjectOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProjectOption
+     */
+    omit?: FundingProjectOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProjectOptionInclude<ExtArgs> | null
+    /**
+     * Filter, which FundingProjectOption to fetch.
+     */
+    where?: FundingProjectOptionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FundingProjectOptions to fetch.
+     */
+    orderBy?: FundingProjectOptionOrderByWithRelationInput | FundingProjectOptionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FundingProjectOptions.
+     */
+    cursor?: FundingProjectOptionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FundingProjectOptions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FundingProjectOptions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FundingProjectOptions.
+     */
+    distinct?: FundingProjectOptionScalarFieldEnum | FundingProjectOptionScalarFieldEnum[]
+  }
+
+  /**
+   * FundingProjectOption findMany
+   */
+  export type FundingProjectOptionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProjectOption
+     */
+    select?: FundingProjectOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProjectOption
+     */
+    omit?: FundingProjectOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProjectOptionInclude<ExtArgs> | null
+    /**
+     * Filter, which FundingProjectOptions to fetch.
+     */
+    where?: FundingProjectOptionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FundingProjectOptions to fetch.
+     */
+    orderBy?: FundingProjectOptionOrderByWithRelationInput | FundingProjectOptionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing FundingProjectOptions.
+     */
+    cursor?: FundingProjectOptionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FundingProjectOptions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FundingProjectOptions.
+     */
+    skip?: number
+    distinct?: FundingProjectOptionScalarFieldEnum | FundingProjectOptionScalarFieldEnum[]
+  }
+
+  /**
+   * FundingProjectOption create
+   */
+  export type FundingProjectOptionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProjectOption
+     */
+    select?: FundingProjectOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProjectOption
+     */
+    omit?: FundingProjectOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProjectOptionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a FundingProjectOption.
+     */
+    data: XOR<FundingProjectOptionCreateInput, FundingProjectOptionUncheckedCreateInput>
+  }
+
+  /**
+   * FundingProjectOption createMany
+   */
+  export type FundingProjectOptionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many FundingProjectOptions.
+     */
+    data: FundingProjectOptionCreateManyInput | FundingProjectOptionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * FundingProjectOption createManyAndReturn
+   */
+  export type FundingProjectOptionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProjectOption
+     */
+    select?: FundingProjectOptionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProjectOption
+     */
+    omit?: FundingProjectOptionOmit<ExtArgs> | null
+    /**
+     * The data used to create many FundingProjectOptions.
+     */
+    data: FundingProjectOptionCreateManyInput | FundingProjectOptionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProjectOptionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FundingProjectOption update
+   */
+  export type FundingProjectOptionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProjectOption
+     */
+    select?: FundingProjectOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProjectOption
+     */
+    omit?: FundingProjectOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProjectOptionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a FundingProjectOption.
+     */
+    data: XOR<FundingProjectOptionUpdateInput, FundingProjectOptionUncheckedUpdateInput>
+    /**
+     * Choose, which FundingProjectOption to update.
+     */
+    where: FundingProjectOptionWhereUniqueInput
+  }
+
+  /**
+   * FundingProjectOption updateMany
+   */
+  export type FundingProjectOptionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update FundingProjectOptions.
+     */
+    data: XOR<FundingProjectOptionUpdateManyMutationInput, FundingProjectOptionUncheckedUpdateManyInput>
+    /**
+     * Filter which FundingProjectOptions to update
+     */
+    where?: FundingProjectOptionWhereInput
+    /**
+     * Limit how many FundingProjectOptions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * FundingProjectOption updateManyAndReturn
+   */
+  export type FundingProjectOptionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProjectOption
+     */
+    select?: FundingProjectOptionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProjectOption
+     */
+    omit?: FundingProjectOptionOmit<ExtArgs> | null
+    /**
+     * The data used to update FundingProjectOptions.
+     */
+    data: XOR<FundingProjectOptionUpdateManyMutationInput, FundingProjectOptionUncheckedUpdateManyInput>
+    /**
+     * Filter which FundingProjectOptions to update
+     */
+    where?: FundingProjectOptionWhereInput
+    /**
+     * Limit how many FundingProjectOptions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProjectOptionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FundingProjectOption upsert
+   */
+  export type FundingProjectOptionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProjectOption
+     */
+    select?: FundingProjectOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProjectOption
+     */
+    omit?: FundingProjectOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProjectOptionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the FundingProjectOption to update in case it exists.
+     */
+    where: FundingProjectOptionWhereUniqueInput
+    /**
+     * In case the FundingProjectOption found by the `where` argument doesn't exist, create a new FundingProjectOption with this data.
+     */
+    create: XOR<FundingProjectOptionCreateInput, FundingProjectOptionUncheckedCreateInput>
+    /**
+     * In case the FundingProjectOption was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<FundingProjectOptionUpdateInput, FundingProjectOptionUncheckedUpdateInput>
+  }
+
+  /**
+   * FundingProjectOption delete
+   */
+  export type FundingProjectOptionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProjectOption
+     */
+    select?: FundingProjectOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProjectOption
+     */
+    omit?: FundingProjectOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProjectOptionInclude<ExtArgs> | null
+    /**
+     * Filter which FundingProjectOption to delete.
+     */
+    where: FundingProjectOptionWhereUniqueInput
+  }
+
+  /**
+   * FundingProjectOption deleteMany
+   */
+  export type FundingProjectOptionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FundingProjectOptions to delete
+     */
+    where?: FundingProjectOptionWhereInput
+    /**
+     * Limit how many FundingProjectOptions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * FundingProjectOption without action
+   */
+  export type FundingProjectOptionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FundingProjectOption
+     */
+    select?: FundingProjectOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FundingProjectOption
+     */
+    omit?: FundingProjectOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FundingProjectOptionInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model LandbankLoanOption
+   */
+
+  export type AggregateLandbankLoanOption = {
+    _count: LandbankLoanOptionCountAggregateOutputType | null
+    _min: LandbankLoanOptionMinAggregateOutputType | null
+    _max: LandbankLoanOptionMaxAggregateOutputType | null
+  }
+
+  export type LandbankLoanOptionMinAggregateOutputType = {
+    id: string | null
+    number: string | null
+    createdById: string | null
+    createdAt: Date | null
+  }
+
+  export type LandbankLoanOptionMaxAggregateOutputType = {
+    id: string | null
+    number: string | null
+    createdById: string | null
+    createdAt: Date | null
+  }
+
+  export type LandbankLoanOptionCountAggregateOutputType = {
+    id: number
+    number: number
+    createdById: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type LandbankLoanOptionMinAggregateInputType = {
+    id?: true
+    number?: true
+    createdById?: true
+    createdAt?: true
+  }
+
+  export type LandbankLoanOptionMaxAggregateInputType = {
+    id?: true
+    number?: true
+    createdById?: true
+    createdAt?: true
+  }
+
+  export type LandbankLoanOptionCountAggregateInputType = {
+    id?: true
+    number?: true
+    createdById?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type LandbankLoanOptionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LandbankLoanOption to aggregate.
+     */
+    where?: LandbankLoanOptionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LandbankLoanOptions to fetch.
+     */
+    orderBy?: LandbankLoanOptionOrderByWithRelationInput | LandbankLoanOptionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: LandbankLoanOptionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LandbankLoanOptions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LandbankLoanOptions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned LandbankLoanOptions
+    **/
+    _count?: true | LandbankLoanOptionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: LandbankLoanOptionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: LandbankLoanOptionMaxAggregateInputType
+  }
+
+  export type GetLandbankLoanOptionAggregateType<T extends LandbankLoanOptionAggregateArgs> = {
+        [P in keyof T & keyof AggregateLandbankLoanOption]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateLandbankLoanOption[P]>
+      : GetScalarType<T[P], AggregateLandbankLoanOption[P]>
+  }
+
+
+
+
+  export type LandbankLoanOptionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LandbankLoanOptionWhereInput
+    orderBy?: LandbankLoanOptionOrderByWithAggregationInput | LandbankLoanOptionOrderByWithAggregationInput[]
+    by: LandbankLoanOptionScalarFieldEnum[] | LandbankLoanOptionScalarFieldEnum
+    having?: LandbankLoanOptionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: LandbankLoanOptionCountAggregateInputType | true
+    _min?: LandbankLoanOptionMinAggregateInputType
+    _max?: LandbankLoanOptionMaxAggregateInputType
+  }
+
+  export type LandbankLoanOptionGroupByOutputType = {
+    id: string
+    number: string
+    createdById: string
+    createdAt: Date
+    _count: LandbankLoanOptionCountAggregateOutputType | null
+    _min: LandbankLoanOptionMinAggregateOutputType | null
+    _max: LandbankLoanOptionMaxAggregateOutputType | null
+  }
+
+  type GetLandbankLoanOptionGroupByPayload<T extends LandbankLoanOptionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<LandbankLoanOptionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof LandbankLoanOptionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], LandbankLoanOptionGroupByOutputType[P]>
+            : GetScalarType<T[P], LandbankLoanOptionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type LandbankLoanOptionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    number?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["landbankLoanOption"]>
+
+  export type LandbankLoanOptionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    number?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["landbankLoanOption"]>
+
+  export type LandbankLoanOptionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    number?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["landbankLoanOption"]>
+
+  export type LandbankLoanOptionSelectScalar = {
+    id?: boolean
+    number?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+  }
+
+  export type LandbankLoanOptionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "number" | "createdById" | "createdAt", ExtArgs["result"]["landbankLoanOption"]>
+  export type LandbankLoanOptionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type LandbankLoanOptionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type LandbankLoanOptionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $LandbankLoanOptionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "LandbankLoanOption"
+    objects: {
+      createdBy: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      number: string
+      createdById: string
+      createdAt: Date
+    }, ExtArgs["result"]["landbankLoanOption"]>
+    composites: {}
+  }
+
+  type LandbankLoanOptionGetPayload<S extends boolean | null | undefined | LandbankLoanOptionDefaultArgs> = $Result.GetResult<Prisma.$LandbankLoanOptionPayload, S>
+
+  type LandbankLoanOptionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<LandbankLoanOptionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: LandbankLoanOptionCountAggregateInputType | true
+    }
+
+  export interface LandbankLoanOptionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['LandbankLoanOption'], meta: { name: 'LandbankLoanOption' } }
+    /**
+     * Find zero or one LandbankLoanOption that matches the filter.
+     * @param {LandbankLoanOptionFindUniqueArgs} args - Arguments to find a LandbankLoanOption
+     * @example
+     * // Get one LandbankLoanOption
+     * const landbankLoanOption = await prisma.landbankLoanOption.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends LandbankLoanOptionFindUniqueArgs>(args: SelectSubset<T, LandbankLoanOptionFindUniqueArgs<ExtArgs>>): Prisma__LandbankLoanOptionClient<$Result.GetResult<Prisma.$LandbankLoanOptionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one LandbankLoanOption that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {LandbankLoanOptionFindUniqueOrThrowArgs} args - Arguments to find a LandbankLoanOption
+     * @example
+     * // Get one LandbankLoanOption
+     * const landbankLoanOption = await prisma.landbankLoanOption.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends LandbankLoanOptionFindUniqueOrThrowArgs>(args: SelectSubset<T, LandbankLoanOptionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__LandbankLoanOptionClient<$Result.GetResult<Prisma.$LandbankLoanOptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first LandbankLoanOption that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LandbankLoanOptionFindFirstArgs} args - Arguments to find a LandbankLoanOption
+     * @example
+     * // Get one LandbankLoanOption
+     * const landbankLoanOption = await prisma.landbankLoanOption.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends LandbankLoanOptionFindFirstArgs>(args?: SelectSubset<T, LandbankLoanOptionFindFirstArgs<ExtArgs>>): Prisma__LandbankLoanOptionClient<$Result.GetResult<Prisma.$LandbankLoanOptionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first LandbankLoanOption that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LandbankLoanOptionFindFirstOrThrowArgs} args - Arguments to find a LandbankLoanOption
+     * @example
+     * // Get one LandbankLoanOption
+     * const landbankLoanOption = await prisma.landbankLoanOption.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends LandbankLoanOptionFindFirstOrThrowArgs>(args?: SelectSubset<T, LandbankLoanOptionFindFirstOrThrowArgs<ExtArgs>>): Prisma__LandbankLoanOptionClient<$Result.GetResult<Prisma.$LandbankLoanOptionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more LandbankLoanOptions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LandbankLoanOptionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all LandbankLoanOptions
+     * const landbankLoanOptions = await prisma.landbankLoanOption.findMany()
+     * 
+     * // Get first 10 LandbankLoanOptions
+     * const landbankLoanOptions = await prisma.landbankLoanOption.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const landbankLoanOptionWithIdOnly = await prisma.landbankLoanOption.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends LandbankLoanOptionFindManyArgs>(args?: SelectSubset<T, LandbankLoanOptionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LandbankLoanOptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a LandbankLoanOption.
+     * @param {LandbankLoanOptionCreateArgs} args - Arguments to create a LandbankLoanOption.
+     * @example
+     * // Create one LandbankLoanOption
+     * const LandbankLoanOption = await prisma.landbankLoanOption.create({
+     *   data: {
+     *     // ... data to create a LandbankLoanOption
+     *   }
+     * })
+     * 
+     */
+    create<T extends LandbankLoanOptionCreateArgs>(args: SelectSubset<T, LandbankLoanOptionCreateArgs<ExtArgs>>): Prisma__LandbankLoanOptionClient<$Result.GetResult<Prisma.$LandbankLoanOptionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many LandbankLoanOptions.
+     * @param {LandbankLoanOptionCreateManyArgs} args - Arguments to create many LandbankLoanOptions.
+     * @example
+     * // Create many LandbankLoanOptions
+     * const landbankLoanOption = await prisma.landbankLoanOption.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends LandbankLoanOptionCreateManyArgs>(args?: SelectSubset<T, LandbankLoanOptionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many LandbankLoanOptions and returns the data saved in the database.
+     * @param {LandbankLoanOptionCreateManyAndReturnArgs} args - Arguments to create many LandbankLoanOptions.
+     * @example
+     * // Create many LandbankLoanOptions
+     * const landbankLoanOption = await prisma.landbankLoanOption.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many LandbankLoanOptions and only return the `id`
+     * const landbankLoanOptionWithIdOnly = await prisma.landbankLoanOption.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends LandbankLoanOptionCreateManyAndReturnArgs>(args?: SelectSubset<T, LandbankLoanOptionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LandbankLoanOptionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a LandbankLoanOption.
+     * @param {LandbankLoanOptionDeleteArgs} args - Arguments to delete one LandbankLoanOption.
+     * @example
+     * // Delete one LandbankLoanOption
+     * const LandbankLoanOption = await prisma.landbankLoanOption.delete({
+     *   where: {
+     *     // ... filter to delete one LandbankLoanOption
+     *   }
+     * })
+     * 
+     */
+    delete<T extends LandbankLoanOptionDeleteArgs>(args: SelectSubset<T, LandbankLoanOptionDeleteArgs<ExtArgs>>): Prisma__LandbankLoanOptionClient<$Result.GetResult<Prisma.$LandbankLoanOptionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one LandbankLoanOption.
+     * @param {LandbankLoanOptionUpdateArgs} args - Arguments to update one LandbankLoanOption.
+     * @example
+     * // Update one LandbankLoanOption
+     * const landbankLoanOption = await prisma.landbankLoanOption.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends LandbankLoanOptionUpdateArgs>(args: SelectSubset<T, LandbankLoanOptionUpdateArgs<ExtArgs>>): Prisma__LandbankLoanOptionClient<$Result.GetResult<Prisma.$LandbankLoanOptionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more LandbankLoanOptions.
+     * @param {LandbankLoanOptionDeleteManyArgs} args - Arguments to filter LandbankLoanOptions to delete.
+     * @example
+     * // Delete a few LandbankLoanOptions
+     * const { count } = await prisma.landbankLoanOption.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends LandbankLoanOptionDeleteManyArgs>(args?: SelectSubset<T, LandbankLoanOptionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more LandbankLoanOptions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LandbankLoanOptionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many LandbankLoanOptions
+     * const landbankLoanOption = await prisma.landbankLoanOption.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends LandbankLoanOptionUpdateManyArgs>(args: SelectSubset<T, LandbankLoanOptionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more LandbankLoanOptions and returns the data updated in the database.
+     * @param {LandbankLoanOptionUpdateManyAndReturnArgs} args - Arguments to update many LandbankLoanOptions.
+     * @example
+     * // Update many LandbankLoanOptions
+     * const landbankLoanOption = await prisma.landbankLoanOption.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more LandbankLoanOptions and only return the `id`
+     * const landbankLoanOptionWithIdOnly = await prisma.landbankLoanOption.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends LandbankLoanOptionUpdateManyAndReturnArgs>(args: SelectSubset<T, LandbankLoanOptionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LandbankLoanOptionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one LandbankLoanOption.
+     * @param {LandbankLoanOptionUpsertArgs} args - Arguments to update or create a LandbankLoanOption.
+     * @example
+     * // Update or create a LandbankLoanOption
+     * const landbankLoanOption = await prisma.landbankLoanOption.upsert({
+     *   create: {
+     *     // ... data to create a LandbankLoanOption
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the LandbankLoanOption we want to update
+     *   }
+     * })
+     */
+    upsert<T extends LandbankLoanOptionUpsertArgs>(args: SelectSubset<T, LandbankLoanOptionUpsertArgs<ExtArgs>>): Prisma__LandbankLoanOptionClient<$Result.GetResult<Prisma.$LandbankLoanOptionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of LandbankLoanOptions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LandbankLoanOptionCountArgs} args - Arguments to filter LandbankLoanOptions to count.
+     * @example
+     * // Count the number of LandbankLoanOptions
+     * const count = await prisma.landbankLoanOption.count({
+     *   where: {
+     *     // ... the filter for the LandbankLoanOptions we want to count
+     *   }
+     * })
+    **/
+    count<T extends LandbankLoanOptionCountArgs>(
+      args?: Subset<T, LandbankLoanOptionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], LandbankLoanOptionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a LandbankLoanOption.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LandbankLoanOptionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends LandbankLoanOptionAggregateArgs>(args: Subset<T, LandbankLoanOptionAggregateArgs>): Prisma.PrismaPromise<GetLandbankLoanOptionAggregateType<T>>
+
+    /**
+     * Group by LandbankLoanOption.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LandbankLoanOptionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends LandbankLoanOptionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: LandbankLoanOptionGroupByArgs['orderBy'] }
+        : { orderBy?: LandbankLoanOptionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, LandbankLoanOptionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetLandbankLoanOptionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the LandbankLoanOption model
+   */
+  readonly fields: LandbankLoanOptionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for LandbankLoanOption.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__LandbankLoanOptionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the LandbankLoanOption model
+   */
+  interface LandbankLoanOptionFieldRefs {
+    readonly id: FieldRef<"LandbankLoanOption", 'String'>
+    readonly number: FieldRef<"LandbankLoanOption", 'String'>
+    readonly createdById: FieldRef<"LandbankLoanOption", 'String'>
+    readonly createdAt: FieldRef<"LandbankLoanOption", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * LandbankLoanOption findUnique
+   */
+  export type LandbankLoanOptionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LandbankLoanOption
+     */
+    select?: LandbankLoanOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LandbankLoanOption
+     */
+    omit?: LandbankLoanOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LandbankLoanOptionInclude<ExtArgs> | null
+    /**
+     * Filter, which LandbankLoanOption to fetch.
+     */
+    where: LandbankLoanOptionWhereUniqueInput
+  }
+
+  /**
+   * LandbankLoanOption findUniqueOrThrow
+   */
+  export type LandbankLoanOptionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LandbankLoanOption
+     */
+    select?: LandbankLoanOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LandbankLoanOption
+     */
+    omit?: LandbankLoanOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LandbankLoanOptionInclude<ExtArgs> | null
+    /**
+     * Filter, which LandbankLoanOption to fetch.
+     */
+    where: LandbankLoanOptionWhereUniqueInput
+  }
+
+  /**
+   * LandbankLoanOption findFirst
+   */
+  export type LandbankLoanOptionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LandbankLoanOption
+     */
+    select?: LandbankLoanOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LandbankLoanOption
+     */
+    omit?: LandbankLoanOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LandbankLoanOptionInclude<ExtArgs> | null
+    /**
+     * Filter, which LandbankLoanOption to fetch.
+     */
+    where?: LandbankLoanOptionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LandbankLoanOptions to fetch.
+     */
+    orderBy?: LandbankLoanOptionOrderByWithRelationInput | LandbankLoanOptionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LandbankLoanOptions.
+     */
+    cursor?: LandbankLoanOptionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LandbankLoanOptions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LandbankLoanOptions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LandbankLoanOptions.
+     */
+    distinct?: LandbankLoanOptionScalarFieldEnum | LandbankLoanOptionScalarFieldEnum[]
+  }
+
+  /**
+   * LandbankLoanOption findFirstOrThrow
+   */
+  export type LandbankLoanOptionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LandbankLoanOption
+     */
+    select?: LandbankLoanOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LandbankLoanOption
+     */
+    omit?: LandbankLoanOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LandbankLoanOptionInclude<ExtArgs> | null
+    /**
+     * Filter, which LandbankLoanOption to fetch.
+     */
+    where?: LandbankLoanOptionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LandbankLoanOptions to fetch.
+     */
+    orderBy?: LandbankLoanOptionOrderByWithRelationInput | LandbankLoanOptionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LandbankLoanOptions.
+     */
+    cursor?: LandbankLoanOptionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LandbankLoanOptions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LandbankLoanOptions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LandbankLoanOptions.
+     */
+    distinct?: LandbankLoanOptionScalarFieldEnum | LandbankLoanOptionScalarFieldEnum[]
+  }
+
+  /**
+   * LandbankLoanOption findMany
+   */
+  export type LandbankLoanOptionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LandbankLoanOption
+     */
+    select?: LandbankLoanOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LandbankLoanOption
+     */
+    omit?: LandbankLoanOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LandbankLoanOptionInclude<ExtArgs> | null
+    /**
+     * Filter, which LandbankLoanOptions to fetch.
+     */
+    where?: LandbankLoanOptionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LandbankLoanOptions to fetch.
+     */
+    orderBy?: LandbankLoanOptionOrderByWithRelationInput | LandbankLoanOptionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing LandbankLoanOptions.
+     */
+    cursor?: LandbankLoanOptionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LandbankLoanOptions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LandbankLoanOptions.
+     */
+    skip?: number
+    distinct?: LandbankLoanOptionScalarFieldEnum | LandbankLoanOptionScalarFieldEnum[]
+  }
+
+  /**
+   * LandbankLoanOption create
+   */
+  export type LandbankLoanOptionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LandbankLoanOption
+     */
+    select?: LandbankLoanOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LandbankLoanOption
+     */
+    omit?: LandbankLoanOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LandbankLoanOptionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a LandbankLoanOption.
+     */
+    data: XOR<LandbankLoanOptionCreateInput, LandbankLoanOptionUncheckedCreateInput>
+  }
+
+  /**
+   * LandbankLoanOption createMany
+   */
+  export type LandbankLoanOptionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many LandbankLoanOptions.
+     */
+    data: LandbankLoanOptionCreateManyInput | LandbankLoanOptionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * LandbankLoanOption createManyAndReturn
+   */
+  export type LandbankLoanOptionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LandbankLoanOption
+     */
+    select?: LandbankLoanOptionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the LandbankLoanOption
+     */
+    omit?: LandbankLoanOptionOmit<ExtArgs> | null
+    /**
+     * The data used to create many LandbankLoanOptions.
+     */
+    data: LandbankLoanOptionCreateManyInput | LandbankLoanOptionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LandbankLoanOptionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * LandbankLoanOption update
+   */
+  export type LandbankLoanOptionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LandbankLoanOption
+     */
+    select?: LandbankLoanOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LandbankLoanOption
+     */
+    omit?: LandbankLoanOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LandbankLoanOptionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a LandbankLoanOption.
+     */
+    data: XOR<LandbankLoanOptionUpdateInput, LandbankLoanOptionUncheckedUpdateInput>
+    /**
+     * Choose, which LandbankLoanOption to update.
+     */
+    where: LandbankLoanOptionWhereUniqueInput
+  }
+
+  /**
+   * LandbankLoanOption updateMany
+   */
+  export type LandbankLoanOptionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update LandbankLoanOptions.
+     */
+    data: XOR<LandbankLoanOptionUpdateManyMutationInput, LandbankLoanOptionUncheckedUpdateManyInput>
+    /**
+     * Filter which LandbankLoanOptions to update
+     */
+    where?: LandbankLoanOptionWhereInput
+    /**
+     * Limit how many LandbankLoanOptions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * LandbankLoanOption updateManyAndReturn
+   */
+  export type LandbankLoanOptionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LandbankLoanOption
+     */
+    select?: LandbankLoanOptionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the LandbankLoanOption
+     */
+    omit?: LandbankLoanOptionOmit<ExtArgs> | null
+    /**
+     * The data used to update LandbankLoanOptions.
+     */
+    data: XOR<LandbankLoanOptionUpdateManyMutationInput, LandbankLoanOptionUncheckedUpdateManyInput>
+    /**
+     * Filter which LandbankLoanOptions to update
+     */
+    where?: LandbankLoanOptionWhereInput
+    /**
+     * Limit how many LandbankLoanOptions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LandbankLoanOptionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * LandbankLoanOption upsert
+   */
+  export type LandbankLoanOptionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LandbankLoanOption
+     */
+    select?: LandbankLoanOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LandbankLoanOption
+     */
+    omit?: LandbankLoanOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LandbankLoanOptionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the LandbankLoanOption to update in case it exists.
+     */
+    where: LandbankLoanOptionWhereUniqueInput
+    /**
+     * In case the LandbankLoanOption found by the `where` argument doesn't exist, create a new LandbankLoanOption with this data.
+     */
+    create: XOR<LandbankLoanOptionCreateInput, LandbankLoanOptionUncheckedCreateInput>
+    /**
+     * In case the LandbankLoanOption was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<LandbankLoanOptionUpdateInput, LandbankLoanOptionUncheckedUpdateInput>
+  }
+
+  /**
+   * LandbankLoanOption delete
+   */
+  export type LandbankLoanOptionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LandbankLoanOption
+     */
+    select?: LandbankLoanOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LandbankLoanOption
+     */
+    omit?: LandbankLoanOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LandbankLoanOptionInclude<ExtArgs> | null
+    /**
+     * Filter which LandbankLoanOption to delete.
+     */
+    where: LandbankLoanOptionWhereUniqueInput
+  }
+
+  /**
+   * LandbankLoanOption deleteMany
+   */
+  export type LandbankLoanOptionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LandbankLoanOptions to delete
+     */
+    where?: LandbankLoanOptionWhereInput
+    /**
+     * Limit how many LandbankLoanOptions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * LandbankLoanOption without action
+   */
+  export type LandbankLoanOptionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LandbankLoanOption
+     */
+    select?: LandbankLoanOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LandbankLoanOption
+     */
+    omit?: LandbankLoanOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LandbankLoanOptionInclude<ExtArgs> | null
   }
 
 
@@ -21202,6 +24760,7 @@ export namespace Prisma {
     referenceNumber: 'referenceNumber',
     type: 'type',
     percentage: 'percentage',
+    remarks: 'remarks',
     amount: 'amount',
     createdById: 'createdById',
     createdAt: 'createdAt'
@@ -21223,6 +24782,38 @@ export namespace Prisma {
   };
 
   export type VariationOrderScalarFieldEnum = (typeof VariationOrderScalarFieldEnum)[keyof typeof VariationOrderScalarFieldEnum]
+
+
+  export const FundingProgramOptionScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    sourceOfFund: 'sourceOfFund',
+    createdById: 'createdById',
+    createdAt: 'createdAt'
+  };
+
+  export type FundingProgramOptionScalarFieldEnum = (typeof FundingProgramOptionScalarFieldEnum)[keyof typeof FundingProgramOptionScalarFieldEnum]
+
+
+  export const FundingProjectOptionScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    program: 'program',
+    createdById: 'createdById',
+    createdAt: 'createdAt'
+  };
+
+  export type FundingProjectOptionScalarFieldEnum = (typeof FundingProjectOptionScalarFieldEnum)[keyof typeof FundingProjectOptionScalarFieldEnum]
+
+
+  export const LandbankLoanOptionScalarFieldEnum: {
+    id: 'id',
+    number: 'number',
+    createdById: 'createdById',
+    createdAt: 'createdAt'
+  };
+
+  export type LandbankLoanOptionScalarFieldEnum = (typeof LandbankLoanOptionScalarFieldEnum)[keyof typeof LandbankLoanOptionScalarFieldEnum]
 
 
   export const TimelineAdjustmentScalarFieldEnum: {
@@ -21442,34 +25033,6 @@ export namespace Prisma {
    * Reference to a field of type 'UserStatus[]'
    */
   export type ListEnumUserStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserStatus[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'ProjectSubType'
-   */
-  export type EnumProjectSubTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProjectSubType'>
-    
-
-
-  /**
-   * Reference to a field of type 'ProjectSubType[]'
-   */
-  export type ListEnumProjectSubTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProjectSubType[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'FundingProgram'
-   */
-  export type EnumFundingProgramFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FundingProgram'>
-    
-
-
-  /**
-   * Reference to a field of type 'FundingProgram[]'
-   */
-  export type ListEnumFundingProgramFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FundingProgram[]'>
     
 
 
@@ -21742,6 +25305,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestListRelationFilter
     accessRequestsReviewed?: ProjectAccessRequestListRelationFilter
     archiveLocations?: PhysicalArchiveLocationListRelationFilter
+    fundingProgramOptions?: FundingProgramOptionListRelationFilter
+    fundingProjectOptions?: FundingProjectOptionListRelationFilter
+    landbankLoanOptions?: LandbankLoanOptionListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -21776,6 +25342,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestOrderByRelationAggregateInput
     accessRequestsReviewed?: ProjectAccessRequestOrderByRelationAggregateInput
     archiveLocations?: PhysicalArchiveLocationOrderByRelationAggregateInput
+    fundingProgramOptions?: FundingProgramOptionOrderByRelationAggregateInput
+    fundingProjectOptions?: FundingProjectOptionOrderByRelationAggregateInput
+    landbankLoanOptions?: LandbankLoanOptionOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -21813,6 +25382,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestListRelationFilter
     accessRequestsReviewed?: ProjectAccessRequestListRelationFilter
     archiveLocations?: PhysicalArchiveLocationListRelationFilter
+    fundingProgramOptions?: FundingProgramOptionListRelationFilter
+    fundingProjectOptions?: FundingProjectOptionListRelationFilter
+    landbankLoanOptions?: LandbankLoanOptionListRelationFilter
   }, "id" | "email" | "employeeId">
 
   export type UserOrderByWithAggregationInput = {
@@ -21931,8 +25503,8 @@ export namespace Prisma {
     id?: StringFilter<"Project"> | string
     projectCode?: StringFilter<"Project"> | string
     title?: StringFilter<"Project"> | string
-    subType?: EnumProjectSubTypeNullableFilter<"Project"> | $Enums.ProjectSubType | null
-    program?: EnumFundingProgramNullableFilter<"Project"> | $Enums.FundingProgram | null
+    subType?: StringNullableFilter<"Project"> | string | null
+    program?: StringNullableFilter<"Project"> | string | null
     projectAccount?: EnumProjectAccountNullableFilter<"Project"> | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFilter<"Project"> | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFilter<"Project"> | $Enums.District
@@ -22042,8 +25614,8 @@ export namespace Prisma {
     OR?: ProjectWhereInput[]
     NOT?: ProjectWhereInput | ProjectWhereInput[]
     title?: StringFilter<"Project"> | string
-    subType?: EnumProjectSubTypeNullableFilter<"Project"> | $Enums.ProjectSubType | null
-    program?: EnumFundingProgramNullableFilter<"Project"> | $Enums.FundingProgram | null
+    subType?: StringNullableFilter<"Project"> | string | null
+    program?: StringNullableFilter<"Project"> | string | null
     projectAccount?: EnumProjectAccountNullableFilter<"Project"> | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFilter<"Project"> | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFilter<"Project"> | $Enums.District
@@ -22149,8 +25721,8 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Project"> | string
     projectCode?: StringWithAggregatesFilter<"Project"> | string
     title?: StringWithAggregatesFilter<"Project"> | string
-    subType?: EnumProjectSubTypeNullableWithAggregatesFilter<"Project"> | $Enums.ProjectSubType | null
-    program?: EnumFundingProgramNullableWithAggregatesFilter<"Project"> | $Enums.FundingProgram | null
+    subType?: StringNullableWithAggregatesFilter<"Project"> | string | null
+    program?: StringNullableWithAggregatesFilter<"Project"> | string | null
     projectAccount?: EnumProjectAccountNullableWithAggregatesFilter<"Project"> | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationWithAggregatesFilter<"Project"> | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictWithAggregatesFilter<"Project"> | $Enums.District
@@ -22336,6 +25908,7 @@ export namespace Prisma {
     referenceNumber?: StringNullableFilter<"Disbursement"> | string | null
     type?: EnumDisbursementTypeNullableFilter<"Disbursement"> | $Enums.DisbursementType | null
     percentage?: FloatNullableFilter<"Disbursement"> | number | null
+    remarks?: StringNullableFilter<"Disbursement"> | string | null
     amount?: FloatFilter<"Disbursement"> | number
     createdById?: StringFilter<"Disbursement"> | string
     createdAt?: DateTimeFilter<"Disbursement"> | Date | string
@@ -22350,6 +25923,7 @@ export namespace Prisma {
     referenceNumber?: SortOrderInput | SortOrder
     type?: SortOrderInput | SortOrder
     percentage?: SortOrderInput | SortOrder
+    remarks?: SortOrderInput | SortOrder
     amount?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
@@ -22367,6 +25941,7 @@ export namespace Prisma {
     referenceNumber?: StringNullableFilter<"Disbursement"> | string | null
     type?: EnumDisbursementTypeNullableFilter<"Disbursement"> | $Enums.DisbursementType | null
     percentage?: FloatNullableFilter<"Disbursement"> | number | null
+    remarks?: StringNullableFilter<"Disbursement"> | string | null
     amount?: FloatFilter<"Disbursement"> | number
     createdById?: StringFilter<"Disbursement"> | string
     createdAt?: DateTimeFilter<"Disbursement"> | Date | string
@@ -22381,6 +25956,7 @@ export namespace Prisma {
     referenceNumber?: SortOrderInput | SortOrder
     type?: SortOrderInput | SortOrder
     percentage?: SortOrderInput | SortOrder
+    remarks?: SortOrderInput | SortOrder
     amount?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
@@ -22401,6 +25977,7 @@ export namespace Prisma {
     referenceNumber?: StringNullableWithAggregatesFilter<"Disbursement"> | string | null
     type?: EnumDisbursementTypeNullableWithAggregatesFilter<"Disbursement"> | $Enums.DisbursementType | null
     percentage?: FloatNullableWithAggregatesFilter<"Disbursement"> | number | null
+    remarks?: StringNullableWithAggregatesFilter<"Disbursement"> | string | null
     amount?: FloatWithAggregatesFilter<"Disbursement"> | number
     createdById?: StringWithAggregatesFilter<"Disbursement"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Disbursement"> | Date | string
@@ -22414,8 +25991,8 @@ export namespace Prisma {
     projectId?: StringFilter<"VariationOrder"> | string
     date?: DateTimeFilter<"VariationOrder"> | Date | string
     sourceOfFund?: EnumSourceOfFundNullableFilter<"VariationOrder"> | $Enums.SourceOfFund | null
-    program?: EnumFundingProgramNullableFilter<"VariationOrder"> | $Enums.FundingProgram | null
-    subType?: EnumProjectSubTypeNullableFilter<"VariationOrder"> | $Enums.ProjectSubType | null
+    program?: StringNullableFilter<"VariationOrder"> | string | null
+    subType?: StringNullableFilter<"VariationOrder"> | string | null
     amount?: FloatFilter<"VariationOrder"> | number
     createdById?: StringFilter<"VariationOrder"> | string
     createdAt?: DateTimeFilter<"VariationOrder"> | Date | string
@@ -22445,8 +26022,8 @@ export namespace Prisma {
     projectId?: StringFilter<"VariationOrder"> | string
     date?: DateTimeFilter<"VariationOrder"> | Date | string
     sourceOfFund?: EnumSourceOfFundNullableFilter<"VariationOrder"> | $Enums.SourceOfFund | null
-    program?: EnumFundingProgramNullableFilter<"VariationOrder"> | $Enums.FundingProgram | null
-    subType?: EnumProjectSubTypeNullableFilter<"VariationOrder"> | $Enums.ProjectSubType | null
+    program?: StringNullableFilter<"VariationOrder"> | string | null
+    subType?: StringNullableFilter<"VariationOrder"> | string | null
     amount?: FloatFilter<"VariationOrder"> | number
     createdById?: StringFilter<"VariationOrder"> | string
     createdAt?: DateTimeFilter<"VariationOrder"> | Date | string
@@ -22479,11 +26056,173 @@ export namespace Prisma {
     projectId?: StringWithAggregatesFilter<"VariationOrder"> | string
     date?: DateTimeWithAggregatesFilter<"VariationOrder"> | Date | string
     sourceOfFund?: EnumSourceOfFundNullableWithAggregatesFilter<"VariationOrder"> | $Enums.SourceOfFund | null
-    program?: EnumFundingProgramNullableWithAggregatesFilter<"VariationOrder"> | $Enums.FundingProgram | null
-    subType?: EnumProjectSubTypeNullableWithAggregatesFilter<"VariationOrder"> | $Enums.ProjectSubType | null
+    program?: StringNullableWithAggregatesFilter<"VariationOrder"> | string | null
+    subType?: StringNullableWithAggregatesFilter<"VariationOrder"> | string | null
     amount?: FloatWithAggregatesFilter<"VariationOrder"> | number
     createdById?: StringWithAggregatesFilter<"VariationOrder"> | string
     createdAt?: DateTimeWithAggregatesFilter<"VariationOrder"> | Date | string
+  }
+
+  export type FundingProgramOptionWhereInput = {
+    AND?: FundingProgramOptionWhereInput | FundingProgramOptionWhereInput[]
+    OR?: FundingProgramOptionWhereInput[]
+    NOT?: FundingProgramOptionWhereInput | FundingProgramOptionWhereInput[]
+    id?: StringFilter<"FundingProgramOption"> | string
+    name?: StringFilter<"FundingProgramOption"> | string
+    sourceOfFund?: EnumSourceOfFundFilter<"FundingProgramOption"> | $Enums.SourceOfFund
+    createdById?: StringFilter<"FundingProgramOption"> | string
+    createdAt?: DateTimeFilter<"FundingProgramOption"> | Date | string
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type FundingProgramOptionOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    sourceOfFund?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    createdBy?: UserOrderByWithRelationInput
+  }
+
+  export type FundingProgramOptionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    sourceOfFund_name?: FundingProgramOptionSourceOfFundNameCompoundUniqueInput
+    AND?: FundingProgramOptionWhereInput | FundingProgramOptionWhereInput[]
+    OR?: FundingProgramOptionWhereInput[]
+    NOT?: FundingProgramOptionWhereInput | FundingProgramOptionWhereInput[]
+    name?: StringFilter<"FundingProgramOption"> | string
+    sourceOfFund?: EnumSourceOfFundFilter<"FundingProgramOption"> | $Enums.SourceOfFund
+    createdById?: StringFilter<"FundingProgramOption"> | string
+    createdAt?: DateTimeFilter<"FundingProgramOption"> | Date | string
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "sourceOfFund_name">
+
+  export type FundingProgramOptionOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    sourceOfFund?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    _count?: FundingProgramOptionCountOrderByAggregateInput
+    _max?: FundingProgramOptionMaxOrderByAggregateInput
+    _min?: FundingProgramOptionMinOrderByAggregateInput
+  }
+
+  export type FundingProgramOptionScalarWhereWithAggregatesInput = {
+    AND?: FundingProgramOptionScalarWhereWithAggregatesInput | FundingProgramOptionScalarWhereWithAggregatesInput[]
+    OR?: FundingProgramOptionScalarWhereWithAggregatesInput[]
+    NOT?: FundingProgramOptionScalarWhereWithAggregatesInput | FundingProgramOptionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"FundingProgramOption"> | string
+    name?: StringWithAggregatesFilter<"FundingProgramOption"> | string
+    sourceOfFund?: EnumSourceOfFundWithAggregatesFilter<"FundingProgramOption"> | $Enums.SourceOfFund
+    createdById?: StringWithAggregatesFilter<"FundingProgramOption"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"FundingProgramOption"> | Date | string
+  }
+
+  export type FundingProjectOptionWhereInput = {
+    AND?: FundingProjectOptionWhereInput | FundingProjectOptionWhereInput[]
+    OR?: FundingProjectOptionWhereInput[]
+    NOT?: FundingProjectOptionWhereInput | FundingProjectOptionWhereInput[]
+    id?: StringFilter<"FundingProjectOption"> | string
+    name?: StringFilter<"FundingProjectOption"> | string
+    program?: StringFilter<"FundingProjectOption"> | string
+    createdById?: StringFilter<"FundingProjectOption"> | string
+    createdAt?: DateTimeFilter<"FundingProjectOption"> | Date | string
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type FundingProjectOptionOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    program?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    createdBy?: UserOrderByWithRelationInput
+  }
+
+  export type FundingProjectOptionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    program_name?: FundingProjectOptionProgramNameCompoundUniqueInput
+    AND?: FundingProjectOptionWhereInput | FundingProjectOptionWhereInput[]
+    OR?: FundingProjectOptionWhereInput[]
+    NOT?: FundingProjectOptionWhereInput | FundingProjectOptionWhereInput[]
+    name?: StringFilter<"FundingProjectOption"> | string
+    program?: StringFilter<"FundingProjectOption"> | string
+    createdById?: StringFilter<"FundingProjectOption"> | string
+    createdAt?: DateTimeFilter<"FundingProjectOption"> | Date | string
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "program_name">
+
+  export type FundingProjectOptionOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    program?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    _count?: FundingProjectOptionCountOrderByAggregateInput
+    _max?: FundingProjectOptionMaxOrderByAggregateInput
+    _min?: FundingProjectOptionMinOrderByAggregateInput
+  }
+
+  export type FundingProjectOptionScalarWhereWithAggregatesInput = {
+    AND?: FundingProjectOptionScalarWhereWithAggregatesInput | FundingProjectOptionScalarWhereWithAggregatesInput[]
+    OR?: FundingProjectOptionScalarWhereWithAggregatesInput[]
+    NOT?: FundingProjectOptionScalarWhereWithAggregatesInput | FundingProjectOptionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"FundingProjectOption"> | string
+    name?: StringWithAggregatesFilter<"FundingProjectOption"> | string
+    program?: StringWithAggregatesFilter<"FundingProjectOption"> | string
+    createdById?: StringWithAggregatesFilter<"FundingProjectOption"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"FundingProjectOption"> | Date | string
+  }
+
+  export type LandbankLoanOptionWhereInput = {
+    AND?: LandbankLoanOptionWhereInput | LandbankLoanOptionWhereInput[]
+    OR?: LandbankLoanOptionWhereInput[]
+    NOT?: LandbankLoanOptionWhereInput | LandbankLoanOptionWhereInput[]
+    id?: StringFilter<"LandbankLoanOption"> | string
+    number?: StringFilter<"LandbankLoanOption"> | string
+    createdById?: StringFilter<"LandbankLoanOption"> | string
+    createdAt?: DateTimeFilter<"LandbankLoanOption"> | Date | string
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type LandbankLoanOptionOrderByWithRelationInput = {
+    id?: SortOrder
+    number?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    createdBy?: UserOrderByWithRelationInput
+  }
+
+  export type LandbankLoanOptionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    number?: string
+    AND?: LandbankLoanOptionWhereInput | LandbankLoanOptionWhereInput[]
+    OR?: LandbankLoanOptionWhereInput[]
+    NOT?: LandbankLoanOptionWhereInput | LandbankLoanOptionWhereInput[]
+    createdById?: StringFilter<"LandbankLoanOption"> | string
+    createdAt?: DateTimeFilter<"LandbankLoanOption"> | Date | string
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "number">
+
+  export type LandbankLoanOptionOrderByWithAggregationInput = {
+    id?: SortOrder
+    number?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    _count?: LandbankLoanOptionCountOrderByAggregateInput
+    _max?: LandbankLoanOptionMaxOrderByAggregateInput
+    _min?: LandbankLoanOptionMinOrderByAggregateInput
+  }
+
+  export type LandbankLoanOptionScalarWhereWithAggregatesInput = {
+    AND?: LandbankLoanOptionScalarWhereWithAggregatesInput | LandbankLoanOptionScalarWhereWithAggregatesInput[]
+    OR?: LandbankLoanOptionScalarWhereWithAggregatesInput[]
+    NOT?: LandbankLoanOptionScalarWhereWithAggregatesInput | LandbankLoanOptionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"LandbankLoanOption"> | string
+    number?: StringWithAggregatesFilter<"LandbankLoanOption"> | string
+    createdById?: StringWithAggregatesFilter<"LandbankLoanOption"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"LandbankLoanOption"> | Date | string
   }
 
   export type TimelineAdjustmentWhereInput = {
@@ -23166,6 +26905,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -23200,6 +26942,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUpdateInput = {
@@ -23234,6 +26979,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -23268,6 +27016,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -23400,8 +27151,8 @@ export namespace Prisma {
     id?: string
     projectCode: string
     title: string
-    subType?: $Enums.ProjectSubType | null
-    program?: $Enums.FundingProgram | null
+    subType?: string | null
+    program?: string | null
     projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
@@ -23453,8 +27204,8 @@ export namespace Prisma {
     id?: string
     projectCode: string
     title: string
-    subType?: $Enums.ProjectSubType | null
-    program?: $Enums.FundingProgram | null
+    subType?: string | null
+    program?: string | null
     projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
@@ -23506,8 +27257,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
     projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
@@ -23559,8 +27310,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
     projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
@@ -23612,8 +27363,8 @@ export namespace Prisma {
     id?: string
     projectCode: string
     title: string
-    subType?: $Enums.ProjectSubType | null
-    program?: $Enums.FundingProgram | null
+    subType?: string | null
+    program?: string | null
     projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
@@ -23657,8 +27408,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
     projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
@@ -23701,8 +27452,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
     projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
@@ -23884,6 +27635,7 @@ export namespace Prisma {
     referenceNumber?: string | null
     type?: $Enums.DisbursementType | null
     percentage?: number | null
+    remarks?: string | null
     amount: number
     createdAt?: Date | string
     project: ProjectCreateNestedOneWithoutDisbursementsInput
@@ -23897,6 +27649,7 @@ export namespace Prisma {
     referenceNumber?: string | null
     type?: $Enums.DisbursementType | null
     percentage?: number | null
+    remarks?: string | null
     amount: number
     createdById: string
     createdAt?: Date | string
@@ -23908,6 +27661,7 @@ export namespace Prisma {
     referenceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     type?: NullableEnumDisbursementTypeFieldUpdateOperationsInput | $Enums.DisbursementType | null
     percentage?: NullableFloatFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutDisbursementsNestedInput
@@ -23921,6 +27675,7 @@ export namespace Prisma {
     referenceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     type?: NullableEnumDisbursementTypeFieldUpdateOperationsInput | $Enums.DisbursementType | null
     percentage?: NullableFloatFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23933,6 +27688,7 @@ export namespace Prisma {
     referenceNumber?: string | null
     type?: $Enums.DisbursementType | null
     percentage?: number | null
+    remarks?: string | null
     amount: number
     createdById: string
     createdAt?: Date | string
@@ -23944,6 +27700,7 @@ export namespace Prisma {
     referenceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     type?: NullableEnumDisbursementTypeFieldUpdateOperationsInput | $Enums.DisbursementType | null
     percentage?: NullableFloatFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -23955,6 +27712,7 @@ export namespace Prisma {
     referenceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     type?: NullableEnumDisbursementTypeFieldUpdateOperationsInput | $Enums.DisbursementType | null
     percentage?: NullableFloatFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23964,8 +27722,8 @@ export namespace Prisma {
     id?: string
     date?: Date | string
     sourceOfFund?: $Enums.SourceOfFund | null
-    program?: $Enums.FundingProgram | null
-    subType?: $Enums.ProjectSubType | null
+    program?: string | null
+    subType?: string | null
     amount: number
     createdAt?: Date | string
     project: ProjectCreateNestedOneWithoutVariationOrdersInput
@@ -23977,8 +27735,8 @@ export namespace Prisma {
     projectId: string
     date?: Date | string
     sourceOfFund?: $Enums.SourceOfFund | null
-    program?: $Enums.FundingProgram | null
-    subType?: $Enums.ProjectSubType | null
+    program?: string | null
+    subType?: string | null
     amount: number
     createdById: string
     createdAt?: Date | string
@@ -23988,8 +27746,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutVariationOrdersNestedInput
@@ -24001,8 +27759,8 @@ export namespace Prisma {
     projectId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24013,8 +27771,8 @@ export namespace Prisma {
     projectId: string
     date?: Date | string
     sourceOfFund?: $Enums.SourceOfFund | null
-    program?: $Enums.FundingProgram | null
-    subType?: $Enums.ProjectSubType | null
+    program?: string | null
+    subType?: string | null
     amount: number
     createdById: string
     createdAt?: Date | string
@@ -24024,8 +27782,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -24035,9 +27793,167 @@ export namespace Prisma {
     projectId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FundingProgramOptionCreateInput = {
+    id?: string
+    name: string
+    sourceOfFund: $Enums.SourceOfFund
+    createdAt?: Date | string
+    createdBy: UserCreateNestedOneWithoutFundingProgramOptionsInput
+  }
+
+  export type FundingProgramOptionUncheckedCreateInput = {
+    id?: string
+    name: string
+    sourceOfFund: $Enums.SourceOfFund
+    createdById: string
+    createdAt?: Date | string
+  }
+
+  export type FundingProgramOptionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutFundingProgramOptionsNestedInput
+  }
+
+  export type FundingProgramOptionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FundingProgramOptionCreateManyInput = {
+    id?: string
+    name: string
+    sourceOfFund: $Enums.SourceOfFund
+    createdById: string
+    createdAt?: Date | string
+  }
+
+  export type FundingProgramOptionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FundingProgramOptionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FundingProjectOptionCreateInput = {
+    id?: string
+    name: string
+    program: string
+    createdAt?: Date | string
+    createdBy: UserCreateNestedOneWithoutFundingProjectOptionsInput
+  }
+
+  export type FundingProjectOptionUncheckedCreateInput = {
+    id?: string
+    name: string
+    program: string
+    createdById: string
+    createdAt?: Date | string
+  }
+
+  export type FundingProjectOptionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    program?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutFundingProjectOptionsNestedInput
+  }
+
+  export type FundingProjectOptionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    program?: StringFieldUpdateOperationsInput | string
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FundingProjectOptionCreateManyInput = {
+    id?: string
+    name: string
+    program: string
+    createdById: string
+    createdAt?: Date | string
+  }
+
+  export type FundingProjectOptionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    program?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FundingProjectOptionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    program?: StringFieldUpdateOperationsInput | string
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LandbankLoanOptionCreateInput = {
+    id?: string
+    number: string
+    createdAt?: Date | string
+    createdBy: UserCreateNestedOneWithoutLandbankLoanOptionsInput
+  }
+
+  export type LandbankLoanOptionUncheckedCreateInput = {
+    id?: string
+    number: string
+    createdById: string
+    createdAt?: Date | string
+  }
+
+  export type LandbankLoanOptionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    number?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutLandbankLoanOptionsNestedInput
+  }
+
+  export type LandbankLoanOptionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    number?: StringFieldUpdateOperationsInput | string
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LandbankLoanOptionCreateManyInput = {
+    id?: string
+    number: string
+    createdById: string
+    createdAt?: Date | string
+  }
+
+  export type LandbankLoanOptionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    number?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LandbankLoanOptionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    number?: StringFieldUpdateOperationsInput | string
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -24865,6 +28781,24 @@ export namespace Prisma {
     none?: PhysicalArchiveLocationWhereInput
   }
 
+  export type FundingProgramOptionListRelationFilter = {
+    every?: FundingProgramOptionWhereInput
+    some?: FundingProgramOptionWhereInput
+    none?: FundingProgramOptionWhereInput
+  }
+
+  export type FundingProjectOptionListRelationFilter = {
+    every?: FundingProjectOptionWhereInput
+    some?: FundingProjectOptionWhereInput
+    none?: FundingProjectOptionWhereInput
+  }
+
+  export type LandbankLoanOptionListRelationFilter = {
+    every?: LandbankLoanOptionWhereInput
+    some?: LandbankLoanOptionWhereInput
+    none?: LandbankLoanOptionWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -24919,6 +28853,18 @@ export namespace Prisma {
   }
 
   export type PhysicalArchiveLocationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type FundingProgramOptionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type FundingProjectOptionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type LandbankLoanOptionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -25106,20 +29052,6 @@ export namespace Prisma {
     createdAt?: SortOrder
     expiresAt?: SortOrder
     lastActive?: SortOrder
-  }
-
-  export type EnumProjectSubTypeNullableFilter<$PrismaModel = never> = {
-    equals?: $Enums.ProjectSubType | EnumProjectSubTypeFieldRefInput<$PrismaModel> | null
-    in?: $Enums.ProjectSubType[] | ListEnumProjectSubTypeFieldRefInput<$PrismaModel> | null
-    notIn?: $Enums.ProjectSubType[] | ListEnumProjectSubTypeFieldRefInput<$PrismaModel> | null
-    not?: NestedEnumProjectSubTypeNullableFilter<$PrismaModel> | $Enums.ProjectSubType | null
-  }
-
-  export type EnumFundingProgramNullableFilter<$PrismaModel = never> = {
-    equals?: $Enums.FundingProgram | EnumFundingProgramFieldRefInput<$PrismaModel> | null
-    in?: $Enums.FundingProgram[] | ListEnumFundingProgramFieldRefInput<$PrismaModel> | null
-    notIn?: $Enums.FundingProgram[] | ListEnumFundingProgramFieldRefInput<$PrismaModel> | null
-    not?: NestedEnumFundingProgramNullableFilter<$PrismaModel> | $Enums.FundingProgram | null
   }
 
   export type EnumProjectAccountNullableFilter<$PrismaModel = never> = {
@@ -25347,26 +29279,6 @@ export namespace Prisma {
     completionPercentage?: SortOrder
   }
 
-  export type EnumProjectSubTypeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.ProjectSubType | EnumProjectSubTypeFieldRefInput<$PrismaModel> | null
-    in?: $Enums.ProjectSubType[] | ListEnumProjectSubTypeFieldRefInput<$PrismaModel> | null
-    notIn?: $Enums.ProjectSubType[] | ListEnumProjectSubTypeFieldRefInput<$PrismaModel> | null
-    not?: NestedEnumProjectSubTypeNullableWithAggregatesFilter<$PrismaModel> | $Enums.ProjectSubType | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedEnumProjectSubTypeNullableFilter<$PrismaModel>
-    _max?: NestedEnumProjectSubTypeNullableFilter<$PrismaModel>
-  }
-
-  export type EnumFundingProgramNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.FundingProgram | EnumFundingProgramFieldRefInput<$PrismaModel> | null
-    in?: $Enums.FundingProgram[] | ListEnumFundingProgramFieldRefInput<$PrismaModel> | null
-    notIn?: $Enums.FundingProgram[] | ListEnumFundingProgramFieldRefInput<$PrismaModel> | null
-    not?: NestedEnumFundingProgramNullableWithAggregatesFilter<$PrismaModel> | $Enums.FundingProgram | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedEnumFundingProgramNullableFilter<$PrismaModel>
-    _max?: NestedEnumFundingProgramNullableFilter<$PrismaModel>
-  }
-
   export type EnumProjectAccountNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.ProjectAccount | EnumProjectAccountFieldRefInput<$PrismaModel> | null
     in?: $Enums.ProjectAccount[] | ListEnumProjectAccountFieldRefInput<$PrismaModel> | null
@@ -25566,6 +29478,7 @@ export namespace Prisma {
     referenceNumber?: SortOrder
     type?: SortOrder
     percentage?: SortOrder
+    remarks?: SortOrder
     amount?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
@@ -25583,6 +29496,7 @@ export namespace Prisma {
     referenceNumber?: SortOrder
     type?: SortOrder
     percentage?: SortOrder
+    remarks?: SortOrder
     amount?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
@@ -25595,6 +29509,7 @@ export namespace Prisma {
     referenceNumber?: SortOrder
     type?: SortOrder
     percentage?: SortOrder
+    remarks?: SortOrder
     amount?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
@@ -25690,6 +29605,85 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedEnumSourceOfFundNullableFilter<$PrismaModel>
     _max?: NestedEnumSourceOfFundNullableFilter<$PrismaModel>
+  }
+
+  export type FundingProgramOptionSourceOfFundNameCompoundUniqueInput = {
+    sourceOfFund: $Enums.SourceOfFund
+    name: string
+  }
+
+  export type FundingProgramOptionCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    sourceOfFund?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type FundingProgramOptionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    sourceOfFund?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type FundingProgramOptionMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    sourceOfFund?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type FundingProjectOptionProgramNameCompoundUniqueInput = {
+    program: string
+    name: string
+  }
+
+  export type FundingProjectOptionCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    program?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type FundingProjectOptionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    program?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type FundingProjectOptionMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    program?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type LandbankLoanOptionCountOrderByAggregateInput = {
+    id?: SortOrder
+    number?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type LandbankLoanOptionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    number?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type LandbankLoanOptionMinOrderByAggregateInput = {
+    id?: SortOrder
+    number?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type EnumTimelineAdjustmentTypeFilter<$PrismaModel = never> = {
@@ -26319,6 +30313,27 @@ export namespace Prisma {
     connect?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
   }
 
+  export type FundingProgramOptionCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<FundingProgramOptionCreateWithoutCreatedByInput, FundingProgramOptionUncheckedCreateWithoutCreatedByInput> | FundingProgramOptionCreateWithoutCreatedByInput[] | FundingProgramOptionUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: FundingProgramOptionCreateOrConnectWithoutCreatedByInput | FundingProgramOptionCreateOrConnectWithoutCreatedByInput[]
+    createMany?: FundingProgramOptionCreateManyCreatedByInputEnvelope
+    connect?: FundingProgramOptionWhereUniqueInput | FundingProgramOptionWhereUniqueInput[]
+  }
+
+  export type FundingProjectOptionCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<FundingProjectOptionCreateWithoutCreatedByInput, FundingProjectOptionUncheckedCreateWithoutCreatedByInput> | FundingProjectOptionCreateWithoutCreatedByInput[] | FundingProjectOptionUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: FundingProjectOptionCreateOrConnectWithoutCreatedByInput | FundingProjectOptionCreateOrConnectWithoutCreatedByInput[]
+    createMany?: FundingProjectOptionCreateManyCreatedByInputEnvelope
+    connect?: FundingProjectOptionWhereUniqueInput | FundingProjectOptionWhereUniqueInput[]
+  }
+
+  export type LandbankLoanOptionCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<LandbankLoanOptionCreateWithoutCreatedByInput, LandbankLoanOptionUncheckedCreateWithoutCreatedByInput> | LandbankLoanOptionCreateWithoutCreatedByInput[] | LandbankLoanOptionUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: LandbankLoanOptionCreateOrConnectWithoutCreatedByInput | LandbankLoanOptionCreateOrConnectWithoutCreatedByInput[]
+    createMany?: LandbankLoanOptionCreateManyCreatedByInputEnvelope
+    connect?: LandbankLoanOptionWhereUniqueInput | LandbankLoanOptionWhereUniqueInput[]
+  }
+
   export type PostUncheckedCreateNestedManyWithoutCreatedByInput = {
     create?: XOR<PostCreateWithoutCreatedByInput, PostUncheckedCreateWithoutCreatedByInput> | PostCreateWithoutCreatedByInput[] | PostUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: PostCreateOrConnectWithoutCreatedByInput | PostCreateOrConnectWithoutCreatedByInput[]
@@ -26422,6 +30437,27 @@ export namespace Prisma {
     connectOrCreate?: PhysicalArchiveLocationCreateOrConnectWithoutCreatedByInput | PhysicalArchiveLocationCreateOrConnectWithoutCreatedByInput[]
     createMany?: PhysicalArchiveLocationCreateManyCreatedByInputEnvelope
     connect?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
+  }
+
+  export type FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<FundingProgramOptionCreateWithoutCreatedByInput, FundingProgramOptionUncheckedCreateWithoutCreatedByInput> | FundingProgramOptionCreateWithoutCreatedByInput[] | FundingProgramOptionUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: FundingProgramOptionCreateOrConnectWithoutCreatedByInput | FundingProgramOptionCreateOrConnectWithoutCreatedByInput[]
+    createMany?: FundingProgramOptionCreateManyCreatedByInputEnvelope
+    connect?: FundingProgramOptionWhereUniqueInput | FundingProgramOptionWhereUniqueInput[]
+  }
+
+  export type FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<FundingProjectOptionCreateWithoutCreatedByInput, FundingProjectOptionUncheckedCreateWithoutCreatedByInput> | FundingProjectOptionCreateWithoutCreatedByInput[] | FundingProjectOptionUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: FundingProjectOptionCreateOrConnectWithoutCreatedByInput | FundingProjectOptionCreateOrConnectWithoutCreatedByInput[]
+    createMany?: FundingProjectOptionCreateManyCreatedByInputEnvelope
+    connect?: FundingProjectOptionWhereUniqueInput | FundingProjectOptionWhereUniqueInput[]
+  }
+
+  export type LandbankLoanOptionUncheckedCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<LandbankLoanOptionCreateWithoutCreatedByInput, LandbankLoanOptionUncheckedCreateWithoutCreatedByInput> | LandbankLoanOptionCreateWithoutCreatedByInput[] | LandbankLoanOptionUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: LandbankLoanOptionCreateOrConnectWithoutCreatedByInput | LandbankLoanOptionCreateOrConnectWithoutCreatedByInput[]
+    createMany?: LandbankLoanOptionCreateManyCreatedByInputEnvelope
+    connect?: LandbankLoanOptionWhereUniqueInput | LandbankLoanOptionWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -26662,6 +30698,48 @@ export namespace Prisma {
     deleteMany?: PhysicalArchiveLocationScalarWhereInput | PhysicalArchiveLocationScalarWhereInput[]
   }
 
+  export type FundingProgramOptionUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<FundingProgramOptionCreateWithoutCreatedByInput, FundingProgramOptionUncheckedCreateWithoutCreatedByInput> | FundingProgramOptionCreateWithoutCreatedByInput[] | FundingProgramOptionUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: FundingProgramOptionCreateOrConnectWithoutCreatedByInput | FundingProgramOptionCreateOrConnectWithoutCreatedByInput[]
+    upsert?: FundingProgramOptionUpsertWithWhereUniqueWithoutCreatedByInput | FundingProgramOptionUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: FundingProgramOptionCreateManyCreatedByInputEnvelope
+    set?: FundingProgramOptionWhereUniqueInput | FundingProgramOptionWhereUniqueInput[]
+    disconnect?: FundingProgramOptionWhereUniqueInput | FundingProgramOptionWhereUniqueInput[]
+    delete?: FundingProgramOptionWhereUniqueInput | FundingProgramOptionWhereUniqueInput[]
+    connect?: FundingProgramOptionWhereUniqueInput | FundingProgramOptionWhereUniqueInput[]
+    update?: FundingProgramOptionUpdateWithWhereUniqueWithoutCreatedByInput | FundingProgramOptionUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: FundingProgramOptionUpdateManyWithWhereWithoutCreatedByInput | FundingProgramOptionUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: FundingProgramOptionScalarWhereInput | FundingProgramOptionScalarWhereInput[]
+  }
+
+  export type FundingProjectOptionUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<FundingProjectOptionCreateWithoutCreatedByInput, FundingProjectOptionUncheckedCreateWithoutCreatedByInput> | FundingProjectOptionCreateWithoutCreatedByInput[] | FundingProjectOptionUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: FundingProjectOptionCreateOrConnectWithoutCreatedByInput | FundingProjectOptionCreateOrConnectWithoutCreatedByInput[]
+    upsert?: FundingProjectOptionUpsertWithWhereUniqueWithoutCreatedByInput | FundingProjectOptionUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: FundingProjectOptionCreateManyCreatedByInputEnvelope
+    set?: FundingProjectOptionWhereUniqueInput | FundingProjectOptionWhereUniqueInput[]
+    disconnect?: FundingProjectOptionWhereUniqueInput | FundingProjectOptionWhereUniqueInput[]
+    delete?: FundingProjectOptionWhereUniqueInput | FundingProjectOptionWhereUniqueInput[]
+    connect?: FundingProjectOptionWhereUniqueInput | FundingProjectOptionWhereUniqueInput[]
+    update?: FundingProjectOptionUpdateWithWhereUniqueWithoutCreatedByInput | FundingProjectOptionUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: FundingProjectOptionUpdateManyWithWhereWithoutCreatedByInput | FundingProjectOptionUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: FundingProjectOptionScalarWhereInput | FundingProjectOptionScalarWhereInput[]
+  }
+
+  export type LandbankLoanOptionUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<LandbankLoanOptionCreateWithoutCreatedByInput, LandbankLoanOptionUncheckedCreateWithoutCreatedByInput> | LandbankLoanOptionCreateWithoutCreatedByInput[] | LandbankLoanOptionUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: LandbankLoanOptionCreateOrConnectWithoutCreatedByInput | LandbankLoanOptionCreateOrConnectWithoutCreatedByInput[]
+    upsert?: LandbankLoanOptionUpsertWithWhereUniqueWithoutCreatedByInput | LandbankLoanOptionUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: LandbankLoanOptionCreateManyCreatedByInputEnvelope
+    set?: LandbankLoanOptionWhereUniqueInput | LandbankLoanOptionWhereUniqueInput[]
+    disconnect?: LandbankLoanOptionWhereUniqueInput | LandbankLoanOptionWhereUniqueInput[]
+    delete?: LandbankLoanOptionWhereUniqueInput | LandbankLoanOptionWhereUniqueInput[]
+    connect?: LandbankLoanOptionWhereUniqueInput | LandbankLoanOptionWhereUniqueInput[]
+    update?: LandbankLoanOptionUpdateWithWhereUniqueWithoutCreatedByInput | LandbankLoanOptionUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: LandbankLoanOptionUpdateManyWithWhereWithoutCreatedByInput | LandbankLoanOptionUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: LandbankLoanOptionScalarWhereInput | LandbankLoanOptionScalarWhereInput[]
+  }
+
   export type PostUncheckedUpdateManyWithoutCreatedByNestedInput = {
     create?: XOR<PostCreateWithoutCreatedByInput, PostUncheckedCreateWithoutCreatedByInput> | PostCreateWithoutCreatedByInput[] | PostUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: PostCreateOrConnectWithoutCreatedByInput | PostCreateOrConnectWithoutCreatedByInput[]
@@ -26872,6 +30950,48 @@ export namespace Prisma {
     deleteMany?: PhysicalArchiveLocationScalarWhereInput | PhysicalArchiveLocationScalarWhereInput[]
   }
 
+  export type FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<FundingProgramOptionCreateWithoutCreatedByInput, FundingProgramOptionUncheckedCreateWithoutCreatedByInput> | FundingProgramOptionCreateWithoutCreatedByInput[] | FundingProgramOptionUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: FundingProgramOptionCreateOrConnectWithoutCreatedByInput | FundingProgramOptionCreateOrConnectWithoutCreatedByInput[]
+    upsert?: FundingProgramOptionUpsertWithWhereUniqueWithoutCreatedByInput | FundingProgramOptionUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: FundingProgramOptionCreateManyCreatedByInputEnvelope
+    set?: FundingProgramOptionWhereUniqueInput | FundingProgramOptionWhereUniqueInput[]
+    disconnect?: FundingProgramOptionWhereUniqueInput | FundingProgramOptionWhereUniqueInput[]
+    delete?: FundingProgramOptionWhereUniqueInput | FundingProgramOptionWhereUniqueInput[]
+    connect?: FundingProgramOptionWhereUniqueInput | FundingProgramOptionWhereUniqueInput[]
+    update?: FundingProgramOptionUpdateWithWhereUniqueWithoutCreatedByInput | FundingProgramOptionUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: FundingProgramOptionUpdateManyWithWhereWithoutCreatedByInput | FundingProgramOptionUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: FundingProgramOptionScalarWhereInput | FundingProgramOptionScalarWhereInput[]
+  }
+
+  export type FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<FundingProjectOptionCreateWithoutCreatedByInput, FundingProjectOptionUncheckedCreateWithoutCreatedByInput> | FundingProjectOptionCreateWithoutCreatedByInput[] | FundingProjectOptionUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: FundingProjectOptionCreateOrConnectWithoutCreatedByInput | FundingProjectOptionCreateOrConnectWithoutCreatedByInput[]
+    upsert?: FundingProjectOptionUpsertWithWhereUniqueWithoutCreatedByInput | FundingProjectOptionUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: FundingProjectOptionCreateManyCreatedByInputEnvelope
+    set?: FundingProjectOptionWhereUniqueInput | FundingProjectOptionWhereUniqueInput[]
+    disconnect?: FundingProjectOptionWhereUniqueInput | FundingProjectOptionWhereUniqueInput[]
+    delete?: FundingProjectOptionWhereUniqueInput | FundingProjectOptionWhereUniqueInput[]
+    connect?: FundingProjectOptionWhereUniqueInput | FundingProjectOptionWhereUniqueInput[]
+    update?: FundingProjectOptionUpdateWithWhereUniqueWithoutCreatedByInput | FundingProjectOptionUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: FundingProjectOptionUpdateManyWithWhereWithoutCreatedByInput | FundingProjectOptionUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: FundingProjectOptionScalarWhereInput | FundingProjectOptionScalarWhereInput[]
+  }
+
+  export type LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<LandbankLoanOptionCreateWithoutCreatedByInput, LandbankLoanOptionUncheckedCreateWithoutCreatedByInput> | LandbankLoanOptionCreateWithoutCreatedByInput[] | LandbankLoanOptionUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: LandbankLoanOptionCreateOrConnectWithoutCreatedByInput | LandbankLoanOptionCreateOrConnectWithoutCreatedByInput[]
+    upsert?: LandbankLoanOptionUpsertWithWhereUniqueWithoutCreatedByInput | LandbankLoanOptionUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: LandbankLoanOptionCreateManyCreatedByInputEnvelope
+    set?: LandbankLoanOptionWhereUniqueInput | LandbankLoanOptionWhereUniqueInput[]
+    disconnect?: LandbankLoanOptionWhereUniqueInput | LandbankLoanOptionWhereUniqueInput[]
+    delete?: LandbankLoanOptionWhereUniqueInput | LandbankLoanOptionWhereUniqueInput[]
+    connect?: LandbankLoanOptionWhereUniqueInput | LandbankLoanOptionWhereUniqueInput[]
+    update?: LandbankLoanOptionUpdateWithWhereUniqueWithoutCreatedByInput | LandbankLoanOptionUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: LandbankLoanOptionUpdateManyWithWhereWithoutCreatedByInput | LandbankLoanOptionUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: LandbankLoanOptionScalarWhereInput | LandbankLoanOptionScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutSessionsInput = {
     create?: XOR<UserCreateWithoutSessionsInput, UserUncheckedCreateWithoutSessionsInput>
     connectOrCreate?: UserCreateOrConnectWithoutSessionsInput
@@ -27002,14 +31122,6 @@ export namespace Prisma {
     connectOrCreate?: PhysicalArchiveLocationCreateOrConnectWithoutProjectInput | PhysicalArchiveLocationCreateOrConnectWithoutProjectInput[]
     createMany?: PhysicalArchiveLocationCreateManyProjectInputEnvelope
     connect?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
-  }
-
-  export type NullableEnumProjectSubTypeFieldUpdateOperationsInput = {
-    set?: $Enums.ProjectSubType | null
-  }
-
-  export type NullableEnumFundingProgramFieldUpdateOperationsInput = {
-    set?: $Enums.FundingProgram | null
   }
 
   export type NullableEnumProjectAccountFieldUpdateOperationsInput = {
@@ -27414,6 +31526,48 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutVariationOrdersInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutVariationOrdersInput, UserUpdateWithoutVariationOrdersInput>, UserUncheckedUpdateWithoutVariationOrdersInput>
+  }
+
+  export type UserCreateNestedOneWithoutFundingProgramOptionsInput = {
+    create?: XOR<UserCreateWithoutFundingProgramOptionsInput, UserUncheckedCreateWithoutFundingProgramOptionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFundingProgramOptionsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutFundingProgramOptionsNestedInput = {
+    create?: XOR<UserCreateWithoutFundingProgramOptionsInput, UserUncheckedCreateWithoutFundingProgramOptionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFundingProgramOptionsInput
+    upsert?: UserUpsertWithoutFundingProgramOptionsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutFundingProgramOptionsInput, UserUpdateWithoutFundingProgramOptionsInput>, UserUncheckedUpdateWithoutFundingProgramOptionsInput>
+  }
+
+  export type UserCreateNestedOneWithoutFundingProjectOptionsInput = {
+    create?: XOR<UserCreateWithoutFundingProjectOptionsInput, UserUncheckedCreateWithoutFundingProjectOptionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFundingProjectOptionsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutFundingProjectOptionsNestedInput = {
+    create?: XOR<UserCreateWithoutFundingProjectOptionsInput, UserUncheckedCreateWithoutFundingProjectOptionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFundingProjectOptionsInput
+    upsert?: UserUpsertWithoutFundingProjectOptionsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutFundingProjectOptionsInput, UserUpdateWithoutFundingProjectOptionsInput>, UserUncheckedUpdateWithoutFundingProjectOptionsInput>
+  }
+
+  export type UserCreateNestedOneWithoutLandbankLoanOptionsInput = {
+    create?: XOR<UserCreateWithoutLandbankLoanOptionsInput, UserUncheckedCreateWithoutLandbankLoanOptionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutLandbankLoanOptionsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutLandbankLoanOptionsNestedInput = {
+    create?: XOR<UserCreateWithoutLandbankLoanOptionsInput, UserUncheckedCreateWithoutLandbankLoanOptionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutLandbankLoanOptionsInput
+    upsert?: UserUpsertWithoutLandbankLoanOptionsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutLandbankLoanOptionsInput, UserUpdateWithoutLandbankLoanOptionsInput>, UserUncheckedUpdateWithoutLandbankLoanOptionsInput>
   }
 
   export type ProjectCreateNestedOneWithoutTimelineAdjustmentsInput = {
@@ -27993,20 +32147,6 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type NestedEnumProjectSubTypeNullableFilter<$PrismaModel = never> = {
-    equals?: $Enums.ProjectSubType | EnumProjectSubTypeFieldRefInput<$PrismaModel> | null
-    in?: $Enums.ProjectSubType[] | ListEnumProjectSubTypeFieldRefInput<$PrismaModel> | null
-    notIn?: $Enums.ProjectSubType[] | ListEnumProjectSubTypeFieldRefInput<$PrismaModel> | null
-    not?: NestedEnumProjectSubTypeNullableFilter<$PrismaModel> | $Enums.ProjectSubType | null
-  }
-
-  export type NestedEnumFundingProgramNullableFilter<$PrismaModel = never> = {
-    equals?: $Enums.FundingProgram | EnumFundingProgramFieldRefInput<$PrismaModel> | null
-    in?: $Enums.FundingProgram[] | ListEnumFundingProgramFieldRefInput<$PrismaModel> | null
-    notIn?: $Enums.FundingProgram[] | ListEnumFundingProgramFieldRefInput<$PrismaModel> | null
-    not?: NestedEnumFundingProgramNullableFilter<$PrismaModel> | $Enums.FundingProgram | null
-  }
-
   export type NestedEnumProjectAccountNullableFilter<$PrismaModel = never> = {
     equals?: $Enums.ProjectAccount | EnumProjectAccountFieldRefInput<$PrismaModel> | null
     in?: $Enums.ProjectAccount[] | ListEnumProjectAccountFieldRefInput<$PrismaModel> | null
@@ -28058,26 +32198,6 @@ export namespace Prisma {
     in?: $Enums.ProjectStatus[] | ListEnumProjectStatusFieldRefInput<$PrismaModel>
     notIn?: $Enums.ProjectStatus[] | ListEnumProjectStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumProjectStatusFilter<$PrismaModel> | $Enums.ProjectStatus
-  }
-
-  export type NestedEnumProjectSubTypeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.ProjectSubType | EnumProjectSubTypeFieldRefInput<$PrismaModel> | null
-    in?: $Enums.ProjectSubType[] | ListEnumProjectSubTypeFieldRefInput<$PrismaModel> | null
-    notIn?: $Enums.ProjectSubType[] | ListEnumProjectSubTypeFieldRefInput<$PrismaModel> | null
-    not?: NestedEnumProjectSubTypeNullableWithAggregatesFilter<$PrismaModel> | $Enums.ProjectSubType | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedEnumProjectSubTypeNullableFilter<$PrismaModel>
-    _max?: NestedEnumProjectSubTypeNullableFilter<$PrismaModel>
-  }
-
-  export type NestedEnumFundingProgramNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.FundingProgram | EnumFundingProgramFieldRefInput<$PrismaModel> | null
-    in?: $Enums.FundingProgram[] | ListEnumFundingProgramFieldRefInput<$PrismaModel> | null
-    notIn?: $Enums.FundingProgram[] | ListEnumFundingProgramFieldRefInput<$PrismaModel> | null
-    not?: NestedEnumFundingProgramNullableWithAggregatesFilter<$PrismaModel> | $Enums.FundingProgram | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedEnumFundingProgramNullableFilter<$PrismaModel>
-    _max?: NestedEnumFundingProgramNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumProjectAccountNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -28425,8 +32545,8 @@ export namespace Prisma {
     id?: string
     projectCode: string
     title: string
-    subType?: $Enums.ProjectSubType | null
-    program?: $Enums.FundingProgram | null
+    subType?: string | null
+    program?: string | null
     projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
@@ -28477,8 +32597,8 @@ export namespace Prisma {
     id?: string
     projectCode: string
     title: string
-    subType?: $Enums.ProjectSubType | null
-    program?: $Enums.FundingProgram | null
+    subType?: string | null
+    program?: string | null
     projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
@@ -28643,6 +32763,7 @@ export namespace Prisma {
     referenceNumber?: string | null
     type?: $Enums.DisbursementType | null
     percentage?: number | null
+    remarks?: string | null
     amount: number
     createdAt?: Date | string
     project: ProjectCreateNestedOneWithoutDisbursementsInput
@@ -28655,6 +32776,7 @@ export namespace Prisma {
     referenceNumber?: string | null
     type?: $Enums.DisbursementType | null
     percentage?: number | null
+    remarks?: string | null
     amount: number
     createdAt?: Date | string
   }
@@ -28673,8 +32795,8 @@ export namespace Prisma {
     id?: string
     date?: Date | string
     sourceOfFund?: $Enums.SourceOfFund | null
-    program?: $Enums.FundingProgram | null
-    subType?: $Enums.ProjectSubType | null
+    program?: string | null
+    subType?: string | null
     amount: number
     createdAt?: Date | string
     project: ProjectCreateNestedOneWithoutVariationOrdersInput
@@ -28685,8 +32807,8 @@ export namespace Prisma {
     projectId: string
     date?: Date | string
     sourceOfFund?: $Enums.SourceOfFund | null
-    program?: $Enums.FundingProgram | null
-    subType?: $Enums.ProjectSubType | null
+    program?: string | null
+    subType?: string | null
     amount: number
     createdAt?: Date | string
   }
@@ -28965,6 +33087,76 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type FundingProgramOptionCreateWithoutCreatedByInput = {
+    id?: string
+    name: string
+    sourceOfFund: $Enums.SourceOfFund
+    createdAt?: Date | string
+  }
+
+  export type FundingProgramOptionUncheckedCreateWithoutCreatedByInput = {
+    id?: string
+    name: string
+    sourceOfFund: $Enums.SourceOfFund
+    createdAt?: Date | string
+  }
+
+  export type FundingProgramOptionCreateOrConnectWithoutCreatedByInput = {
+    where: FundingProgramOptionWhereUniqueInput
+    create: XOR<FundingProgramOptionCreateWithoutCreatedByInput, FundingProgramOptionUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type FundingProgramOptionCreateManyCreatedByInputEnvelope = {
+    data: FundingProgramOptionCreateManyCreatedByInput | FundingProgramOptionCreateManyCreatedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type FundingProjectOptionCreateWithoutCreatedByInput = {
+    id?: string
+    name: string
+    program: string
+    createdAt?: Date | string
+  }
+
+  export type FundingProjectOptionUncheckedCreateWithoutCreatedByInput = {
+    id?: string
+    name: string
+    program: string
+    createdAt?: Date | string
+  }
+
+  export type FundingProjectOptionCreateOrConnectWithoutCreatedByInput = {
+    where: FundingProjectOptionWhereUniqueInput
+    create: XOR<FundingProjectOptionCreateWithoutCreatedByInput, FundingProjectOptionUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type FundingProjectOptionCreateManyCreatedByInputEnvelope = {
+    data: FundingProjectOptionCreateManyCreatedByInput | FundingProjectOptionCreateManyCreatedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type LandbankLoanOptionCreateWithoutCreatedByInput = {
+    id?: string
+    number: string
+    createdAt?: Date | string
+  }
+
+  export type LandbankLoanOptionUncheckedCreateWithoutCreatedByInput = {
+    id?: string
+    number: string
+    createdAt?: Date | string
+  }
+
+  export type LandbankLoanOptionCreateOrConnectWithoutCreatedByInput = {
+    where: LandbankLoanOptionWhereUniqueInput
+    create: XOR<LandbankLoanOptionCreateWithoutCreatedByInput, LandbankLoanOptionUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type LandbankLoanOptionCreateManyCreatedByInputEnvelope = {
+    data: LandbankLoanOptionCreateManyCreatedByInput | LandbankLoanOptionCreateManyCreatedByInput[]
+    skipDuplicates?: boolean
+  }
+
   export type PostUpsertWithWhereUniqueWithoutCreatedByInput = {
     where: PostWhereUniqueInput
     update: XOR<PostUpdateWithoutCreatedByInput, PostUncheckedUpdateWithoutCreatedByInput>
@@ -29015,8 +33207,8 @@ export namespace Prisma {
     id?: StringFilter<"Project"> | string
     projectCode?: StringFilter<"Project"> | string
     title?: StringFilter<"Project"> | string
-    subType?: EnumProjectSubTypeNullableFilter<"Project"> | $Enums.ProjectSubType | null
-    program?: EnumFundingProgramNullableFilter<"Project"> | $Enums.FundingProgram | null
+    subType?: StringNullableFilter<"Project"> | string | null
+    program?: StringNullableFilter<"Project"> | string | null
     projectAccount?: EnumProjectAccountNullableFilter<"Project"> | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFilter<"Project"> | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFilter<"Project"> | $Enums.District
@@ -29178,6 +33370,7 @@ export namespace Prisma {
     referenceNumber?: StringNullableFilter<"Disbursement"> | string | null
     type?: EnumDisbursementTypeNullableFilter<"Disbursement"> | $Enums.DisbursementType | null
     percentage?: FloatNullableFilter<"Disbursement"> | number | null
+    remarks?: StringNullableFilter<"Disbursement"> | string | null
     amount?: FloatFilter<"Disbursement"> | number
     createdById?: StringFilter<"Disbursement"> | string
     createdAt?: DateTimeFilter<"Disbursement"> | Date | string
@@ -29207,8 +33400,8 @@ export namespace Prisma {
     projectId?: StringFilter<"VariationOrder"> | string
     date?: DateTimeFilter<"VariationOrder"> | Date | string
     sourceOfFund?: EnumSourceOfFundNullableFilter<"VariationOrder"> | $Enums.SourceOfFund | null
-    program?: EnumFundingProgramNullableFilter<"VariationOrder"> | $Enums.FundingProgram | null
-    subType?: EnumProjectSubTypeNullableFilter<"VariationOrder"> | $Enums.ProjectSubType | null
+    program?: StringNullableFilter<"VariationOrder"> | string | null
+    subType?: StringNullableFilter<"VariationOrder"> | string | null
     amount?: FloatFilter<"VariationOrder"> | number
     createdById?: StringFilter<"VariationOrder"> | string
     createdAt?: DateTimeFilter<"VariationOrder"> | Date | string
@@ -29430,6 +33623,86 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"PhysicalArchiveLocation"> | Date | string
   }
 
+  export type FundingProgramOptionUpsertWithWhereUniqueWithoutCreatedByInput = {
+    where: FundingProgramOptionWhereUniqueInput
+    update: XOR<FundingProgramOptionUpdateWithoutCreatedByInput, FundingProgramOptionUncheckedUpdateWithoutCreatedByInput>
+    create: XOR<FundingProgramOptionCreateWithoutCreatedByInput, FundingProgramOptionUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type FundingProgramOptionUpdateWithWhereUniqueWithoutCreatedByInput = {
+    where: FundingProgramOptionWhereUniqueInput
+    data: XOR<FundingProgramOptionUpdateWithoutCreatedByInput, FundingProgramOptionUncheckedUpdateWithoutCreatedByInput>
+  }
+
+  export type FundingProgramOptionUpdateManyWithWhereWithoutCreatedByInput = {
+    where: FundingProgramOptionScalarWhereInput
+    data: XOR<FundingProgramOptionUpdateManyMutationInput, FundingProgramOptionUncheckedUpdateManyWithoutCreatedByInput>
+  }
+
+  export type FundingProgramOptionScalarWhereInput = {
+    AND?: FundingProgramOptionScalarWhereInput | FundingProgramOptionScalarWhereInput[]
+    OR?: FundingProgramOptionScalarWhereInput[]
+    NOT?: FundingProgramOptionScalarWhereInput | FundingProgramOptionScalarWhereInput[]
+    id?: StringFilter<"FundingProgramOption"> | string
+    name?: StringFilter<"FundingProgramOption"> | string
+    sourceOfFund?: EnumSourceOfFundFilter<"FundingProgramOption"> | $Enums.SourceOfFund
+    createdById?: StringFilter<"FundingProgramOption"> | string
+    createdAt?: DateTimeFilter<"FundingProgramOption"> | Date | string
+  }
+
+  export type FundingProjectOptionUpsertWithWhereUniqueWithoutCreatedByInput = {
+    where: FundingProjectOptionWhereUniqueInput
+    update: XOR<FundingProjectOptionUpdateWithoutCreatedByInput, FundingProjectOptionUncheckedUpdateWithoutCreatedByInput>
+    create: XOR<FundingProjectOptionCreateWithoutCreatedByInput, FundingProjectOptionUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type FundingProjectOptionUpdateWithWhereUniqueWithoutCreatedByInput = {
+    where: FundingProjectOptionWhereUniqueInput
+    data: XOR<FundingProjectOptionUpdateWithoutCreatedByInput, FundingProjectOptionUncheckedUpdateWithoutCreatedByInput>
+  }
+
+  export type FundingProjectOptionUpdateManyWithWhereWithoutCreatedByInput = {
+    where: FundingProjectOptionScalarWhereInput
+    data: XOR<FundingProjectOptionUpdateManyMutationInput, FundingProjectOptionUncheckedUpdateManyWithoutCreatedByInput>
+  }
+
+  export type FundingProjectOptionScalarWhereInput = {
+    AND?: FundingProjectOptionScalarWhereInput | FundingProjectOptionScalarWhereInput[]
+    OR?: FundingProjectOptionScalarWhereInput[]
+    NOT?: FundingProjectOptionScalarWhereInput | FundingProjectOptionScalarWhereInput[]
+    id?: StringFilter<"FundingProjectOption"> | string
+    name?: StringFilter<"FundingProjectOption"> | string
+    program?: StringFilter<"FundingProjectOption"> | string
+    createdById?: StringFilter<"FundingProjectOption"> | string
+    createdAt?: DateTimeFilter<"FundingProjectOption"> | Date | string
+  }
+
+  export type LandbankLoanOptionUpsertWithWhereUniqueWithoutCreatedByInput = {
+    where: LandbankLoanOptionWhereUniqueInput
+    update: XOR<LandbankLoanOptionUpdateWithoutCreatedByInput, LandbankLoanOptionUncheckedUpdateWithoutCreatedByInput>
+    create: XOR<LandbankLoanOptionCreateWithoutCreatedByInput, LandbankLoanOptionUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type LandbankLoanOptionUpdateWithWhereUniqueWithoutCreatedByInput = {
+    where: LandbankLoanOptionWhereUniqueInput
+    data: XOR<LandbankLoanOptionUpdateWithoutCreatedByInput, LandbankLoanOptionUncheckedUpdateWithoutCreatedByInput>
+  }
+
+  export type LandbankLoanOptionUpdateManyWithWhereWithoutCreatedByInput = {
+    where: LandbankLoanOptionScalarWhereInput
+    data: XOR<LandbankLoanOptionUpdateManyMutationInput, LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByInput>
+  }
+
+  export type LandbankLoanOptionScalarWhereInput = {
+    AND?: LandbankLoanOptionScalarWhereInput | LandbankLoanOptionScalarWhereInput[]
+    OR?: LandbankLoanOptionScalarWhereInput[]
+    NOT?: LandbankLoanOptionScalarWhereInput | LandbankLoanOptionScalarWhereInput[]
+    id?: StringFilter<"LandbankLoanOption"> | string
+    number?: StringFilter<"LandbankLoanOption"> | string
+    createdById?: StringFilter<"LandbankLoanOption"> | string
+    createdAt?: DateTimeFilter<"LandbankLoanOption"> | Date | string
+  }
+
   export type UserCreateWithoutSessionsInput = {
     id?: string
     name?: string | null
@@ -29461,6 +33734,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -29494,6 +33770,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -29543,6 +33822,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -29576,6 +33858,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutProjectsInput = {
@@ -29609,6 +33894,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutProjectsInput = {
@@ -29642,6 +33930,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutProjectsInput = {
@@ -29679,6 +33970,7 @@ export namespace Prisma {
     referenceNumber?: string | null
     type?: $Enums.DisbursementType | null
     percentage?: number | null
+    remarks?: string | null
     amount: number
     createdAt?: Date | string
     createdBy: UserCreateNestedOneWithoutDisbursementsInput
@@ -29690,6 +33982,7 @@ export namespace Prisma {
     referenceNumber?: string | null
     type?: $Enums.DisbursementType | null
     percentage?: number | null
+    remarks?: string | null
     amount: number
     createdById: string
     createdAt?: Date | string
@@ -29709,8 +34002,8 @@ export namespace Prisma {
     id?: string
     date?: Date | string
     sourceOfFund?: $Enums.SourceOfFund | null
-    program?: $Enums.FundingProgram | null
-    subType?: $Enums.ProjectSubType | null
+    program?: string | null
+    subType?: string | null
     amount: number
     createdAt?: Date | string
     createdBy: UserCreateNestedOneWithoutVariationOrdersInput
@@ -29720,8 +34013,8 @@ export namespace Prisma {
     id?: string
     date?: Date | string
     sourceOfFund?: $Enums.SourceOfFund | null
-    program?: $Enums.FundingProgram | null
-    subType?: $Enums.ProjectSubType | null
+    program?: string | null
+    subType?: string | null
     amount: number
     createdById: string
     createdAt?: Date | string
@@ -29945,6 +34238,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectsInput = {
@@ -29978,6 +34274,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectActivityUpsertWithWhereUniqueWithoutProjectInput = {
@@ -30112,8 +34411,8 @@ export namespace Prisma {
     id?: string
     projectCode: string
     title: string
-    subType?: $Enums.ProjectSubType | null
-    program?: $Enums.FundingProgram | null
+    subType?: string | null
+    program?: string | null
     projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
@@ -30164,8 +34463,8 @@ export namespace Prisma {
     id?: string
     projectCode: string
     title: string
-    subType?: $Enums.ProjectSubType | null
-    program?: $Enums.FundingProgram | null
+    subType?: string | null
+    program?: string | null
     projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
@@ -30248,6 +34547,9 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutArchiveLocationsInput = {
@@ -30281,6 +34583,9 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutArchiveLocationsInput = {
@@ -30303,8 +34608,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
     projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
@@ -30355,8 +34660,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
     projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
@@ -30445,6 +34750,9 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutArchiveLocationsInput = {
@@ -30478,14 +34786,17 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectCreateWithoutActivitiesInput = {
     id?: string
     projectCode: string
     title: string
-    subType?: $Enums.ProjectSubType | null
-    program?: $Enums.FundingProgram | null
+    subType?: string | null
+    program?: string | null
     projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
@@ -30536,8 +34847,8 @@ export namespace Prisma {
     id?: string
     projectCode: string
     title: string
-    subType?: $Enums.ProjectSubType | null
-    program?: $Enums.FundingProgram | null
+    subType?: string | null
+    program?: string | null
     projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
@@ -30620,6 +34931,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutProjectActivitiesInput = {
@@ -30653,6 +34967,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutProjectActivitiesInput = {
@@ -30675,8 +34992,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
     projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
@@ -30727,8 +35044,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
     projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
@@ -30817,6 +35134,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectActivitiesInput = {
@@ -30850,14 +35170,17 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectCreateWithoutDisbursementsInput = {
     id?: string
     projectCode: string
     title: string
-    subType?: $Enums.ProjectSubType | null
-    program?: $Enums.FundingProgram | null
+    subType?: string | null
+    program?: string | null
     projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
@@ -30908,8 +35231,8 @@ export namespace Prisma {
     id?: string
     projectCode: string
     title: string
-    subType?: $Enums.ProjectSubType | null
-    program?: $Enums.FundingProgram | null
+    subType?: string | null
+    program?: string | null
     projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
@@ -30992,6 +35315,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutDisbursementsInput = {
@@ -31025,6 +35351,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutDisbursementsInput = {
@@ -31047,8 +35376,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
     projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
@@ -31099,8 +35428,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
     projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
@@ -31189,6 +35518,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDisbursementsInput = {
@@ -31222,14 +35554,17 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectCreateWithoutVariationOrdersInput = {
     id?: string
     projectCode: string
     title: string
-    subType?: $Enums.ProjectSubType | null
-    program?: $Enums.FundingProgram | null
+    subType?: string | null
+    program?: string | null
     projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
@@ -31280,8 +35615,8 @@ export namespace Prisma {
     id?: string
     projectCode: string
     title: string
-    subType?: $Enums.ProjectSubType | null
-    program?: $Enums.FundingProgram | null
+    subType?: string | null
+    program?: string | null
     projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
@@ -31364,6 +35699,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutVariationOrdersInput = {
@@ -31397,6 +35735,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutVariationOrdersInput = {
@@ -31419,8 +35760,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
     projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
@@ -31471,8 +35812,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
     projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
@@ -31561,6 +35902,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutVariationOrdersInput = {
@@ -31594,14 +35938,497 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserCreateWithoutFundingProgramOptionsInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password: string
+    role?: $Enums.UserRole
+    employeeId?: string | null
+    designation?: string | null
+    division?: string | null
+    contactNumber?: string | null
+    birthday?: Date | string | null
+    sex?: $Enums.Sex | null
+    status?: $Enums.UserStatus
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    posts?: PostCreateNestedManyWithoutCreatedByInput
+    projects?: ProjectCreateNestedManyWithoutCreatedByInput
+    sessions?: UserSessionCreateNestedManyWithoutUserInput
+    documents?: DocumentCreateNestedManyWithoutCreatedByInput
+    projectActivities?: ProjectActivityCreateNestedManyWithoutCreatedByInput
+    disbursements?: DisbursementCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutCreatedByInput
+    taskNotificationsReceived?: TaskNotificationCreateNestedManyWithoutNotifyUserInput
+    taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
+    taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
+    projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutFundingProgramOptionsInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password: string
+    role?: $Enums.UserRole
+    employeeId?: string | null
+    designation?: string | null
+    division?: string | null
+    contactNumber?: string | null
+    birthday?: Date | string | null
+    sex?: $Enums.Sex | null
+    status?: $Enums.UserStatus
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
+    projects?: ProjectUncheckedCreateNestedManyWithoutCreatedByInput
+    sessions?: UserSessionUncheckedCreateNestedManyWithoutUserInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutCreatedByInput
+    projectActivities?: ProjectActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    disbursements?: DisbursementUncheckedCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutCreatedByInput
+    taskNotificationsReceived?: TaskNotificationUncheckedCreateNestedManyWithoutNotifyUserInput
+    taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
+    taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
+    projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutFundingProgramOptionsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutFundingProgramOptionsInput, UserUncheckedCreateWithoutFundingProgramOptionsInput>
+  }
+
+  export type UserUpsertWithoutFundingProgramOptionsInput = {
+    update: XOR<UserUpdateWithoutFundingProgramOptionsInput, UserUncheckedUpdateWithoutFundingProgramOptionsInput>
+    create: XOR<UserCreateWithoutFundingProgramOptionsInput, UserUncheckedCreateWithoutFundingProgramOptionsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutFundingProgramOptionsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutFundingProgramOptionsInput, UserUncheckedUpdateWithoutFundingProgramOptionsInput>
+  }
+
+  export type UserUpdateWithoutFundingProgramOptionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    designation?: NullableStringFieldUpdateOperationsInput | string | null
+    division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    posts?: PostUpdateManyWithoutCreatedByNestedInput
+    projects?: ProjectUpdateManyWithoutCreatedByNestedInput
+    sessions?: UserSessionUpdateManyWithoutUserNestedInput
+    documents?: DocumentUpdateManyWithoutCreatedByNestedInput
+    projectActivities?: ProjectActivityUpdateManyWithoutCreatedByNestedInput
+    disbursements?: DisbursementUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutCreatedByNestedInput
+    taskNotificationsReceived?: TaskNotificationUpdateManyWithoutNotifyUserNestedInput
+    taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
+    taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
+    projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutFundingProgramOptionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    designation?: NullableStringFieldUpdateOperationsInput | string | null
+    division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
+    projects?: ProjectUncheckedUpdateManyWithoutCreatedByNestedInput
+    sessions?: UserSessionUncheckedUpdateManyWithoutUserNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectActivities?: ProjectActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    disbursements?: DisbursementUncheckedUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+    taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
+    taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
+    taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserCreateWithoutFundingProjectOptionsInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password: string
+    role?: $Enums.UserRole
+    employeeId?: string | null
+    designation?: string | null
+    division?: string | null
+    contactNumber?: string | null
+    birthday?: Date | string | null
+    sex?: $Enums.Sex | null
+    status?: $Enums.UserStatus
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    posts?: PostCreateNestedManyWithoutCreatedByInput
+    projects?: ProjectCreateNestedManyWithoutCreatedByInput
+    sessions?: UserSessionCreateNestedManyWithoutUserInput
+    documents?: DocumentCreateNestedManyWithoutCreatedByInput
+    projectActivities?: ProjectActivityCreateNestedManyWithoutCreatedByInput
+    disbursements?: DisbursementCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutCreatedByInput
+    taskNotificationsReceived?: TaskNotificationCreateNestedManyWithoutNotifyUserInput
+    taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
+    taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
+    projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutFundingProjectOptionsInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password: string
+    role?: $Enums.UserRole
+    employeeId?: string | null
+    designation?: string | null
+    division?: string | null
+    contactNumber?: string | null
+    birthday?: Date | string | null
+    sex?: $Enums.Sex | null
+    status?: $Enums.UserStatus
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
+    projects?: ProjectUncheckedCreateNestedManyWithoutCreatedByInput
+    sessions?: UserSessionUncheckedCreateNestedManyWithoutUserInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutCreatedByInput
+    projectActivities?: ProjectActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    disbursements?: DisbursementUncheckedCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutCreatedByInput
+    taskNotificationsReceived?: TaskNotificationUncheckedCreateNestedManyWithoutNotifyUserInput
+    taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
+    taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
+    projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutFundingProjectOptionsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutFundingProjectOptionsInput, UserUncheckedCreateWithoutFundingProjectOptionsInput>
+  }
+
+  export type UserUpsertWithoutFundingProjectOptionsInput = {
+    update: XOR<UserUpdateWithoutFundingProjectOptionsInput, UserUncheckedUpdateWithoutFundingProjectOptionsInput>
+    create: XOR<UserCreateWithoutFundingProjectOptionsInput, UserUncheckedCreateWithoutFundingProjectOptionsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutFundingProjectOptionsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutFundingProjectOptionsInput, UserUncheckedUpdateWithoutFundingProjectOptionsInput>
+  }
+
+  export type UserUpdateWithoutFundingProjectOptionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    designation?: NullableStringFieldUpdateOperationsInput | string | null
+    division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    posts?: PostUpdateManyWithoutCreatedByNestedInput
+    projects?: ProjectUpdateManyWithoutCreatedByNestedInput
+    sessions?: UserSessionUpdateManyWithoutUserNestedInput
+    documents?: DocumentUpdateManyWithoutCreatedByNestedInput
+    projectActivities?: ProjectActivityUpdateManyWithoutCreatedByNestedInput
+    disbursements?: DisbursementUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutCreatedByNestedInput
+    taskNotificationsReceived?: TaskNotificationUpdateManyWithoutNotifyUserNestedInput
+    taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
+    taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
+    projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutFundingProjectOptionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    designation?: NullableStringFieldUpdateOperationsInput | string | null
+    division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
+    projects?: ProjectUncheckedUpdateManyWithoutCreatedByNestedInput
+    sessions?: UserSessionUncheckedUpdateManyWithoutUserNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectActivities?: ProjectActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    disbursements?: DisbursementUncheckedUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+    taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
+    taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
+    taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserCreateWithoutLandbankLoanOptionsInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password: string
+    role?: $Enums.UserRole
+    employeeId?: string | null
+    designation?: string | null
+    division?: string | null
+    contactNumber?: string | null
+    birthday?: Date | string | null
+    sex?: $Enums.Sex | null
+    status?: $Enums.UserStatus
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    posts?: PostCreateNestedManyWithoutCreatedByInput
+    projects?: ProjectCreateNestedManyWithoutCreatedByInput
+    sessions?: UserSessionCreateNestedManyWithoutUserInput
+    documents?: DocumentCreateNestedManyWithoutCreatedByInput
+    projectActivities?: ProjectActivityCreateNestedManyWithoutCreatedByInput
+    disbursements?: DisbursementCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutCreatedByInput
+    taskNotificationsReceived?: TaskNotificationCreateNestedManyWithoutNotifyUserInput
+    taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
+    taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
+    projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutLandbankLoanOptionsInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password: string
+    role?: $Enums.UserRole
+    employeeId?: string | null
+    designation?: string | null
+    division?: string | null
+    contactNumber?: string | null
+    birthday?: Date | string | null
+    sex?: $Enums.Sex | null
+    status?: $Enums.UserStatus
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
+    projects?: ProjectUncheckedCreateNestedManyWithoutCreatedByInput
+    sessions?: UserSessionUncheckedCreateNestedManyWithoutUserInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutCreatedByInput
+    projectActivities?: ProjectActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    disbursements?: DisbursementUncheckedCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutCreatedByInput
+    taskNotificationsReceived?: TaskNotificationUncheckedCreateNestedManyWithoutNotifyUserInput
+    taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
+    taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
+    projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutLandbankLoanOptionsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutLandbankLoanOptionsInput, UserUncheckedCreateWithoutLandbankLoanOptionsInput>
+  }
+
+  export type UserUpsertWithoutLandbankLoanOptionsInput = {
+    update: XOR<UserUpdateWithoutLandbankLoanOptionsInput, UserUncheckedUpdateWithoutLandbankLoanOptionsInput>
+    create: XOR<UserCreateWithoutLandbankLoanOptionsInput, UserUncheckedCreateWithoutLandbankLoanOptionsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutLandbankLoanOptionsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutLandbankLoanOptionsInput, UserUncheckedUpdateWithoutLandbankLoanOptionsInput>
+  }
+
+  export type UserUpdateWithoutLandbankLoanOptionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    designation?: NullableStringFieldUpdateOperationsInput | string | null
+    division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    posts?: PostUpdateManyWithoutCreatedByNestedInput
+    projects?: ProjectUpdateManyWithoutCreatedByNestedInput
+    sessions?: UserSessionUpdateManyWithoutUserNestedInput
+    documents?: DocumentUpdateManyWithoutCreatedByNestedInput
+    projectActivities?: ProjectActivityUpdateManyWithoutCreatedByNestedInput
+    disbursements?: DisbursementUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutCreatedByNestedInput
+    taskNotificationsReceived?: TaskNotificationUpdateManyWithoutNotifyUserNestedInput
+    taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
+    taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
+    projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutLandbankLoanOptionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    designation?: NullableStringFieldUpdateOperationsInput | string | null
+    division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
+    projects?: ProjectUncheckedUpdateManyWithoutCreatedByNestedInput
+    sessions?: UserSessionUncheckedUpdateManyWithoutUserNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectActivities?: ProjectActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    disbursements?: DisbursementUncheckedUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+    taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
+    taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
+    taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectCreateWithoutTimelineAdjustmentsInput = {
     id?: string
     projectCode: string
     title: string
-    subType?: $Enums.ProjectSubType | null
-    program?: $Enums.FundingProgram | null
+    subType?: string | null
+    program?: string | null
     projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
@@ -31652,8 +36479,8 @@ export namespace Prisma {
     id?: string
     projectCode: string
     title: string
-    subType?: $Enums.ProjectSubType | null
-    program?: $Enums.FundingProgram | null
+    subType?: string | null
+    program?: string | null
     projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
@@ -31736,6 +36563,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTimelineAdjustmentsInput = {
@@ -31769,6 +36599,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTimelineAdjustmentsInput = {
@@ -31791,8 +36624,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
     projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
@@ -31843,8 +36676,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
     projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
@@ -31933,6 +36766,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTimelineAdjustmentsInput = {
@@ -31966,14 +36802,17 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectCreateWithoutTaskNotificationsInput = {
     id?: string
     projectCode: string
     title: string
-    subType?: $Enums.ProjectSubType | null
-    program?: $Enums.FundingProgram | null
+    subType?: string | null
+    program?: string | null
     projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
@@ -32024,8 +36863,8 @@ export namespace Prisma {
     id?: string
     projectCode: string
     title: string
-    subType?: $Enums.ProjectSubType | null
-    program?: $Enums.FundingProgram | null
+    subType?: string | null
+    program?: string | null
     projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
@@ -32108,6 +36947,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTaskNotificationsReceivedInput = {
@@ -32141,6 +36983,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTaskNotificationsReceivedInput = {
@@ -32179,6 +37024,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTaskNotificationsCreatedInput = {
@@ -32212,6 +37060,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTaskNotificationsCreatedInput = {
@@ -32262,8 +37113,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
     projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
@@ -32314,8 +37165,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
     projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
@@ -32404,6 +37255,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTaskNotificationsReceivedInput = {
@@ -32437,6 +37291,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUpsertWithoutTaskNotificationsCreatedInput = {
@@ -32481,6 +37338,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTaskNotificationsCreatedInput = {
@@ -32514,6 +37374,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type TaskReplyUpsertWithWhereUniqueWithoutTaskNotificationInput = {
@@ -32592,6 +37455,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTaskRepliesInput = {
@@ -32625,6 +37491,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTaskRepliesInput = {
@@ -32737,6 +37606,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTaskRepliesInput = {
@@ -32770,6 +37642,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type TaskReplyDocumentUpsertWithWhereUniqueWithoutReplyInput = {
@@ -32884,6 +37759,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutDocumentsInput = {
@@ -32917,6 +37795,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutDocumentsInput = {
@@ -32966,6 +37847,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDocumentsInput = {
@@ -32999,14 +37883,17 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectCreateWithoutFilesInput = {
     id?: string
     projectCode: string
     title: string
-    subType?: $Enums.ProjectSubType | null
-    program?: $Enums.FundingProgram | null
+    subType?: string | null
+    program?: string | null
     projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
@@ -33057,8 +37944,8 @@ export namespace Prisma {
     id?: string
     projectCode: string
     title: string
-    subType?: $Enums.ProjectSubType | null
-    program?: $Enums.FundingProgram | null
+    subType?: string | null
+    program?: string | null
     projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
@@ -33141,6 +38028,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutProjectFilesInput = {
@@ -33174,6 +38064,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutProjectFilesInput = {
@@ -33232,8 +38125,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
     projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
@@ -33284,8 +38177,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
     projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
@@ -33374,6 +38267,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectFilesInput = {
@@ -33407,6 +38303,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectAccessRequestUpsertWithWhereUniqueWithoutProjectFileInput = {
@@ -33429,8 +38328,8 @@ export namespace Prisma {
     id?: string
     projectCode: string
     title: string
-    subType?: $Enums.ProjectSubType | null
-    program?: $Enums.FundingProgram | null
+    subType?: string | null
+    program?: string | null
     projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
@@ -33481,8 +38380,8 @@ export namespace Prisma {
     id?: string
     projectCode: string
     title: string
-    subType?: $Enums.ProjectSubType | null
-    program?: $Enums.FundingProgram | null
+    subType?: string | null
+    program?: string | null
     projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
@@ -33592,6 +38491,9 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutAccessRequestsMadeInput = {
@@ -33625,6 +38527,9 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutAccessRequestsMadeInput = {
@@ -33663,6 +38568,9 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutAccessRequestsReviewedInput = {
@@ -33696,6 +38604,9 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutAccessRequestsReviewedInput = {
@@ -33718,8 +38629,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
     projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
@@ -33770,8 +38681,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
     projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
@@ -33893,6 +38804,9 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccessRequestsMadeInput = {
@@ -33926,6 +38840,9 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUpsertWithoutAccessRequestsReviewedInput = {
@@ -33970,6 +38887,9 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccessRequestsReviewedInput = {
@@ -34003,6 +38923,9 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutPostsInput = {
@@ -34036,6 +38959,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutPostsInput = {
@@ -34069,6 +38995,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutPostsInput = {
@@ -34118,6 +39047,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPostsInput = {
@@ -34151,6 +39083,9 @@ export namespace Prisma {
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type PostCreateManyCreatedByInput = {
@@ -34164,8 +39099,8 @@ export namespace Prisma {
     id?: string
     projectCode: string
     title: string
-    subType?: $Enums.ProjectSubType | null
-    program?: $Enums.FundingProgram | null
+    subType?: string | null
+    program?: string | null
     projectAccount?: $Enums.ProjectAccount | null
     modeOfImplementation: $Enums.ModeOfImplementation
     locationImplementation: $Enums.District
@@ -34247,6 +39182,7 @@ export namespace Prisma {
     referenceNumber?: string | null
     type?: $Enums.DisbursementType | null
     percentage?: number | null
+    remarks?: string | null
     amount: number
     createdAt?: Date | string
   }
@@ -34256,8 +39192,8 @@ export namespace Prisma {
     projectId: string
     date?: Date | string
     sourceOfFund?: $Enums.SourceOfFund | null
-    program?: $Enums.FundingProgram | null
-    subType?: $Enums.ProjectSubType | null
+    program?: string | null
+    subType?: string | null
     amount: number
     createdAt?: Date | string
   }
@@ -34350,6 +39286,26 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type FundingProgramOptionCreateManyCreatedByInput = {
+    id?: string
+    name: string
+    sourceOfFund: $Enums.SourceOfFund
+    createdAt?: Date | string
+  }
+
+  export type FundingProjectOptionCreateManyCreatedByInput = {
+    id?: string
+    name: string
+    program: string
+    createdAt?: Date | string
+  }
+
+  export type LandbankLoanOptionCreateManyCreatedByInput = {
+    id?: string
+    number: string
+    createdAt?: Date | string
+  }
+
   export type PostUpdateWithoutCreatedByInput = {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34374,8 +39330,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
     projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
@@ -34426,8 +39382,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
     projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
@@ -34478,8 +39434,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectCode?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
     projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
     modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
     locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
@@ -34632,6 +39588,7 @@ export namespace Prisma {
     referenceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     type?: NullableEnumDisbursementTypeFieldUpdateOperationsInput | $Enums.DisbursementType | null
     percentage?: NullableFloatFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutDisbursementsNestedInput
@@ -34644,6 +39601,7 @@ export namespace Prisma {
     referenceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     type?: NullableEnumDisbursementTypeFieldUpdateOperationsInput | $Enums.DisbursementType | null
     percentage?: NullableFloatFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -34655,6 +39613,7 @@ export namespace Prisma {
     referenceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     type?: NullableEnumDisbursementTypeFieldUpdateOperationsInput | $Enums.DisbursementType | null
     percentage?: NullableFloatFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -34663,8 +39622,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutVariationOrdersNestedInput
@@ -34675,8 +39634,8 @@ export namespace Prisma {
     projectId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -34686,8 +39645,8 @@ export namespace Prisma {
     projectId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -34964,6 +39923,66 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type FundingProgramOptionUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FundingProgramOptionUncheckedUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FundingProgramOptionUncheckedUpdateManyWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FundingProjectOptionUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    program?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FundingProjectOptionUncheckedUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    program?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FundingProjectOptionUncheckedUpdateManyWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    program?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LandbankLoanOptionUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    number?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LandbankLoanOptionUncheckedUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    number?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    number?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ProjectActivityCreateManyProjectInput = {
     id?: string
     description: string
@@ -34977,6 +39996,7 @@ export namespace Prisma {
     referenceNumber?: string | null
     type?: $Enums.DisbursementType | null
     percentage?: number | null
+    remarks?: string | null
     amount: number
     createdById: string
     createdAt?: Date | string
@@ -34986,8 +40006,8 @@ export namespace Prisma {
     id?: string
     date?: Date | string
     sourceOfFund?: $Enums.SourceOfFund | null
-    program?: $Enums.FundingProgram | null
-    subType?: $Enums.ProjectSubType | null
+    program?: string | null
+    subType?: string | null
     amount: number
     createdById: string
     createdAt?: Date | string
@@ -35076,6 +40096,7 @@ export namespace Prisma {
     referenceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     type?: NullableEnumDisbursementTypeFieldUpdateOperationsInput | $Enums.DisbursementType | null
     percentage?: NullableFloatFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneRequiredWithoutDisbursementsNestedInput
@@ -35087,6 +40108,7 @@ export namespace Prisma {
     referenceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     type?: NullableEnumDisbursementTypeFieldUpdateOperationsInput | $Enums.DisbursementType | null
     percentage?: NullableFloatFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35098,6 +40120,7 @@ export namespace Prisma {
     referenceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     type?: NullableEnumDisbursementTypeFieldUpdateOperationsInput | $Enums.DisbursementType | null
     percentage?: NullableFloatFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35107,8 +40130,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneRequiredWithoutVariationOrdersNestedInput
@@ -35118,8 +40141,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35129,8 +40152,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     sourceOfFund?: NullableEnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund | null
-    program?: NullableEnumFundingProgramFieldUpdateOperationsInput | $Enums.FundingProgram | null
-    subType?: NullableEnumProjectSubTypeFieldUpdateOperationsInput | $Enums.ProjectSubType | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

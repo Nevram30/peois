@@ -10,10 +10,8 @@ import { type District } from "../../../../generated/prisma";
 import { notificationEmitter } from "~/server/api/events";
 import {
   SOURCE_OF_FUND_VALUES,
-  PROJECT_SUB_TYPE_VALUES,
   PROJECT_STATUS_VALUES,
   DISBURSEMENT_TYPE_VALUES,
-  FUNDING_PROGRAM_VALUES,
   PROJECT_ACCOUNT_VALUES,
 } from "~/lib/fund-constants";
 
@@ -52,8 +50,8 @@ export const projectRouter = createTRPCRouter({
     .input(
       z.object({
         title: z.string().min(1, "Project title is required"),
-        subType: z.enum(PROJECT_SUB_TYPE_VALUES).optional().nullable(),
-        program: z.enum(FUNDING_PROGRAM_VALUES).optional().nullable(),
+        subType: z.string().optional().nullable(),
+        program: z.string().optional().nullable(),
         projectAccount: z.enum(PROJECT_ACCOUNT_VALUES).optional().nullable(),
         landbankNumber: z.string().optional().nullable(),
         supplementalBudgetYear: z.string().optional().nullable(),
@@ -162,8 +160,8 @@ export const projectRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         title: z.string().min(1, "Project title is required"),
-        subType: z.enum(PROJECT_SUB_TYPE_VALUES).optional().nullable(),
-        program: z.enum(FUNDING_PROGRAM_VALUES).optional().nullable(),
+        subType: z.string().optional().nullable(),
+        program: z.string().optional().nullable(),
         projectAccount: z.enum(PROJECT_ACCOUNT_VALUES).optional().nullable(),
         landbankNumber: z.string().optional().nullable(),
         supplementalBudgetYear: z.string().optional().nullable(),
@@ -244,7 +242,12 @@ export const projectRouter = createTRPCRouter({
         modeOfImplementation: z.enum(["BY_ADMINISTRATION", "BY_CONTRACT"]),
         locationImplementation: z.enum(["DISTRICT_I", "DISTRICT_II"]),
         sourceOfFund: z.enum(SOURCE_OF_FUND_VALUES),
-        subType: z.enum(PROJECT_SUB_TYPE_VALUES).optional().nullable(),
+        subType: z.string().optional().nullable(),
+        program: z.string().optional().nullable(),
+        projectAccount: z.enum(PROJECT_ACCOUNT_VALUES).optional().nullable(),
+        landbankNumber: z.string().optional().nullable(),
+        supplementalBudgetYear: z.string().optional().nullable(),
+        supplementalBudgetNumber: z.string().optional().nullable(),
         status: z.enum(PROJECT_STATUS_VALUES).optional(),
         projectCost: z.number().min(0).default(0),
         contractCost: z.number().min(0).default(0),
@@ -302,6 +305,7 @@ export const projectRouter = createTRPCRouter({
         referenceNumber: z.string().optional(),
         type: z.enum(DISBURSEMENT_TYPE_VALUES).optional(),
         percentage: z.number().min(0).optional(),
+        remarks: z.string().optional(),
         date: z.date().optional(),
       }),
     )
@@ -313,6 +317,7 @@ export const projectRouter = createTRPCRouter({
           referenceNumber: input.referenceNumber,
           type: input.type,
           percentage: input.percentage,
+          remarks: input.remarks,
           date: input.date ?? new Date(),
           createdById: ctx.session.user.id,
         },
@@ -340,8 +345,8 @@ export const projectRouter = createTRPCRouter({
         projectId: z.string(),
         amount: z.number().min(0),
         sourceOfFund: z.enum(SOURCE_OF_FUND_VALUES).optional(),
-        program: z.enum(FUNDING_PROGRAM_VALUES).optional().nullable(),
-        subType: z.enum(PROJECT_SUB_TYPE_VALUES).optional().nullable(),
+        program: z.string().optional().nullable(),
+        subType: z.string().optional().nullable(),
         date: z.date().optional(),
       }),
     )
@@ -365,8 +370,8 @@ export const projectRouter = createTRPCRouter({
         id: z.string(),
         amount: z.number().min(0),
         sourceOfFund: z.enum(SOURCE_OF_FUND_VALUES).optional().nullable(),
-        program: z.enum(FUNDING_PROGRAM_VALUES).optional().nullable(),
-        subType: z.enum(PROJECT_SUB_TYPE_VALUES).optional().nullable(),
+        program: z.string().optional().nullable(),
+        subType: z.string().optional().nullable(),
       }),
     )
     .mutation(async ({ ctx, input }) => {

@@ -14,6 +14,7 @@ import {
   SOURCE_TO_SUB_TYPES,
   type SourceOfFundValue,
 } from "~/lib/fund-constants";
+import { projectLabel } from "~/lib/funding-options";
 
 const STATUS_BADGES: Record<string, { label: string; className: string }> = {
   NOT_YET_STARTED: {
@@ -663,8 +664,7 @@ export const UserProjectsList = () => {
                         </dd>
                         {p.subType && (
                           <dd className="text-xs text-gray-400">
-                            {PROJECT_SUB_TYPE_LABEL[p.subType] ??
-                              p.subType.replace(/_/g, " ")}
+                            {projectLabel(p.subType)}
                           </dd>
                         )}
                       </div>
@@ -790,8 +790,7 @@ export const UserProjectsList = () => {
                           </p>
                           {p.subType && (
                             <p className="mt-0.5 text-xs text-gray-400">
-                              {PROJECT_SUB_TYPE_LABEL[p.subType] ??
-                                p.subType.replace(/_/g, " ")}
+                              {projectLabel(p.subType)}
                             </p>
                           )}
                         </td>
