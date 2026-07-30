@@ -8,11 +8,14 @@ import {
   SOURCE_OF_FUND_LABEL,
   SOURCE_OF_FUND_ORDER,
   PROJECT_SUB_TYPE_LABEL,
-  PROJECT_SUB_TYPE_VALUES,
   PROJECT_STATUS_LABEL,
   PROJECT_STATUS_ORDER,
   SOURCE_TO_SUB_TYPES,
+  FUNDING_PROGRAM_LABEL,
+  SOURCE_TO_PROGRAMS,
+  PROGRAM_TO_PROJECTS,
   type SourceOfFundValue,
+  type FundingProgramValue,
 } from "~/lib/fund-constants";
 import { projectLabel } from "~/lib/funding-options";
 
@@ -275,6 +278,7 @@ export const UserProjectsList = () => {
   const [search, setSearch] = useState("");
   const [modeFilter, setModeFilter] = useState("");
   const [sourceOfFundFilter, setSourceOfFundFilter] = useState("");
+  const [programFilter, setProgramFilter] = useState("");
   const [subTypeFilter, setSubTypeFilter] = useState("");
   const [districtFilter, setDistrictFilter] = useState("");
   const [cityFilter, setCityFilter] = useState("");
@@ -304,9 +308,15 @@ export const UserProjectsList = () => {
     ),
   ).sort();
 
-  const subTypeOptions = sourceOfFundFilter
-    ? (SOURCE_TO_SUB_TYPES[sourceOfFundFilter as SourceOfFundValue] ?? [])
-    : PROJECT_SUB_TYPE_VALUES;
+  const availablePrograms = sourceOfFundFilter
+    ? SOURCE_TO_PROGRAMS[sourceOfFundFilter as SourceOfFundValue] ?? []
+    : [];
+
+  const availableSubTypes = programFilter
+    ? PROGRAM_TO_PROJECTS[programFilter as FundingProgramValue] ?? []
+    : sourceOfFundFilter
+      ? SOURCE_TO_SUB_TYPES[sourceOfFundFilter as SourceOfFundValue] ?? []
+      : [];
 
   const filtered = projects?.filter((p) => {
     if (filterToday) {
@@ -327,6 +337,7 @@ export const UserProjectsList = () => {
     if (barangayFilter && p.barangay !== barangayFilter) return false;
     if (sourceOfFundFilter && p.sourceOfFund !== sourceOfFundFilter)
       return false;
+    if (programFilter && p.program !== programFilter) return false;
     if (subTypeFilter && p.subType !== subTypeFilter) return false;
     if (yearFilter && p.budgetYear !== yearFilter) return false;
     if (search) {
@@ -351,6 +362,7 @@ export const UserProjectsList = () => {
     search ||
     modeFilter ||
     sourceOfFundFilter ||
+    programFilter ||
     subTypeFilter ||
     districtFilter ||
     cityFilter ||
@@ -363,6 +375,7 @@ export const UserProjectsList = () => {
     setSearch("");
     setModeFilter("");
     setSourceOfFundFilter("");
+    setProgramFilter("");
     setSubTypeFilter("");
     setDistrictFilter("");
     setCityFilter("");
@@ -389,7 +402,7 @@ export const UserProjectsList = () => {
       {/* Filter bar */}
       <div className="rounded-sm border border-gray-200 bg-white px-4 py-4 shadow-sm sm:px-5">
         <div
-          className={`grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5 ${districtScope ? "xl:grid-cols-10" : "xl:grid-cols-11"}`}
+          className={`grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5 ${districtScope ? "xl:grid-cols-11" : "xl:grid-cols-12"}`}
         >
           {/* Project Title */}
           <div className="col-span-2 sm:col-span-3 lg:col-span-2 xl:col-span-2">
@@ -451,6 +464,7 @@ export const UserProjectsList = () => {
               value={sourceOfFundFilter}
               onChange={(e) => {
                 setSourceOfFundFilter(e.target.value);
+                setProgramFilter("");
                 setSubTypeFilter("");
                 setPage(1);
               }}
@@ -465,10 +479,38 @@ export const UserProjectsList = () => {
             </select>
           </div>
 
-          {/* Sub-Category */}
+          {/* Program */}
           <div>
             <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
-              Sub-Category
+              Program
+            </p>
+            <select
+              value={programFilter}
+              onChange={(e) => {
+                setProgramFilter(e.target.value);
+                setSubTypeFilter("");
+                setPage(1);
+              }}
+              disabled={!sourceOfFundFilter || availablePrograms.length === 0}
+              className={`${selectClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
+            >
+              <option value="">
+                {sourceOfFundFilter && availablePrograms.length === 0
+                  ? "None"
+                  : "All"}
+              </option>
+              {availablePrograms.map((k) => (
+                <option key={k} value={k}>
+                  {FUNDING_PROGRAM_LABEL[k]}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Project */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              Project
             </p>
             <select
               value={subTypeFilter}
@@ -476,15 +518,16 @@ export const UserProjectsList = () => {
                 setSubTypeFilter(e.target.value);
                 setPage(1);
               }}
-              disabled={!!sourceOfFundFilter && subTypeOptions.length === 0}
+              disabled={!sourceOfFundFilter || availableSubTypes.length === 0}
               className={`${selectClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
             >
               <option value="">
-                {sourceOfFundFilter && subTypeOptions.length === 0
+                {(sourceOfFundFilter || programFilter) &&
+                availableSubTypes.length === 0
                   ? "None"
                   : "All"}
               </option>
-              {subTypeOptions.map((k) => (
+              {availableSubTypes.map((k) => (
                 <option key={k} value={k}>
                   {PROJECT_SUB_TYPE_LABEL[k]}
                 </option>
