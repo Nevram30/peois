@@ -95,8 +95,8 @@ const peso = (n: number | null | undefined) => {
 const card = "rounded-sm border border-gray-200 bg-white p-4 shadow-sm sm:p-6";
 const sectionTitle = "flex items-center gap-2 border-b border-gray-100 pb-4 mb-5";
 const fieldLabel = "text-[11px] font-semibold uppercase tracking-wider text-gray-400";
-const fieldBox =
-  "mt-1.5 w-full rounded-lg border border-gray-200 bg-gray-50 px-3.5 py-2.5 text-sm text-gray-800";
+// This is a read-only view, so values render as plain text instead of input-looking boxes.
+const fieldText = "mt-1 w-full text-sm font-medium text-gray-800";
 
 interface Props {
   projectId: string;
@@ -280,54 +280,46 @@ export const ProjectDetail = ({ projectId }: Props) => {
 
               {/* Right column - fields */}
               <div className="flex-1 space-y-3">
-                <div>
-                  <label className={fieldLabel}>Project Title</label>
-                  <div className={fieldBox}>{project.title}</div>
-                </div>
-
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div>
+                    <label className={fieldLabel}>Project Title</label>
+                    <div className={fieldText}>{project.title}</div>
+                  </div>
                   <div>
                     <label className={fieldLabel}>Project Cost</label>
-                    <div className={fieldBox}>{peso(project.projectCost)}</div>
-                  </div>
-                  <div>
-                    <label className={fieldLabel}>Current Status</label>
-                    <div
-                      className={`mt-1.5 flex w-full items-center justify-between rounded-lg px-3.5 py-2.5 text-sm font-semibold ${pillClass}`}
-                    >
-                      <span>{statusLabel}</span>
-                      <svg
-                        className="h-4 w-4 opacity-60"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={2}
-                        stroke="currentColor"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                      </svg>
-                    </div>
+                    <div className={fieldText}>{peso(project.projectCost)}</div>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div>
-                    <label className={fieldLabel}>Track Number</label>
-                    <div className={`${fieldBox} font-mono`}>{project.projectCode}</div>
+                    <label className={fieldLabel}>Current Status</label>
+                    <div className="mt-1">
+                      <span
+                        className={`inline-flex rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${pillClass}`}
+                      >
+                        {statusLabel}
+                      </span>
+                    </div>
                   </div>
                   <div>
+                    <label className={fieldLabel}>Track Number</label>
+                    <div className={`${fieldText} font-mono`}>{project.projectCode}</div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div>
                     <label className={fieldLabel}>Implementation Mode</label>
-                    <div className={fieldBox}>
+                    <div className={fieldText}>
                       {project.modeOfImplementation === "BY_ADMINISTRATION"
                         ? "By Administration"
                         : "By Contract"}
                     </div>
                   </div>
-                </div>
-
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div>
                     <label className={fieldLabel}>Contractor Name</label>
-                    <div className={fieldBox}>{project.contractorName ?? "—"}</div>
+                    <div className={fieldText}>{project.contractorName ?? "—"}</div>
                   </div>
                 </div>
 
@@ -384,24 +376,24 @@ export const ProjectDetail = ({ projectId }: Props) => {
             <div className="space-y-3">
               <div>
                 <label className={fieldLabel}>District</label>
-                <div className={fieldBox}>{districtLabel}</div>
+                <div className={fieldText}>{districtLabel}</div>
               </div>
               <div>
-                <label className={fieldLabel}>Municipality</label>
-                <div className={fieldBox}>{project.cityMunicipality ?? "—"}</div>
+                <label className={fieldLabel}>City/Municipality</label>
+                <div className={fieldText}>{project.cityMunicipality ?? "—"}</div>
               </div>
               <div>
                 <label className={fieldLabel}>Barangay</label>
-                <div className={fieldBox}>{project.barangay ?? "—"}</div>
+                <div className={fieldText}>{project.barangay ?? "—"}</div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className={fieldLabel}>Purok</label>
-                  <div className={fieldBox}>{project.purok ?? "—"}</div>
+                  <div className={fieldText}>{project.purok ?? "—"}</div>
                 </div>
                 <div>
                   <label className={fieldLabel}>Sitio</label>
-                  <div className={fieldBox}>{project.sitio ?? "N/A"}</div>
+                  <div className={fieldText}>{project.sitio ?? "N/A"}</div>
                 </div>
               </div>
             </div>
@@ -432,35 +424,35 @@ export const ProjectDetail = ({ projectId }: Props) => {
           <div className="grid grid-cols-1 gap-x-6 gap-y-4 lg:grid-cols-2">
             <div>
               <label className={fieldLabel}>Budget Year</label>
-              <div className={fieldBox}>{project.budgetYear ?? "\u2014"}</div>
+              <div className={fieldText}>{project.budgetYear ?? "\u2014"}</div>
             </div>
             <div>
               <label className={fieldLabel}>Program</label>
-              <div className={fieldBox}>{programLabel}</div>
+              <div className={fieldText}>{programLabel}</div>
             </div>
             <div>
               <label className={fieldLabel}>Source of Fund</label>
-              <div className={fieldBox}>{sourceLabel}</div>
+              <div className={fieldText}>{sourceLabel}</div>
             </div>
             <div>
               <label className={fieldLabel}>Project</label>
-              <div className={fieldBox}>{subTypeLabel}</div>
+              <div className={fieldText}>{subTypeLabel}</div>
             </div>
             <div>
               <label className={fieldLabel}>Supplemental Budget Year</label>
-              <div className={fieldBox}>{project.supplementalBudgetYear ?? "\u2014"}</div>
+              <div className={fieldText}>{project.supplementalBudgetYear ?? "\u2014"}</div>
             </div>
             <div>
               <label className={fieldLabel}>Project Account</label>
-              <div className={fieldBox}>{projectAccountLabel}</div>
+              <div className={fieldText}>{projectAccountLabel}</div>
             </div>
             <div>
               <label className={fieldLabel}>Supplemental Budget Number</label>
-              <div className={fieldBox}>{project.supplementalBudgetNumber ?? "\u2014"}</div>
+              <div className={fieldText}>{project.supplementalBudgetNumber ?? "\u2014"}</div>
             </div>
             <div>
               <label className={fieldLabel}>* LANDBANK [LBP-TL#]</label>
-              <div className={fieldBox}>{project.landbankNumber ?? "\u2014"}</div>
+              <div className={fieldText}>{project.landbankNumber ?? "\u2014"}</div>
             </div>
           </div>
         </section>
@@ -488,15 +480,15 @@ export const ProjectDetail = ({ projectId }: Props) => {
 
           {/* Balance tiles */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div className="rounded-sm border border-gray-200 bg-gray-50/60 px-4 py-3.5">
+            <div>
               <p className="text-sm font-bold text-blue-800">Total Remaining Balance</p>
               <p className="mt-1 text-xl font-extrabold text-blue-900">{peso(totalRemainingBalance)}</p>
             </div>
-            <div className="rounded-sm border border-gray-200 bg-gray-50/60 px-4 py-3.5">
+            <div>
               <p className="text-sm font-bold text-blue-800">Primary Fund Balance</p>
               <p className="mt-1 text-lg font-extrabold text-gray-900">{peso(primaryFundBalance)}</p>
             </div>
-            <div className="rounded-sm border border-gray-200 bg-gray-50/60 px-4 py-3.5">
+            <div>
               <p className="text-sm font-bold text-blue-800">Variation Order Balance</p>
               <p className="mt-1 text-lg font-extrabold text-gray-900">{peso(variationOrderBalance)}</p>
             </div>
@@ -727,32 +719,32 @@ export const ProjectDetail = ({ projectId }: Props) => {
             </div>
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <div className="rounded-lg border border-gray-200 bg-gray-50/60 p-4">
+              <div>
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">
                   Female
                 </p>
-                <div className="mt-1.5 flex items-end justify-between">
+                <div className="mt-1.5 flex items-center gap-2">
                   <p className="text-3xl font-bold text-gray-900">{project.numFemale}</p>
-                  <span className="text-lg text-gray-400">♀</span>
+                  <span className="text-xl leading-none text-gray-400">♀</span>
                 </div>
               </div>
-              <div className="rounded-lg border border-gray-200 bg-gray-50/60 p-4">
+              <div>
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">
                   Male
                 </p>
-                <div className="mt-1.5 flex items-end justify-between">
+                <div className="mt-1.5 flex items-center gap-2">
                   <p className="text-3xl font-bold text-gray-900">{project.numMale}</p>
-                  <span className="text-lg text-gray-400">♂</span>
+                  <span className="text-xl leading-none text-gray-400">♂</span>
                 </div>
               </div>
-              <div className="rounded-lg border-2 border-gray-300 bg-gray-100 p-4">
+              <div>
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                   Total
                 </p>
-                <div className="mt-1.5 flex items-end justify-between">
+                <div className="mt-1.5 flex items-center gap-2">
                   <p className="text-3xl font-bold text-gray-900">{project.numPersons}</p>
                   <svg
-                    className="h-5 w-5 text-gray-400"
+                    className="h-5 w-5 shrink-0 text-gray-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     strokeWidth={2}
@@ -793,24 +785,19 @@ export const ProjectDetail = ({ projectId }: Props) => {
             <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
               <div>
                 <label className={fieldLabel}>Engineers In-Charge</label>
-                <div className="mt-1.5 flex min-h-11 flex-wrap items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2">
-                  {engineers.length > 0 ? (
-                    engineers.map((eng) => (
-                      <span
-                        key={eng}
-                        className="rounded-md border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 shadow-sm"
-                      >
-                        {eng}
-                      </span>
-                    ))
-                  ) : (
-                    <span className="text-sm text-gray-400">—</span>
-                  )}
-                </div>
+                {engineers.length > 0 ? (
+                  <div className={fieldText}>
+                    {engineers.map((eng) => (
+                      <p key={eng}>{eng}</p>
+                    ))}
+                  </div>
+                ) : (
+                  <div className={fieldText}>—</div>
+                )}
               </div>
               <div>
                 <label className={fieldLabel}>Project Profile</label>
-                <div className="mt-1.5 min-h-22 w-full whitespace-pre-wrap rounded-lg border border-gray-200 bg-gray-50 px-3.5 py-2.5 text-sm text-gray-700">
+                <div className={`${fieldText} whitespace-pre-wrap`}>
                   {project.description ?? "—"}
                 </div>
               </div>
