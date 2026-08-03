@@ -64,23 +64,143 @@ type PendingFile = {
   fileName: string;
   fileUrl: string;
   fileType: ProjectFileType;
+  docType: DocType;
   fileSize: number;
   uploadedAt: Date;
 };
 
-const FILE_TYPE_LABEL: Record<ProjectFileType, string> = {
-  IMAGE: "Image",
-  BLUEPRINT: "Blueprint",
-  REPORT: "Report",
-  CONTRACT: "Contract",
-  PERMIT: "Permit",
-  OTHER: "Other",
+// ─── Document checklist ───────────────────────────────────────────────────
+// The documentary requirements the office expects on file. An uploaded file is
+// matched against these patterns so its checklist row ticks itself; the Type
+// column stays editable for the file names that give nothing away.
+type DocKey =
+  | "CDR"
+  | "NTP"
+  | "SCURVE"
+  | "ABC"
+  | "PPMP"
+  | "POW"
+  | "PLAN"
+  | "ARO"
+  | "BILLBOARD"
+  | "MANPOWER"
+  | "EQUIPMENT"
+  | "QCP";
+
+type DocType = DocKey | "OTHER";
+
+type DocChecklistItem = {
+  key: DocKey;
+  label: string;
+  fileType: ProjectFileType;
+  patterns: RegExp[];
+  // "Plan" alone matches file names that belong to a more specific row
+  // (Quality Control Plan, Procurement Management Plan), so it is tried last.
+  matchLast?: boolean;
 };
 
-const inferFileType = (file: File): ProjectFileType => {
-  if (file.type.startsWith("image/")) return "IMAGE";
-  return "OTHER";
+const DOC_CHECKLIST: DocChecklistItem[] = [
+  {
+    key: "CDR",
+    label: "Checklist of Documentary Requirements",
+    fileType: "REPORT",
+    patterns: [/checklist/, /documentary requirement/, /\bcdr\b/],
+  },
+  {
+    key: "NTP",
+    label: "Notice to Proceed - Request",
+    fileType: "PERMIT",
+    patterns: [/notice to proceed/, /\bntp\b/],
+  },
+  {
+    key: "SCURVE",
+    label: "Bar Chart / S-Curve",
+    fileType: "REPORT",
+    patterns: [/bar ?chart/, /\bs ?curve\b/, /gantt/],
+  },
+  {
+    key: "ABC",
+    label: "Approve Budget Contract (ABC)",
+    fileType: "CONTRACT",
+    patterns: [/approved? budget/, /\babc\b/],
+  },
+  {
+    key: "PPMP",
+    label: "Project Procurement Management Plan",
+    fileType: "REPORT",
+    patterns: [/procurement management/, /\bppmp\b/],
+  },
+  {
+    key: "POW",
+    label: "Program of Works",
+    fileType: "REPORT",
+    patterns: [/program of works?/, /\bpow\b/],
+  },
+  {
+    key: "PLAN",
+    label: "Plan",
+    fileType: "BLUEPRINT",
+    patterns: [/\bplans?\b/, /\bdrawings?\b/, /blueprint/, /layout/],
+    matchLast: true,
+  },
+  {
+    key: "ARO",
+    label: "Allotment Release Order",
+    fileType: "PERMIT",
+    patterns: [/allotment release/, /\bs?aro\b/],
+  },
+  {
+    key: "BILLBOARD",
+    label: "Billboard Photo",
+    fileType: "IMAGE",
+    patterns: [/bill ?board/, /tarpaulin/, /signage/],
+  },
+  {
+    key: "MANPOWER",
+    label: "Manpower Schedule",
+    fileType: "REPORT",
+    patterns: [/man ?power/],
+  },
+  {
+    key: "EQUIPMENT",
+    label: "Equipment Schedule",
+    fileType: "REPORT",
+    patterns: [/equipment/],
+  },
+  {
+    key: "QCP",
+    label: "Quality Control Plan",
+    fileType: "REPORT",
+    patterns: [/quality control/, /\bqcp\b/],
+  },
+];
+
+// Display order is the order above; matching defers the catch-all rows.
+const DOC_MATCH_ORDER = [...DOC_CHECKLIST].sort(
+  (a, b) => Number(a.matchLast ?? false) - Number(b.matchLast ?? false),
+);
+
+const docItem = (docType: DocType) =>
+  DOC_CHECKLIST.find((item) => item.key === docType);
+
+const isImageName = (fileName: string) =>
+  /\.(jpe?g|png|gif|webp|heic)$/i.test(fileName);
+
+// Reads the requirement out of the file name — separators are normalised so
+// "notice-to-proceed_v2.pdf" and "Notice To Proceed.pdf" land on the same row.
+const inferDocType = (fileName: string): DocType => {
+  const name = fileName
+    .replace(/\.[^.]+$/, "")
+    .replace(/[_\-.]+/g, " ")
+    .toLowerCase();
+  return (
+    DOC_MATCH_ORDER.find((item) => item.patterns.some((p) => p.test(name)))
+      ?.key ?? "OTHER"
+  );
 };
+
+const docFileType = (docType: DocType, fileName: string): ProjectFileType =>
+  docItem(docType)?.fileType ?? (isImageName(fileName) ? "IMAGE" : "OTHER");
 
 const fileIconColor = (fileType: ProjectFileType, fileName: string) => {
   if (fileType === "IMAGE") return { bg: "bg-blue-100", text: "text-blue-600" };
@@ -115,14 +235,6 @@ type PendingAdjustment = {
 
 const fmtInputDate = (d: string) => {
   return new Date(d).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" });
-};
-
-const fileTypeBadge = (fileType: ProjectFileType, fileName: string) => {
-  if (fileType === "IMAGE") return "IMAGE";
-  if (fileName.toLowerCase().endsWith(".pdf")) return "PDF DOCUMENT";
-  if (fileName.toLowerCase().endsWith(".docx")) return "DOCX WORD";
-  if (fileName.toLowerCase().endsWith(".doc")) return "DOC WORD";
-  return FILE_TYPE_LABEL[fileType].toUpperCase();
 };
 
 // ─── Section wrappers ─────────────────────────────────────────────────────
@@ -367,7 +479,18 @@ export const AddProjectForm = () => {
 
   const { startUpload: startFileUpload } = useUploadThing("projectFileUploader");
 
+  const { data: me } = api.user.getMe.useQuery();
+
   // ── Derived values ───────────────────────────────────────────────────
+  // A requirement is satisfied the moment a file is filed against it.
+  const satisfiedDocs = useMemo(
+    () => new Set(pendingFiles.map((f) => f.docType)),
+    [pendingFiles],
+  );
+  const satisfiedCount = DOC_CHECKLIST.filter((item) =>
+    satisfiedDocs.has(item.key),
+  ).length;
+
   const duration = useMemo(() => {
     if (!dateStarted || !targetCompletionDate) return 0;
     const start = new Date(dateStarted);
@@ -586,13 +709,17 @@ export const AddProjectForm = () => {
         const result = await startFileUpload([file]);
         const url = result?.[0]?.ufsUrl ?? result?.[0]?.url;
         if (!url) continue;
+        // The requirement is read off the file name, which is what ticks the
+        // matching row in the checklist beside the table.
+        const docType = inferDocType(file.name);
         setPendingFiles((prev) => [
           ...prev,
           {
             id: `${file.name}-${Date.now()}-${Math.random()}`,
             fileName: file.name,
             fileUrl: url,
-            fileType: inferFileType(file),
+            fileType: docFileType(docType, file.name),
+            docType,
             fileSize: file.size,
             uploadedAt: new Date(),
           },
@@ -608,8 +735,16 @@ export const AddProjectForm = () => {
   const removeFile = (id: string) =>
     setPendingFiles((prev) => prev.filter((f) => f.id !== id));
 
-  const changeFileType = (id: string, fileType: ProjectFileType) =>
-    setPendingFiles((prev) => prev.map((f) => (f.id === id ? { ...f, fileType } : f)));
+  // Correcting the type re-points the file at another checklist row, so the
+  // ticks follow the correction.
+  const changeDocType = (id: string, docType: DocType) =>
+    setPendingFiles((prev) =>
+      prev.map((f) =>
+        f.id === id
+          ? { ...f, docType, fileType: docFileType(docType, f.fileName) }
+          : f,
+      ),
+    );
 
   const handleRecordAdjustment = () => {
     if (!dateStarted || !targetCompletionDate) {
@@ -1811,59 +1946,125 @@ export const AddProjectForm = () => {
 
         {/* ── Project Documentation ─────────────────────────────────── */}
         <section className={cardClass}>
-          <SectionHeader icon={FolderIcon} title="Project Documentation" />
-          <div className="p-5">
-            {/* Upload drop zone */}
+          <SectionHeader
+            icon={FolderIcon}
+            title="Project Documentation"
+            action={
+              <button
+                type="button"
+                onClick={() => docInputRef.current?.click()}
+                disabled={isUploadingDoc}
+                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0 3 3m-3-3-3 3m9-6.75V18a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 18V6a2.25 2.25 0 0 1 2.25-2.25h6.879a1.5 1.5 0 0 1 1.06.44l3.622 3.62a1.5 1.5 0 0 1 .439 1.061Z" />
+                </svg>
+                {isUploadingDoc ? "Uploading..." : "Upload Document"}
+              </button>
+            }
+          />
+          <div className="grid gap-5 p-5 lg:grid-cols-[minmax(0,17rem)_minmax(0,1fr)]">
+            <input
+              ref={docInputRef}
+              type="file"
+              multiple
+              accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png"
+              className="hidden"
+              onChange={(e) => void handleFilesAdded(e.target.files)}
+            />
+
+            {/* Document checklist — ticked automatically by what is uploaded */}
+            <div className="rounded-xl border border-gray-200 bg-gray-50/70 p-5">
+              <div className="mb-4 flex items-center justify-between gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                  Document Checklist
+                </span>
+                <span className="text-[10px] font-bold tracking-wider text-gray-400">
+                  {satisfiedCount}/{DOC_CHECKLIST.length}
+                </span>
+              </div>
+              <ul className="space-y-3.5">
+                {DOC_CHECKLIST.map((item) => {
+                  const done = satisfiedDocs.has(item.key);
+                  return (
+                    <li
+                      key={item.key}
+                      role="checkbox"
+                      aria-checked={done}
+                      aria-readonly
+                      className="flex items-start gap-3"
+                    >
+                      <span
+                        className={`mt-px flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition ${
+                          done
+                            ? "border-blue-600 bg-blue-600 text-white"
+                            : "border-gray-200 bg-white"
+                        }`}
+                      >
+                        {done && (
+                          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                          </svg>
+                        )}
+                      </span>
+                      <span
+                        className={`text-sm leading-snug ${
+                          done ? "font-semibold text-gray-900" : "text-gray-600"
+                        }`}
+                      >
+                        {item.label}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+
+            {/* Uploaded files */}
             <div
-              onClick={() => docInputRef.current?.click()}
               onDragOver={(e) => e.preventDefault()}
               onDrop={(e) => {
                 e.preventDefault();
                 void handleFilesAdded(e.dataTransfer.files);
               }}
-              className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-200 bg-gray-50 px-4 py-6 transition hover:border-blue-300 hover:bg-blue-50"
             >
-              <svg className="h-7 w-7 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z" />
-              </svg>
-              <p className="text-sm text-gray-500">
-                <span className="font-medium text-blue-600">Upload files</span> or drag and drop
-              </p>
-              <p className="text-xs text-gray-400">
-                Blueprints, contracts, reports, images (PDF, DOC, DOCX, JPG, PNG)
-              </p>
-              {isUploadingDoc && <p className="text-xs text-blue-500">Uploading...</p>}
-              {docUploadError && <p className="text-xs text-red-500">{docUploadError}</p>}
-              <input
-                ref={docInputRef}
-                type="file"
-                multiple
-                accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png"
-                className="hidden"
-                onChange={(e) => void handleFilesAdded(e.target.files)}
-              />
-            </div>
-
-            {/* Uploaded files table */}
-            {pendingFiles.length > 0 && (
-              <div className="mt-4 overflow-hidden rounded-lg border border-gray-200">
-                <table className="w-full text-sm">
+              <div className="overflow-x-auto rounded-xl border border-gray-200">
+                <table className="w-full min-w-160 text-sm">
                   <thead>
                     <tr className="border-b border-gray-100 bg-gray-50">
-                      <th className="px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">File Name</th>
-                      <th className="px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Type</th>
-                      <th className="px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Upload Date</th>
-                      <th className="px-4 py-2.5 text-right text-[10px] font-bold uppercase tracking-wider text-gray-400">Actions</th>
+                      <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">File Name</th>
+                      <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Type</th>
+                      <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Upload Date</th>
+                      <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Uploaded By</th>
+                      <th className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-wider text-gray-400">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
+                    {pendingFiles.length === 0 && (
+                      <tr>
+                        <td colSpan={5}>
+                          <button
+                            type="button"
+                            onClick={() => docInputRef.current?.click()}
+                            className="flex w-full cursor-pointer flex-col items-center justify-center gap-3 px-4 py-16 text-center transition hover:bg-gray-50/70"
+                          >
+                            <svg className="h-12 w-12 text-gray-200" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15a4.5 4.5 0 0 0 4.5 4.5H18a3.75 3.75 0 0 0 1.332-7.257 3 3 0 0 0-3.758-3.848 5.25 5.25 0 0 0-8.6-1.9M2.25 15a4.5 4.5 0 0 1 4.5-4.5M3 3l18 18" />
+                            </svg>
+                            <span className="text-sm text-gray-400">
+                              No documents uploaded yet.
+                            </span>
+                          </button>
+                        </td>
+                      </tr>
+                    )}
                     {pendingFiles.map((f) => {
                       const colors = fileIconColor(f.fileType, f.fileName);
                       return (
                         <tr key={f.id} className="hover:bg-gray-50/50">
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-2">
-                              <div className={`flex h-8 w-8 items-center justify-center rounded ${colors.bg}`}>
+                              <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded ${colors.bg}`}>
                                 <svg className={`h-4 w-4 ${colors.text}`} fill="currentColor" viewBox="0 0 20 20">
                                   <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
                                 </svg>
@@ -1873,18 +2074,21 @@ export const AddProjectForm = () => {
                           </td>
                           <td className="px-4 py-3">
                             <select
-                              value={f.fileType}
-                              onChange={(e) => changeFileType(f.id, e.target.value as ProjectFileType)}
-                              className="rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                              value={f.docType}
+                              onChange={(e) => changeDocType(f.id, e.target.value as DocType)}
+                              aria-label={`Document type for ${f.fileName}`}
+                              className="max-w-60 rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                             >
-                              {(Object.keys(FILE_TYPE_LABEL) as ProjectFileType[]).map((t) => (
-                                <option key={t} value={t}>
-                                  {t === f.fileType ? fileTypeBadge(t, f.fileName) : FILE_TYPE_LABEL[t].toUpperCase()}
+                              {DOC_CHECKLIST.map((item) => (
+                                <option key={item.key} value={item.key}>
+                                  {item.label}
                                 </option>
                               ))}
+                              <option value="OTHER">Other</option>
                             </select>
                           </td>
-                          <td className="px-4 py-3 text-gray-600">{fmtDate(f.uploadedAt)}</td>
+                          <td className="px-4 py-3 whitespace-nowrap text-gray-600">{fmtDate(f.uploadedAt)}</td>
+                          <td className="px-4 py-3 whitespace-nowrap text-gray-600">{me?.name ?? me?.email ?? "—"}</td>
                           <td className="px-4 py-3 text-right">
                             <div className="flex justify-end gap-2">
                               <a
@@ -1917,7 +2121,18 @@ export const AddProjectForm = () => {
                   </tbody>
                 </table>
               </div>
-            )}
+              <p className="mt-2 text-xs text-gray-400">
+                Drag and drop here or use Upload Document. The checklist ticks
+                itself from the file name — correct the Type column if a
+                document lands on the wrong requirement.
+              </p>
+              {isUploadingDoc && (
+                <p className="mt-1 text-xs text-blue-500">Uploading...</p>
+              )}
+              {docUploadError && (
+                <p className="mt-1 text-xs text-red-500">{docUploadError}</p>
+              )}
+            </div>
           </div>
         </section>
 
