@@ -27,6 +27,13 @@ import {
   getMunicipalitiesByDistrict,
   getBarangaysByMunicipality,
 } from "~/lib/davao-del-norte-locations";
+import {
+  SLIPPAGE_STAGE_VALUES,
+  SLIPPAGE_STAGE_CONFIG,
+  computeSlippage,
+  formatSlippage,
+  getSlippageStageConfig,
+} from "~/lib/slippage";
 
 // ─── Shared styles ────────────────────────────────────────────────────────
 const inputClass =
@@ -210,6 +217,17 @@ const ExternalLinkIcon = (
     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
   </svg>
 );
+const TrendDownIcon = (
+  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6 9 12.75l4.286-4.286a11.948 11.948 0 0 1 4.306 6.43l.776 2.898m0 0 3.182-5.511m-3.182 5.51-5.511-3.181" />
+  </svg>
+);
+const SaveIcon = (
+  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3 6.75A2.25 2.25 0 0 1 5.25 4.5h9.129c.597 0 1.17.237 1.591.659l2.871 2.871c.422.422.659.994.659 1.591v9.129A2.25 2.25 0 0 1 17.25 21H5.25A2.25 2.25 0 0 1 3 18.75V6.75Z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 4.5v4.125c0 .621.504 1.125 1.125 1.125h4.5c.621 0 1.125-.504 1.125-1.125V4.5M7.5 21v-5.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125V21" />
+  </svg>
+);
 const MapPlaceholderIcon = (
   <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
     <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
@@ -234,6 +252,16 @@ const parseCoord = (value: string, max: number) => {
   if (!trimmed) return null;
   const parsed = Number(trimmed);
   if (!Number.isFinite(parsed) || Math.abs(parsed) > max) return null;
+  return parsed;
+};
+
+// Same idea for the slippage inputs: anything that is not a 0–100 percentage
+// reads as "not entered yet" rather than NaN.
+const parsePercent = (value: string) => {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  const parsed = Number(trimmed);
+  if (!Number.isFinite(parsed) || parsed < 0 || parsed > 100) return null;
   return parsed;
 };
 
@@ -291,6 +319,15 @@ export const AddProjectForm = () => {
   const [adjError, setAdjError] = useState<string | null>(null);
   const [pendingAdjustments, setPendingAdjustments] = useState<PendingAdjustment[]>([]);
 
+  // ── Slippage ─────────────────────────────────────────────────────────
+  // Percentages live as strings so a half-typed value survives editing.
+  // `slippageRevision` is the revision the current figures will be filed as;
+  // saving files them and the next edit rolls the counter forward.
+  const [slippageTargetInput, setSlippageTargetInput] = useState("");
+  const [slippageActualInput, setSlippageActualInput] = useState("");
+  const [slippageRevision, setSlippageRevision] = useState(0);
+  const [savedSlippage, setSavedSlippage] = useState<string | null>(null);
+
   // ── Workforce Distribution ───────────────────────────────────────────
   const [numFemale, setNumFemale] = useState(0);
   const [numMale, setNumMale] = useState(0);
@@ -344,6 +381,33 @@ export const AddProjectForm = () => {
     0,
     Math.min(100, parseInt(completionPercentage) || 0),
   );
+
+  // ── Slippage derived values ──────────────────────────────────────────
+  const slippageTarget = useMemo(
+    () => parsePercent(slippageTargetInput),
+    [slippageTargetInput],
+  );
+  const slippageActual = useMemo(
+    () => parsePercent(slippageActualInput),
+    [slippageActualInput],
+  );
+  const slippage =
+    slippageTarget !== null && slippageActual !== null
+      ? computeSlippage(slippageTarget, slippageActual)
+      : null;
+  const slippageStage = slippage !== null ? getSlippageStageConfig(slippage) : null;
+  // Identity of the figures currently on screen, compared against the last
+  // saved pair to tell a filed revision from an edited one.
+  const slippageKey =
+    slippage !== null ? `${slippageTarget}|${slippageActual}` : null;
+  const isSlippageDirty = slippageKey !== null && slippageKey !== savedSlippage;
+
+  const handleSaveSlippage = () => {
+    if (slippageKey === null || !isSlippageDirty) return;
+    // The first save files Rev. 0; every later change files the next revision.
+    if (savedSlippage !== null) setSlippageRevision((r) => r + 1);
+    setSavedSlippage(slippageKey);
+  };
 
   const availableMunicipalities = useMemo(
     () => getMunicipalitiesByDistrict(district as "DISTRICT_I" | "DISTRICT_II" | ""),
@@ -640,6 +704,10 @@ export const AddProjectForm = () => {
         !!targetCompletionDate &&
         new Date(targetCompletionDate) < new Date(dateStarted),
       workforce: totalWorkforce < 1,
+      // The slippage assessment is optional, but a typed-in percentage must
+      // be a valid 0–100 figure.
+      slippageTarget: slippageTargetInput.trim() !== "" && slippageTarget === null,
+      slippageActual: slippageActualInput.trim() !== "" && slippageActual === null,
       engineers: engineers.length === 0,
       description: !description.trim(),
     }),
@@ -669,6 +737,10 @@ export const AddProjectForm = () => {
       dateStarted,
       targetCompletionDate,
       totalWorkforce,
+      slippageTargetInput,
+      slippageTarget,
+      slippageActualInput,
+      slippageActual,
       engineers,
       description,
     ],
@@ -719,6 +791,11 @@ export const AddProjectForm = () => {
       latitude: parsedLat,
       longitude: parsedLng,
       description: description || undefined,
+      // Sent whether or not the card was saved, so a filled-in assessment is
+      // never dropped; the revision counter only moves on an explicit save.
+      slippageTarget,
+      slippageActual,
+      slippageRevision,
       status: isDraft ? "NOT_YET_STARTED" : status,
       imageUrl: imageUrl || undefined,
       projectCode: trackingNumber || undefined,
@@ -1482,6 +1559,130 @@ export const AddProjectForm = () => {
               </button>
             </div>
             {adjError && <p className="mt-1 text-xs text-red-500">{adjError}</p>}
+          </div>
+        </section>
+
+        {/* ── Slippage ──────────────────────────────────────────────── */}
+        <section className={cardClass}>
+          <SectionHeader icon={TrendDownIcon} title="Slippage" />
+          <div className="p-5">
+            <div className="flex flex-wrap items-end gap-4">
+              {/* Live readout — actual minus target, with its stage */}
+              <div
+                className={`flex min-w-70 flex-1 items-center justify-between gap-4 rounded-lg border px-4 py-3 ${
+                  slippageStage ? slippageStage.tile : "border-gray-200 bg-gray-50"
+                }`}
+              >
+                <div>
+                  <p
+                    className={`text-[10px] font-bold uppercase tracking-widest ${
+                      slippageStage ? slippageStage.text : "text-gray-400"
+                    }`}
+                  >
+                    Slippage
+                  </p>
+                  <p
+                    className={`mt-0.5 text-3xl font-extrabold ${
+                      slippageStage ? slippageStage.text : "text-gray-300"
+                    }`}
+                  >
+                    {slippage !== null ? formatSlippage(slippage) : "—"}
+                    <span className="ml-0.5 text-base font-bold">%</span>
+                  </p>
+                </div>
+                {slippageStage && (
+                  <span
+                    className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest ${slippageStage.badge}`}
+                  >
+                    {slippageStage.label}
+                  </span>
+                )}
+              </div>
+
+              <div className="w-45 shrink-0">
+                <label className={fieldLabelClass}>Target %</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    value={slippageTargetInput}
+                    onChange={(e) => setSlippageTargetInput(e.target.value)}
+                    placeholder="0.00"
+                    className={`${inputClass} pr-8 ${showErrors && fieldErrors.slippageTarget ? errorRingClass : ""}`}
+                  />
+                  <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-sm text-gray-400">%</span>
+                </div>
+                <FieldError
+                  show={showErrors && fieldErrors.slippageTarget}
+                  message="Enter a value between 0 and 100"
+                />
+              </div>
+
+              <div className="w-45 shrink-0">
+                <label className={fieldLabelClass}>Actual %</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    value={slippageActualInput}
+                    onChange={(e) => setSlippageActualInput(e.target.value)}
+                    placeholder="0.00"
+                    className={`${inputClass} pr-8 ${showErrors && fieldErrors.slippageActual ? errorRingClass : ""}`}
+                  />
+                  <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-sm text-gray-400">%</span>
+                </div>
+                <FieldError
+                  show={showErrors && fieldErrors.slippageActual}
+                  message="Enter a value between 0 and 100"
+                />
+              </div>
+
+              {/* Revision counter — advanced by Save, never typed */}
+              <div className="w-35 shrink-0">
+                <label className={fieldLabelClass}>Revision</label>
+                <div className={`${inputClass} bg-gray-50 text-gray-600`}>
+                  Rev. {isSlippageDirty && savedSlippage !== null ? slippageRevision + 1 : slippageRevision}
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleSaveSlippage}
+                disabled={!isSlippageDirty}
+                className="flex h-10.5 shrink-0 items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 text-xs font-bold uppercase tracking-widest text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {SaveIcon}
+                Save
+              </button>
+            </div>
+
+            {/* Prescribed action for the current stage / save state */}
+            {slippageStage && (
+              <p className="mt-3 text-xs text-gray-500">
+                <span className="font-semibold text-gray-700">{slippageStage.label}:</span>{" "}
+                {slippageStage.action}
+                {savedSlippage !== null && !isSlippageDirty && (
+                  <span className="ml-1 text-gray-400">
+                    — filed as Rev. {slippageRevision}.
+                  </span>
+                )}
+              </p>
+            )}
+
+            {/* Stage legend */}
+            <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-gray-100 pt-4">
+              {SLIPPAGE_STAGE_VALUES.map((stage) => {
+                const cfg = SLIPPAGE_STAGE_CONFIG[stage];
+                return (
+                  <span key={stage} className="flex items-center gap-2">
+                    <span className={`h-2 w-2 rounded-full ${cfg.dot}`} />
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                      {cfg.range}: {cfg.label}
+                    </span>
+                  </span>
+                );
+              })}
+            </div>
           </div>
         </section>
 

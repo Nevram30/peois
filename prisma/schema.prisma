@@ -303,6 +303,14 @@ model Project {
   description              String?
   status                   ProjectStatus        @default(NOT_YET_STARTED)
   completionPercentage     Int                  @default(0)
+  // Slippage tracking: the planned vs. actual physical accomplishment at the
+  // time of assessment. The slippage percentage itself is always derived
+  // (actual − target) by ~/lib/slippage, so the two inputs stay the only
+  // source of truth. `slippageRevision` counts the re-assessments recorded
+  // against the project (Rev. 0 is the first one).
+  slippageTarget           Float?
+  slippageActual           Float?
+  slippageRevision         Int                  @default(0)
 
   imageUrl     String?
   documentUrl  String?

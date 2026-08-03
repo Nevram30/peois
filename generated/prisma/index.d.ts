@@ -5914,6 +5914,9 @@ export namespace Prisma {
     latitude: number | null
     longitude: number | null
     completionPercentage: number | null
+    slippageTarget: number | null
+    slippageActual: number | null
+    slippageRevision: number | null
   }
 
   export type ProjectSumAggregateOutputType = {
@@ -5929,6 +5932,9 @@ export namespace Prisma {
     latitude: number | null
     longitude: number | null
     completionPercentage: number | null
+    slippageTarget: number | null
+    slippageActual: number | null
+    slippageRevision: number | null
   }
 
   export type ProjectMinAggregateOutputType = {
@@ -5970,6 +5976,9 @@ export namespace Prisma {
     description: string | null
     status: $Enums.ProjectStatus | null
     completionPercentage: number | null
+    slippageTarget: number | null
+    slippageActual: number | null
+    slippageRevision: number | null
     imageUrl: string | null
     documentUrl: string | null
     documentName: string | null
@@ -6017,6 +6026,9 @@ export namespace Prisma {
     description: string | null
     status: $Enums.ProjectStatus | null
     completionPercentage: number | null
+    slippageTarget: number | null
+    slippageActual: number | null
+    slippageRevision: number | null
     imageUrl: string | null
     documentUrl: string | null
     documentName: string | null
@@ -6064,6 +6076,9 @@ export namespace Prisma {
     description: number
     status: number
     completionPercentage: number
+    slippageTarget: number
+    slippageActual: number
+    slippageRevision: number
     imageUrl: number
     documentUrl: number
     documentName: number
@@ -6087,6 +6102,9 @@ export namespace Prisma {
     latitude?: true
     longitude?: true
     completionPercentage?: true
+    slippageTarget?: true
+    slippageActual?: true
+    slippageRevision?: true
   }
 
   export type ProjectSumAggregateInputType = {
@@ -6102,6 +6120,9 @@ export namespace Prisma {
     latitude?: true
     longitude?: true
     completionPercentage?: true
+    slippageTarget?: true
+    slippageActual?: true
+    slippageRevision?: true
   }
 
   export type ProjectMinAggregateInputType = {
@@ -6143,6 +6164,9 @@ export namespace Prisma {
     description?: true
     status?: true
     completionPercentage?: true
+    slippageTarget?: true
+    slippageActual?: true
+    slippageRevision?: true
     imageUrl?: true
     documentUrl?: true
     documentName?: true
@@ -6190,6 +6214,9 @@ export namespace Prisma {
     description?: true
     status?: true
     completionPercentage?: true
+    slippageTarget?: true
+    slippageActual?: true
+    slippageRevision?: true
     imageUrl?: true
     documentUrl?: true
     documentName?: true
@@ -6237,6 +6264,9 @@ export namespace Prisma {
     description?: true
     status?: true
     completionPercentage?: true
+    slippageTarget?: true
+    slippageActual?: true
+    slippageRevision?: true
     imageUrl?: true
     documentUrl?: true
     documentName?: true
@@ -6371,6 +6401,9 @@ export namespace Prisma {
     description: string | null
     status: $Enums.ProjectStatus
     completionPercentage: number
+    slippageTarget: number | null
+    slippageActual: number | null
+    slippageRevision: number
     imageUrl: string | null
     documentUrl: string | null
     documentName: string | null
@@ -6437,6 +6470,9 @@ export namespace Prisma {
     description?: boolean
     status?: boolean
     completionPercentage?: boolean
+    slippageTarget?: boolean
+    slippageActual?: boolean
+    slippageRevision?: boolean
     imageUrl?: boolean
     documentUrl?: boolean
     documentName?: boolean
@@ -6494,6 +6530,9 @@ export namespace Prisma {
     description?: boolean
     status?: boolean
     completionPercentage?: boolean
+    slippageTarget?: boolean
+    slippageActual?: boolean
+    slippageRevision?: boolean
     imageUrl?: boolean
     documentUrl?: boolean
     documentName?: boolean
@@ -6542,6 +6581,9 @@ export namespace Prisma {
     description?: boolean
     status?: boolean
     completionPercentage?: boolean
+    slippageTarget?: boolean
+    slippageActual?: boolean
+    slippageRevision?: boolean
     imageUrl?: boolean
     documentUrl?: boolean
     documentName?: boolean
@@ -6590,6 +6632,9 @@ export namespace Prisma {
     description?: boolean
     status?: boolean
     completionPercentage?: boolean
+    slippageTarget?: boolean
+    slippageActual?: boolean
+    slippageRevision?: boolean
     imageUrl?: boolean
     documentUrl?: boolean
     documentName?: boolean
@@ -6598,7 +6643,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectCode" | "title" | "subType" | "program" | "projectAccount" | "modeOfImplementation" | "locationImplementation" | "sourceOfFund" | "projectCost" | "contractCost" | "contractorName" | "projectEngineer" | "budgetYear" | "landbankNumber" | "supplementalBudgetYear" | "supplementalBudgetNumber" | "dateStarted" | "targetCompletionDate" | "duration" | "revisedCompletionDate" | "dateCompleted" | "daysSuspended" | "daysExtended" | "numFemale" | "numMale" | "numPersons" | "numManDays" | "district" | "cityMunicipality" | "barangay" | "purok" | "sitio" | "latitude" | "longitude" | "description" | "status" | "completionPercentage" | "imageUrl" | "documentUrl" | "documentName" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
+  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectCode" | "title" | "subType" | "program" | "projectAccount" | "modeOfImplementation" | "locationImplementation" | "sourceOfFund" | "projectCost" | "contractCost" | "contractorName" | "projectEngineer" | "budgetYear" | "landbankNumber" | "supplementalBudgetYear" | "supplementalBudgetNumber" | "dateStarted" | "targetCompletionDate" | "duration" | "revisedCompletionDate" | "dateCompleted" | "daysSuspended" | "daysExtended" | "numFemale" | "numMale" | "numPersons" | "numManDays" | "district" | "cityMunicipality" | "barangay" | "purok" | "sitio" | "latitude" | "longitude" | "description" | "status" | "completionPercentage" | "slippageTarget" | "slippageActual" | "slippageRevision" | "imageUrl" | "documentUrl" | "documentName" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
   export type ProjectInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
     activities?: boolean | Project$activitiesArgs<ExtArgs>
@@ -6670,6 +6715,9 @@ export namespace Prisma {
       description: string | null
       status: $Enums.ProjectStatus
       completionPercentage: number
+      slippageTarget: number | null
+      slippageActual: number | null
+      slippageRevision: number
       imageUrl: string | null
       documentUrl: string | null
       documentName: string | null
@@ -7146,6 +7194,9 @@ export namespace Prisma {
     readonly description: FieldRef<"Project", 'String'>
     readonly status: FieldRef<"Project", 'ProjectStatus'>
     readonly completionPercentage: FieldRef<"Project", 'Int'>
+    readonly slippageTarget: FieldRef<"Project", 'Float'>
+    readonly slippageActual: FieldRef<"Project", 'Float'>
+    readonly slippageRevision: FieldRef<"Project", 'Int'>
     readonly imageUrl: FieldRef<"Project", 'String'>
     readonly documentUrl: FieldRef<"Project", 'String'>
     readonly documentName: FieldRef<"Project", 'String'>
@@ -24752,6 +24803,9 @@ export namespace Prisma {
     description: 'description',
     status: 'status',
     completionPercentage: 'completionPercentage',
+    slippageTarget: 'slippageTarget',
+    slippageActual: 'slippageActual',
+    slippageRevision: 'slippageRevision',
     imageUrl: 'imageUrl',
     documentUrl: 'documentUrl',
     documentName: 'documentName',
@@ -25574,6 +25628,9 @@ export namespace Prisma {
     description?: StringNullableFilter<"Project"> | string | null
     status?: EnumProjectStatusFilter<"Project"> | $Enums.ProjectStatus
     completionPercentage?: IntFilter<"Project"> | number
+    slippageTarget?: FloatNullableFilter<"Project"> | number | null
+    slippageActual?: FloatNullableFilter<"Project"> | number | null
+    slippageRevision?: IntFilter<"Project"> | number
     imageUrl?: StringNullableFilter<"Project"> | string | null
     documentUrl?: StringNullableFilter<"Project"> | string | null
     documentName?: StringNullableFilter<"Project"> | string | null
@@ -25630,6 +25687,9 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     status?: SortOrder
     completionPercentage?: SortOrder
+    slippageTarget?: SortOrderInput | SortOrder
+    slippageActual?: SortOrderInput | SortOrder
+    slippageRevision?: SortOrder
     imageUrl?: SortOrderInput | SortOrder
     documentUrl?: SortOrderInput | SortOrder
     documentName?: SortOrderInput | SortOrder
@@ -25689,6 +25749,9 @@ export namespace Prisma {
     description?: StringNullableFilter<"Project"> | string | null
     status?: EnumProjectStatusFilter<"Project"> | $Enums.ProjectStatus
     completionPercentage?: IntFilter<"Project"> | number
+    slippageTarget?: FloatNullableFilter<"Project"> | number | null
+    slippageActual?: FloatNullableFilter<"Project"> | number | null
+    slippageRevision?: IntFilter<"Project"> | number
     imageUrl?: StringNullableFilter<"Project"> | string | null
     documentUrl?: StringNullableFilter<"Project"> | string | null
     documentName?: StringNullableFilter<"Project"> | string | null
@@ -25745,6 +25808,9 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     status?: SortOrder
     completionPercentage?: SortOrder
+    slippageTarget?: SortOrderInput | SortOrder
+    slippageActual?: SortOrderInput | SortOrder
+    slippageRevision?: SortOrder
     imageUrl?: SortOrderInput | SortOrder
     documentUrl?: SortOrderInput | SortOrder
     documentName?: SortOrderInput | SortOrder
@@ -25800,6 +25866,9 @@ export namespace Prisma {
     description?: StringNullableWithAggregatesFilter<"Project"> | string | null
     status?: EnumProjectStatusWithAggregatesFilter<"Project"> | $Enums.ProjectStatus
     completionPercentage?: IntWithAggregatesFilter<"Project"> | number
+    slippageTarget?: FloatNullableWithAggregatesFilter<"Project"> | number | null
+    slippageActual?: FloatNullableWithAggregatesFilter<"Project"> | number | null
+    slippageRevision?: IntWithAggregatesFilter<"Project"> | number
     imageUrl?: StringNullableWithAggregatesFilter<"Project"> | string | null
     documentUrl?: StringNullableWithAggregatesFilter<"Project"> | string | null
     documentName?: StringNullableWithAggregatesFilter<"Project"> | string | null
@@ -27232,6 +27301,9 @@ export namespace Prisma {
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
+    slippageTarget?: number | null
+    slippageActual?: number | null
+    slippageRevision?: number
     imageUrl?: string | null
     documentUrl?: string | null
     documentName?: string | null
@@ -27287,6 +27359,9 @@ export namespace Prisma {
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
+    slippageTarget?: number | null
+    slippageActual?: number | null
+    slippageRevision?: number
     imageUrl?: string | null
     documentUrl?: string | null
     documentName?: string | null
@@ -27342,6 +27417,9 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27397,6 +27475,9 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27452,6 +27533,9 @@ export namespace Prisma {
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
+    slippageTarget?: number | null
+    slippageActual?: number | null
+    slippageRevision?: number
     imageUrl?: string | null
     documentUrl?: string | null
     documentName?: string | null
@@ -27499,6 +27583,9 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27545,6 +27632,9 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -29228,6 +29318,9 @@ export namespace Prisma {
     description?: SortOrder
     status?: SortOrder
     completionPercentage?: SortOrder
+    slippageTarget?: SortOrder
+    slippageActual?: SortOrder
+    slippageRevision?: SortOrder
     imageUrl?: SortOrder
     documentUrl?: SortOrder
     documentName?: SortOrder
@@ -29249,6 +29342,9 @@ export namespace Prisma {
     latitude?: SortOrder
     longitude?: SortOrder
     completionPercentage?: SortOrder
+    slippageTarget?: SortOrder
+    slippageActual?: SortOrder
+    slippageRevision?: SortOrder
   }
 
   export type ProjectMaxOrderByAggregateInput = {
@@ -29290,6 +29386,9 @@ export namespace Prisma {
     description?: SortOrder
     status?: SortOrder
     completionPercentage?: SortOrder
+    slippageTarget?: SortOrder
+    slippageActual?: SortOrder
+    slippageRevision?: SortOrder
     imageUrl?: SortOrder
     documentUrl?: SortOrder
     documentName?: SortOrder
@@ -29337,6 +29436,9 @@ export namespace Prisma {
     description?: SortOrder
     status?: SortOrder
     completionPercentage?: SortOrder
+    slippageTarget?: SortOrder
+    slippageActual?: SortOrder
+    slippageRevision?: SortOrder
     imageUrl?: SortOrder
     documentUrl?: SortOrder
     documentName?: SortOrder
@@ -29358,6 +29460,9 @@ export namespace Prisma {
     latitude?: SortOrder
     longitude?: SortOrder
     completionPercentage?: SortOrder
+    slippageTarget?: SortOrder
+    slippageActual?: SortOrder
+    slippageRevision?: SortOrder
   }
 
   export type EnumProjectAccountNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -32650,6 +32755,9 @@ export namespace Prisma {
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
+    slippageTarget?: number | null
+    slippageActual?: number | null
+    slippageRevision?: number
     imageUrl?: string | null
     documentUrl?: string | null
     documentName?: string | null
@@ -32704,6 +32812,9 @@ export namespace Prisma {
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
+    slippageTarget?: number | null
+    slippageActual?: number | null
+    slippageRevision?: number
     imageUrl?: string | null
     documentUrl?: string | null
     documentName?: string | null
@@ -33316,6 +33427,9 @@ export namespace Prisma {
     description?: StringNullableFilter<"Project"> | string | null
     status?: EnumProjectStatusFilter<"Project"> | $Enums.ProjectStatus
     completionPercentage?: IntFilter<"Project"> | number
+    slippageTarget?: FloatNullableFilter<"Project"> | number | null
+    slippageActual?: FloatNullableFilter<"Project"> | number | null
+    slippageRevision?: IntFilter<"Project"> | number
     imageUrl?: StringNullableFilter<"Project"> | string | null
     documentUrl?: StringNullableFilter<"Project"> | string | null
     documentName?: StringNullableFilter<"Project"> | string | null
@@ -34522,6 +34636,9 @@ export namespace Prisma {
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
+    slippageTarget?: number | null
+    slippageActual?: number | null
+    slippageRevision?: number
     imageUrl?: string | null
     documentUrl?: string | null
     documentName?: string | null
@@ -34576,6 +34693,9 @@ export namespace Prisma {
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
+    slippageTarget?: number | null
+    slippageActual?: number | null
+    slippageRevision?: number
     imageUrl?: string | null
     documentUrl?: string | null
     documentName?: string | null
@@ -34723,6 +34843,9 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34777,6 +34900,9 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34914,6 +35040,9 @@ export namespace Prisma {
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
+    slippageTarget?: number | null
+    slippageActual?: number | null
+    slippageRevision?: number
     imageUrl?: string | null
     documentUrl?: string | null
     documentName?: string | null
@@ -34968,6 +35097,9 @@ export namespace Prisma {
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
+    slippageTarget?: number | null
+    slippageActual?: number | null
+    slippageRevision?: number
     imageUrl?: string | null
     documentUrl?: string | null
     documentName?: string | null
@@ -35115,6 +35247,9 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35169,6 +35304,9 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35306,6 +35444,9 @@ export namespace Prisma {
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
+    slippageTarget?: number | null
+    slippageActual?: number | null
+    slippageRevision?: number
     imageUrl?: string | null
     documentUrl?: string | null
     documentName?: string | null
@@ -35360,6 +35501,9 @@ export namespace Prisma {
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
+    slippageTarget?: number | null
+    slippageActual?: number | null
+    slippageRevision?: number
     imageUrl?: string | null
     documentUrl?: string | null
     documentName?: string | null
@@ -35507,6 +35651,9 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35561,6 +35708,9 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35698,6 +35848,9 @@ export namespace Prisma {
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
+    slippageTarget?: number | null
+    slippageActual?: number | null
+    slippageRevision?: number
     imageUrl?: string | null
     documentUrl?: string | null
     documentName?: string | null
@@ -35752,6 +35905,9 @@ export namespace Prisma {
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
+    slippageTarget?: number | null
+    slippageActual?: number | null
+    slippageRevision?: number
     imageUrl?: string | null
     documentUrl?: string | null
     documentName?: string | null
@@ -35899,6 +36055,9 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35953,6 +36112,9 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36570,6 +36732,9 @@ export namespace Prisma {
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
+    slippageTarget?: number | null
+    slippageActual?: number | null
+    slippageRevision?: number
     imageUrl?: string | null
     documentUrl?: string | null
     documentName?: string | null
@@ -36624,6 +36789,9 @@ export namespace Prisma {
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
+    slippageTarget?: number | null
+    slippageActual?: number | null
+    slippageRevision?: number
     imageUrl?: string | null
     documentUrl?: string | null
     documentName?: string | null
@@ -36771,6 +36939,9 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36825,6 +36996,9 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36962,6 +37136,9 @@ export namespace Prisma {
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
+    slippageTarget?: number | null
+    slippageActual?: number | null
+    slippageRevision?: number
     imageUrl?: string | null
     documentUrl?: string | null
     documentName?: string | null
@@ -37016,6 +37193,9 @@ export namespace Prisma {
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
+    slippageTarget?: number | null
+    slippageActual?: number | null
+    slippageRevision?: number
     imageUrl?: string | null
     documentUrl?: string | null
     documentName?: string | null
@@ -37268,6 +37448,9 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -37322,6 +37505,9 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -38051,6 +38237,9 @@ export namespace Prisma {
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
+    slippageTarget?: number | null
+    slippageActual?: number | null
+    slippageRevision?: number
     imageUrl?: string | null
     documentUrl?: string | null
     documentName?: string | null
@@ -38105,6 +38294,9 @@ export namespace Prisma {
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
+    slippageTarget?: number | null
+    slippageActual?: number | null
+    slippageRevision?: number
     imageUrl?: string | null
     documentUrl?: string | null
     documentName?: string | null
@@ -38288,6 +38480,9 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -38342,6 +38537,9 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -38495,6 +38693,9 @@ export namespace Prisma {
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
+    slippageTarget?: number | null
+    slippageActual?: number | null
+    slippageRevision?: number
     imageUrl?: string | null
     documentUrl?: string | null
     documentName?: string | null
@@ -38549,6 +38750,9 @@ export namespace Prisma {
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
+    slippageTarget?: number | null
+    slippageActual?: number | null
+    slippageRevision?: number
     imageUrl?: string | null
     documentUrl?: string | null
     documentName?: string | null
@@ -38800,6 +39004,9 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -38854,6 +39061,9 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39274,6 +39484,9 @@ export namespace Prisma {
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
+    slippageTarget?: number | null
+    slippageActual?: number | null
+    slippageRevision?: number
     imageUrl?: string | null
     documentUrl?: string | null
     documentName?: string | null
@@ -39507,6 +39720,9 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39561,6 +39777,9 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39615,6 +39834,9 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
