@@ -214,14 +214,31 @@ export default function ProjectsDataListPage() {
   const [statusFilter, setStatusFilter] = useState("");
   const [cardYearFilter, setCardYearFilter] = useState("");
   const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 10;
 
+  const utils = api.useUtils();
   const { data: projects, isLoading } = api.project.getAll.useQuery();
   const statsInput = cardYearFilter ? { budgetYear: cardYearFilter } : undefined;
   const { data: stats } = api.project.getStats.useQuery(statsInput);
   const { data: financial } = api.project.getFinancialOverview.useQuery(statsInput);
   const { data: budgetYears } = api.project.getBudgetYears.useQuery();
+
+  const deleteProject = api.project.delete.useMutation({
+    onSuccess: () => {
+      void utils.project.getAll.invalidate();
+      void utils.project.getStats.invalidate();
+      void utils.project.getFinancialOverview.invalidate();
+      void utils.project.getBudgetYears.invalidate();
+      setDeleteTarget(null);
+      setDeleteError(null);
+    },
+    onError: (err) => {
+      setDeleteError(err.message ?? "Failed to delete project.");
+    },
+  });
 
   const availableYears = budgetYears ?? [];
 
@@ -1025,29 +1042,53 @@ export default function ProjectsDataListPage() {
                     </td>
                     <td className="px-4 py-3 text-gray-600">{project.budgetYear ?? "—"}</td>
                     <td className="px-4 py-3">
-                      <button
-                        onClick={() =>
-                          router.push(
-                            `/super-admin/projects-data-list/${project.id}?id=${userId}`,
-                          )
-                        }
-                        className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-blue-700"
-                      >
-                        <svg
-                          className="h-3.5 w-3.5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={2}
-                          stroke="currentColor"
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() =>
+                            router.push(
+                              `/super-admin/projects-data-list/${project.id}?id=${userId}`,
+                            )
+                          }
+                          className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-blue-700"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125"
-                          />
-                        </svg>
-                        Override
-                      </button>
+                          <svg
+                            className="h-3.5 w-3.5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={2}
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125"
+                            />
+                          </svg>
+                          Override
+                        </button>
+                        <button
+                          onClick={() => {
+                            setDeleteTarget({ id: project.id, title: project.title });
+                            setDeleteError(null);
+                          }}
+                          className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-100"
+                        >
+                          <svg
+                            className="h-3.5 w-3.5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={2}
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                            />
+                          </svg>
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -1111,6 +1152,124 @@ export default function ProjectsDataListPage() {
         fileName="projects-data-list-report"
         reportTitle="Projects Data List Report"
       />
+
+      <DeleteProjectConfirmModal
+        open={!!deleteTarget}
+        projectTitle={deleteTarget?.title}
+        error={deleteError}
+        isDeleting={deleteProject.isPending}
+        onCancel={() => {
+          if (deleteProject.isPending) return;
+          setDeleteTarget(null);
+          setDeleteError(null);
+        }}
+        onConfirm={() => {
+          if (deleteTarget) deleteProject.mutate({ id: deleteTarget.id });
+        }}
+      />
     </>
+  );
+}
+
+function DeleteProjectConfirmModal({
+  open,
+  projectTitle,
+  error,
+  isDeleting,
+  onCancel,
+  onConfirm,
+}: {
+  open: boolean;
+  projectTitle?: string;
+  error: string | null;
+  isDeleting: boolean;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        onClick={onCancel}
+      />
+      <div className="relative mx-4 w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl">
+        <div className="flex items-start gap-4 px-6 pt-6 pb-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-100">
+            <svg
+              className="h-6 w-6 text-red-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
+              />
+            </svg>
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-bold text-gray-900">Delete Project</h3>
+            <p className="mt-1 text-sm text-gray-600">
+              Are you sure you want to delete
+              {projectTitle ? (
+                <>
+                  {" "}
+                  <span className="font-semibold text-gray-900">{projectTitle}</span>
+                </>
+              ) : (
+                " this project"
+              )}
+              ? This action cannot be undone and all associated data will be permanently removed.
+            </p>
+          </div>
+        </div>
+
+        {error && (
+          <div className="mx-6 mb-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            {error}
+          </div>
+        )}
+
+        <div className="flex items-center justify-end gap-2 border-t border-gray-100 bg-gray-50 px-6 py-4">
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={isDeleting}
+            className="cursor-pointer rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            disabled={isDeleting}
+            className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isDeleting && (
+              <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                />
+              </svg>
+            )}
+            {isDeleting ? "Deleting..." : "Delete Project"}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }

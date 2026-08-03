@@ -148,7 +148,6 @@ export const ProjectDetail = ({ projectId }: Props) => {
   const projectAccountLabel = project.projectAccount
     ? (PROJECT_ACCOUNT_LABEL[project.projectAccount] ?? project.projectAccount)
     : "—";
-
   const districtLabel = project.district
     ? (DISTRICT_LABEL[project.district] ?? project.district)
     : "—";
