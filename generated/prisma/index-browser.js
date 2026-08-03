@@ -184,6 +184,8 @@ exports.Prisma.ProjectScalarFieldEnum = {
   barangay: 'barangay',
   purok: 'purok',
   sitio: 'sitio',
+  latitude: 'latitude',
+  longitude: 'longitude',
   description: 'description',
   status: 'status',
   completionPercentage: 'completionPercentage',

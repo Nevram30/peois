@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { api } from "~/trpc/react";
 import { useUploadThing } from "~/lib/uploadthing";
 import {
@@ -33,6 +33,8 @@ const inputClass =
   "block w-full rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none";
 const labelClass =
   "mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-gray-500";
+// Identity & Status uses larger sentence-case labels (see the card's design).
+const fieldLabelClass = "mb-1.5 block text-sm font-bold text-gray-600";
 const cardClass = "rounded-sm border border-gray-200 bg-white shadow-sm";
 const errorRingClass =
   "border-red-400 focus:border-red-500 focus:ring-red-500/20";
@@ -188,6 +190,52 @@ const FolderIcon = (
     <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
   </svg>
 );
+const GlobeIcon = (
+  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.949 8.949 0 0 0 4.951-1.488A3.987 3.987 0 0 0 13 16h-2a3.987 3.987 0 0 0-3.951 3.512A8.949 8.949 0 0 0 12 21Zm3-11.25a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+  </svg>
+);
+const SearchIcon = (
+  <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+  </svg>
+);
+const CrosshairIcon = (
+  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m0 13.5V21m9-9h-2.25M5.25 12H3m15 0a6 6 0 1 1-12 0 6 6 0 0 1 12 0Zm-3.75 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+  </svg>
+);
+const ExternalLinkIcon = (
+  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+  </svg>
+);
+const MapPlaceholderIcon = (
+  <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
+  </svg>
+);
+
+// ─── Geocoding ────────────────────────────────────────────────────────────
+// Free-form place search is served by OpenStreetMap's Nominatim endpoint —
+// no API key and no extra dependency, in exchange for a strict usage policy
+// (see the debounce in the search effect below).
+type GeoResult = {
+  place_id: number;
+  display_name: string;
+  lat: string;
+  lon: string;
+};
+
+// Returns null for anything that is not a usable coordinate, so a half-typed
+// value ("-", "125.") simply reads as "no pin yet" instead of NaN.
+const parseCoord = (value: string, max: number) => {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  const parsed = Number(trimmed);
+  if (!Number.isFinite(parsed) || Math.abs(parsed) > max) return null;
+  return parsed;
+};
 
 export const AddProjectForm = () => {
   const router = useRouter();
@@ -210,6 +258,20 @@ export const AddProjectForm = () => {
   const [barangay, setBarangay] = useState("");
   const [purok, setPurok] = useState("");
   const [sitio, setSitio] = useState("");
+
+  // ── Geospatial Data ──────────────────────────────────────────────────
+  // Coordinates live as strings so a partially typed value survives editing.
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
+  const [mapQuery, setMapQuery] = useState("");
+  const [mapResults, setMapResults] = useState<GeoResult[]>([]);
+  const [isSearchingMap, setIsSearchingMap] = useState(false);
+  const [mapSearchMessage, setMapSearchMessage] = useState<string | null>(null);
+  const [isLocating, setIsLocating] = useState(false);
+  const [geoError, setGeoError] = useState<string | null>(null);
+  // Picking a result writes its full name back into the search box; this flag
+  // stops that write from triggering another lookup.
+  const skipNextGeoSearch = useRef(false);
 
   // ── Funding Information ──────────────────────────────────────────────
   const [sourceOfFund, setSourceOfFund] = useState<SourceOfFundValue | "">("");
@@ -278,6 +340,11 @@ export const AddProjectForm = () => {
 
   const totalWorkforce = numFemale + numMale;
 
+  const progressValue = Math.max(
+    0,
+    Math.min(100, parseInt(completionPercentage) || 0),
+  );
+
   const availableMunicipalities = useMemo(
     () => getMunicipalitiesByDistrict(district as "DISTRICT_I" | "DISTRICT_II" | ""),
     [district],
@@ -286,6 +353,110 @@ export const AddProjectForm = () => {
     () => getBarangaysByMunicipality(cityMunicipality),
     [cityMunicipality],
   );
+
+  // ── Geospatial derived values ────────────────────────────────────────
+  const parsedLat = useMemo(() => parseCoord(latitude, 90), [latitude]);
+  const parsedLng = useMemo(() => parseCoord(longitude, 180), [longitude]);
+
+  const mapEmbedSrc = useMemo(() => {
+    if (parsedLat === null || parsedLng === null) return null;
+    // ~1 km viewport around the pin.
+    const pad = 0.01;
+    const bbox = [
+      parsedLng - pad,
+      parsedLat - pad,
+      parsedLng + pad,
+      parsedLat + pad,
+    ].join(",");
+    return `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${parsedLat},${parsedLng}`;
+  }, [parsedLat, parsedLng]);
+
+  const fullMapHref =
+    parsedLat !== null && parsedLng !== null
+      ? `https://www.openstreetmap.org/?mlat=${parsedLat}&mlon=${parsedLng}#map=16/${parsedLat}/${parsedLng}`
+      : null;
+
+  // Place search. Debounced and aborted on every keystroke to stay inside the
+  // Nominatim usage policy (max one request per second).
+  useEffect(() => {
+    if (skipNextGeoSearch.current) {
+      skipNextGeoSearch.current = false;
+      return;
+    }
+    const query = mapQuery.trim();
+    if (query.length < 3) {
+      setMapResults([]);
+      setMapSearchMessage(null);
+      return;
+    }
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => {
+      setIsSearchingMap(true);
+      void fetch(
+        `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&countrycodes=ph&q=${encodeURIComponent(query)}`,
+        { signal: controller.signal, headers: { Accept: "application/json" } },
+      )
+        .then((res) => {
+          if (!res.ok) throw new Error("Search request failed");
+          return res.json() as Promise<GeoResult[]>;
+        })
+        .then((results) => {
+          setMapResults(results);
+          setMapSearchMessage(
+            results.length === 0 ? "No matching place found." : null,
+          );
+        })
+        .catch(() => {
+          if (controller.signal.aborted) return;
+          setMapResults([]);
+          setMapSearchMessage(
+            "Map search is unavailable. Enter the coordinates manually.",
+          );
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) setIsSearchingMap(false);
+        });
+    }, 600);
+
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [mapQuery]);
+
+  const applyGeoResult = (result: GeoResult) => {
+    skipNextGeoSearch.current = true;
+    setLatitude(Number(result.lat).toFixed(6));
+    setLongitude(Number(result.lon).toFixed(6));
+    setMapQuery(result.display_name);
+    setMapResults([]);
+    setMapSearchMessage(null);
+    setGeoError(null);
+  };
+
+  const handleUseMyLocation = () => {
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      setGeoError("Location services are not available in this browser.");
+      return;
+    }
+    setIsLocating(true);
+    setGeoError(null);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLatitude(position.coords.latitude.toFixed(6));
+        setLongitude(position.coords.longitude.toFixed(6));
+        setIsLocating(false);
+      },
+      () => {
+        setGeoError(
+          "Could not read your location. Allow location access or type the coordinates.",
+        );
+        setIsLocating(false);
+      },
+      { enableHighAccuracy: true, timeout: 10_000 },
+    );
+  };
   // Programs / Projects / LBP-TL numbers registered by a super admin.
   const { data: customOptions } = api.fundingOption.getAll.useQuery();
   // Cascade: Source of Fund → Program → Project. Both lists are the built-in
@@ -454,6 +625,9 @@ export const AddProjectForm = () => {
       barangay: !barangay,
       purok: !purok.trim(),
       sitio: !sitio.trim(),
+      // The pin itself is optional, but a typed-in coordinate must be valid.
+      latitude: latitude.trim() !== "" && parsedLat === null,
+      longitude: longitude.trim() !== "" && parsedLng === null,
       sourceOfFund: !sourceOfFund,
       program: availablePrograms.length > 0 && !program,
       subType: availableSubTypes.length > 0 && !subType,
@@ -481,6 +655,10 @@ export const AddProjectForm = () => {
       barangay,
       purok,
       sitio,
+      latitude,
+      parsedLat,
+      longitude,
+      parsedLng,
       sourceOfFund,
       program,
       availablePrograms,
@@ -505,6 +683,7 @@ export const AddProjectForm = () => {
       setShowErrors(true);
       return;
     }
+
     createProject.mutate({
       title,
       subType: subType || null,
@@ -537,6 +716,8 @@ export const AddProjectForm = () => {
       barangay: barangay || undefined,
       purok: purok || undefined,
       sitio: sitio || undefined,
+      latitude: parsedLat,
+      longitude: parsedLng,
       description: description || undefined,
       status: isDraft ? "NOT_YET_STARTED" : status,
       imageUrl: imageUrl || undefined,
@@ -575,9 +756,9 @@ export const AddProjectForm = () => {
           {/* Project Identity & Status */}
           <section className={`${cardClass} lg:col-span-2`}>
             <SectionHeader icon={InfoIcon} title="Project Identity & Status" />
-            <div className="flex flex-col gap-5 p-5 sm:flex-row">
-              {/* Image uploader (square) */}
-              <div className="shrink-0">
+            <div className="space-y-4 p-5">
+              {/* Project image — full-width banner */}
+              <div>
                 <div
                   onClick={() => imageInputRef.current?.click()}
                   onDragOver={(e) => e.preventDefault()}
@@ -586,7 +767,7 @@ export const AddProjectForm = () => {
                     const file = e.dataTransfer.files[0];
                     if (file) void handleImageChange(file);
                   }}
-                  className="group flex h-64 w-64 cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden rounded-lg border-2 border-dashed border-gray-200 bg-gray-50 transition hover:border-blue-300 hover:bg-blue-50"
+                  className="group relative flex aspect-video w-full cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 transition hover:border-blue-300 hover:bg-blue-50"
                 >
                   {imagePreview ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -602,6 +783,11 @@ export const AddProjectForm = () => {
                       </span>
                     </>
                   )}
+                  {trackingNumber && (
+                    <span className="absolute top-3 left-3 rounded-md bg-gray-900/90 px-3 py-1.5 text-[10px] font-bold tracking-wider text-white">
+                      #{trackingNumber}
+                    </span>
+                  )}
                   <input
                     ref={imageInputRef}
                     type="file"
@@ -613,147 +799,143 @@ export const AddProjectForm = () => {
                     }}
                   />
                 </div>
-                {trackingNumber && (
-                  <div className="mt-2 rounded-md bg-gray-900 px-3 py-1.5 text-center text-[10px] font-bold tracking-wider text-white">
-                    #{trackingNumber}
-                  </div>
-                )}
                 {isUploadingImage && (
-                  <p className="mt-1 text-center text-[10px] text-blue-500">Uploading...</p>
+                  <p className="mt-1.5 text-[10px] text-blue-500">Uploading...</p>
                 )}
                 {imageUploadError && (
-                  <p className="mt-1 text-center text-[10px] text-red-500">{imageUploadError}</p>
+                  <p className="mt-1.5 text-[10px] text-red-500">{imageUploadError}</p>
                 )}
                 {showErrors && fieldErrors.image && (
-                  <p className="mt-1 text-center text-xs text-red-500">Project image is required</p>
+                  <p className="mt-1.5 text-xs text-red-500">Project image is required</p>
                 )}
               </div>
 
-              {/* Right: fields */}
-              <div className="flex-1 space-y-3">
+              <div>
+                <label className={fieldLabelClass}>Project Title <span className="text-red-500">*</span></label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Enter project title"
+                  className={`${inputClass} ${showErrors && fieldErrors.title ? errorRingClass : ""}`}
+                />
+                <FieldError show={showErrors && fieldErrors.title} />
+              </div>
+
+              <div className="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2">
                 <div>
-                  <label className={labelClass}>Project Title <span className="text-red-500">*</span></label>
-                  <input
-                    type="text"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Enter project title"
-                    className={`${inputClass} ${showErrors && fieldErrors.title ? errorRingClass : ""}`}
-                  />
-                  <FieldError show={showErrors && fieldErrors.title} />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className={labelClass}>Project Cost <span className="text-red-500">*</span></label>
-                    <div className="relative">
-                      <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">₱</span>
-                      <input
-                        type="text"
-                        inputMode="decimal"
-                        value={projectCost}
-                        onChange={(e) => handleCostChange(setProjectCost, e.target.value)}
-                        onFocus={() => setProjectCost(projectCost.replace(/,/g, ""))}
-                        onBlur={() => handleCostBlur(projectCost, setProjectCost)}
-                        className={`${inputClass} pl-7 ${showErrors && fieldErrors.projectCost ? errorRingClass : ""}`}
-                      />
-                    </div>
-                    <FieldError
-                      show={showErrors && fieldErrors.projectCost}
-                      message="Project cost must be greater than 0"
-                    />
-                  </div>
-                  {/* Contract Cost field hidden from UI per request — kept in code for state/submission logic */}
-                  {/* <div>
-                    <label className={labelClass}>Contract Cost</label>
-                    <div className="relative">
-                      <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">₱</span>
-                      <input
-                        type="text"
-                        inputMode="decimal"
-                        value={contractCost}
-                        onChange={(e) => handleCostChange(setContractCost, e.target.value)}
-                        onFocus={() => setContractCost(contractCost.replace(/,/g, ""))}
-                        onBlur={() => handleCostBlur(contractCost, setContractCost)}
-                        className={`${inputClass} pl-7`}
-                      />
-                    </div>
-                  </div> */}
-                  <div>
-                    <label className={labelClass}>Current Status</label>
-                    <select
-                      value={status}
-                      onChange={(e) => setStatus(e.target.value as ProjectStatusValue)}
-                      className={inputClass}
-                    >
-                      {PROJECT_STATUS_ORDER.filter((s) => s !== "NOT_YET_STARTED").map((s) => (
-                        <option key={s} value={s}>{PROJECT_STATUS_LABEL[s]}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className={labelClass}>Track Number <span className="text-red-500">*</span></label>
+                  <label className={fieldLabelClass}>Project Cost <span className="text-red-500">*</span></label>
+                  <div className="relative">
+                    <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm text-gray-500">₱</span>
                     <input
                       type="text"
-                      value={trackingNumber}
-                      onChange={(e) => setTrackingNumber(e.target.value)}
-                      placeholder="PEO-2025-XXXXX"
-                      className={`${inputClass} ${showErrors && fieldErrors.trackingNumber ? errorRingClass : ""}`}
-                    />
-                    <FieldError show={showErrors && fieldErrors.trackingNumber} />
-                  </div>
-                  <div>
-                    <label className={labelClass}>Implementation Mode <span className="text-red-500">*</span></label>
-                    <select
-                      required
-                      value={modeOfImplementation}
-                      onChange={(e) => {
-                        setModeOfImplementation(e.target.value);
-                        if (e.target.value !== "BY_CONTRACT") setContractorName("");
-                      }}
-                      className={`${inputClass} ${showErrors && fieldErrors.modeOfImplementation ? errorRingClass : ""}`}
-                    >
-                      <option value="">Select Mode</option>
-                      <option value="BY_ADMINISTRATION">By Administration</option>
-                      <option value="BY_CONTRACT">By Contract</option>
-                    </select>
-                    <FieldError show={showErrors && fieldErrors.modeOfImplementation} />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  {modeOfImplementation === "BY_CONTRACT" ? (
-                    <div>
-                      <label className={labelClass}>Contractor Name <span className="text-red-500">*</span></label>
-                      <input
-                        type="text"
-                        value={contractorName}
-                        onChange={(e) => setContractorName(e.target.value)}
-                        placeholder="Enter contractor name"
-                        className={`${inputClass} ${showErrors && fieldErrors.contractorName ? errorRingClass : ""}`}
-                      />
-                      <FieldError show={showErrors && fieldErrors.contractorName} />
-                    </div>
-                  ) : (
-                    <div />
-                  )}
-                  <div>
-                    <div className="mb-1 flex items-center justify-between">
-                      <label className={labelClass}>Physical Progress</label>
-                      <span className="text-xs font-semibold text-gray-400">
-                        ({Math.max(0, Math.min(100, parseInt(completionPercentage) || 0))}%)
-                      </span>
-                    </div>
-                    <input
-                      type="range"
-                      min={0}
-                      max={100}
-                      value={Math.max(0, Math.min(100, parseInt(completionPercentage) || 0))}
-                      onChange={(e) => setCompletionPercentage(e.target.value)}
-                      className="h-2.5 w-full cursor-pointer appearance-none rounded-full bg-gray-100 accent-blue-900"
+                      inputMode="decimal"
+                      value={projectCost}
+                      onChange={(e) => handleCostChange(setProjectCost, e.target.value)}
+                      onFocus={() => setProjectCost(projectCost.replace(/,/g, ""))}
+                      onBlur={() => handleCostBlur(projectCost, setProjectCost)}
+                      className={`${inputClass} pl-7 ${showErrors && fieldErrors.projectCost ? errorRingClass : ""}`}
                     />
                   </div>
+                  <FieldError
+                    show={showErrors && fieldErrors.projectCost}
+                    message="Project cost must be greater than 0"
+                  />
                 </div>
+                {/* Contract Cost field hidden from UI per request — kept in code for state/submission logic */}
+                {/* As Per Plan mirrors the Target Completion Date entered in the
+                    Project Timeline card; read-only so there is one source. */}
+                <div>
+                  <label className={fieldLabelClass}>As Per Plan</label>
+                  <div
+                    className={`${inputClass} truncate ${targetCompletionDate ? "text-gray-900" : "text-gray-400"}`}
+                  >
+                    {targetCompletionDate
+                      ? fmtInputDate(targetCompletionDate)
+                      : "Set in Project Timeline"}
+                  </div>
+                </div>
+                <div>
+                  <label className={fieldLabelClass}>Current Status</label>
+                  <select
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value as ProjectStatusValue)}
+                    className={inputClass}
+                  >
+                    {PROJECT_STATUS_ORDER.filter((s) => s !== "NOT_YET_STARTED").map((s) => (
+                      <option key={s} value={s}>{PROJECT_STATUS_LABEL[s]}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className={fieldLabelClass}>Project I.D. <span className="text-red-500">*</span></label>
+                  <input
+                    type="text"
+                    value={trackingNumber}
+                    onChange={(e) => setTrackingNumber(e.target.value)}
+                    placeholder="PEO-2025-XXXXX"
+                    className={`${inputClass} ${showErrors && fieldErrors.trackingNumber ? errorRingClass : ""}`}
+                  />
+                  <FieldError show={showErrors && fieldErrors.trackingNumber} />
+                </div>
+                <div>
+                  <label className={fieldLabelClass}>Implementation Mode <span className="text-red-500">*</span></label>
+                  <select
+                    required
+                    value={modeOfImplementation}
+                    onChange={(e) => {
+                      setModeOfImplementation(e.target.value);
+                      if (e.target.value !== "BY_CONTRACT") setContractorName("");
+                    }}
+                    className={`${inputClass} ${showErrors && fieldErrors.modeOfImplementation ? errorRingClass : ""}`}
+                  >
+                    <option value="">Select Mode</option>
+                    <option value="BY_ADMINISTRATION">By Administration</option>
+                    <option value="BY_CONTRACT">By Contract</option>
+                  </select>
+                  <FieldError show={showErrors && fieldErrors.modeOfImplementation} />
+                </div>
+                {/* Contractor Name keeps its slot next to the mode and is only
+                    enabled — and only required — for By Contract projects. */}
+                <div>
+                  <label className={fieldLabelClass}>
+                    Contractor Name
+                    {modeOfImplementation === "BY_CONTRACT" && (
+                      <span className="text-red-500"> *</span>
+                    )}
+                  </label>
+                  <input
+                    type="text"
+                    value={contractorName}
+                    onChange={(e) => setContractorName(e.target.value)}
+                    disabled={modeOfImplementation !== "BY_CONTRACT"}
+                    placeholder={
+                      modeOfImplementation === "BY_CONTRACT"
+                        ? "Enter contractor name"
+                        : "For By Contract projects only"
+                    }
+                    className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400 ${showErrors && fieldErrors.contractorName ? errorRingClass : ""}`}
+                  />
+                  <FieldError show={showErrors && fieldErrors.contractorName} />
+                </div>
+              </div>
+
+              <div>
+                <div className="mb-2 flex items-center justify-between">
+                  <label className="text-sm font-bold text-gray-600">Physical Progress</label>
+                  <span className="text-xs font-bold text-gray-400">{progressValue}%</span>
+                </div>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={progressValue}
+                  onChange={(e) => setCompletionPercentage(e.target.value)}
+                  style={{
+                    background: `linear-gradient(to right, var(--color-blue-700) ${progressValue}%, var(--color-gray-200) ${progressValue}%)`,
+                  }}
+                  className="h-2.5 w-full cursor-pointer appearance-none rounded-full [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:cursor-grab [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-blue-700 [&::-moz-range-thumb]:bg-white [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:cursor-grab [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-700 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-sm"
+                />
               </div>
             </div>
           </section>
@@ -845,6 +1027,141 @@ export const AddProjectForm = () => {
                     className={`${inputClass} ${showErrors && fieldErrors.sitio ? errorRingClass : ""}`}
                   />
                   <FieldError show={showErrors && fieldErrors.sitio} />
+                </div>
+              </div>
+
+              {/* ── Geospatial Data ──────────────────────────────────── */}
+              <div className="space-y-3 border-t border-gray-100 pt-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-blue-500">{GlobeIcon}</span>
+                  <span className="text-xs font-bold uppercase tracking-widest text-gray-700">
+                    Geospatial Data
+                  </span>
+                </div>
+
+                {/* Place search */}
+                <div className="relative">
+                  <span className="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-gray-400">
+                    {SearchIcon}
+                  </span>
+                  <input
+                    type="text"
+                    value={mapQuery}
+                    onChange={(e) => setMapQuery(e.target.value)}
+                    placeholder="Search on map..."
+                    autoComplete="off"
+                    className={`${inputClass} pl-11`}
+                  />
+                  {isSearchingMap && (
+                    <span className="absolute inset-y-0 right-3.5 flex items-center">
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-gray-200 border-t-blue-500" />
+                    </span>
+                  )}
+                  {mapResults.length > 0 && (
+                    <ul className="absolute z-20 mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
+                      {mapResults.map((result) => (
+                        <li key={result.place_id}>
+                          <button
+                            type="button"
+                            onClick={() => applyGeoResult(result)}
+                            className="flex w-full items-start gap-2 px-3 py-2 text-left text-xs text-gray-700 hover:bg-blue-50"
+                          >
+                            <span className="mt-0.5 shrink-0 text-blue-400">
+                              {PinIcon}
+                            </span>
+                            <span className="line-clamp-2">{result.display_name}</span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {mapSearchMessage && (
+                    <p className="mt-1 text-xs text-gray-400">{mapSearchMessage}</p>
+                  )}
+                </div>
+
+                {/* Coordinates + current location */}
+                <div className="flex items-start gap-3">
+                  <div className="flex-1">
+                    <label className={labelClass}>Latitude</label>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={latitude}
+                      onChange={(e) => setLatitude(e.target.value)}
+                      placeholder="7.4478"
+                      className={`${inputClass} ${showErrors && fieldErrors.latitude ? errorRingClass : ""}`}
+                    />
+                    <FieldError
+                      show={showErrors && fieldErrors.latitude}
+                      message="Enter a value between -90 and 90"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label className={labelClass}>Longitude</label>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={longitude}
+                      onChange={(e) => setLongitude(e.target.value)}
+                      placeholder="125.8078"
+                      className={`${inputClass} ${showErrors && fieldErrors.longitude ? errorRingClass : ""}`}
+                    />
+                    <FieldError
+                      show={showErrors && fieldErrors.longitude}
+                      message="Enter a value between -180 and 180"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleUseMyLocation}
+                    disabled={isLocating}
+                    title="Use my current location"
+                    aria-label="Use my current location"
+                    className="mt-5.5 flex h-10.5 w-11.5 shrink-0 items-center justify-center rounded-lg border border-blue-200 bg-blue-50 text-blue-600 shadow-sm transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {isLocating ? (
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-blue-200 border-t-blue-600" />
+                    ) : (
+                      CrosshairIcon
+                    )}
+                  </button>
+                </div>
+
+                {geoError && <p className="text-xs text-red-500">{geoError}</p>}
+
+                {/* Map preview */}
+                <div className="relative h-52 overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
+                  {mapEmbedSrc ? (
+                    <iframe
+                      key={mapEmbedSrc}
+                      src={mapEmbedSrc}
+                      title="Project location map preview"
+                      loading="lazy"
+                      className="h-full w-full border-0"
+                    />
+                  ) : (
+                    <div className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center text-gray-400">
+                      {MapPlaceholderIcon}
+                      <p className="text-[11px] font-semibold uppercase tracking-widest">
+                        Map Preview
+                      </p>
+                      <p className="text-xs">
+                        Search for a place or enter coordinates to drop a pin.
+                      </p>
+                    </div>
+                  )}
+                  {fullMapHref && (
+                    <a
+                      href={fullMapHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="absolute right-3 bottom-3 flex items-center gap-1.5 rounded-md bg-white/95 px-3 py-2 text-[11px] font-bold uppercase tracking-widest text-gray-700 shadow-md transition hover:bg-white hover:text-blue-600"
+                    >
+                      <span className="text-blue-500">{ExternalLinkIcon}</span>
+                      Full View
+                    </a>
+                  )}
                 </div>
               </div>
             </div>

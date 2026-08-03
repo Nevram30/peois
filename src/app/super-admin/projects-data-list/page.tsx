@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "~/trpc/react";
 import { GenerateReportModal } from "~/app/_components/generate-report-modal";
@@ -203,6 +203,7 @@ function DonutChart({
 export default function ProjectsDataListPage() {
   const searchParams = useSearchParams();
   const userId = searchParams.get("id");
+
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [districtFilter, setDistrictFilter] = useState("");
@@ -214,12 +215,17 @@ export default function ProjectsDataListPage() {
   const [statusFilter, setStatusFilter] = useState("");
   const [cardYearFilter, setCardYearFilter] = useState("");
   const [reportModalOpen, setReportModalOpen] = useState(false);
-  const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{
+    id: string;
+    title: string;
+    projectId: string;
+  } | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 10;
 
   const utils = api.useUtils();
+
   const { data: projects, isLoading } = api.project.getAll.useQuery();
   const statsInput = cardYearFilter ? { budgetYear: cardYearFilter } : undefined;
   const { data: stats } = api.project.getStats.useQuery(statsInput);
@@ -927,175 +933,179 @@ export default function ProjectsDataListPage() {
           </button>
         </div>
         <div className="overflow-x-auto">
-        <table className="w-full min-w-250 text-sm">
-          <thead>
-            <tr className="border-b border-gray-100 bg-gray-50">
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Project Title
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Project Cost
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                District
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Mode of Implementation
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Source / Sub-Category
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                City/Municipality
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Barangay
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Status
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Budget Year
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Action
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-50">
-            {isLoading ? (
-              <tr>
-                <td colSpan={10} className="py-16 text-center text-sm text-gray-400">
-                  <div className="flex flex-col items-center gap-2">
-                    <svg
-                      className="h-8 w-8 animate-spin text-blue-400"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                      />
-                    </svg>
-                    <span>Loading projects...</span>
-                  </div>
-                </td>
+          <table className="w-full min-w-250 text-sm">
+            <thead>
+              <tr className="border-b border-gray-100 bg-gray-50">
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Project Title
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Project Cost
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  District
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Mode of Implementation
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Source / Sub-Category
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  City/Municipality
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Barangay
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Status
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Budget Year
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Action
+                </th>
               </tr>
-            ) : filtered.length === 0 ? (
-              <tr>
-                <td colSpan={10} className="py-16 text-center text-sm text-gray-400">
-                  No projects found.
-                </td>
-              </tr>
-            ) : (
-              paginated.map((project) => {
-                const style =
-                  STATUS_STYLES[project.status as ProjectStatusValue] ??
-                  STATUS_STYLES.NOT_YET_STARTED;
-                const statusLabel =
-                  PROJECT_STATUS_LABEL[project.status as ProjectStatusValue] ??
-                  project.status;
-                return (
-                  <tr key={project.id} className="transition hover:bg-gray-50">
-                    <td className="max-w-xs px-4 py-3 font-medium text-gray-900">
-                      <span className="line-clamp-2">{project.title}</span>
-                    </td>
-                    <td className="px-4 py-3 text-gray-700">
-                      ₱{project.projectCost.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
-                    </td>
-                    <td className="px-4 py-3 text-gray-600">
-                      {project.locationImplementation === "DISTRICT_I" ? "District 1" : "District 2"}
-                    </td>
-                    <td className="px-4 py-3 text-gray-600">
-                      {project.modeOfImplementation === "BY_CONTRACT" ? "By Contract" : "By Administration"}
-                    </td>
-                    <td className="px-4 py-3 text-gray-600">
-                      <p>{FUND_SOURCE_LABELS[project.sourceOfFund] ?? project.sourceOfFund}</p>
-                      {project.subType && (
-                        <p className="text-xs text-gray-400">
-                          {PROJECT_SUBTYPE_LABELS[project.subType] ?? project.subType}
-                        </p>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-gray-600">
-                      {project.cityMunicipality ?? "—"}
-                    </td>
-                    <td className="px-4 py-3 text-gray-600">
-                      {project.barangay ?? "—"}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${style.bg} ${style.text}`}
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {isLoading ? (
+                <tr>
+                  <td colSpan={10} className="py-16 text-center text-sm text-gray-400">
+                    <div className="flex flex-col items-center gap-2">
+                      <svg
+                        className="h-8 w-8 animate-spin text-blue-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
                       >
-                        <span className={`h-1.5 w-1.5 rounded-full ${style.dot}`} />
-                        {statusLabel}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-gray-600">{project.budgetYear ?? "—"}</td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() =>
-                            router.push(
-                              `/super-admin/projects-data-list/${project.id}?id=${userId}`,
-                            )
-                          }
-                          className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-blue-700"
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                        />
+                      </svg>
+                      <span>Loading projects...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={10} className="py-16 text-center text-sm text-gray-400">
+                    No projects found.
+                  </td>
+                </tr>
+              ) : (
+                paginated.map((project) => {
+                  const style =
+                    STATUS_STYLES[project.status as ProjectStatusValue] ??
+                    STATUS_STYLES.NOT_YET_STARTED;
+                  const statusLabel =
+                    PROJECT_STATUS_LABEL[project.status as ProjectStatusValue] ??
+                    project.status;
+                  return (
+                    <tr key={project.id} className="transition hover:bg-gray-50">
+                      <td className="max-w-xs px-4 py-3 font-medium text-gray-900">
+                        <span className="line-clamp-2">{project.title}</span>
+                      </td>
+                      <td className="px-4 py-3 text-gray-700">
+                        ₱{project.projectCost.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
+                      </td>
+                      <td className="px-4 py-3 text-gray-600">
+                        {project.locationImplementation === "DISTRICT_I" ? "District 1" : "District 2"}
+                      </td>
+                      <td className="px-4 py-3 text-gray-600">
+                        {project.modeOfImplementation === "BY_CONTRACT" ? "By Contract" : "By Administration"}
+                      </td>
+                      <td className="px-4 py-3 text-gray-600">
+                        <p>{FUND_SOURCE_LABELS[project.sourceOfFund] ?? project.sourceOfFund}</p>
+                        {project.subType && (
+                          <p className="text-xs text-gray-400">
+                            {PROJECT_SUBTYPE_LABELS[project.subType] ?? project.subType}
+                          </p>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-gray-600">
+                        {project.cityMunicipality ?? "—"}
+                      </td>
+                      <td className="px-4 py-3 text-gray-600">
+                        {project.barangay ?? "—"}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${style.bg} ${style.text}`}
                         >
-                          <svg
-                            className="h-3.5 w-3.5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={2}
-                            stroke="currentColor"
+                          <span className={`h-1.5 w-1.5 rounded-full ${style.dot}`} />
+                          {statusLabel}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-gray-600">{project.budgetYear ?? "—"}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() =>
+                              router.push(
+                                `/super-admin/projects-data-list/${project.id}?id=${userId}`,
+                              )
+                            }
+                            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-blue-700"
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125"
-                            />
-                          </svg>
-                          Override
-                        </button>
-                        <button
-                          onClick={() => {
-                            setDeleteTarget({ id: project.id, title: project.title });
-                            setDeleteError(null);
-                          }}
-                          className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-100"
-                        >
-                          <svg
-                            className="h-3.5 w-3.5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={2}
-                            stroke="currentColor"
+                            <svg
+                              className="h-3.5 w-3.5"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={2}
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125"
+                              />
+                            </svg>
+                            Override
+                          </button>
+                          <button
+                            onClick={() => {
+                              setDeleteTarget({
+                                id: project.id,
+                                title: project.title,
+                                projectId: project.projectCode?.trim() ?? "",
+                              });
+                              setDeleteError(null);
+                            }}
+                            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-100"
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-                            />
-                          </svg>
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
+                            <svg
+                              className="h-3.5 w-3.5"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={2}
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                              />
+                            </svg>
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
         </div>
 
         <div className="flex flex-col gap-3 border-t border-gray-100 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
@@ -1156,6 +1166,7 @@ export default function ProjectsDataListPage() {
       <DeleteProjectConfirmModal
         open={!!deleteTarget}
         projectTitle={deleteTarget?.title}
+        projectId={deleteTarget ? (deleteTarget.projectId || deleteTarget.id) : undefined}
         error={deleteError}
         isDeleting={deleteProject.isPending}
         onCancel={() => {
@@ -1174,6 +1185,7 @@ export default function ProjectsDataListPage() {
 function DeleteProjectConfirmModal({
   open,
   projectTitle,
+  projectId,
   error,
   isDeleting,
   onCancel,
@@ -1181,12 +1193,25 @@ function DeleteProjectConfirmModal({
 }: {
   open: boolean;
   projectTitle?: string;
+  projectId?: string;
   error: string | null;
   isDeleting: boolean;
   onCancel: () => void;
   onConfirm: () => void;
 }) {
+  const [confirmText, setConfirmText] = useState("");
+
+  useEffect(() => {
+    setConfirmText("");
+  }, [open, projectId]);
+
   if (!open) return null;
+
+  const expectedId = projectId?.trim() ?? "";
+  const requiresConfirmation = expectedId.length > 0;
+  const canDelete =
+    !requiresConfirmation ||
+    confirmText.trim().toLowerCase() === expectedId.toLowerCase();
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -1194,9 +1219,9 @@ function DeleteProjectConfirmModal({
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onCancel}
       />
-      <div className="relative mx-4 w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl">
-        <div className="flex items-start gap-4 px-6 pt-6 pb-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-100">
+      <div className="relative mx-4 w-full max-w-md overflow-hidden rounded-sm bg-white shadow-2xl">
+        <div className="px-6 pt-6 pb-4">
+          <div className="mb-4 flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-100">
             <svg
               className="h-6 w-6 text-red-600"
               fill="none"
@@ -1211,7 +1236,7 @@ function DeleteProjectConfirmModal({
               />
             </svg>
           </div>
-          <div className="flex-1">
+          <div>
             <h3 className="text-lg font-bold text-gray-900">Delete Project</h3>
             <p className="mt-1 text-sm text-gray-600">
               Are you sure you want to delete
@@ -1223,13 +1248,51 @@ function DeleteProjectConfirmModal({
               ) : (
                 " this project"
               )}
+              {expectedId && (
+                <>
+                  {" "}
+                  (Project ID:{" "}
+                  <span className="font-mono font-semibold text-gray-900">
+                    {expectedId}
+                  </span>
+                  )
+                </>
+              )}
               ? This action cannot be undone and all associated data will be permanently removed.
             </p>
           </div>
         </div>
 
+        {requiresConfirmation && (
+          <div className="px-6 pb-4">
+            <label
+              htmlFor="delete-project-confirm"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Type the project ID{" "}
+              <span className="font-mono font-semibold text-gray-900">
+                {expectedId}
+              </span>{" "}
+              to confirm
+            </label>
+            <input
+              id="delete-project-confirm"
+              type="text"
+              autoComplete="off"
+              value={confirmText}
+              disabled={isDeleting}
+              onChange={(e) => setConfirmText(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && canDelete && !isDeleting) onConfirm();
+              }}
+              placeholder="Enter project ID"
+              className="mt-2 w-full rounded-sm border border-gray-300 px-3 py-2 font-mono text-sm text-gray-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100 disabled:cursor-not-allowed disabled:bg-gray-50"
+            />
+          </div>
+        )}
+
         {error && (
-          <div className="mx-6 mb-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+          <div className="mx-6 mb-2 rounded-sm border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
             {error}
           </div>
         )}
@@ -1239,15 +1302,15 @@ function DeleteProjectConfirmModal({
             type="button"
             onClick={onCancel}
             disabled={isDeleting}
-            className="cursor-pointer rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
+            className="cursor-pointer rounded-sm border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={onConfirm}
-            disabled={isDeleting}
-            className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={isDeleting || !canDelete}
+            className="inline-flex cursor-pointer items-center gap-2 rounded-sm bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isDeleting && (
               <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">

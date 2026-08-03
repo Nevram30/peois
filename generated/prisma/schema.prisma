@@ -296,6 +296,10 @@ model Project {
   barangay                 String?
   purok                    String?
   sitio                    String?
+  // Geospatial pin for the project site (WGS84 decimal degrees). Optional:
+  // older records and drafts may only have the administrative location above.
+  latitude                 Float?
+  longitude                Float?
   description              String?
   status                   ProjectStatus        @default(NOT_YET_STARTED)
   completionPercentage     Int                  @default(0)

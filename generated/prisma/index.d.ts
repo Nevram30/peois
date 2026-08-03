@@ -5911,6 +5911,8 @@ export namespace Prisma {
     numMale: number | null
     numPersons: number | null
     numManDays: number | null
+    latitude: number | null
+    longitude: number | null
     completionPercentage: number | null
   }
 
@@ -5924,6 +5926,8 @@ export namespace Prisma {
     numMale: number | null
     numPersons: number | null
     numManDays: number | null
+    latitude: number | null
+    longitude: number | null
     completionPercentage: number | null
   }
 
@@ -5961,6 +5965,8 @@ export namespace Prisma {
     barangay: string | null
     purok: string | null
     sitio: string | null
+    latitude: number | null
+    longitude: number | null
     description: string | null
     status: $Enums.ProjectStatus | null
     completionPercentage: number | null
@@ -6006,6 +6012,8 @@ export namespace Prisma {
     barangay: string | null
     purok: string | null
     sitio: string | null
+    latitude: number | null
+    longitude: number | null
     description: string | null
     status: $Enums.ProjectStatus | null
     completionPercentage: number | null
@@ -6051,6 +6059,8 @@ export namespace Prisma {
     barangay: number
     purok: number
     sitio: number
+    latitude: number
+    longitude: number
     description: number
     status: number
     completionPercentage: number
@@ -6074,6 +6084,8 @@ export namespace Prisma {
     numMale?: true
     numPersons?: true
     numManDays?: true
+    latitude?: true
+    longitude?: true
     completionPercentage?: true
   }
 
@@ -6087,6 +6099,8 @@ export namespace Prisma {
     numMale?: true
     numPersons?: true
     numManDays?: true
+    latitude?: true
+    longitude?: true
     completionPercentage?: true
   }
 
@@ -6124,6 +6138,8 @@ export namespace Prisma {
     barangay?: true
     purok?: true
     sitio?: true
+    latitude?: true
+    longitude?: true
     description?: true
     status?: true
     completionPercentage?: true
@@ -6169,6 +6185,8 @@ export namespace Prisma {
     barangay?: true
     purok?: true
     sitio?: true
+    latitude?: true
+    longitude?: true
     description?: true
     status?: true
     completionPercentage?: true
@@ -6214,6 +6232,8 @@ export namespace Prisma {
     barangay?: true
     purok?: true
     sitio?: true
+    latitude?: true
+    longitude?: true
     description?: true
     status?: true
     completionPercentage?: true
@@ -6346,6 +6366,8 @@ export namespace Prisma {
     barangay: string | null
     purok: string | null
     sitio: string | null
+    latitude: number | null
+    longitude: number | null
     description: string | null
     status: $Enums.ProjectStatus
     completionPercentage: number
@@ -6410,6 +6432,8 @@ export namespace Prisma {
     barangay?: boolean
     purok?: boolean
     sitio?: boolean
+    latitude?: boolean
+    longitude?: boolean
     description?: boolean
     status?: boolean
     completionPercentage?: boolean
@@ -6465,6 +6489,8 @@ export namespace Prisma {
     barangay?: boolean
     purok?: boolean
     sitio?: boolean
+    latitude?: boolean
+    longitude?: boolean
     description?: boolean
     status?: boolean
     completionPercentage?: boolean
@@ -6511,6 +6537,8 @@ export namespace Prisma {
     barangay?: boolean
     purok?: boolean
     sitio?: boolean
+    latitude?: boolean
+    longitude?: boolean
     description?: boolean
     status?: boolean
     completionPercentage?: boolean
@@ -6557,6 +6585,8 @@ export namespace Prisma {
     barangay?: boolean
     purok?: boolean
     sitio?: boolean
+    latitude?: boolean
+    longitude?: boolean
     description?: boolean
     status?: boolean
     completionPercentage?: boolean
@@ -6568,7 +6598,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectCode" | "title" | "subType" | "program" | "projectAccount" | "modeOfImplementation" | "locationImplementation" | "sourceOfFund" | "projectCost" | "contractCost" | "contractorName" | "projectEngineer" | "budgetYear" | "landbankNumber" | "supplementalBudgetYear" | "supplementalBudgetNumber" | "dateStarted" | "targetCompletionDate" | "duration" | "revisedCompletionDate" | "dateCompleted" | "daysSuspended" | "daysExtended" | "numFemale" | "numMale" | "numPersons" | "numManDays" | "district" | "cityMunicipality" | "barangay" | "purok" | "sitio" | "description" | "status" | "completionPercentage" | "imageUrl" | "documentUrl" | "documentName" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
+  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectCode" | "title" | "subType" | "program" | "projectAccount" | "modeOfImplementation" | "locationImplementation" | "sourceOfFund" | "projectCost" | "contractCost" | "contractorName" | "projectEngineer" | "budgetYear" | "landbankNumber" | "supplementalBudgetYear" | "supplementalBudgetNumber" | "dateStarted" | "targetCompletionDate" | "duration" | "revisedCompletionDate" | "dateCompleted" | "daysSuspended" | "daysExtended" | "numFemale" | "numMale" | "numPersons" | "numManDays" | "district" | "cityMunicipality" | "barangay" | "purok" | "sitio" | "latitude" | "longitude" | "description" | "status" | "completionPercentage" | "imageUrl" | "documentUrl" | "documentName" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
   export type ProjectInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
     activities?: boolean | Project$activitiesArgs<ExtArgs>
@@ -6635,6 +6665,8 @@ export namespace Prisma {
       barangay: string | null
       purok: string | null
       sitio: string | null
+      latitude: number | null
+      longitude: number | null
       description: string | null
       status: $Enums.ProjectStatus
       completionPercentage: number
@@ -7109,6 +7141,8 @@ export namespace Prisma {
     readonly barangay: FieldRef<"Project", 'String'>
     readonly purok: FieldRef<"Project", 'String'>
     readonly sitio: FieldRef<"Project", 'String'>
+    readonly latitude: FieldRef<"Project", 'Float'>
+    readonly longitude: FieldRef<"Project", 'Float'>
     readonly description: FieldRef<"Project", 'String'>
     readonly status: FieldRef<"Project", 'ProjectStatus'>
     readonly completionPercentage: FieldRef<"Project", 'Int'>
@@ -24713,6 +24747,8 @@ export namespace Prisma {
     barangay: 'barangay',
     purok: 'purok',
     sitio: 'sitio',
+    latitude: 'latitude',
+    longitude: 'longitude',
     description: 'description',
     status: 'status',
     completionPercentage: 'completionPercentage',
@@ -25533,6 +25569,8 @@ export namespace Prisma {
     barangay?: StringNullableFilter<"Project"> | string | null
     purok?: StringNullableFilter<"Project"> | string | null
     sitio?: StringNullableFilter<"Project"> | string | null
+    latitude?: FloatNullableFilter<"Project"> | number | null
+    longitude?: FloatNullableFilter<"Project"> | number | null
     description?: StringNullableFilter<"Project"> | string | null
     status?: EnumProjectStatusFilter<"Project"> | $Enums.ProjectStatus
     completionPercentage?: IntFilter<"Project"> | number
@@ -25587,6 +25625,8 @@ export namespace Prisma {
     barangay?: SortOrderInput | SortOrder
     purok?: SortOrderInput | SortOrder
     sitio?: SortOrderInput | SortOrder
+    latitude?: SortOrderInput | SortOrder
+    longitude?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
     status?: SortOrder
     completionPercentage?: SortOrder
@@ -25644,6 +25684,8 @@ export namespace Prisma {
     barangay?: StringNullableFilter<"Project"> | string | null
     purok?: StringNullableFilter<"Project"> | string | null
     sitio?: StringNullableFilter<"Project"> | string | null
+    latitude?: FloatNullableFilter<"Project"> | number | null
+    longitude?: FloatNullableFilter<"Project"> | number | null
     description?: StringNullableFilter<"Project"> | string | null
     status?: EnumProjectStatusFilter<"Project"> | $Enums.ProjectStatus
     completionPercentage?: IntFilter<"Project"> | number
@@ -25698,6 +25740,8 @@ export namespace Prisma {
     barangay?: SortOrderInput | SortOrder
     purok?: SortOrderInput | SortOrder
     sitio?: SortOrderInput | SortOrder
+    latitude?: SortOrderInput | SortOrder
+    longitude?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
     status?: SortOrder
     completionPercentage?: SortOrder
@@ -25751,6 +25795,8 @@ export namespace Prisma {
     barangay?: StringNullableWithAggregatesFilter<"Project"> | string | null
     purok?: StringNullableWithAggregatesFilter<"Project"> | string | null
     sitio?: StringNullableWithAggregatesFilter<"Project"> | string | null
+    latitude?: FloatNullableWithAggregatesFilter<"Project"> | number | null
+    longitude?: FloatNullableWithAggregatesFilter<"Project"> | number | null
     description?: StringNullableWithAggregatesFilter<"Project"> | string | null
     status?: EnumProjectStatusWithAggregatesFilter<"Project"> | $Enums.ProjectStatus
     completionPercentage?: IntWithAggregatesFilter<"Project"> | number
@@ -27181,6 +27227,8 @@ export namespace Prisma {
     barangay?: string | null
     purok?: string | null
     sitio?: string | null
+    latitude?: number | null
+    longitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -27234,6 +27282,8 @@ export namespace Prisma {
     barangay?: string | null
     purok?: string | null
     sitio?: string | null
+    latitude?: number | null
+    longitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -27287,6 +27337,8 @@ export namespace Prisma {
     barangay?: NullableStringFieldUpdateOperationsInput | string | null
     purok?: NullableStringFieldUpdateOperationsInput | string | null
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
@@ -27340,6 +27392,8 @@ export namespace Prisma {
     barangay?: NullableStringFieldUpdateOperationsInput | string | null
     purok?: NullableStringFieldUpdateOperationsInput | string | null
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
@@ -27393,6 +27447,8 @@ export namespace Prisma {
     barangay?: string | null
     purok?: string | null
     sitio?: string | null
+    latitude?: number | null
+    longitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -27438,6 +27494,8 @@ export namespace Prisma {
     barangay?: NullableStringFieldUpdateOperationsInput | string | null
     purok?: NullableStringFieldUpdateOperationsInput | string | null
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
@@ -27482,6 +27540,8 @@ export namespace Prisma {
     barangay?: NullableStringFieldUpdateOperationsInput | string | null
     purok?: NullableStringFieldUpdateOperationsInput | string | null
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
@@ -29111,6 +29171,17 @@ export namespace Prisma {
     not?: NestedEnumDistrictNullableFilter<$PrismaModel> | $Enums.District | null
   }
 
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type EnumProjectStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.ProjectStatus | EnumProjectStatusFieldRefInput<$PrismaModel>
     in?: $Enums.ProjectStatus[] | ListEnumProjectStatusFieldRefInput<$PrismaModel>
@@ -29152,6 +29223,8 @@ export namespace Prisma {
     barangay?: SortOrder
     purok?: SortOrder
     sitio?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
     description?: SortOrder
     status?: SortOrder
     completionPercentage?: SortOrder
@@ -29173,6 +29246,8 @@ export namespace Prisma {
     numMale?: SortOrder
     numPersons?: SortOrder
     numManDays?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
     completionPercentage?: SortOrder
   }
 
@@ -29210,6 +29285,8 @@ export namespace Prisma {
     barangay?: SortOrder
     purok?: SortOrder
     sitio?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
     description?: SortOrder
     status?: SortOrder
     completionPercentage?: SortOrder
@@ -29255,6 +29332,8 @@ export namespace Prisma {
     barangay?: SortOrder
     purok?: SortOrder
     sitio?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
     description?: SortOrder
     status?: SortOrder
     completionPercentage?: SortOrder
@@ -29276,6 +29355,8 @@ export namespace Prisma {
     numMale?: SortOrder
     numPersons?: SortOrder
     numManDays?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
     completionPercentage?: SortOrder
   }
 
@@ -29359,6 +29440,22 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedEnumDistrictNullableFilter<$PrismaModel>
     _max?: NestedEnumDistrictNullableFilter<$PrismaModel>
+  }
+
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type EnumProjectStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -29460,17 +29557,6 @@ export namespace Prisma {
     not?: NestedEnumDisbursementTypeNullableFilter<$PrismaModel> | $Enums.DisbursementType | null
   }
 
-  export type FloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
-
   export type DisbursementCountOrderByAggregateInput = {
     id?: SortOrder
     projectId?: SortOrder
@@ -29528,22 +29614,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedEnumDisbursementTypeNullableFilter<$PrismaModel>
     _max?: NestedEnumDisbursementTypeNullableFilter<$PrismaModel>
-  }
-
-  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedFloatNullableFilter<$PrismaModel>
-    _min?: NestedFloatNullableFilter<$PrismaModel>
-    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type EnumSourceOfFundNullableFilter<$PrismaModel = never> = {
@@ -31160,6 +31230,14 @@ export namespace Prisma {
     set?: $Enums.District | null
   }
 
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type EnumProjectStatusFieldUpdateOperationsInput = {
     set?: $Enums.ProjectStatus
   }
@@ -31470,14 +31548,6 @@ export namespace Prisma {
 
   export type NullableEnumDisbursementTypeFieldUpdateOperationsInput = {
     set?: $Enums.DisbursementType | null
-  }
-
-  export type NullableFloatFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type ProjectUpdateOneRequiredWithoutDisbursementsNestedInput = {
@@ -32193,6 +32263,17 @@ export namespace Prisma {
     not?: NestedEnumDistrictNullableFilter<$PrismaModel> | $Enums.District | null
   }
 
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type NestedEnumProjectStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.ProjectStatus | EnumProjectStatusFieldRefInput<$PrismaModel>
     in?: $Enums.ProjectStatus[] | ListEnumProjectStatusFieldRefInput<$PrismaModel>
@@ -32282,6 +32363,22 @@ export namespace Prisma {
     _max?: NestedEnumDistrictNullableFilter<$PrismaModel>
   }
 
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
   export type NestedEnumProjectStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.ProjectStatus | EnumProjectStatusFieldRefInput<$PrismaModel>
     in?: $Enums.ProjectStatus[] | ListEnumProjectStatusFieldRefInput<$PrismaModel>
@@ -32316,17 +32413,6 @@ export namespace Prisma {
     not?: NestedEnumDisbursementTypeNullableFilter<$PrismaModel> | $Enums.DisbursementType | null
   }
 
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
-
   export type NestedEnumDisbursementTypeNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.DisbursementType | EnumDisbursementTypeFieldRefInput<$PrismaModel> | null
     in?: $Enums.DisbursementType[] | ListEnumDisbursementTypeFieldRefInput<$PrismaModel> | null
@@ -32335,22 +32421,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedEnumDisbursementTypeNullableFilter<$PrismaModel>
     _max?: NestedEnumDisbursementTypeNullableFilter<$PrismaModel>
-  }
-
-  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedFloatNullableFilter<$PrismaModel>
-    _min?: NestedFloatNullableFilter<$PrismaModel>
-    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumSourceOfFundNullableFilter<$PrismaModel = never> = {
@@ -32575,6 +32645,8 @@ export namespace Prisma {
     barangay?: string | null
     purok?: string | null
     sitio?: string | null
+    latitude?: number | null
+    longitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -32627,6 +32699,8 @@ export namespace Prisma {
     barangay?: string | null
     purok?: string | null
     sitio?: string | null
+    latitude?: number | null
+    longitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -33237,6 +33311,8 @@ export namespace Prisma {
     barangay?: StringNullableFilter<"Project"> | string | null
     purok?: StringNullableFilter<"Project"> | string | null
     sitio?: StringNullableFilter<"Project"> | string | null
+    latitude?: FloatNullableFilter<"Project"> | number | null
+    longitude?: FloatNullableFilter<"Project"> | number | null
     description?: StringNullableFilter<"Project"> | string | null
     status?: EnumProjectStatusFilter<"Project"> | $Enums.ProjectStatus
     completionPercentage?: IntFilter<"Project"> | number
@@ -34441,6 +34517,8 @@ export namespace Prisma {
     barangay?: string | null
     purok?: string | null
     sitio?: string | null
+    latitude?: number | null
+    longitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -34493,6 +34571,8 @@ export namespace Prisma {
     barangay?: string | null
     purok?: string | null
     sitio?: string | null
+    latitude?: number | null
+    longitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -34638,6 +34718,8 @@ export namespace Prisma {
     barangay?: NullableStringFieldUpdateOperationsInput | string | null
     purok?: NullableStringFieldUpdateOperationsInput | string | null
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
@@ -34690,6 +34772,8 @@ export namespace Prisma {
     barangay?: NullableStringFieldUpdateOperationsInput | string | null
     purok?: NullableStringFieldUpdateOperationsInput | string | null
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
@@ -34825,6 +34909,8 @@ export namespace Prisma {
     barangay?: string | null
     purok?: string | null
     sitio?: string | null
+    latitude?: number | null
+    longitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -34877,6 +34963,8 @@ export namespace Prisma {
     barangay?: string | null
     purok?: string | null
     sitio?: string | null
+    latitude?: number | null
+    longitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -35022,6 +35110,8 @@ export namespace Prisma {
     barangay?: NullableStringFieldUpdateOperationsInput | string | null
     purok?: NullableStringFieldUpdateOperationsInput | string | null
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
@@ -35074,6 +35164,8 @@ export namespace Prisma {
     barangay?: NullableStringFieldUpdateOperationsInput | string | null
     purok?: NullableStringFieldUpdateOperationsInput | string | null
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
@@ -35209,6 +35301,8 @@ export namespace Prisma {
     barangay?: string | null
     purok?: string | null
     sitio?: string | null
+    latitude?: number | null
+    longitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -35261,6 +35355,8 @@ export namespace Prisma {
     barangay?: string | null
     purok?: string | null
     sitio?: string | null
+    latitude?: number | null
+    longitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -35406,6 +35502,8 @@ export namespace Prisma {
     barangay?: NullableStringFieldUpdateOperationsInput | string | null
     purok?: NullableStringFieldUpdateOperationsInput | string | null
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
@@ -35458,6 +35556,8 @@ export namespace Prisma {
     barangay?: NullableStringFieldUpdateOperationsInput | string | null
     purok?: NullableStringFieldUpdateOperationsInput | string | null
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
@@ -35593,6 +35693,8 @@ export namespace Prisma {
     barangay?: string | null
     purok?: string | null
     sitio?: string | null
+    latitude?: number | null
+    longitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -35645,6 +35747,8 @@ export namespace Prisma {
     barangay?: string | null
     purok?: string | null
     sitio?: string | null
+    latitude?: number | null
+    longitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -35790,6 +35894,8 @@ export namespace Prisma {
     barangay?: NullableStringFieldUpdateOperationsInput | string | null
     purok?: NullableStringFieldUpdateOperationsInput | string | null
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
@@ -35842,6 +35948,8 @@ export namespace Prisma {
     barangay?: NullableStringFieldUpdateOperationsInput | string | null
     purok?: NullableStringFieldUpdateOperationsInput | string | null
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
@@ -36457,6 +36565,8 @@ export namespace Prisma {
     barangay?: string | null
     purok?: string | null
     sitio?: string | null
+    latitude?: number | null
+    longitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -36509,6 +36619,8 @@ export namespace Prisma {
     barangay?: string | null
     purok?: string | null
     sitio?: string | null
+    latitude?: number | null
+    longitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -36654,6 +36766,8 @@ export namespace Prisma {
     barangay?: NullableStringFieldUpdateOperationsInput | string | null
     purok?: NullableStringFieldUpdateOperationsInput | string | null
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
@@ -36706,6 +36820,8 @@ export namespace Prisma {
     barangay?: NullableStringFieldUpdateOperationsInput | string | null
     purok?: NullableStringFieldUpdateOperationsInput | string | null
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
@@ -36841,6 +36957,8 @@ export namespace Prisma {
     barangay?: string | null
     purok?: string | null
     sitio?: string | null
+    latitude?: number | null
+    longitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -36893,6 +37011,8 @@ export namespace Prisma {
     barangay?: string | null
     purok?: string | null
     sitio?: string | null
+    latitude?: number | null
+    longitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -37143,6 +37263,8 @@ export namespace Prisma {
     barangay?: NullableStringFieldUpdateOperationsInput | string | null
     purok?: NullableStringFieldUpdateOperationsInput | string | null
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
@@ -37195,6 +37317,8 @@ export namespace Prisma {
     barangay?: NullableStringFieldUpdateOperationsInput | string | null
     purok?: NullableStringFieldUpdateOperationsInput | string | null
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
@@ -37922,6 +38046,8 @@ export namespace Prisma {
     barangay?: string | null
     purok?: string | null
     sitio?: string | null
+    latitude?: number | null
+    longitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -37974,6 +38100,8 @@ export namespace Prisma {
     barangay?: string | null
     purok?: string | null
     sitio?: string | null
+    latitude?: number | null
+    longitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -38155,6 +38283,8 @@ export namespace Prisma {
     barangay?: NullableStringFieldUpdateOperationsInput | string | null
     purok?: NullableStringFieldUpdateOperationsInput | string | null
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
@@ -38207,6 +38337,8 @@ export namespace Prisma {
     barangay?: NullableStringFieldUpdateOperationsInput | string | null
     purok?: NullableStringFieldUpdateOperationsInput | string | null
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
@@ -38358,6 +38490,8 @@ export namespace Prisma {
     barangay?: string | null
     purok?: string | null
     sitio?: string | null
+    latitude?: number | null
+    longitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -38410,6 +38544,8 @@ export namespace Prisma {
     barangay?: string | null
     purok?: string | null
     sitio?: string | null
+    latitude?: number | null
+    longitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -38659,6 +38795,8 @@ export namespace Prisma {
     barangay?: NullableStringFieldUpdateOperationsInput | string | null
     purok?: NullableStringFieldUpdateOperationsInput | string | null
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
@@ -38711,6 +38849,8 @@ export namespace Prisma {
     barangay?: NullableStringFieldUpdateOperationsInput | string | null
     purok?: NullableStringFieldUpdateOperationsInput | string | null
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
@@ -39129,6 +39269,8 @@ export namespace Prisma {
     barangay?: string | null
     purok?: string | null
     sitio?: string | null
+    latitude?: number | null
+    longitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -39360,6 +39502,8 @@ export namespace Prisma {
     barangay?: NullableStringFieldUpdateOperationsInput | string | null
     purok?: NullableStringFieldUpdateOperationsInput | string | null
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
@@ -39412,6 +39556,8 @@ export namespace Prisma {
     barangay?: NullableStringFieldUpdateOperationsInput | string | null
     purok?: NullableStringFieldUpdateOperationsInput | string | null
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
@@ -39464,6 +39610,8 @@ export namespace Prisma {
     barangay?: NullableStringFieldUpdateOperationsInput | string | null
     purok?: NullableStringFieldUpdateOperationsInput | string | null
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: IntFieldUpdateOperationsInput | number
