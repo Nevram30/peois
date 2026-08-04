@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { api } from "~/trpc/react";
 import { useUploadThing } from "~/lib/uploadthing";
 import {
@@ -34,10 +34,18 @@ import {
   formatSlippage,
   getSlippageStageConfig,
 } from "~/lib/slippage";
+import {
+  DOC_CHECKLIST,
+  docFileType,
+  type DocType,
+  type ProjectFileType,
+} from "~/lib/project-documents";
+import { UploadDocumentModal } from "./upload-document-modal";
+import { LocationPickerMap } from "./location-picker-map";
 
 // ─── Shared styles ────────────────────────────────────────────────────────
 const inputClass =
-  "block w-full rounded-lg border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none";
+  "block w-full rounded-sm border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none";
 const labelClass =
   "mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-gray-500";
 // Identity & Status uses larger sentence-case labels (see the card's design).
@@ -57,8 +65,6 @@ function FieldError({
   return <p className="mt-1 text-xs text-red-500">{message}</p>;
 }
 
-type ProjectFileType = "IMAGE" | "BLUEPRINT" | "REPORT" | "CONTRACT" | "PERMIT" | "OTHER";
-
 type PendingFile = {
   id: string;
   fileName: string;
@@ -68,139 +74,6 @@ type PendingFile = {
   fileSize: number;
   uploadedAt: Date;
 };
-
-// ─── Document checklist ───────────────────────────────────────────────────
-// The documentary requirements the office expects on file. An uploaded file is
-// matched against these patterns so its checklist row ticks itself; the Type
-// column stays editable for the file names that give nothing away.
-type DocKey =
-  | "CDR"
-  | "NTP"
-  | "SCURVE"
-  | "ABC"
-  | "PPMP"
-  | "POW"
-  | "PLAN"
-  | "ARO"
-  | "BILLBOARD"
-  | "MANPOWER"
-  | "EQUIPMENT"
-  | "QCP";
-
-type DocType = DocKey | "OTHER";
-
-type DocChecklistItem = {
-  key: DocKey;
-  label: string;
-  fileType: ProjectFileType;
-  patterns: RegExp[];
-  // "Plan" alone matches file names that belong to a more specific row
-  // (Quality Control Plan, Procurement Management Plan), so it is tried last.
-  matchLast?: boolean;
-};
-
-const DOC_CHECKLIST: DocChecklistItem[] = [
-  {
-    key: "CDR",
-    label: "Checklist of Documentary Requirements",
-    fileType: "REPORT",
-    patterns: [/checklist/, /documentary requirement/, /\bcdr\b/],
-  },
-  {
-    key: "NTP",
-    label: "Notice to Proceed - Request",
-    fileType: "PERMIT",
-    patterns: [/notice to proceed/, /\bntp\b/],
-  },
-  {
-    key: "SCURVE",
-    label: "Bar Chart / S-Curve",
-    fileType: "REPORT",
-    patterns: [/bar ?chart/, /\bs ?curve\b/, /gantt/],
-  },
-  {
-    key: "ABC",
-    label: "Approve Budget Contract (ABC)",
-    fileType: "CONTRACT",
-    patterns: [/approved? budget/, /\babc\b/],
-  },
-  {
-    key: "PPMP",
-    label: "Project Procurement Management Plan",
-    fileType: "REPORT",
-    patterns: [/procurement management/, /\bppmp\b/],
-  },
-  {
-    key: "POW",
-    label: "Program of Works",
-    fileType: "REPORT",
-    patterns: [/program of works?/, /\bpow\b/],
-  },
-  {
-    key: "PLAN",
-    label: "Plan",
-    fileType: "BLUEPRINT",
-    patterns: [/\bplans?\b/, /\bdrawings?\b/, /blueprint/, /layout/],
-    matchLast: true,
-  },
-  {
-    key: "ARO",
-    label: "Allotment Release Order",
-    fileType: "PERMIT",
-    patterns: [/allotment release/, /\bs?aro\b/],
-  },
-  {
-    key: "BILLBOARD",
-    label: "Billboard Photo",
-    fileType: "IMAGE",
-    patterns: [/bill ?board/, /tarpaulin/, /signage/],
-  },
-  {
-    key: "MANPOWER",
-    label: "Manpower Schedule",
-    fileType: "REPORT",
-    patterns: [/man ?power/],
-  },
-  {
-    key: "EQUIPMENT",
-    label: "Equipment Schedule",
-    fileType: "REPORT",
-    patterns: [/equipment/],
-  },
-  {
-    key: "QCP",
-    label: "Quality Control Plan",
-    fileType: "REPORT",
-    patterns: [/quality control/, /\bqcp\b/],
-  },
-];
-
-// Display order is the order above; matching defers the catch-all rows.
-const DOC_MATCH_ORDER = [...DOC_CHECKLIST].sort(
-  (a, b) => Number(a.matchLast ?? false) - Number(b.matchLast ?? false),
-);
-
-const docItem = (docType: DocType) =>
-  DOC_CHECKLIST.find((item) => item.key === docType);
-
-const isImageName = (fileName: string) =>
-  /\.(jpe?g|png|gif|webp|heic)$/i.test(fileName);
-
-// Reads the requirement out of the file name — separators are normalised so
-// "notice-to-proceed_v2.pdf" and "Notice To Proceed.pdf" land on the same row.
-const inferDocType = (fileName: string): DocType => {
-  const name = fileName
-    .replace(/\.[^.]+$/, "")
-    .replace(/[_\-.]+/g, " ")
-    .toLowerCase();
-  return (
-    DOC_MATCH_ORDER.find((item) => item.patterns.some((p) => p.test(name)))
-      ?.key ?? "OTHER"
-  );
-};
-
-const docFileType = (docType: DocType, fileName: string): ProjectFileType =>
-  docItem(docType)?.fileType ?? (isImageName(fileName) ? "IMAGE" : "OTHER");
 
 const fileIconColor = (fileType: ProjectFileType, fileName: string) => {
   if (fileType === "IMAGE") return { bg: "bg-blue-100", text: "text-blue-600" };
@@ -340,12 +213,6 @@ const SaveIcon = (
     <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 4.5v4.125c0 .621.504 1.125 1.125 1.125h4.5c.621 0 1.125-.504 1.125-1.125V4.5M7.5 21v-5.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125V21" />
   </svg>
 );
-const MapPlaceholderIcon = (
-  <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
-  </svg>
-);
-
 // ─── Geocoding ────────────────────────────────────────────────────────────
 // Free-form place search is served by OpenStreetMap's Nominatim endpoint —
 // no API key and no extra dependency, in exchange for a strict usage policy
@@ -409,6 +276,12 @@ export const AddProjectForm = () => {
   const [mapSearchMessage, setMapSearchMessage] = useState<string | null>(null);
   const [isLocating, setIsLocating] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
+  // Metres of uncertainty reported by the device, kept so the encoder can see
+  // whether the reading is worth adjusting by hand.
+  const [geoAccuracy, setGeoAccuracy] = useState<number | null>(null);
+  // Address the current pin resolves to, refreshed whenever the pin moves.
+  const [resolvedAddress, setResolvedAddress] = useState<string | null>(null);
+  const [isResolvingAddress, setIsResolvingAddress] = useState(false);
   // Picking a result writes its full name back into the search box; this flag
   // stops that write from triggering another lookup.
   const skipNextGeoSearch = useRef(false);
@@ -456,10 +329,15 @@ export const AddProjectForm = () => {
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   // ── Multi-file Project Documentation ─────────────────────────────────
+  // Documents go in through the upload modal, which asks for the requirement
+  // outright instead of inferring it from the file name after the fact.
   const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
   const [docUploadError, setDocUploadError] = useState<string | null>(null);
   const [isUploadingDoc, setIsUploadingDoc] = useState(false);
-  const docInputRef = useRef<HTMLInputElement>(null);
+  const [isDocModalOpen, setIsDocModalOpen] = useState(false);
+  // Files dropped on the documents table, handed to the modal so the category
+  // can still be picked before they are uploaded.
+  const [stagedDropFiles, setStagedDropFiles] = useState<File[]>([]);
 
   // ── Validation ───────────────────────────────────────────────────────
   const [showErrors, setShowErrors] = useState(false);
@@ -545,19 +423,6 @@ export const AddProjectForm = () => {
   const parsedLat = useMemo(() => parseCoord(latitude, 90), [latitude]);
   const parsedLng = useMemo(() => parseCoord(longitude, 180), [longitude]);
 
-  const mapEmbedSrc = useMemo(() => {
-    if (parsedLat === null || parsedLng === null) return null;
-    // ~1 km viewport around the pin.
-    const pad = 0.01;
-    const bbox = [
-      parsedLng - pad,
-      parsedLat - pad,
-      parsedLng + pad,
-      parsedLat + pad,
-    ].join(",");
-    return `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${parsedLat},${parsedLng}`;
-  }, [parsedLat, parsedLng]);
-
   const fullMapHref =
     parsedLat !== null && parsedLng !== null
       ? `https://www.openstreetmap.org/?mlat=${parsedLat}&mlon=${parsedLng}#map=16/${parsedLat}/${parsedLng}`
@@ -612,6 +477,42 @@ export const AddProjectForm = () => {
     };
   }, [mapQuery]);
 
+  // Reverse lookup — names whatever the pin currently sits on, so moving it is
+  // confirmed by something readable and not just two changed numbers. Debounced
+  // for the same Nominatim policy as the search above.
+  useEffect(() => {
+    if (parsedLat === null || parsedLng === null) {
+      setResolvedAddress(null);
+      return;
+    }
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => {
+      setIsResolvingAddress(true);
+      void fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=18&lat=${parsedLat}&lon=${parsedLng}`,
+        { signal: controller.signal, headers: { Accept: "application/json" } },
+      )
+        .then((res) => {
+          if (!res.ok) throw new Error("Reverse lookup failed");
+          return res.json() as Promise<{ display_name?: string }>;
+        })
+        .then((result) => setResolvedAddress(result.display_name ?? null))
+        .catch(() => {
+          // The coordinates are still valid without a name for them.
+          if (!controller.signal.aborted) setResolvedAddress(null);
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) setIsResolvingAddress(false);
+        });
+    }, 800);
+
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [parsedLat, parsedLng]);
+
   const applyGeoResult = (result: GeoResult) => {
     skipNextGeoSearch.current = true;
     setLatitude(Number(result.lat).toFixed(6));
@@ -620,8 +521,23 @@ export const AddProjectForm = () => {
     setMapResults([]);
     setMapSearchMessage(null);
     setGeoError(null);
+    // A searched place is not a device reading, so the accuracy no longer says
+    // anything about the pin.
+    setGeoAccuracy(null);
   };
 
+  // Dragging or tapping the map is the primary way to adjust the pin; the
+  // number fields stay authoritative and simply follow it.
+  const handleMapPinChange = useCallback((lat: number, lng: number) => {
+    setLatitude(lat.toFixed(6));
+    setLongitude(lng.toFixed(6));
+    setGeoError(null);
+    // The reading is the user's own placement now, not the device's.
+    setGeoAccuracy(null);
+  }, []);
+
+  // "Pin My Location" seeds the pin from the device; it is a starting point,
+  // not the final answer — the map underneath stays adjustable.
   const handleUseMyLocation = () => {
     if (typeof navigator === "undefined" || !navigator.geolocation) {
       setGeoError("Location services are not available in this browser.");
@@ -633,15 +549,22 @@ export const AddProjectForm = () => {
       (position) => {
         setLatitude(position.coords.latitude.toFixed(6));
         setLongitude(position.coords.longitude.toFixed(6));
-        setIsLocating(false);
-      },
-      () => {
-        setGeoError(
-          "Could not read your location. Allow location access or type the coordinates.",
+        setGeoAccuracy(
+          Number.isFinite(position.coords.accuracy)
+            ? Math.round(position.coords.accuracy)
+            : null,
         );
         setIsLocating(false);
       },
-      { enableHighAccuracy: true, timeout: 10_000 },
+      (error) => {
+        setGeoError(
+          error.code === error.PERMISSION_DENIED
+            ? "Location permission was denied. Allow it in your browser, or drag the pin on the map."
+            : "Could not read your location. Drag the pin on the map or type the coordinates.",
+        );
+        setIsLocating(false);
+      },
+      { enableHighAccuracy: true, timeout: 10_000, maximumAge: 0 },
     );
   };
   // Programs / Projects / LBP-TL numbers registered by a super admin.
@@ -700,18 +623,27 @@ export const AddProjectForm = () => {
     await startImageUpload([file]);
   };
 
-  const handleFilesAdded = async (files: FileList | null) => {
-    if (!files || files.length === 0) return;
+  const openDocModal = (dropped: File[] = []) => {
+    setStagedDropFiles(dropped);
+    setDocUploadError(null);
+    setIsDocModalOpen(true);
+  };
+
+  const closeDocModal = () => {
+    setIsDocModalOpen(false);
+    setStagedDropFiles([]);
+  };
+
+  // Submitted from the upload modal: every file in the batch is filed against
+  // the category the uploader chose, which is what ticks the checklist row.
+  const handleDocUpload = async (files: File[], docType: DocType) => {
     setDocUploadError(null);
     setIsUploadingDoc(true);
     try {
-      for (const file of Array.from(files)) {
+      for (const file of files) {
         const result = await startFileUpload([file]);
         const url = result?.[0]?.ufsUrl ?? result?.[0]?.url;
-        if (!url) continue;
-        // The requirement is read off the file name, which is what ticks the
-        // matching row in the checklist beside the table.
-        const docType = inferDocType(file.name);
+        if (!url) throw new Error(`"${file.name}" could not be uploaded.`);
         setPendingFiles((prev) => [
           ...prev,
           {
@@ -725,7 +657,9 @@ export const AddProjectForm = () => {
           },
         ]);
       }
+      closeDocModal();
     } catch (err) {
+      // The modal stays open with the message so the batch can be retried.
       setDocUploadError(err instanceof Error ? err.message : "Upload failed.");
     } finally {
       setIsUploadingDoc(false);
@@ -1270,7 +1204,7 @@ export const AddProjectForm = () => {
                     </span>
                   )}
                   {mapResults.length > 0 && (
-                    <ul className="absolute z-20 mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
+                    <ul className="absolute z-20 mt-1 max-h-56 w-full overflow-y-auto rounded-sm border border-gray-200 bg-white py-1 shadow-lg">
                       {mapResults.map((result) => (
                         <li key={result.place_id}>
                           <button
@@ -1324,57 +1258,72 @@ export const AddProjectForm = () => {
                       message="Enter a value between -180 and 180"
                     />
                   </div>
+                </div>
+
+                {/* Pin from the device, then adjust by hand on the map */}
+                <div className="flex flex-wrap items-center gap-3">
                   <button
                     type="button"
                     onClick={handleUseMyLocation}
                     disabled={isLocating}
-                    title="Use my current location"
-                    aria-label="Use my current location"
-                    className="mt-5.5 flex h-10.5 w-11.5 shrink-0 items-center justify-center rounded-lg border border-blue-200 bg-blue-50 text-blue-600 shadow-sm transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex items-center gap-2 rounded-sm border border-blue-200 bg-blue-50 px-4 py-2.5 text-[11px] font-bold uppercase tracking-widest text-blue-700 shadow-sm transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {isLocating ? (
                       <span className="h-4 w-4 animate-spin rounded-full border-2 border-blue-200 border-t-blue-600" />
                     ) : (
                       CrosshairIcon
                     )}
+                    {isLocating ? "Locating..." : "Pin My Location"}
                   </button>
+                  {geoAccuracy !== null && (
+                    <span className="text-xs text-gray-500">
+                      Device accuracy ±{geoAccuracy} m — drag the map to correct
+                      it.
+                    </span>
+                  )}
                 </div>
 
                 {geoError && <p className="text-xs text-red-500">{geoError}</p>}
 
-                {/* Map preview */}
-                <div className="relative h-52 overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
-                  {mapEmbedSrc ? (
-                    <iframe
-                      key={mapEmbedSrc}
-                      src={mapEmbedSrc}
-                      title="Project location map preview"
-                      loading="lazy"
-                      className="h-full w-full border-0"
-                    />
-                  ) : (
-                    <div className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center text-gray-400">
-                      {MapPlaceholderIcon}
-                      <p className="text-[11px] font-semibold uppercase tracking-widest">
-                        Map Preview
-                      </p>
-                      <p className="text-xs">
-                        Search for a place or enter coordinates to drop a pin.
-                      </p>
-                    </div>
-                  )}
+                {/* Interactive map — the pin is whatever the centre sits on */}
+                <div className="relative">
+                  <LocationPickerMap
+                    latitude={parsedLat}
+                    longitude={parsedLng}
+                    onChange={handleMapPinChange}
+                    className="h-64"
+                  />
                   {fullMapHref && (
                     <a
                       href={fullMapHref}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="absolute right-3 bottom-3 flex items-center gap-1.5 rounded-md bg-white/95 px-3 py-2 text-[11px] font-bold uppercase tracking-widest text-gray-700 shadow-md transition hover:bg-white hover:text-blue-600"
+                      className="absolute right-3 bottom-3 flex items-center gap-1.5 rounded-sm bg-white/95 px-3 py-2 text-[11px] font-bold uppercase tracking-widest text-gray-700 shadow-md transition hover:bg-white hover:text-blue-600"
                     >
                       <span className="text-blue-500">{ExternalLinkIcon}</span>
                       Full View
                     </a>
                   )}
                 </div>
+
+                <p className="text-xs text-gray-400">
+                  {parsedLat === null || parsedLng === null
+                    ? "Tap the map, search for a place, or use Pin My Location to drop the pin."
+                    : "Drag or tap the map to adjust the pin — the coordinates follow it."}
+                </p>
+
+                {(isResolvingAddress || resolvedAddress) && (
+                  <p className="flex items-start gap-1.5 text-xs text-gray-500">
+                    <span className="mt-0.5 shrink-0 text-blue-400">
+                      {PinIcon}
+                    </span>
+                    <span className="line-clamp-2">
+                      {isResolvingAddress && !resolvedAddress
+                        ? "Resolving address..."
+                        : resolvedAddress}
+                    </span>
+                  </p>
+                )}
               </div>
             </div>
           </section>
@@ -1583,7 +1532,7 @@ export const AddProjectForm = () => {
           <SectionHeader icon={CalendarIcon} title="Project Timeline" />
           <div className="p-5">
             <label className={labelClass}>Timeline Adjustment History</label>
-            <div className="overflow-y-auto rounded-lg border border-gray-200" style={{ maxHeight: "392px" }}>
+            <div className="overflow-y-auto rounded-sm border border-gray-200" style={{ maxHeight: "392px" }}>
               <table className="w-full border-separate border-spacing-0 text-xs">
                 <thead className="sticky top-0 z-10 bg-gray-50">
                   <tr className="[&>th]:border-b [&>th]:border-gray-100">
@@ -1688,7 +1637,7 @@ export const AddProjectForm = () => {
               <button
                 type="button"
                 onClick={handleRecordAdjustment}
-                className="rounded-lg bg-blue-900 px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-blue-800"
+                className="rounded-sm bg-blue-900 px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-blue-800"
               >
                 Record
               </button>
@@ -1704,7 +1653,7 @@ export const AddProjectForm = () => {
             <div className="flex flex-wrap items-end gap-4">
               {/* Live readout — actual minus target, with its stage */}
               <div
-                className={`flex min-w-70 flex-1 items-center justify-between gap-4 rounded-lg border px-4 py-3 ${
+                className={`flex min-w-70 flex-1 items-center justify-between gap-4 rounded-sm border px-4 py-3 ${
                   slippageStage ? slippageStage.tile : "border-gray-200 bg-gray-50"
                 }`}
               >
@@ -1784,7 +1733,7 @@ export const AddProjectForm = () => {
                 type="button"
                 onClick={handleSaveSlippage}
                 disabled={!isSlippageDirty}
-                className="flex h-10.5 shrink-0 items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 text-xs font-bold uppercase tracking-widest text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10.5 shrink-0 items-center justify-center gap-2 rounded-sm bg-blue-600 px-6 text-xs font-bold uppercase tracking-widest text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {SaveIcon}
                 Save
@@ -1952,9 +1901,9 @@ export const AddProjectForm = () => {
             action={
               <button
                 type="button"
-                onClick={() => docInputRef.current?.click()}
+                onClick={() => openDocModal()}
                 disabled={isUploadingDoc}
-                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-sm bg-blue-600 px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0 3 3m-3-3-3 3m9-6.75V18a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 18V6a2.25 2.25 0 0 1 2.25-2.25h6.879a1.5 1.5 0 0 1 1.06.44l3.622 3.62a1.5 1.5 0 0 1 .439 1.061Z" />
@@ -1964,16 +1913,7 @@ export const AddProjectForm = () => {
             }
           />
           <div className="grid gap-5 p-5 lg:grid-cols-[minmax(0,17rem)_minmax(0,1fr)]">
-            <input
-              ref={docInputRef}
-              type="file"
-              multiple
-              accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png"
-              className="hidden"
-              onChange={(e) => void handleFilesAdded(e.target.files)}
-            />
-
-            {/* Document checklist — ticked automatically by what is uploaded */}
+            {/* Document checklist — ticked by the category each upload is filed under */}
             <div className="rounded-xl border border-gray-200 bg-gray-50/70 p-5">
               <div className="mb-4 flex items-center justify-between gap-2">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
@@ -2025,7 +1965,10 @@ export const AddProjectForm = () => {
               onDragOver={(e) => e.preventDefault()}
               onDrop={(e) => {
                 e.preventDefault();
-                void handleFilesAdded(e.dataTransfer.files);
+                const dropped = Array.from(e.dataTransfer.files);
+                // Dropping here opens the modal with the files staged so the
+                // category is still chosen before anything is uploaded.
+                if (dropped.length > 0) openDocModal(dropped);
               }}
             >
               <div className="overflow-x-auto rounded-xl border border-gray-200">
@@ -2045,7 +1988,7 @@ export const AddProjectForm = () => {
                         <td colSpan={5}>
                           <button
                             type="button"
-                            onClick={() => docInputRef.current?.click()}
+                            onClick={() => openDocModal()}
                             className="flex w-full cursor-pointer flex-col items-center justify-center gap-3 px-4 py-16 text-center transition hover:bg-gray-50/70"
                           >
                             <svg className="h-12 w-12 text-gray-200" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -2122,28 +2065,31 @@ export const AddProjectForm = () => {
                 </table>
               </div>
               <p className="mt-2 text-xs text-gray-400">
-                Drag and drop here or use Upload Document. The checklist ticks
-                itself from the file name — correct the Type column if a
-                document lands on the wrong requirement.
+                Drag and drop here or use Upload Document — both open the upload
+                form, where the requirement the document satisfies is chosen.
+                Correct the Type column if one lands on the wrong row.
               </p>
-              {isUploadingDoc && (
-                <p className="mt-1 text-xs text-blue-500">Uploading...</p>
-              )}
-              {docUploadError && (
-                <p className="mt-1 text-xs text-red-500">{docUploadError}</p>
-              )}
             </div>
           </div>
         </section>
 
+        <UploadDocumentModal
+          open={isDocModalOpen}
+          onClose={closeDocModal}
+          onSubmit={handleDocUpload}
+          isUploading={isUploadingDoc}
+          uploadError={docUploadError}
+          initialFiles={stagedDropFiles}
+        />
+
         {/* Error */}
         {showErrors && hasErrors && (
-          <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+          <div className="rounded-sm border border-red-200 bg-red-50 p-3 text-sm text-red-700">
             Please complete all required fields highlighted above before submitting.
           </div>
         )}
         {createProject.isError && (
-          <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+          <div className="rounded-sm border border-red-200 bg-red-50 p-3 text-sm text-red-700">
             {createProject.error.message}
           </div>
         )}
@@ -2152,7 +2098,7 @@ export const AddProjectForm = () => {
         <div className="flex items-center justify-between border-t border-gray-200 pt-4 pb-8">
           <Link
             href="/admin/projects"
-            className="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
+            className="rounded-sm border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
           >
             Cancel
           </Link>
@@ -2161,7 +2107,7 @@ export const AddProjectForm = () => {
               type="button"
               onClick={() => handleSubmit(true)}
               disabled={isBusy || !title}
-              className="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-sm border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Save as Draft
             </button>
@@ -2169,7 +2115,7 @@ export const AddProjectForm = () => {
               type="button"
               onClick={() => handleSubmit(false)}
               disabled={isBusy}
-              className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-sm bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {createProject.isPending
                 ? "Submitting..."
