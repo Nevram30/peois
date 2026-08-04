@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useMemo, useRef, useEffect, useCallback } from "react";
+import { useState, useMemo, useRef } from "react";
 import { api } from "~/trpc/react";
 import { useUploadThing } from "~/lib/uploadthing";
 import {
@@ -41,7 +41,8 @@ import {
   type ProjectFileType,
 } from "~/lib/project-documents";
 import { UploadDocumentModal } from "./upload-document-modal";
-import { LocationPickerMap } from "./location-picker-map";
+import { GeospatialFields } from "~/app/_components/geospatial-fields";
+import { parseCoord } from "~/lib/geo";
 
 // ─── Shared styles ────────────────────────────────────────────────────────
 const inputClass =
@@ -182,26 +183,6 @@ const FolderIcon = (
     <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
   </svg>
 );
-const GlobeIcon = (
-  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.949 8.949 0 0 0 4.951-1.488A3.987 3.987 0 0 0 13 16h-2a3.987 3.987 0 0 0-3.951 3.512A8.949 8.949 0 0 0 12 21Zm3-11.25a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-  </svg>
-);
-const SearchIcon = (
-  <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-  </svg>
-);
-const CrosshairIcon = (
-  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m0 13.5V21m9-9h-2.25M5.25 12H3m15 0a6 6 0 1 1-12 0 6 6 0 0 1 12 0Zm-3.75 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
-  </svg>
-);
-const ExternalLinkIcon = (
-  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-  </svg>
-);
 const TrendDownIcon = (
   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
     <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6 9 12.75l4.286-4.286a11.948 11.948 0 0 1 4.306 6.43l.776 2.898m0 0 3.182-5.511m-3.182 5.51-5.511-3.181" />
@@ -213,27 +194,6 @@ const SaveIcon = (
     <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 4.5v4.125c0 .621.504 1.125 1.125 1.125h4.5c.621 0 1.125-.504 1.125-1.125V4.5M7.5 21v-5.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125V21" />
   </svg>
 );
-// ─── Geocoding ────────────────────────────────────────────────────────────
-// Free-form place search is served by OpenStreetMap's Nominatim endpoint —
-// no API key and no extra dependency, in exchange for a strict usage policy
-// (see the debounce in the search effect below).
-type GeoResult = {
-  place_id: number;
-  display_name: string;
-  lat: string;
-  lon: string;
-};
-
-// Returns null for anything that is not a usable coordinate, so a half-typed
-// value ("-", "125.") simply reads as "no pin yet" instead of NaN.
-const parseCoord = (value: string, max: number) => {
-  const trimmed = value.trim();
-  if (!trimmed) return null;
-  const parsed = Number(trimmed);
-  if (!Number.isFinite(parsed) || Math.abs(parsed) > max) return null;
-  return parsed;
-};
-
 // Same idea for the slippage inputs: anything that is not a 0–100 percentage
 // reads as "not entered yet" rather than NaN.
 const parsePercent = (value: string) => {
@@ -268,23 +228,10 @@ export const AddProjectForm = () => {
 
   // ── Geospatial Data ──────────────────────────────────────────────────
   // Coordinates live as strings so a partially typed value survives editing.
+  // Everything else about the pin — search, device location, the draggable
+  // map — belongs to <GeospatialFields>.
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
-  const [mapQuery, setMapQuery] = useState("");
-  const [mapResults, setMapResults] = useState<GeoResult[]>([]);
-  const [isSearchingMap, setIsSearchingMap] = useState(false);
-  const [mapSearchMessage, setMapSearchMessage] = useState<string | null>(null);
-  const [isLocating, setIsLocating] = useState(false);
-  const [geoError, setGeoError] = useState<string | null>(null);
-  // Metres of uncertainty reported by the device, kept so the encoder can see
-  // whether the reading is worth adjusting by hand.
-  const [geoAccuracy, setGeoAccuracy] = useState<number | null>(null);
-  // Address the current pin resolves to, refreshed whenever the pin moves.
-  const [resolvedAddress, setResolvedAddress] = useState<string | null>(null);
-  const [isResolvingAddress, setIsResolvingAddress] = useState(false);
-  // Picking a result writes its full name back into the search box; this flag
-  // stops that write from triggering another lookup.
-  const skipNextGeoSearch = useRef(false);
 
   // ── Funding Information ──────────────────────────────────────────────
   const [sourceOfFund, setSourceOfFund] = useState<SourceOfFundValue | "">("");
@@ -423,150 +370,6 @@ export const AddProjectForm = () => {
   const parsedLat = useMemo(() => parseCoord(latitude, 90), [latitude]);
   const parsedLng = useMemo(() => parseCoord(longitude, 180), [longitude]);
 
-  const fullMapHref =
-    parsedLat !== null && parsedLng !== null
-      ? `https://www.openstreetmap.org/?mlat=${parsedLat}&mlon=${parsedLng}#map=16/${parsedLat}/${parsedLng}`
-      : null;
-
-  // Place search. Debounced and aborted on every keystroke to stay inside the
-  // Nominatim usage policy (max one request per second).
-  useEffect(() => {
-    if (skipNextGeoSearch.current) {
-      skipNextGeoSearch.current = false;
-      return;
-    }
-    const query = mapQuery.trim();
-    if (query.length < 3) {
-      setMapResults([]);
-      setMapSearchMessage(null);
-      return;
-    }
-
-    const controller = new AbortController();
-    const timer = setTimeout(() => {
-      setIsSearchingMap(true);
-      void fetch(
-        `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&countrycodes=ph&q=${encodeURIComponent(query)}`,
-        { signal: controller.signal, headers: { Accept: "application/json" } },
-      )
-        .then((res) => {
-          if (!res.ok) throw new Error("Search request failed");
-          return res.json() as Promise<GeoResult[]>;
-        })
-        .then((results) => {
-          setMapResults(results);
-          setMapSearchMessage(
-            results.length === 0 ? "No matching place found." : null,
-          );
-        })
-        .catch(() => {
-          if (controller.signal.aborted) return;
-          setMapResults([]);
-          setMapSearchMessage(
-            "Map search is unavailable. Enter the coordinates manually.",
-          );
-        })
-        .finally(() => {
-          if (!controller.signal.aborted) setIsSearchingMap(false);
-        });
-    }, 600);
-
-    return () => {
-      clearTimeout(timer);
-      controller.abort();
-    };
-  }, [mapQuery]);
-
-  // Reverse lookup — names whatever the pin currently sits on, so moving it is
-  // confirmed by something readable and not just two changed numbers. Debounced
-  // for the same Nominatim policy as the search above.
-  useEffect(() => {
-    if (parsedLat === null || parsedLng === null) {
-      setResolvedAddress(null);
-      return;
-    }
-
-    const controller = new AbortController();
-    const timer = setTimeout(() => {
-      setIsResolvingAddress(true);
-      void fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=18&lat=${parsedLat}&lon=${parsedLng}`,
-        { signal: controller.signal, headers: { Accept: "application/json" } },
-      )
-        .then((res) => {
-          if (!res.ok) throw new Error("Reverse lookup failed");
-          return res.json() as Promise<{ display_name?: string }>;
-        })
-        .then((result) => setResolvedAddress(result.display_name ?? null))
-        .catch(() => {
-          // The coordinates are still valid without a name for them.
-          if (!controller.signal.aborted) setResolvedAddress(null);
-        })
-        .finally(() => {
-          if (!controller.signal.aborted) setIsResolvingAddress(false);
-        });
-    }, 800);
-
-    return () => {
-      clearTimeout(timer);
-      controller.abort();
-    };
-  }, [parsedLat, parsedLng]);
-
-  const applyGeoResult = (result: GeoResult) => {
-    skipNextGeoSearch.current = true;
-    setLatitude(Number(result.lat).toFixed(6));
-    setLongitude(Number(result.lon).toFixed(6));
-    setMapQuery(result.display_name);
-    setMapResults([]);
-    setMapSearchMessage(null);
-    setGeoError(null);
-    // A searched place is not a device reading, so the accuracy no longer says
-    // anything about the pin.
-    setGeoAccuracy(null);
-  };
-
-  // Dragging or tapping the map is the primary way to adjust the pin; the
-  // number fields stay authoritative and simply follow it.
-  const handleMapPinChange = useCallback((lat: number, lng: number) => {
-    setLatitude(lat.toFixed(6));
-    setLongitude(lng.toFixed(6));
-    setGeoError(null);
-    // The reading is the user's own placement now, not the device's.
-    setGeoAccuracy(null);
-  }, []);
-
-  // "Pin My Location" seeds the pin from the device; it is a starting point,
-  // not the final answer — the map underneath stays adjustable.
-  const handleUseMyLocation = () => {
-    if (typeof navigator === "undefined" || !navigator.geolocation) {
-      setGeoError("Location services are not available in this browser.");
-      return;
-    }
-    setIsLocating(true);
-    setGeoError(null);
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLatitude(position.coords.latitude.toFixed(6));
-        setLongitude(position.coords.longitude.toFixed(6));
-        setGeoAccuracy(
-          Number.isFinite(position.coords.accuracy)
-            ? Math.round(position.coords.accuracy)
-            : null,
-        );
-        setIsLocating(false);
-      },
-      (error) => {
-        setGeoError(
-          error.code === error.PERMISSION_DENIED
-            ? "Location permission was denied. Allow it in your browser, or drag the pin on the map."
-            : "Could not read your location. Drag the pin on the map or type the coordinates.",
-        );
-        setIsLocating(false);
-      },
-      { enableHighAccuracy: true, timeout: 10_000, maximumAge: 0 },
-    );
-  };
   // Programs / Projects / LBP-TL numbers registered by a super admin.
   const { data: customOptions } = api.fundingOption.getAll.useQuery();
   // Cascade: Source of Fund → Program → Project. Both lists are the built-in
@@ -1177,153 +980,18 @@ export const AddProjectForm = () => {
               </div>
 
               {/* ── Geospatial Data ──────────────────────────────────── */}
-              <div className="space-y-3 border-t border-gray-100 pt-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-blue-500">{GlobeIcon}</span>
-                  <span className="text-xs font-bold uppercase tracking-widest text-gray-700">
-                    Geospatial Data
-                  </span>
-                </div>
-
-                {/* Place search */}
-                <div className="relative">
-                  <span className="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-gray-400">
-                    {SearchIcon}
-                  </span>
-                  <input
-                    type="text"
-                    value={mapQuery}
-                    onChange={(e) => setMapQuery(e.target.value)}
-                    placeholder="Search on map..."
-                    autoComplete="off"
-                    className={`${inputClass} pl-11`}
-                  />
-                  {isSearchingMap && (
-                    <span className="absolute inset-y-0 right-3.5 flex items-center">
-                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-gray-200 border-t-blue-500" />
-                    </span>
-                  )}
-                  {mapResults.length > 0 && (
-                    <ul className="absolute z-20 mt-1 max-h-56 w-full overflow-y-auto rounded-sm border border-gray-200 bg-white py-1 shadow-lg">
-                      {mapResults.map((result) => (
-                        <li key={result.place_id}>
-                          <button
-                            type="button"
-                            onClick={() => applyGeoResult(result)}
-                            className="flex w-full items-start gap-2 px-3 py-2 text-left text-xs text-gray-700 hover:bg-blue-50"
-                          >
-                            <span className="mt-0.5 shrink-0 text-blue-400">
-                              {PinIcon}
-                            </span>
-                            <span className="line-clamp-2">{result.display_name}</span>
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                  {mapSearchMessage && (
-                    <p className="mt-1 text-xs text-gray-400">{mapSearchMessage}</p>
-                  )}
-                </div>
-
-                {/* Coordinates + current location */}
-                <div className="flex items-start gap-3">
-                  <div className="flex-1">
-                    <label className={labelClass}>Latitude</label>
-                    <input
-                      type="text"
-                      inputMode="decimal"
-                      value={latitude}
-                      onChange={(e) => setLatitude(e.target.value)}
-                      placeholder="7.4478"
-                      className={`${inputClass} ${showErrors && fieldErrors.latitude ? errorRingClass : ""}`}
-                    />
-                    <FieldError
-                      show={showErrors && fieldErrors.latitude}
-                      message="Enter a value between -90 and 90"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <label className={labelClass}>Longitude</label>
-                    <input
-                      type="text"
-                      inputMode="decimal"
-                      value={longitude}
-                      onChange={(e) => setLongitude(e.target.value)}
-                      placeholder="125.8078"
-                      className={`${inputClass} ${showErrors && fieldErrors.longitude ? errorRingClass : ""}`}
-                    />
-                    <FieldError
-                      show={showErrors && fieldErrors.longitude}
-                      message="Enter a value between -180 and 180"
-                    />
-                  </div>
-                </div>
-
-                {/* Pin from the device, then adjust by hand on the map */}
-                <div className="flex flex-wrap items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={handleUseMyLocation}
-                    disabled={isLocating}
-                    className="inline-flex items-center gap-2 rounded-sm border border-blue-200 bg-blue-50 px-4 py-2.5 text-[11px] font-bold uppercase tracking-widest text-blue-700 shadow-sm transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    {isLocating ? (
-                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-blue-200 border-t-blue-600" />
-                    ) : (
-                      CrosshairIcon
-                    )}
-                    {isLocating ? "Locating..." : "Pin My Location"}
-                  </button>
-                  {geoAccuracy !== null && (
-                    <span className="text-xs text-gray-500">
-                      Device accuracy ±{geoAccuracy} m — drag the map to correct
-                      it.
-                    </span>
-                  )}
-                </div>
-
-                {geoError && <p className="text-xs text-red-500">{geoError}</p>}
-
-                {/* Interactive map — the pin is whatever the centre sits on */}
-                <div className="relative">
-                  <LocationPickerMap
-                    latitude={parsedLat}
-                    longitude={parsedLng}
-                    onChange={handleMapPinChange}
-                    className="h-64"
-                  />
-                  {fullMapHref && (
-                    <a
-                      href={fullMapHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="absolute right-3 bottom-3 flex items-center gap-1.5 rounded-sm bg-white/95 px-3 py-2 text-[11px] font-bold uppercase tracking-widest text-gray-700 shadow-md transition hover:bg-white hover:text-blue-600"
-                    >
-                      <span className="text-blue-500">{ExternalLinkIcon}</span>
-                      Full View
-                    </a>
-                  )}
-                </div>
-
-                <p className="text-xs text-gray-400">
-                  {parsedLat === null || parsedLng === null
-                    ? "Tap the map, search for a place, or use Pin My Location to drop the pin."
-                    : "Drag or tap the map to adjust the pin — the coordinates follow it."}
-                </p>
-
-                {(isResolvingAddress || resolvedAddress) && (
-                  <p className="flex items-start gap-1.5 text-xs text-gray-500">
-                    <span className="mt-0.5 shrink-0 text-blue-400">
-                      {PinIcon}
-                    </span>
-                    <span className="line-clamp-2">
-                      {isResolvingAddress && !resolvedAddress
-                        ? "Resolving address..."
-                        : resolvedAddress}
-                    </span>
-                  </p>
-                )}
+              <div className="border-t border-gray-100 pt-4">
+                <GeospatialFields
+                  latitude={latitude}
+                  longitude={longitude}
+                  onLatitudeChange={setLatitude}
+                  onLongitudeChange={setLongitude}
+                  showLatitudeError={showErrors && fieldErrors.latitude}
+                  showLongitudeError={showErrors && fieldErrors.longitude}
+                  inputClassName={inputClass}
+                  labelClassName={labelClass}
+                  errorClassName={errorRingClass}
+                />
               </div>
             </div>
           </section>

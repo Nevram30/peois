@@ -200,6 +200,8 @@ export const projectRouter = createTRPCRouter({
         description: z.string().optional(),
         status: z.enum(PROJECT_STATUS_VALUES).optional(),
         completionPercentage: z.number().int().min(0).max(100).optional(),
+        latitude: z.number().min(-90).max(90).optional().nullable(),
+        longitude: z.number().min(-180).max(180).optional().nullable(),
         imageUrl: z.string().optional(),
         documentUrl: z.string().optional(),
         documentName: z.string().optional(),
@@ -223,6 +225,50 @@ export const projectRouter = createTRPCRouter({
           ...data,
           duration,
           numPersons,
+        },
+      });
+    }),
+
+  // Filing a slippage assessment. Kept apart from `update` because each save is
+  // a numbered re-assessment rather than an edit: the revision counter advances
+  // here, on the server, so two encoders cannot file the same revision number.
+  updateSlippage: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        slippageTarget: z.number().min(0).max(100).nullable(),
+        slippageActual: z.number().min(0).max(100).nullable(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const current = await ctx.db.project.findUnique({
+        where: { id: input.id },
+        select: {
+          slippageTarget: true,
+          slippageActual: true,
+          slippageRevision: true,
+        },
+      });
+      if (!current) throw new Error("Project not found");
+
+      // Rev. 0 is the first assessment on file; every later change to the pair
+      // rolls the counter forward.
+      const hadAssessment =
+        current.slippageTarget !== null && current.slippageActual !== null;
+      const changed =
+        current.slippageTarget !== input.slippageTarget ||
+        current.slippageActual !== input.slippageActual;
+      const slippageRevision =
+        hadAssessment && changed
+          ? current.slippageRevision + 1
+          : current.slippageRevision;
+
+      return ctx.db.project.update({
+        where: { id: input.id },
+        data: {
+          slippageTarget: input.slippageTarget,
+          slippageActual: input.slippageActual,
+          slippageRevision,
         },
       });
     }),

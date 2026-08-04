@@ -33,6 +33,15 @@ import {
   getMunicipalitiesByDistrict,
   getBarangaysByMunicipality,
 } from "~/lib/davao-del-norte-locations";
+import {
+  SLIPPAGE_STAGE_VALUES,
+  SLIPPAGE_STAGE_CONFIG,
+  computeSlippage,
+  formatSlippage,
+  getSlippageStageConfig,
+} from "~/lib/slippage";
+import { parseCoord } from "~/lib/geo";
+import { GeospatialFields } from "~/app/_components/geospatial-fields";
 
 const STATUS_CONFIG: Record<string, { label: string; badge: string; dot: string }> = {
   NOT_YET_STARTED: { label: "Not Yet Started", badge: "bg-gray-100 text-gray-600 border-gray-200", dot: "bg-gray-400" },
@@ -129,6 +138,23 @@ const Select = (props: React.SelectHTMLAttributes<HTMLSelectElement>) => {
   );
 }
 
+// Percentages behave like the coordinates: anything that is not a 0–100 value
+// reads as "not entered yet" rather than NaN.
+const parsePercent = (value: string) => {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  const parsed = Number(trimmed);
+  if (!Number.isFinite(parsed) || parsed < 0 || parsed > 100) return null;
+  return parsed;
+};
+
+// Styling handed to the shared <GeospatialFields> so it matches this form's
+// Input / FieldLabel rather than the new-project form's.
+const GEO_INPUT_CLASS =
+  "block w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 placeholder:text-gray-300 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20";
+const GEO_LABEL_CLASS =
+  "mb-1 block text-[10px] font-bold uppercase tracking-widest text-gray-400";
+
 // ─── Icons ───────────────────────────────────────────────────────────────────
 const EditIcon = () => (
   <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
@@ -167,6 +193,19 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   const [barangay, setBarangay] = useState("");
   const [purok, setPurok] = useState("");
   const [sitio, setSitio] = useState("");
+
+  // ─ Geospatial ──────────────────────────────────────────────────────────
+  // Coordinates live as strings so a partially typed value survives editing;
+  // they are saved with the rest of the form by Save Changes.
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
+
+  // ─ Slippage ────────────────────────────────────────────────────────────
+  // Filed on its own Save, like disbursements and timeline adjustments — the
+  // revision counter is advanced server-side.
+  const [slippageTargetInput, setSlippageTargetInput] = useState("");
+  const [slippageActualInput, setSlippageActualInput] = useState("");
+  const [slippageError, setSlippageError] = useState<string | null>(null);
 
   // ─ Funding ─────────────────────────────────────────────────────────────
   const [sourceOfFund, setSourceOfFund] = useState<SourceOfFundValue | "">("");
@@ -244,6 +283,14 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     setBarangay(project.barangay ?? "");
     setPurok(project.purok ?? "");
     setSitio(project.sitio ?? "");
+    setLatitude(project.latitude !== null ? String(project.latitude) : "");
+    setLongitude(project.longitude !== null ? String(project.longitude) : "");
+    setSlippageTargetInput(
+      project.slippageTarget !== null ? String(project.slippageTarget) : "",
+    );
+    setSlippageActualInput(
+      project.slippageActual !== null ? String(project.slippageActual) : "",
+    );
     setSourceOfFund(project.sourceOfFund);
     setProgram(project.program ?? "");
     setSubType(project.subType ?? "");
@@ -273,6 +320,41 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     () => getBarangaysByMunicipality(cityMunicipality),
     [cityMunicipality],
   );
+
+  // ─ Geospatial derived values ───────────────────────────────────────────
+  const parsedLat = useMemo(() => parseCoord(latitude, 90), [latitude]);
+  const parsedLng = useMemo(() => parseCoord(longitude, 180), [longitude]);
+  const hasInvalidLat = latitude.trim() !== "" && parsedLat === null;
+  const hasInvalidLng = longitude.trim() !== "" && parsedLng === null;
+
+  // ─ Slippage derived values ─────────────────────────────────────────────
+  const slippageTarget = useMemo(
+    () => parsePercent(slippageTargetInput),
+    [slippageTargetInput],
+  );
+  const slippageActual = useMemo(
+    () => parsePercent(slippageActualInput),
+    [slippageActualInput],
+  );
+  const slippage =
+    slippageTarget !== null && slippageActual !== null
+      ? computeSlippage(slippageTarget, slippageActual)
+      : null;
+  const slippageStage =
+    slippage !== null ? getSlippageStageConfig(slippage) : null;
+
+  // The pair currently on file, against which the inputs read as dirty.
+  const savedSlippageKey =
+    project?.slippageTarget != null && project?.slippageActual != null
+      ? `${project.slippageTarget}|${project.slippageActual}`
+      : null;
+  const slippageKey =
+    slippageTarget !== null && slippageActual !== null
+      ? `${slippageTarget}|${slippageActual}`
+      : null;
+  const isSlippageDirty =
+    slippageKey !== null && slippageKey !== savedSlippageKey;
+  const slippageRevision = project?.slippageRevision ?? 0;
   // ─ Mutations ───────────────────────────────────────────────────────────
   const updateProject = api.project.update.useMutation({
     onSuccess: () => {
@@ -287,6 +369,36 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
       void utils.projectActivity.getByProjectId.invalidate({ projectId });
     },
   });
+
+  const updateSlippage = api.project.updateSlippage.useMutation({
+    onSuccess: (updated) => {
+      void utils.project.getById.invalidate({ id: projectId });
+      setSlippageError(null);
+      addActivity.mutate({
+        projectId,
+        description: `Filed slippage assessment Rev. ${updated.slippageRevision} — target ${updated.slippageTarget}%, actual ${updated.slippageActual}%.`,
+      });
+    },
+    onError: (error) => setSlippageError(error.message),
+  });
+
+  const handleSaveSlippage = () => {
+    if (slippageTargetInput.trim() === "" || slippageActualInput.trim() === "") {
+      setSlippageError("Enter both the target and actual accomplishment.");
+      return;
+    }
+    if (slippageTarget === null || slippageActual === null) {
+      setSlippageError("Target and actual must each be between 0 and 100.");
+      return;
+    }
+    if (!isSlippageDirty) return;
+    setSlippageError(null);
+    updateSlippage.mutate({
+      id: projectId,
+      slippageTarget,
+      slippageActual,
+    });
+  };
 
   const recordDisbursement = api.project.createDisbursement.useMutation({
     onSuccess: (_data, variables) => {
@@ -428,6 +540,9 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     if (barangay !== (project.barangay ?? "")) locationFields.push("Barangay");
     if (purok !== (project.purok ?? "")) locationFields.push("Purok");
     if (sitio !== (project.sitio ?? "")) locationFields.push("Sitio");
+    if (parsedLat !== project.latitude || parsedLng !== project.longitude) {
+      locationFields.push("Geospatial Data");
+    }
     if (locationFields.length > 0) {
       sections.push(`Project Location (${locationFields.join(", ")})`);
     }
@@ -510,6 +625,8 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
         barangay: barangay || undefined,
         purok: purok || undefined,
         sitio: sitio || undefined,
+        latitude: parsedLat,
+        longitude: parsedLng,
         description: description || undefined,
         status: status as ProjectStatusValue,
         completionPercentage: completion,
@@ -721,11 +838,11 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
         ════════════════════════════════ */}
         <div className="min-w-0 flex-1 space-y-4">
 
-          {/* ── Row 1: Identity + Location ── */}
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
+          {/* ── Identity, then Location stacked beneath it ── */}
+          <div className="space-y-4">
 
             {/* PROJECT IDENTITY & STATUS */}
-            <SectionCard className="lg:col-span-3">
+            <SectionCard>
               <SectionHeader
                 icon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>}
                 title="Project Identity & Status"
@@ -856,13 +973,15 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
             </SectionCard>
 
             {/* PROJECT LOCATION */}
-            <SectionCard className="lg:col-span-2">
+            <SectionCard>
               <SectionHeader
                 icon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>}
                 title="Project Location"
                 action={<button type="button" className="text-gray-400 hover:text-gray-600"><EditIcon /></button>}
               />
               <div className="space-y-3 p-4">
+                {/* Full-width card, so the administrative levels sit in one row */}
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <div>
                   <FieldLabel>District</FieldLabel>
                   <Select
@@ -919,6 +1038,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                     ))}
                   </Select>
                 </div>
+                </div>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div>
                     <FieldLabel>Purok</FieldLabel>
@@ -936,6 +1056,21 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                       placeholder="Enter Sitio"
                     />
                   </div>
+                </div>
+
+                {/* ── Geospatial Data ── */}
+                <div className="border-t border-gray-100 pt-4">
+                  <GeospatialFields
+                    latitude={latitude}
+                    longitude={longitude}
+                    onLatitudeChange={setLatitude}
+                    onLongitudeChange={setLongitude}
+                    showLatitudeError={hasInvalidLat}
+                    showLongitudeError={hasInvalidLng}
+                    inputClassName={GEO_INPUT_CLASS}
+                    labelClassName={GEO_LABEL_CLASS}
+                    errorClassName="border-red-300 focus:border-red-400 focus:ring-red-400/20"
+                  />
                 </div>
               </div>
             </SectionCard>
@@ -1455,6 +1590,115 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                 </button>
               </div>
               {adjError && <p className="mt-1 text-xs text-red-500">{adjError}</p>}
+            </div>
+          </SectionCard>
+
+          {/* ── Slippage ── */}
+          <SectionCard>
+            <SectionHeader
+              icon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6 9 12.75l4.286-4.286a11.948 11.948 0 0 1 4.306 6.43l.776 2.898m0 0 3.182-5.511m-3.182 5.51-5.511-3.181" /></svg>}
+              title="Slippage"
+            />
+            <div className="p-4">
+              <div className="flex flex-wrap items-end gap-4">
+                {/* Live readout — actual minus target, with its stage */}
+                <div
+                  className={`flex min-w-70 flex-1 items-center justify-between gap-4 rounded-lg border px-4 py-3 ${slippageStage ? slippageStage.tile : "border-gray-200 bg-gray-50"
+                    }`}
+                >
+                  <div>
+                    <p className={`text-[10px] font-bold uppercase tracking-widest ${slippageStage ? slippageStage.text : "text-gray-400"}`}>
+                      Slippage
+                    </p>
+                    <p className={`mt-0.5 text-3xl font-extrabold ${slippageStage ? slippageStage.text : "text-gray-300"}`}>
+                      {slippage !== null ? formatSlippage(slippage) : "—"}
+                      <span className="ml-0.5 text-base font-bold">%</span>
+                    </p>
+                  </div>
+                  {slippageStage && (
+                    <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest ${slippageStage.badge}`}>
+                      {slippageStage.label}
+                    </span>
+                  )}
+                </div>
+
+                <div className="w-full shrink-0 sm:w-40">
+                  <FieldLabel>Target %</FieldLabel>
+                  <div className="relative">
+                    <Input
+                      type="text"
+                      inputMode="decimal"
+                      value={slippageTargetInput}
+                      onChange={(e) => { setSlippageTargetInput(e.target.value); setSlippageError(null); }}
+                      placeholder="0.00"
+                      className="pr-8"
+                      error={slippageTargetInput.trim() !== "" && slippageTarget === null}
+                    />
+                    <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-sm text-gray-400">%</span>
+                  </div>
+                </div>
+
+                <div className="w-full shrink-0 sm:w-40">
+                  <FieldLabel>Actual %</FieldLabel>
+                  <div className="relative">
+                    <Input
+                      type="text"
+                      inputMode="decimal"
+                      value={slippageActualInput}
+                      onChange={(e) => { setSlippageActualInput(e.target.value); setSlippageError(null); }}
+                      placeholder="0.00"
+                      className="pr-8"
+                      error={slippageActualInput.trim() !== "" && slippageActual === null}
+                    />
+                    <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-sm text-gray-400">%</span>
+                  </div>
+                </div>
+
+                {/* Revision counter — advanced by Save, never typed */}
+                <div className="w-full shrink-0 sm:w-32">
+                  <FieldLabel>Revision</FieldLabel>
+                  <div className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-600">
+                    Rev. {isSlippageDirty && savedSlippageKey !== null ? slippageRevision + 1 : slippageRevision}
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleSaveSlippage}
+                  disabled={!isSlippageDirty || updateSlippage.isPending}
+                  className="flex shrink-0 items-center justify-center gap-2 rounded-lg bg-blue-900 px-6 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {updateSlippage.isPending ? "Saving..." : "Save"}
+                </button>
+              </div>
+
+              {slippageError && <p className="mt-2 text-xs text-red-500">{slippageError}</p>}
+
+              {/* Prescribed action for the current stage / save state */}
+              {slippageStage && (
+                <p className="mt-3 text-xs text-gray-500">
+                  <span className="font-semibold text-gray-700">{slippageStage.label}:</span>{" "}
+                  {slippageStage.action}
+                  {savedSlippageKey !== null && !isSlippageDirty && (
+                    <span className="ml-1 text-gray-400">— filed as Rev. {slippageRevision}.</span>
+                  )}
+                </p>
+              )}
+
+              {/* Stage legend */}
+              <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-gray-100 pt-4">
+                {SLIPPAGE_STAGE_VALUES.map((stage) => {
+                  const cfg = SLIPPAGE_STAGE_CONFIG[stage];
+                  return (
+                    <span key={stage} className="flex items-center gap-2">
+                      <span className={`h-2 w-2 rounded-full ${cfg.dot}`} />
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                        {cfg.range}: {cfg.label}
+                      </span>
+                    </span>
+                  );
+                })}
+              </div>
             </div>
           </SectionCard>
 
