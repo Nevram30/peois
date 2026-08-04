@@ -30,3 +30,20 @@ export const NOMINATIM_REVERSE_URL = (lat: number, lng: number) =>
 
 export const osmFullMapHref = (lat: number, lng: number) =>
   `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=16/${lat}/${lng}`;
+
+/** Static, non-interactive map for read-only views. ~1 km around the pin. */
+export const osmEmbedSrc = (lat: number, lng: number) => {
+  const pad = 0.01;
+  const bbox = [lng - pad, lat - pad, lng + pad, lat + pad].join(",");
+  return `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lng}`;
+};
+
+/** Signed decimal degrees with the hemisphere spelled out, e.g. "7.447800° N". */
+export const formatCoord = (
+  value: number,
+  axis: "lat" | "lng",
+) => {
+  const hemisphere =
+    axis === "lat" ? (value >= 0 ? "N" : "S") : value >= 0 ? "E" : "W";
+  return `${Math.abs(value).toFixed(6)}° ${hemisphere}`;
+};

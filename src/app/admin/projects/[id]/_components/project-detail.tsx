@@ -15,6 +15,14 @@ import {
   type SourceOfFundValue,
   type FundingProgramValue,
 } from "~/lib/fund-constants";
+import {
+  SLIPPAGE_STAGE_VALUES,
+  SLIPPAGE_STAGE_CONFIG,
+  computeSlippage,
+  formatSlippage,
+  getSlippageStageConfig,
+} from "~/lib/slippage";
+import { GeospatialSummary } from "~/app/_components/geospatial-summary";
 
 const STATUS_PILL: Record<string, string> = {
   NOT_YET_STARTED: "bg-gray-50 text-gray-600 border border-gray-200",
@@ -163,6 +171,14 @@ export const ProjectDetail = ({ projectId }: Props) => {
   const variationOrderBalance = Math.max(0, totalVariationOrder - overflow);
   const totalRemainingBalance = primaryFundBalance + variationOrderBalance;
 
+  // Slippage is always derived from the two figures on file, never stored.
+  const slippage =
+    project.slippageTarget !== null && project.slippageActual !== null
+      ? computeSlippage(project.slippageTarget, project.slippageActual)
+      : null;
+  const slippageStage =
+    slippage !== null ? getSlippageStageConfig(slippage) : null;
+
   const engineers = (project.projectEngineer ?? "")
     .split(/[,;]/)
     .map((s) => s.trim())
@@ -222,10 +238,10 @@ export const ProjectDetail = ({ projectId }: Props) => {
       </div>
 
       <div className="space-y-6">
-        {/* ── Top row: Identity & Status (left, wide) + Location (right) ── */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* ── Identity & Status, then Location stacked beneath it ── */}
+        <div className="space-y-6">
           {/* Project Identity & Status */}
-          <section className={`${card} lg:col-span-2`}>
+          <section className={card}>
             <div className={sectionTitle}>
               <svg
                 className="h-5 w-5 text-blue-600"
@@ -373,19 +389,24 @@ export const ProjectDetail = ({ projectId }: Props) => {
             </div>
 
             <div className="space-y-3">
-              <div>
-                <label className={fieldLabel}>District</label>
-                <div className={fieldText}>{districtLabel}</div>
+              {/* Full-width card, so the administrative levels sit in one row */}
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <div>
+                  <label className={fieldLabel}>District</label>
+                  <div className={fieldText}>{districtLabel}</div>
+                </div>
+                <div>
+                  <label className={fieldLabel}>City/Municipality</label>
+                  <div className={fieldText}>{project.cityMunicipality ?? "—"}</div>
+                </div>
+                <div>
+                  <label className={fieldLabel}>Barangay</label>
+                  <div className={fieldText}>{project.barangay ?? "—"}</div>
+                </div>
               </div>
-              <div>
-                <label className={fieldLabel}>City/Municipality</label>
-                <div className={fieldText}>{project.cityMunicipality ?? "—"}</div>
-              </div>
-              <div>
-                <label className={fieldLabel}>Barangay</label>
-                <div className={fieldText}>{project.barangay ?? "—"}</div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
+              {/* Same 3-up grid as the row above, so Purok sits under District
+                  and Sitio under City/Municipality */}
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <div>
                   <label className={fieldLabel}>Purok</label>
                   <div className={fieldText}>{project.purok ?? "—"}</div>
@@ -394,6 +415,16 @@ export const ProjectDetail = ({ projectId }: Props) => {
                   <label className={fieldLabel}>Sitio</label>
                   <div className={fieldText}>{project.sitio ?? "N/A"}</div>
                 </div>
+              </div>
+
+              {/* ── Geospatial Data ── */}
+              <div className="border-t border-gray-100 pt-4">
+                <GeospatialSummary
+                  latitude={project.latitude}
+                  longitude={project.longitude}
+                  labelClassName={fieldLabel}
+                  valueClassName={fieldText}
+                />
               </div>
             </div>
           </section>
@@ -673,6 +704,112 @@ export const ProjectDetail = ({ projectId }: Props) => {
                 </tbody>
               </table>
             </div>
+          </div>
+        </section>
+
+        {/* ── Slippage ── */}
+        <section className={card}>
+          <div className={sectionTitle}>
+            <svg
+              className="h-5 w-5 text-blue-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M2.25 6 9 12.75l4.286-4.286a11.948 11.948 0 0 1 4.306 6.43l.776 2.898m0 0 3.182-5.511m-3.182 5.51-5.511-3.181"
+              />
+            </svg>
+            <h2 className="text-sm font-bold uppercase tracking-wider text-gray-700">
+              Slippage
+            </h2>
+          </div>
+
+          <div className="flex flex-wrap items-stretch gap-4">
+            {/* Readout — actual minus target, with its stage */}
+            <div
+              className={`flex min-w-70 flex-1 items-center justify-between gap-4 rounded-sm border px-4 py-3 ${slippageStage ? slippageStage.tile : "border-gray-200 bg-gray-50"
+                }`}
+            >
+              <div>
+                <p
+                  className={`text-[10px] font-bold uppercase tracking-widest ${slippageStage ? slippageStage.text : "text-gray-400"
+                    }`}
+                >
+                  Slippage
+                </p>
+                <p
+                  className={`mt-0.5 text-3xl font-extrabold ${slippageStage ? slippageStage.text : "text-gray-300"
+                    }`}
+                >
+                  {slippage !== null ? formatSlippage(slippage) : "—"}
+                  <span className="ml-0.5 text-base font-bold">%</span>
+                </p>
+              </div>
+              {slippageStage && (
+                <span
+                  className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest ${slippageStage.badge}`}
+                >
+                  {slippageStage.label}
+                </span>
+              )}
+            </div>
+
+            <div className="w-full shrink-0 sm:w-40">
+              <label className={fieldLabel}>Target %</label>
+              <div className={fieldText}>
+                {project.slippageTarget !== null
+                  ? `${project.slippageTarget.toFixed(2)}%`
+                  : "—"}
+              </div>
+            </div>
+            <div className="w-full shrink-0 sm:w-40">
+              <label className={fieldLabel}>Actual %</label>
+              <div className={fieldText}>
+                {project.slippageActual !== null
+                  ? `${project.slippageActual.toFixed(2)}%`
+                  : "—"}
+              </div>
+            </div>
+            <div className="w-full shrink-0 sm:w-32">
+              <label className={fieldLabel}>Revision</label>
+              <div className={fieldText}>Rev. {project.slippageRevision}</div>
+            </div>
+          </div>
+
+          {/* Prescribed action for the stage on file */}
+          {slippageStage ? (
+            <p className="mt-3 text-xs text-gray-500">
+              <span className="font-semibold text-gray-700">
+                {slippageStage.label}:
+              </span>{" "}
+              {slippageStage.action}
+              <span className="ml-1 text-gray-400">
+                — filed as Rev. {project.slippageRevision}.
+              </span>
+            </p>
+          ) : (
+            <p className="mt-3 text-xs text-gray-400">
+              No slippage assessment has been filed for this project yet.
+            </p>
+          )}
+
+          {/* Stage legend */}
+          <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-gray-100 pt-4">
+            {SLIPPAGE_STAGE_VALUES.map((stage) => {
+              const cfg = SLIPPAGE_STAGE_CONFIG[stage];
+              return (
+                <span key={stage} className="flex items-center gap-2">
+                  <span className={`h-2 w-2 rounded-full ${cfg.dot}`} />
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                    {cfg.range}: {cfg.label}
+                  </span>
+                </span>
+              );
+            })}
           </div>
         </section>
 
