@@ -551,15 +551,15 @@ export const AddProjectForm = () => {
       title: !title.trim(),
       image: !imageUrl,
       projectCost: !(parseAmount(projectCost) > 0),
-      trackingNumber: !trackingNumber.trim(),
+      // trackingNumber: !trackingNumber.trim(),
       modeOfImplementation: !modeOfImplementation,
-      contractorName:
-        modeOfImplementation === "BY_CONTRACT" && !contractorName.trim(),
+      // contractorName:
+      //   modeOfImplementation === "BY_CONTRACT" && !contractorName.trim(),
       district: !district,
       cityMunicipality: !cityMunicipality,
       barangay: !barangay,
-      purok: !purok.trim(),
-      sitio: !sitio.trim(),
+      // purok: !purok.trim(),
+      // sitio: !sitio.trim(),
       // The pin itself is optional, but a typed-in coordinate must be valid.
       latitude: latitude.trim() !== "" && parsedLat === null,
       longitude: longitude.trim() !== "" && parsedLng === null,
@@ -568,8 +568,8 @@ export const AddProjectForm = () => {
       subType: availableSubTypes.length > 0 && !subType,
       projectAccount: !projectAccount,
       budgetYear: !budgetYear,
-      dateStarted: !dateStarted,
-      targetCompletionDate: !targetCompletionDate,
+      // dateStarted: !dateStarted,
+      // targetCompletionDate: !targetCompletionDate,
       dateOrder:
         !!dateStarted &&
         !!targetCompletionDate &&
@@ -586,14 +586,14 @@ export const AddProjectForm = () => {
       title,
       imageUrl,
       projectCost,
-      trackingNumber,
+      // trackingNumber,
       modeOfImplementation,
-      contractorName,
+      // contractorName,
       district,
       cityMunicipality,
       barangay,
-      purok,
-      sitio,
+      // purok,
+      // sitio,
       latitude,
       parsedLat,
       longitude,
@@ -816,15 +816,15 @@ export const AddProjectForm = () => {
                   </select>
                 </div>
                 <div>
-                  <label className={fieldLabelClass}>Project I.D. <span className="text-red-500">*</span></label>
+                  <label className={fieldLabelClass}>Project I.D.</label>
                   <input
                     type="text"
                     value={trackingNumber}
                     onChange={(e) => setTrackingNumber(e.target.value)}
                     placeholder="PEO-2025-XXXXX"
-                    className={`${inputClass} ${showErrors && fieldErrors.trackingNumber ? errorRingClass : ""}`}
+                    className={inputClass}
                   />
-                  <FieldError show={showErrors && fieldErrors.trackingNumber} />
+                  {/* <FieldError show={showErrors && fieldErrors.trackingNumber} /> */}
                 </div>
                 <div>
                   <label className={fieldLabelClass}>Implementation Mode <span className="text-red-500">*</span></label>
@@ -844,14 +844,9 @@ export const AddProjectForm = () => {
                   <FieldError show={showErrors && fieldErrors.modeOfImplementation} />
                 </div>
                 {/* Contractor Name keeps its slot next to the mode and is only
-                    enabled — and only required — for By Contract projects. */}
+                    enabled for By Contract projects. */}
                 <div>
-                  <label className={fieldLabelClass}>
-                    Contractor Name
-                    {modeOfImplementation === "BY_CONTRACT" && (
-                      <span className="text-red-500"> *</span>
-                    )}
-                  </label>
+                  <label className={fieldLabelClass}>Contractor Name</label>
                   <input
                     type="text"
                     value={contractorName}
@@ -862,9 +857,9 @@ export const AddProjectForm = () => {
                         ? "Enter contractor name"
                         : "For By Contract projects only"
                     }
-                    className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400 ${showErrors && fieldErrors.contractorName ? errorRingClass : ""}`}
+                    className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
                   />
-                  <FieldError show={showErrors && fieldErrors.contractorName} />
+                  {/* <FieldError show={showErrors && fieldErrors.contractorName} /> */}
                 </div>
               </div>
 
@@ -955,26 +950,26 @@ export const AddProjectForm = () => {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className={labelClass}>Purok <span className="text-red-500">*</span></label>
+                  <label className={labelClass}>Purok</label>
                   <input
                     type="text"
                     value={purok}
                     onChange={(e) => setPurok(e.target.value)}
                     placeholder="Enter Purok"
-                    className={`${inputClass} ${showErrors && fieldErrors.purok ? errorRingClass : ""}`}
+                    className={inputClass}
                   />
-                  <FieldError show={showErrors && fieldErrors.purok} />
+                  {/* <FieldError show={showErrors && fieldErrors.purok} /> */}
                 </div>
                 <div>
-                  <label className={labelClass}>Sitio <span className="text-red-500">*</span></label>
+                  <label className={labelClass}>Sitio</label>
                   <input
                     type="text"
                     value={sitio}
                     onChange={(e) => setSitio(e.target.value)}
                     placeholder="Enter Sitio"
-                    className={`${inputClass} ${showErrors && fieldErrors.sitio ? errorRingClass : ""}`}
+                    className={inputClass}
                   />
-                  <FieldError show={showErrors && fieldErrors.sitio} />
+                  {/* <FieldError show={showErrors && fieldErrors.sitio} /> */}
                 </div>
               </div>
 
@@ -1245,24 +1240,24 @@ export const AddProjectForm = () => {
             {/* Record row — no Revised Target Completion here; that field only exists on the update page */}
             <div className="mt-3 flex flex-wrap items-end gap-2">
               <div className="w-40 shrink-0">
-                <label className={labelClass}>Start Date <span className="text-red-500">*</span></label>
+                <label className={labelClass}>Start Date</label>
                 <input
                   type="date"
                   value={dateStarted}
                   onChange={(e) => { setDateStarted(e.target.value); setAdjError(null); }}
-                  className={`${inputClass} ${(adjError && !dateStarted) || (showErrors && fieldErrors.dateStarted) ? errorRingClass : ""}`}
+                  className={`${inputClass} ${adjError && !dateStarted ? errorRingClass : ""}`}
                 />
-                <FieldError show={showErrors && fieldErrors.dateStarted} />
+                {/* <FieldError show={showErrors && fieldErrors.dateStarted} /> */}
               </div>
               <div className="w-40 shrink-0">
-                <label className={labelClass}>End Date <span className="text-red-500">*</span></label>
+                <label className={labelClass}>End Date</label>
                 <input
                   type="date"
                   value={targetCompletionDate}
                   onChange={(e) => { setTargetCompletionDate(e.target.value); setAdjError(null); }}
-                  className={`${inputClass} ${(adjError && !targetCompletionDate) || (showErrors && (fieldErrors.targetCompletionDate || fieldErrors.dateOrder)) ? errorRingClass : ""}`}
+                  className={`${inputClass} ${(adjError && !targetCompletionDate) || (showErrors && fieldErrors.dateOrder) ? errorRingClass : ""}`}
                 />
-                <FieldError show={showErrors && fieldErrors.targetCompletionDate} />
+                {/* <FieldError show={showErrors && fieldErrors.targetCompletionDate} /> */}
                 <FieldError
                   show={showErrors && fieldErrors.dateOrder}
                   message="End date must be on or after start date"
