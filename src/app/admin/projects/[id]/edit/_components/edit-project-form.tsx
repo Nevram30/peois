@@ -41,6 +41,7 @@ import {
   getSlippageStageConfig,
 } from "~/lib/slippage";
 import { parseCoord } from "~/lib/geo";
+import { handleAmountChange, parseAmount, formatAmountValue } from "~/lib/currency";
 import { GeospatialFields } from "~/app/_components/geospatial-fields";
 
 const STATUS_CONFIG: Record<string, { label: string; badge: string; dot: string }> = {
@@ -651,7 +652,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
 
   const handleRecordDisbursement = () => {
     const errors: { amount?: string; ref?: string; type?: string } = {};
-    const amount = parseFloat(disbAmount);
+    const amount = parseAmount(disbAmount);
     if (!disbAmount || isNaN(amount) || amount <= 0) errors.amount = "Amount must be greater than 0.";
     else if (amount > totalRemainingBalance)
       errors.amount = `Insufficient balance. Amount exceeds the total remaining balance of ₱${totalRemainingBalance.toLocaleString("en-PH", { minimumFractionDigits: 2 })}.`;
@@ -668,7 +669,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   };
 
   const handleRecordVariationOrder = () => {
-    const amount = parseFloat(revisedVariation);
+    const amount = parseAmount(revisedVariation);
     if (!revisedVariation || isNaN(amount) || amount <= 0) {
       setVariationError("Variation amount must be greater than 0.");
       return;
@@ -701,7 +702,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     subType: string | null;
   }) => {
     setEditingVoId(v.id);
-    setRevisedVariation(String(v.amount));
+    setRevisedVariation(formatAmountValue(v.amount));
     setRevisedSourceOfFund(v.sourceOfFund ?? "");
     setRevisedProgram(v.program ?? "");
     setRevisedProject(v.subType ?? "");
@@ -1289,9 +1290,9 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                   <div className="relative w-full shrink-0 sm:w-36">
                     <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">₱</span>
                     <Input
-                      type="number" min={0} placeholder="Amount *"
+                      type="text" inputMode="decimal" placeholder="Amount *"
                       value={disbAmount}
-                      onChange={(e) => { setDisbAmount(e.target.value); setDisbErrors((p) => ({ ...p, amount: undefined })); }}
+                      onChange={(e) => { handleAmountChange(e.target, setDisbAmount); setDisbErrors((p) => ({ ...p, amount: undefined })); }}
                       error={!!disbErrors.amount}
                       className="pl-7"
                     />
@@ -1467,9 +1468,9 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                   <div className="relative min-w-32 flex-1">
                     <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">₱</span>
                     <Input
-                      type="number" min={0} placeholder="Variation"
+                      type="text" inputMode="decimal" placeholder="Variation"
                       value={revisedVariation}
-                      onChange={(e) => { setRevisedVariation(e.target.value); setVariationError(null); }}
+                      onChange={(e) => { handleAmountChange(e.target, setRevisedVariation); setVariationError(null); }}
                       error={!!variationError}
                       className="pl-7"
                     />

@@ -43,6 +43,7 @@ import {
 import { UploadDocumentModal } from "./upload-document-modal";
 import { GeospatialFields } from "~/app/_components/geospatial-fields";
 import { parseCoord } from "~/lib/geo";
+import { handleAmountChange, parseAmount, formatAmountValue } from "~/lib/currency";
 
 // ─── Shared styles ────────────────────────────────────────────────────────
 const inputClass =
@@ -210,7 +211,7 @@ export const AddProjectForm = () => {
 
   // ── Project Identity & Status ────────────────────────────────────────
   const [title, setTitle] = useState("");
-  const [projectCost, setProjectCost] = useState("0.00");
+  const [projectCost, setProjectCost] = useState("");
   // Contract Cost input is hidden from the UI; the value is still submitted.
   const [contractCost] = useState("0.00");
   const [trackingNumber, setTrackingNumber] = useState("");
@@ -390,19 +391,17 @@ export const AddProjectForm = () => {
   // ── Handlers ─────────────────────────────────────────────────────────
   const handleCostChange = (
     setter: (v: string) => void,
-    value: string,
+    input: HTMLInputElement,
   ) => {
-    const raw = value.replace(/[^0-9.]/g, "");
-    setter(raw);
+    handleAmountChange(input, setter);
   };
 
+  // Settle the field on 2 decimals when the user leaves it; an untouched field
+  // stays empty so the placeholder (and the required-field error) still show.
   const handleCostBlur = (value: string, setter: (v: string) => void) => {
-    const num = parseFloat(value.replace(/,/g, ""));
-    if (!isNaN(num)) {
-      setter(num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-    } else {
-      setter("0.00");
-    }
+    const num = parseAmount(value);
+    if (!isNaN(num)) setter(formatAmountValue(num));
+    else if (value !== "") setter("");
   };
 
   const addEngineer = () => {
@@ -551,7 +550,7 @@ export const AddProjectForm = () => {
     () => ({
       title: !title.trim(),
       image: !imageUrl,
-      projectCost: !(parseFloat(projectCost.replace(/,/g, "")) > 0),
+      projectCost: !(parseAmount(projectCost) > 0),
       trackingNumber: !trackingNumber.trim(),
       modeOfImplementation: !modeOfImplementation,
       contractorName:
@@ -639,8 +638,8 @@ export const AddProjectForm = () => {
       modeOfImplementation: modeOfImplementation as "BY_ADMINISTRATION" | "BY_CONTRACT",
       locationImplementation: district as "DISTRICT_I" | "DISTRICT_II",
       sourceOfFund: sourceOfFund as SourceOfFundValue,
-      projectCost: parseFloat(projectCost.replace(/,/g, "")) || 0,
-      contractCost: parseFloat(contractCost.replace(/,/g, "")) || 0,
+      projectCost: parseAmount(projectCost) || 0,
+      contractCost: parseAmount(contractCost) || 0,
       completionPercentage: Math.max(0, Math.min(100, parseInt(completionPercentage) || 0)),
       contractorName:
         modeOfImplementation === "BY_CONTRACT" ? contractorName || undefined : undefined,
@@ -779,9 +778,9 @@ export const AddProjectForm = () => {
                     <input
                       type="text"
                       inputMode="decimal"
+                      placeholder="0.00"
                       value={projectCost}
-                      onChange={(e) => handleCostChange(setProjectCost, e.target.value)}
-                      onFocus={() => setProjectCost(projectCost.replace(/,/g, ""))}
+                      onChange={(e) => handleCostChange(setProjectCost, e.target)}
                       onBlur={() => handleCostBlur(projectCost, setProjectCost)}
                       className={`${inputClass} pl-7 ${showErrors && fieldErrors.projectCost ? errorRingClass : ""}`}
                     />

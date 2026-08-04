@@ -136,7 +136,7 @@ const LoginPage = () => {
                     value={employeeId}
                     onChange={(e) => setEmployeeId(e.target.value)}
                     className="w-full bg-transparent text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none"
-                    placeholder="EMP-202X-XXXX"
+                    placeholder="XXXX-XXXX-XXXX"
                   />
                 </div>
               </div>
