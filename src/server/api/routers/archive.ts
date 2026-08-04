@@ -114,12 +114,27 @@ export const archiveRouter = createTRPCRouter({
       });
     }),
 
-  // Archive registry: every saved physical location, newest first.
+  // Archive registry: every saved physical location, newest first. Also backs
+  // the folder browser, which needs the full project detail for its preview.
   getAll: archiverProcedure.query(async ({ ctx }) => {
     return ctx.db.physicalArchiveLocation.findMany({
       include: {
         project: {
-          select: { id: true, projectCode: true, title: true, budgetYear: true },
+          select: {
+            id: true,
+            projectCode: true,
+            title: true,
+            budgetYear: true,
+            status: true,
+            locationImplementation: true,
+            cityMunicipality: true,
+            contractorName: true,
+            projectEngineer: true,
+            projectCost: true,
+            contractCost: true,
+            dateStarted: true,
+            dateCompleted: true,
+          },
         },
         createdBy: {
           select: { id: true, name: true },
