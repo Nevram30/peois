@@ -2,6 +2,7 @@ import "~/styles/globals.css";
 
 import { type Metadata, type Viewport } from "next";
 import { Poppins } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 
 import { TRPCReactProvider } from "~/trpc/react";
 
@@ -33,6 +34,7 @@ export default function RootLayout({
     <html lang="en" className={`${poppins.variable}`}>
       <body>
         <TRPCReactProvider>{children}</TRPCReactProvider>
+        <Analytics />
       </body>
     </html>
   );
