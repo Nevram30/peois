@@ -138,3 +138,413 @@ Remediate confirmed rows with `UPDATE "TaskNotification" SET "notifyUserId"='<co
 6. Fallback: restart dev server, send task, focus user window → badge updates via refocus; EventSource auto-reconnects.
 7. Hardening: role-USER crafted call to `sendTaskNotification` → FORBIDDEN; uninvolved user hitting `getById`/`acknowledge`/`reply` → NOT_FOUND/FORBIDDEN; sending to an admin id → BAD_REQUEST.
 8. `npm run build && npm run start` smoke test (production single-process shape for the emitter).
+
+#####
+
+SUPERADMIN
+      {/* Financial Overview */}
+      {(() => {
+        const totalAllocation = financial?.totalAllocation ?? 0;
+        const bySource = financial?.bySource ?? {};
+        const bySubType = financial?.bySubType ?? {};
+        const executionRate = financial?.executionRate ?? 0;
+
+        type SubEntry = {
+          key: string;
+          label: string;
+          value: number;
+          color: string;
+          sourceOfFund: string;
+        };
+
+        const subEntries: SubEntry[] = Object.entries(bySubType)
+          .filter(([, v]) => v.amount > 0)
+          .map(([key, v]) => {
+            const isNone = key.startsWith("__NONE__:");
+            const label = isNone
+              ? "Uncategorized"
+              : (PROJECT_SUB_TYPE_LABEL[key as ProjectSubTypeValue] ?? key);
+            const color = isNone
+              ? (FUND_SOURCE_COLORS[v.sourceOfFund] ?? "#94a3b8")
+              : (SUB_TYPE_COLORS[key as ProjectSubTypeValue] ?? "#94a3b8");
+            return {
+              key,
+              label,
+              value: v.amount,
+              color,
+              sourceOfFund: v.sourceOfFund,
+            };
+          });
+
+        const orderedSources = SOURCE_OF_FUND_ORDER.filter(
+          (s) => (bySource[s] ?? 0) > 0,
+        );
+
+        const segments = orderedSources
+          .map((sourceKey) => ({
+            label: FUND_SOURCE_LABELS[sourceKey] ?? sourceKey,
+            value: bySource[sourceKey] ?? 0,
+            color: FUND_SOURCE_COLORS[sourceKey] ?? "#94a3b8",
+          }))
+          .sort((a, b) => b.value - a.value);
+
+        const groupedBreakdown = orderedSources.map((sourceKey) => {
+          const sourceAmount = bySource[sourceKey] ?? 0;
+          const subs = subEntries
+            .filter((e) => e.sourceOfFund === sourceKey)
+            .sort((a, b) => b.value - a.value);
+          return { sourceKey, sourceAmount, subs };
+        });
+
+        return (
+          <div className="mb-8 rounded-sm border border-gray-100 bg-white shadow-sm">
+            {/* Header */}
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-4 py-4 sm:px-6">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                  Financial Overview
+                </p>
+                <p className="text-xs text-gray-400">
+                  Source of funds broken down by sub-category
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  const rows: string[][] = [
+                    ["Source of Fund", "Sub-Category", "Amount (PHP)", "Percentage"],
+                  ];
+                  for (const g of groupedBreakdown) {
+                    for (const s of g.subs) {
+                      const pct = totalAllocation > 0 ? ((s.value / totalAllocation) * 100).toFixed(1) : "0.0";
+                      rows.push([
+                        FUND_SOURCE_LABELS[g.sourceKey] ?? g.sourceKey,
+                        s.label,
+                        s.value.toFixed(2),
+                        `${pct}%`,
+                      ]);
+                    }
+                  }
+                  rows.push(["Grand Total", "", totalAllocation.toFixed(2), "100%"]);
+                  const csv = rows.map((r) => r.join(",")).join("\n");
+                  const blob = new Blob([csv], { type: "text/csv" });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `fiscal-report-${financial?.budgetYear ?? ""}.csv`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
+              >
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                </svg>
+                Export Fiscal Report
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-0 lg:grid-cols-2">
+              {/* Left: Donut Chart */}
+              <div className="flex flex-col items-center justify-center gap-4 border-b border-gray-100 px-6 py-6 lg:border-b-0 lg:border-r">
+                <p className="self-start text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  Total Annual Allocation
+                </p>
+                <DonutChart segments={segments} total={totalAllocation} />
+                {/* Legend (by Source of Fund) */}
+                <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5">
+                  {groupedBreakdown.slice(0, 8).map((g) => (
+                    <span key={g.sourceKey} className="flex items-center gap-1.5 text-xs text-gray-600">
+                      <span
+                        className="inline-block h-2.5 w-2.5 rounded-full"
+                        style={{ backgroundColor: FUND_SOURCE_COLORS[g.sourceKey] ?? "#94a3b8" }}
+                      />
+                      {FUND_SOURCE_LABELS[g.sourceKey] ?? g.sourceKey}
+                    </span>
+                  ))}
+                  {groupedBreakdown.length > 8 && (
+                    <span className="text-xs text-gray-400">
+                      +{groupedBreakdown.length - 8} more
+                    </span>
+                  )}
+                  {groupedBreakdown.length === 0 && (
+                    <span className="text-xs text-gray-400">No allocation data for {financial?.budgetYear ?? new Date().getFullYear()}</span>
+                  )}
+                </div>
+
+                {/* Execution Rate */}
+                <div className="w-full rounded-lg bg-gray-50 px-3 py-2.5">
+                  <div className="mb-1 flex items-center justify-between text-xs">
+                    <div className="flex flex-col">
+                      <span className="font-semibold uppercase tracking-wider text-gray-500">
+                        Execution Rate
+                      </span>
+                      <span className="text-[10px] font-normal normal-case text-gray-400">
+                        Average progress across all projects
+                      </span>
+                    </div>
+                    <span className="text-sm font-bold text-blue-600">
+                      {Math.min(100, Math.max(0, executionRate)).toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className="h-2.5 w-full overflow-hidden rounded-full bg-gray-200">
+                    <div
+                      className="h-full rounded-full bg-blue-500 transition-all duration-500"
+                      style={{
+                        width: `${Math.min(100, Math.max(0, executionRate))}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: Source of Funds Breakdown (grouped by sub-category) */}
+              <div className="px-6 py-6">
+                <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  Source of Funds Breakdown
+                </p>
+                {groupedBreakdown.length === 0 ? (
+                  <p className="py-8 text-center text-sm text-gray-400">
+                    No fund allocation data found for {financial?.budgetYear ?? new Date().getFullYear()}.
+                  </p>
+                ) : (
+                  <div className="flex max-h-80 flex-col gap-3 overflow-y-auto pr-1">
+                    {groupedBreakdown.map(({ sourceKey, sourceAmount, subs }) => {
+                      const sourcePct = totalAllocation > 0
+                        ? ((sourceAmount / totalAllocation) * 100).toFixed(1)
+                        : "0.0";
+                      return (
+                        <div
+                          key={sourceKey}
+                          className="rounded-lg border border-gray-100 bg-gray-50/50 p-3"
+                        >
+                          <div className="mb-2 flex items-center justify-between">
+                            <div className="flex items-center gap-1.5">
+                              <span
+                                className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
+                                style={{ backgroundColor: FUND_SOURCE_COLORS[sourceKey] ?? "#94a3b8" }}
+                              />
+                              <span className="text-xs font-semibold text-gray-700">
+                                {FUND_SOURCE_LABELS[sourceKey] ?? sourceKey}
+                              </span>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-xs font-bold text-gray-900">
+                                {formatPeso(sourceAmount)}
+                              </p>
+                              <p className="text-[10px] text-gray-400">{sourcePct}%</p>
+                            </div>
+                          </div>
+                          {subs.length > 0 && (
+                            <div className="flex flex-col gap-1 pl-4">
+                              {subs.map((s) => {
+                                const pct = totalAllocation > 0
+                                  ? ((s.value / totalAllocation) * 100).toFixed(1)
+                                  : "0.0";
+                                return (
+                                  <div
+                                    key={s.key}
+                                    className="flex items-center justify-between gap-2"
+                                  >
+                                    <div className="flex min-w-0 items-center gap-1.5">
+                                      <span
+                                        className="inline-block h-2 w-2 shrink-0 rounded-full"
+                                        style={{ backgroundColor: s.color }}
+                                      />
+                                      <span className="truncate text-[11px] text-gray-600">
+                                        {s.label}
+                                      </span>
+                                    </div>
+                                    <div className="shrink-0 text-right">
+                                      <span className="text-[11px] font-semibold text-gray-800">
+                                        {formatPeso(s.value)}
+                                      </span>
+                                      <span className="ml-1.5 text-[10px] text-gray-400">
+                                        {pct}%
+                                      </span>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Grand Total */}
+                {groupedBreakdown.length > 0 && (
+                  <div className="mt-6 border-t border-gray-100 pt-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-gray-700">
+                        Grand Total Combined Allocation
+                      </span>
+                      <span className="text-sm font-extrabold text-blue-600">
+                        {formatPeso(totalAllocation)}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Project Cards Year Filter */}
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-sm border border-gray-200 bg-white px-5 py-3 shadow-sm">
+        {/* <div className="flex items-center gap-2.5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+            </svg>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-gray-900">Project Cards Overview</p>
+            <p className="text-xs text-gray-500">
+              {cardYearFilter
+                ? `Showing statistics for ${cardYearFilter}`
+                : "Showing statistics across all years"}
+            </p>
+          </div>
+        </div> */}
+
+        {/* <div className="flex items-center gap-2">
+          <label htmlFor="card-year-filter" className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+            Filter by Budget Year
+          </label>
+          <div className="relative">
+            <select
+              id="card-year-filter"
+              value={cardYearFilter}
+              onChange={(e) => { setCardYearFilter(e.target.value); resetPage(); }}
+              className="appearance-none rounded-lg border border-gray-200 bg-gray-50 py-2 pl-3 pr-9 text-sm font-medium text-gray-700 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">All Years</option>
+              {availableYears.map((y) => (
+                <option key={y} value={y}>
+                  {y}
+                </option>
+              ))}
+            </select>
+            <svg className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+          </div>
+          {cardYearFilter && (
+            <button
+              onClick={() => setCardYearFilter("")}
+              className="flex items-center gap-1 rounded-lg border border-red-200 bg-red-50 px-2.5 py-2 text-xs font-medium text-red-600 transition hover:bg-red-100"
+            >
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+              Clear
+            </button>
+          )}
+        </div> */}
+      </div>
+
+      {/* Colored Summary Cards */}
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8 xl:grid-cols-8">
+        {/* Budget Year */}
+        {/* <div className="flex flex-col rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+              Budget Year
+            </span>
+            <svg className="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none text-gray-900">
+            {financial?.budgetYear ?? new Date().getFullYear()}
+          </p>
+        </div> */}
+
+        {/* Number of Projects */}
+        {/* <div className="flex flex-col rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">No. of Projects</span>
+            <svg className="h-4 w-4 text-indigo-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none text-gray-900">{stats?.total ?? 0}</p>
+          <p className="mt-1 text-xs text-gray-400">Projects</p>
+        </div> */}
+
+        {/* Completed */}
+        {/* <div className="flex flex-col rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Completed</span>
+            <svg className="h-4 w-4 text-teal-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none text-gray-900">{stats?.completed ?? 0}</p>
+          <p className="mt-1 text-xs text-gray-400">Projects</p>
+        </div> */}
+
+        {/* Suspended */}
+        {/* <div className="flex flex-col rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Suspended</span>
+            <svg className="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none text-gray-900">{stats?.suspended ?? 0}</p>
+          <p className="mt-1 text-xs text-gray-400">Projects</p>
+        </div>
+
+        {/* For Implementation */}
+        {/* <div className="flex flex-col rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">For Implementation</span>
+            <svg className="h-4 w-4 text-amber-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none text-gray-900">{stats?.forImplementation ?? 0}</p>
+          <p className="mt-1 text-xs text-gray-400">Projects</p>
+        </div> */}
+
+        {/* On-Going */}
+        {/* <div className="flex flex-col rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">On-going</span>
+            <svg className="h-4 w-4 text-orange-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none text-gray-900">{stats?.ongoing ?? 0}</p>
+          <p className="mt-1 text-xs text-gray-400">Projects</p>
+        </div> */}
+
+        {/* Re-alignment */}
+        {/* <div className="flex flex-col rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Re-alignment</span>
+            <svg className="h-4 w-4 text-purple-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none text-gray-900">{stats?.reAlignment ?? 0}</p>
+          <p className="mt-1 text-xs text-gray-400">Projects</p>
+        </div> */}
+
+        {/* Others */}
+        {/* <div className="flex flex-col rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Others</span>
+            <svg className="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+            </svg>
+          </div>
+          <p className="text-3xl font-extrabold leading-none text-gray-900">{stats?.others ?? 0}</p>
+          <p className="mt-1 text-xs text-gray-400">Projects</p>
+        </div> */}
+
+      </div>

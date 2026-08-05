@@ -496,7 +496,7 @@ const PEOISDashboard = () => {
     ];
 
     return (
-        <div className="bg-slate-100 min-h-screen p-4 font-sans text-slate-800">
+        <div className="min-h-screen font-sans text-slate-800">
 
             {/* Users Status Overview Header */}
             <div className="flex items-start justify-between mb-3">

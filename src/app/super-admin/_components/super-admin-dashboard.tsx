@@ -260,9 +260,9 @@ const AddUserModal = ({
   if (!open) return null;
 
   const inputClass =
-    "block w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none";
+    "block w-full rounded-sm border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none";
   const selectClass =
-    "block w-full appearance-none rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 pr-10 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none";
+    "block w-full appearance-none rounded-sm border border-gray-300 bg-white px-3.5 py-2.5 pr-10 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none";
 
   const selectChevron = (
     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
@@ -282,7 +282,7 @@ const AddUserModal = ({
       />
 
       {/* Modal */}
-      <div className="relative mx-4 w-full max-w-3xl rounded-2xl bg-white shadow-2xl">
+      <div className="relative mx-4 w-full max-w-3xl rounded-sm bg-white shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between px-7 pt-6 pb-2">
           <div>
@@ -293,7 +293,7 @@ const AddUserModal = ({
           </div>
           <button
             onClick={handleClose}
-            className="rounded-lg p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600"
+            className="rounded-sm p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -305,7 +305,7 @@ const AddUserModal = ({
         <form id="create-user-form" onSubmit={handleSubmit} noValidate className="max-h-[70vh] overflow-y-auto px-7 pt-2 pb-0">
           {message && (
             <div
-              className={`mb-4 rounded-lg border p-3 text-sm ${messageType === "success"
+              className={`mb-4 rounded-sm border p-3 text-sm ${messageType === "success"
                 ? "border-green-200 bg-green-50 text-green-700"
                 : "border-red-200 bg-red-50 text-red-700"
                 }`}
@@ -360,7 +360,7 @@ const AddUserModal = ({
                 <button
                   type="button"
                   onClick={() => imageInputRef.current?.click()}
-                  className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
+                  className="rounded-sm border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
                 >
                   {imageFile ? "Change Photo" : "Upload Photo"}
                 </button>
@@ -723,7 +723,7 @@ const AddUserModal = ({
           <button
             type="button"
             onClick={handleClose}
-            className="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
+            className="rounded-sm border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
           >
             Cancel
           </button>
@@ -731,7 +731,7 @@ const AddUserModal = ({
             type="submit"
             form="create-user-form"
             disabled={createUser.isPending || isUploading || !passwordsMatch}
-            className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-sm bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isUploading ? "Uploading..." : createUser.isPending ? "Creating..." : "Create User"}
           </button>
@@ -844,7 +844,7 @@ function EditUserModal({
           </div>
           <button
             onClick={handleClose}
-            className="rounded-lg p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600"
+            className="rounded-sm p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -854,7 +854,7 @@ function EditUserModal({
         <form onSubmit={handleSubmit} className="max-h-[70vh] overflow-y-auto px-6 py-5">
           {message && (
             <div
-              className={`mb-4 rounded-lg border p-3 text-sm ${messageType === "success"
+              className={`mb-4 rounded-sm border p-3 text-sm ${messageType === "success"
                 ? "border-green-200 bg-green-50 text-green-700"
                 : "border-red-200 bg-red-50 text-red-700"
                 }`}
@@ -867,19 +867,19 @@ function EditUserModal({
               <label className="mb-1 block text-sm font-medium text-gray-700">
                 Full Name <span className="text-red-500">*</span>
               </label>
-              <input type="text" required value={name} onChange={(e) => setName(e.target.value)} className="block w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none" placeholder="e.g. Juan Dela Cruz" />
+              <input type="text" required value={name} onChange={(e) => setName(e.target.value)} className="block w-full rounded-sm border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none" placeholder="e.g. Juan Dela Cruz" />
             </div>
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">Employee ID</label>
-              <div className="block w-full rounded-lg border border-gray-200 bg-gray-50 px-3.5 py-2.5 font-mono text-sm text-gray-500">{userData?.employeeId ?? "—"}</div>
+              <div className="block w-full rounded-sm border border-gray-200 bg-gray-50 px-3.5 py-2.5 font-mono text-sm text-gray-500">{userData?.employeeId ?? "—"}</div>
             </div>
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">Email Address <span className="text-red-500">*</span></label>
-              <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="block w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none" placeholder="e.g. user@peo.gov.ph" />
+              <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="block w-full rounded-sm border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none" placeholder="e.g. user@peo.gov.ph" />
             </div>
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">Role <span className="text-red-500">*</span></label>
-              <select value={role} onChange={(e) => setRole(e.target.value as RoleType)} className="block w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
+              <select value={role} onChange={(e) => setRole(e.target.value as RoleType)} className="block w-full rounded-sm border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
                 <option value="ADMIN">Admin</option>
                 <option value="USER">User</option>
                 <option value="ARCHIVER">Archiver</option>
@@ -887,11 +887,11 @@ function EditUserModal({
             </div>
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">Designation</label>
-              <input type="text" value={designation} onChange={(e) => setDesignation(e.target.value)} className="block w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none" placeholder="e.g. Provincial Engineer" />
+              <input type="text" value={designation} onChange={(e) => setDesignation(e.target.value)} className="block w-full rounded-sm border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none" placeholder="e.g. Provincial Engineer" />
             </div>
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">Division</label>
-              <select value={division} onChange={(e) => setDivision(e.target.value)} className="block w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
+              <select value={division} onChange={(e) => setDivision(e.target.value)} className="block w-full rounded-sm border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
                 <option value="">Select Division</option>
                 {/* Keep a legacy free-text value selectable so it isn't silently blanked */}
                 {division && !DIVISIONS.includes(division) && (
@@ -904,7 +904,7 @@ function EditUserModal({
             </div>
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">Sex</label>
-              <select value={sex} onChange={(e) => setSex(e.target.value as "MALE" | "FEMALE" | "")} className="block w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
+              <select value={sex} onChange={(e) => setSex(e.target.value as "MALE" | "FEMALE" | "")} className="block w-full rounded-sm border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
                 <option value="">Select...</option>
                 <option value="MALE">Male</option>
                 <option value="FEMALE">Female</option>
@@ -912,7 +912,7 @@ function EditUserModal({
             </div>
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">Status</label>
-              <select value={status} onChange={(e) => setStatus(e.target.value as "ACTIVE" | "INACTIVE" | "PENDING")} className="block w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
+              <select value={status} onChange={(e) => setStatus(e.target.value as "ACTIVE" | "INACTIVE" | "PENDING")} className="block w-full rounded-sm border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
                 <option value="ACTIVE">Active</option>
                 <option value="INACTIVE">Inactive</option>
                 <option value="PENDING">Pending</option>
@@ -920,8 +920,8 @@ function EditUserModal({
             </div>
           </div>
           <div className="mt-6 flex items-center justify-end gap-3 border-t border-gray-200 pt-4">
-            <button type="button" onClick={handleClose} className="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50">Cancel</button>
-            <button type="submit" disabled={updateUser.isPending} className="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50">
+            <button type="button" onClick={handleClose} className="rounded-sm border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50">Cancel</button>
+            <button type="submit" disabled={updateUser.isPending} className="rounded-sm bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50">
               {updateUser.isPending ? "Saving..." : "Save Changes"}
             </button>
           </div>
@@ -1230,7 +1230,7 @@ export function UserManagementContent() {
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+          className="flex items-center gap-2 rounded-sm bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
         >
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -1250,36 +1250,36 @@ export function UserManagementContent() {
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
             placeholder="Search by name or ID..."
-            className="w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
+            className="w-full rounded-sm border border-gray-300 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
           />
         </div>
-        <select value={roleFilter} onChange={(e) => handleFilterChange(setRoleFilter, e.target.value)} className="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
+        <select value={roleFilter} onChange={(e) => handleFilterChange(setRoleFilter, e.target.value)} className="rounded-sm border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
           <option value="">All Roles</option>
           <option value="SUPER_ADMIN">Super Admin</option>
           <option value="ADMIN">Admin</option>
           <option value="USER">User</option>
           <option value="ARCHIVER">Archiver</option>
         </select>
-        <select value={divisionFilter} onChange={(e) => handleFilterChange(setDivisionFilter, e.target.value)} className="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
+        <select value={divisionFilter} onChange={(e) => handleFilterChange(setDivisionFilter, e.target.value)} className="rounded-sm border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
           <option value="">All Divisions</option>
           {divisions?.map((d) => (
             <option key={d} value={d}>{d}</option>
           ))}
         </select>
-        <select value={statusFilter} onChange={(e) => handleFilterChange(setStatusFilter, e.target.value)} className="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
+        <select value={statusFilter} onChange={(e) => handleFilterChange(setStatusFilter, e.target.value)} className="rounded-sm border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
           <option value="">All Status</option>
           <option value="ACTIVE">Active</option>
           <option value="INACTIVE">Inactive</option>
           <option value="PENDING">Pending</option>
         </select>
         <div className="ml-auto flex items-center gap-2">
-          <button className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50">
+          <button className="flex items-center gap-2 rounded-sm border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50">
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
             </svg>
             Export
           </button>
-          <button className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50">
+          <button className="flex items-center gap-2 rounded-sm border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50">
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M9.75 8.25h.008v.008H9.75V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
             </svg>
@@ -1406,7 +1406,7 @@ export function UserManagementContent() {
               <span className="font-medium text-gray-900">{total}</span> results
             </p>
             <div className="flex flex-wrap items-center gap-1">
-              <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page === 1} className="rounded-lg border border-gray-300 p-2 text-gray-500 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40">
+              <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page === 1} className="rounded-sm border border-gray-300 p-2 text-gray-500 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                 </svg>
@@ -1418,14 +1418,14 @@ export function UserManagementContent() {
                   <button
                     key={p}
                     onClick={() => setPage(Number(p))}
-                    className={`min-w-9 rounded-lg border px-3 py-2 text-sm font-medium transition ${page === p ? "border-blue-600 bg-blue-600 text-white" : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                    className={`min-w-9 rounded-sm border px-3 py-2 text-sm font-medium transition ${page === p ? "border-blue-600 bg-blue-600 text-white" : "border-gray-300 text-gray-700 hover:bg-gray-50"
                       }`}
                   >
                     {p}
                   </button>
                 ),
               )}
-              <button onClick={() => setPage(Math.min(totalPages, page + 1))} disabled={page === totalPages} className="rounded-lg border border-gray-300 p-2 text-gray-500 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40">
+              <button onClick={() => setPage(Math.min(totalPages, page + 1))} disabled={page === totalPages} className="rounded-sm border border-gray-300 p-2 text-gray-500 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                 </svg>

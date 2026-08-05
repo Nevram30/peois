@@ -924,7 +924,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                       </Select>
                     </div>
                     <div>
-                      <FieldLabel>Contraction Name</FieldLabel>
+                      <FieldLabel>Contractor Name</FieldLabel>
                       <Input value={contractorName} onChange={(e) => setContractorName(e.target.value)} placeholder="Contractor name" />
                     </div>
                   </div>
@@ -983,62 +983,62 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
               <div className="space-y-3 p-4">
                 {/* Full-width card, so the administrative levels sit in one row */}
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                <div>
-                  <FieldLabel>District</FieldLabel>
-                  <Select
-                    value={locDistrict}
-                    onChange={(e) => {
-                      setLocDistrict(e.target.value);
-                      setCityMunicipality("");
-                      setBarangay("");
-                      setPurok("");
-                      setSitio("");
-                    }}
-                  >
-                    <option value="">Select district...</option>
-                    <option value="DISTRICT_I">District 1</option>
-                    <option value="DISTRICT_II">District 2</option>
-                  </Select>
-                </div>
-                <div>
-                  <FieldLabel>Municipality / City</FieldLabel>
-                  <Select
-                    value={cityMunicipality}
-                    onChange={(e) => {
-                      setCityMunicipality(e.target.value);
-                      setBarangay("");
-                      setPurok("");
-                      setSitio("");
-                    }}
-                    disabled={!locDistrict}
-                  >
-                    <option value="">
-                      {locDistrict ? "Select municipality..." : "Select district first"}
-                    </option>
-                    {availableMunicipalities.map((m) => (
-                      <option key={m.name} value={m.name}>{m.name}</option>
-                    ))}
-                  </Select>
-                </div>
-                <div>
-                  <FieldLabel>Barangay</FieldLabel>
-                  <Select
-                    value={barangay}
-                    onChange={(e) => {
-                      setBarangay(e.target.value);
-                      setPurok("");
-                      setSitio("");
-                    }}
-                    disabled={!cityMunicipality}
-                  >
-                    <option value="">
-                      {cityMunicipality ? "Select barangay..." : "Select municipality first"}
-                    </option>
-                    {availableBarangays.map((bg) => (
-                      <option key={bg.name} value={bg.name}>{bg.name}</option>
-                    ))}
-                  </Select>
-                </div>
+                  <div>
+                    <FieldLabel>District</FieldLabel>
+                    <Select
+                      value={locDistrict}
+                      onChange={(e) => {
+                        setLocDistrict(e.target.value);
+                        setCityMunicipality("");
+                        setBarangay("");
+                        setPurok("");
+                        setSitio("");
+                      }}
+                    >
+                      <option value="">Select district...</option>
+                      <option value="DISTRICT_I">District 1</option>
+                      <option value="DISTRICT_II">District 2</option>
+                    </Select>
+                  </div>
+                  <div>
+                    <FieldLabel>Municipality / City</FieldLabel>
+                    <Select
+                      value={cityMunicipality}
+                      onChange={(e) => {
+                        setCityMunicipality(e.target.value);
+                        setBarangay("");
+                        setPurok("");
+                        setSitio("");
+                      }}
+                      disabled={!locDistrict}
+                    >
+                      <option value="">
+                        {locDistrict ? "Select municipality..." : "Select district first"}
+                      </option>
+                      {availableMunicipalities.map((m) => (
+                        <option key={m.name} value={m.name}>{m.name}</option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div>
+                    <FieldLabel>Barangay</FieldLabel>
+                    <Select
+                      value={barangay}
+                      onChange={(e) => {
+                        setBarangay(e.target.value);
+                        setPurok("");
+                        setSitio("");
+                      }}
+                      disabled={!cityMunicipality}
+                    >
+                      <option value="">
+                        {cityMunicipality ? "Select barangay..." : "Select municipality first"}
+                      </option>
+                      {availableBarangays.map((bg) => (
+                        <option key={bg.name} value={bg.name}>{bg.name}</option>
+                      ))}
+                    </Select>
+                  </div>
                 </div>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div>
