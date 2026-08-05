@@ -134,7 +134,7 @@ export function UploadDocumentModal({
             onClick={onClose}
             disabled={isUploading}
             aria-label="Close"
-            className="rounded p-1 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-sm p-1 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -157,11 +157,10 @@ export function UploadDocumentModal({
               value={docType}
               onChange={(e) => setDocType(e.target.value as DocType)}
               disabled={isUploading}
-              className={`block w-full rounded-sm border bg-gray-50 px-3.5 py-3 text-base font-semibold text-gray-900 shadow-sm transition focus:ring-2 focus:outline-none disabled:opacity-60 ${
-                missingCategory
-                  ? "border-red-400 focus:border-red-500 focus:ring-red-500/20"
-                  : "border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
-              }`}
+              className={`block w-full rounded-sm border bg-gray-50 px-3.5 py-3 text-base font-semibold text-gray-900 shadow-sm transition focus:ring-2 focus:outline-none disabled:opacity-60 ${missingCategory
+                ? "border-red-400 focus:border-red-500 focus:ring-red-500/20"
+                : "border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
+                }`}
             >
               <option value="">Select an official document type...</option>
               {DOC_CHECKLIST.map((item) => (
@@ -194,15 +193,14 @@ export function UploadDocumentModal({
                 setIsDragging(false);
                 if (!isUploading) addFiles(e.dataTransfer.files);
               }}
-              className={`rounded-xl border-2 border-dashed px-6 py-12 text-center transition ${
-                isDragging
-                  ? "border-blue-500 bg-blue-50/70"
-                  : missingFiles
-                    ? "border-red-300 bg-red-50/40"
-                    : "border-gray-200 bg-gray-50/70"
-              }`}
+              className={`rounded-sm border-2 border-dashed px-6 py-12 text-center transition ${isDragging
+                ? "border-blue-500 bg-blue-50/70"
+                : missingFiles
+                  ? "border-red-300 bg-red-50/40"
+                  : "border-gray-200 bg-gray-50/70"
+                }`}
             >
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl border border-gray-200 bg-white shadow-sm">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-sm border border-gray-200 bg-white shadow-sm">
                 <svg className="h-7 w-7 text-blue-700" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0 3 3m-3-3-3 3m9-6.75V18a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 18V6a2.25 2.25 0 0 1 2.25-2.25h6.879a1.5 1.5 0 0 1 1.06.44l3.622 3.62a1.5 1.5 0 0 1 .439 1.061Z" />
                 </svg>
@@ -225,7 +223,7 @@ export function UploadDocumentModal({
                 {["PDF", "DOC", "JPG", "PNG", "MAX 16MB"].map((chip) => (
                   <span
                     key={chip}
-                    className="rounded-md border border-gray-200 bg-white px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-gray-500"
+                    className="rounded-sm border border-gray-200 bg-white px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-gray-500"
                   >
                     {chip}
                   </span>
@@ -258,7 +256,7 @@ export function UploadDocumentModal({
                     key={`${file.name}-${file.size}-${index}`}
                     className="flex items-center gap-3 rounded-sm border border-gray-200 bg-white px-3 py-2.5"
                   >
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded bg-blue-100">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm bg-blue-100">
                       <svg className="h-4 w-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
                       </svg>
@@ -274,7 +272,7 @@ export function UploadDocumentModal({
                       onClick={() => removeFile(index)}
                       disabled={isUploading}
                       aria-label={`Remove ${file.name}`}
-                      className="shrink-0 rounded p-1 text-gray-400 transition hover:bg-gray-100 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="shrink-0 rounded-sm p-1 text-gray-400 transition hover:bg-gray-100 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />

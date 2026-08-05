@@ -125,7 +125,7 @@ const Input = (props: React.InputHTMLAttributes<HTMLInputElement> & { error?: bo
   return (
     <input
       {...rest}
-      className={`block w-full rounded-lg border px-3 py-2 text-sm text-gray-800 placeholder:text-gray-300 focus:outline-none focus:ring-2 ${error
+      className={`block w-full rounded-sm border px-3 py-2 text-sm text-gray-800 placeholder:text-gray-300 focus:outline-none focus:ring-2 ${error
         ? "border-red-300 focus:border-red-400 focus:ring-red-400/20"
         : "border-gray-200 focus:border-blue-400 focus:ring-blue-400/20"
         } ${className}`}
@@ -139,7 +139,7 @@ const Select = (props: React.SelectHTMLAttributes<HTMLSelectElement>) => {
     <div className="relative">
       <select
         {...props}
-        className={`block w-full appearance-none rounded-lg border border-gray-200 bg-white px-3 py-2 pr-8 text-sm text-gray-800 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20 ${props.className ?? ""}`}
+        className={`block w-full appearance-none rounded-sm border border-gray-200 bg-white px-3 py-2 pr-8 text-sm text-gray-800 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20 ${props.className ?? ""}`}
       />
       <svg className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
@@ -161,7 +161,7 @@ const parsePercent = (value: string) => {
 // Styling handed to the shared <GeospatialFields> so it matches this form's
 // Input / FieldLabel rather than the new-project form's.
 const GEO_INPUT_CLASS =
-  "block w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 placeholder:text-gray-300 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20";
+  "block w-full rounded-sm border border-gray-200 px-3 py-2 text-sm text-gray-800 placeholder:text-gray-300 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20";
 const GEO_LABEL_CLASS =
   "mb-1 block text-[10px] font-bold uppercase tracking-widest text-gray-400";
 
@@ -828,7 +828,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
       {/* ── Success Modal ── */}
       {showSuccess && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="mx-4 w-full max-w-sm overflow-hidden rounded-2xl bg-white shadow-2xl">
+          <div className="mx-4 w-full max-w-sm overflow-hidden rounded-sm bg-white shadow-2xl">
             <div className="bg-linear-to-br from-emerald-500 to-teal-600 px-8 py-8 text-center">
               <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-white/20">
                 <svg className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
@@ -839,7 +839,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
               <p className="mt-1 text-sm text-emerald-100">Project updated successfully.</p>
             </div>
             <div className="px-8 py-5">
-              <button type="button" onClick={() => setShowSuccess(false)} className="w-full rounded-xl bg-gray-900 py-2.5 text-sm font-semibold text-white hover:bg-gray-700">
+              <button type="button" onClick={() => setShowSuccess(false)} className="w-full rounded-sm bg-gray-900 py-2.5 text-sm font-semibold text-white hover:bg-gray-700">
                 Continue
               </button>
             </div>
@@ -972,7 +972,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                     <input
                       type="number" min={0} max={100} value={completion}
                       onChange={(e) => setCompletion(Math.min(100, Math.max(0, Number(e.target.value))))}
-                      className="block w-full rounded-lg border-0 bg-transparent py-2 pl-3 pr-7 text-sm font-bold text-blue-600 focus:outline-none"
+                      className="block w-full rounded-sm border-0 bg-transparent py-2 pl-3 pr-7 text-sm font-bold text-blue-600 focus:outline-none"
                     />
                     <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-sm font-bold text-blue-400">%</span>
                   </div>
@@ -1277,7 +1277,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
               <div className="mt-6">
                 <FieldLabel>Recent Disbursements</FieldLabel>
                 <div
-                  className="overflow-auto rounded-lg border border-gray-200"
+                  className="overflow-auto rounded-sm border border-gray-200"
                   style={{ maxHeight: "268px" }}
                 >
                   <table className="w-full min-w-150 border-separate border-spacing-0 text-xs">
@@ -1313,7 +1313,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                 </div>
 
                 {/* Record form */}
-                <div className="mt-3 flex flex-wrap gap-2 rounded-lg border border-gray-200 p-3">
+                <div className="mt-3 flex flex-wrap gap-2 rounded-sm border border-gray-200 p-3">
                   <div className="relative w-full shrink-0 sm:w-36">
                     <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">₱</span>
                     <Input
@@ -1351,7 +1351,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                   <button
                     type="button" onClick={handleRecordDisbursement}
                     disabled={recordDisbursement.isPending}
-                    className="rounded-lg bg-blue-900 px-8 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-blue-800 disabled:opacity-50"
+                    className="rounded-sm bg-blue-900 px-8 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-blue-800 disabled:opacity-50"
                   >
                     {recordDisbursement.isPending ? "..." : "Record"}
                   </button>
@@ -1369,7 +1369,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
               <div className="mt-6">
                 <FieldLabel>Revised Contract Cost History</FieldLabel>
                 <div
-                  className="overflow-auto rounded-lg border border-gray-200"
+                  className="overflow-auto rounded-sm border border-gray-200"
                   style={{ maxHeight: "268px" }}
                 >
                   <table className="w-full min-w-200 border-separate border-spacing-0 text-xs">
@@ -1433,7 +1433,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                 </div>
 
                 {/* Record / edit form */}
-                <div className="mt-3 flex flex-wrap gap-2 rounded-lg border border-gray-200 p-3">
+                <div className="mt-3 flex flex-wrap gap-2 rounded-sm border border-gray-200 p-3">
                   <div className="relative w-full shrink-0 sm:w-36">
                     <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">₱</span>
                     <Input
@@ -1506,7 +1506,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                     type="button"
                     onClick={handleRecordVariationOrder}
                     disabled={recordVariationOrder.isPending || updateVariationOrder.isPending}
-                    className="rounded-lg bg-blue-900 px-8 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-blue-800 disabled:opacity-50"
+                    className="rounded-sm bg-blue-900 px-8 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-blue-800 disabled:opacity-50"
                   >
                     {recordVariationOrder.isPending || updateVariationOrder.isPending
                       ? "..."
@@ -1518,7 +1518,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                     <button
                       type="button"
                       onClick={resetVariationForm}
-                      className="rounded-lg border border-gray-200 px-4 py-2 text-xs font-bold uppercase tracking-widest text-gray-500 transition hover:bg-gray-50"
+                      className="rounded-sm border border-gray-200 px-4 py-2 text-xs font-bold uppercase tracking-widest text-gray-500 transition hover:bg-gray-50"
                     >
                       Cancel
                     </button>
@@ -1539,7 +1539,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
             <div className="p-4">
               <FieldLabel>Timeline Adjustment History</FieldLabel>
               <div
-                className="overflow-auto rounded-lg border border-gray-200"
+                className="overflow-auto rounded-sm border border-gray-200"
                 style={{ maxHeight: "392px" }}
               >
                 <table className="w-full min-w-160 border-separate border-spacing-0 text-xs">
@@ -1561,7 +1561,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                           <td className="px-3 py-2.5 text-gray-600">{fmt(a.endDate)}</td>
                           <td className="px-3 py-2.5 font-semibold text-gray-800">{a.duration} Days</td>
                           <td className="px-3 py-2.5">
-                            <span className={`inline-flex rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${cfg.badge}`}>{cfg.label}</span>
+                            <span className={`inline-flex rounded-sm border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${cfg.badge}`}>{cfg.label}</span>
                           </td>
                           <td className="px-3 py-2.5 italic text-gray-600">{a.justification ?? "—"}</td>
                         </tr>
@@ -1612,7 +1612,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                   type="button"
                   onClick={handleRecordTimelineAdjustment}
                   disabled={recordTimelineAdjustment.isPending}
-                  className="rounded-lg bg-blue-900 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-blue-800 disabled:opacity-50"
+                  className="rounded-sm bg-blue-900 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-blue-800 disabled:opacity-50"
                 >
                   {recordTimelineAdjustment.isPending ? "..." : "Record"}
                 </button>
@@ -1631,7 +1631,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
               <div className="flex flex-wrap items-end gap-4">
                 {/* Live readout — actual minus target, with its stage */}
                 <div
-                  className={`flex min-w-70 flex-1 items-center justify-between gap-4 rounded-lg border px-4 py-3 ${slippageStage ? slippageStage.tile : "border-gray-200 bg-gray-50"
+                  className={`flex min-w-70 flex-1 items-center justify-between gap-4 rounded-sm border px-4 py-3 ${slippageStage ? slippageStage.tile : "border-gray-200 bg-gray-50"
                     }`}
                 >
                   <div>
@@ -1695,7 +1695,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                 {/* Revision counter — advanced by Save, never typed */}
                 <div className="w-full shrink-0 sm:w-32">
                   <FieldLabel>Revision</FieldLabel>
-                  <div className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-600">
+                  <div className="rounded-sm border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-600">
                     Rev. {isSlippageDirty && savedSlippageKey !== null ? slippageRevision + 1 : slippageRevision}
                   </div>
                 </div>
@@ -1714,7 +1714,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                   type="button"
                   onClick={handleSaveSlippage}
                   disabled={!isSlippageDirty || updateSlippage.isPending}
-                  className="flex shrink-0 items-center justify-center gap-2 rounded-lg bg-blue-900 px-6 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex shrink-0 items-center justify-center gap-2 rounded-sm bg-blue-900 px-6 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {updateSlippage.isPending ? "Saving..." : "Save"}
                 </button>
@@ -1737,7 +1737,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
               <div className="mt-5">
                 <FieldLabel>Slippage History</FieldLabel>
                 <div
-                  className="overflow-auto rounded-lg border border-gray-200"
+                  className="overflow-auto rounded-sm border border-gray-200"
                   style={{ maxHeight: "392px" }}
                 >
                   <table className="w-full min-w-160 border-separate border-spacing-0 text-xs">
@@ -1915,7 +1915,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Describe the scope of work, deliverables, and methodology..."
-                    className="mt-1 block w-full resize-none rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 placeholder:text-gray-300 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20"
+                    className="mt-1 block w-full resize-none rounded-sm border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 placeholder:text-gray-300 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20"
                   />
                 </div>
               </div>
@@ -1933,7 +1933,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                   <select
                     value={pendingFileType}
                     onChange={(e) => setPendingFileType(e.target.value as typeof pendingFileType)}
-                    className="rounded-md border border-gray-200 bg-white px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-gray-500 focus:outline-none"
+                    className="rounded-sm border border-gray-200 bg-white px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-gray-500 focus:outline-none"
                   >
                     <option value="OTHER">Other</option>
                     <option value="IMAGE">Image</option>
@@ -1946,7 +1946,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                     type="button"
                     onClick={() => docInputRef.current?.click()}
                     disabled={isUploadingMedia}
-                    className="flex items-center gap-1.5 rounded-md border border-gray-200 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                    className="flex items-center gap-1.5 rounded-sm border border-gray-200 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:bg-gray-50 disabled:opacity-50"
                   >
                     {isUploadingMedia ? (
                       <div className="h-3 w-3 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />
@@ -1969,14 +1969,14 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
             />
             <div className="p-4">
               {uploadError && (
-                <div className="mb-3 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600">
+                <div className="mb-3 flex items-center gap-2 rounded-sm border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600">
                   <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" /></svg>
                   {uploadError}
                   <button type="button" onClick={() => setUploadError(null)} className="ml-auto">✕</button>
                 </div>
               )}
               {deleteNotice && (
-                <div className="mb-3 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-xs text-green-700">
+                <div className="mb-3 flex items-center gap-2 rounded-sm border border-green-200 bg-green-50 px-3 py-2 text-xs text-green-700">
                   <svg className="h-4 w-4 shrink-0 text-green-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
                   {deleteNotice}
                   <button type="button" onClick={() => setDeleteNotice(null)} className="ml-auto text-green-400 hover:text-green-600">✕</button>
@@ -2008,7 +2008,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                         <tr key={f.id} className="hover:bg-gray-50/50">
                           <td className="px-3 py-3">
                             <div className="flex items-center gap-2">
-                              <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded ${isImage ? "bg-purple-50" : "bg-red-50"}`}>
+                              <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-sm ${isImage ? "bg-purple-50" : "bg-red-50"}`}>
                                 {isImage ? (
                                   <svg className="h-4 w-4 text-purple-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M2.25 19.5h19.5M2.25 4.5h19.5" /></svg>
                                 ) : (
@@ -2065,7 +2065,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
             />
             <div className="p-4">
               {showNotifSuccess && (
-                <div className="mb-4 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-xs text-green-700">
+                <div className="mb-4 flex items-center gap-2 rounded-sm border border-green-200 bg-green-50 px-4 py-3 text-xs text-green-700">
                   <svg className="h-4 w-4 text-green-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
                   Notification sent successfully.
                   <button type="button" onClick={() => setShowNotifSuccess(false)} className="ml-auto text-green-400 hover:text-green-600">✕</button>
@@ -2101,10 +2101,10 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                           <button
                             key={p} type="button"
                             onClick={() => setNotifyPriority(p)}
-                            className={`flex w-full items-start gap-3 rounded-lg border px-3 py-2.5 text-left transition ${isActive ? `${cfg.activeBg} border-transparent text-white` : `${cfg.bg} ${cfg.border}`
+                            className={`flex w-full items-start gap-3 rounded-sm border px-3 py-2.5 text-left transition ${isActive ? `${cfg.activeBg} border-transparent text-white` : `${cfg.bg} ${cfg.border}`
                               }`}
                           >
-                            <span className={`mt-0.5 h-3 w-3 shrink-0 rounded-full ${isActive ? "bg-white/80" : cfg.dot}`} />
+                            <span className={`mt-0.5 h-3 w-3 shrink-0 rounded-sm ${isActive ? "bg-white/80" : cfg.dot}`} />
                             <div>
                               <p className={`text-xs font-bold uppercase tracking-widest ${isActive ? "text-white" : cfg.text}`}>{cfg.label}</p>
                               <p className={`mt-0.5 text-[10px] ${isActive ? "text-white/80" : "text-gray-400"}`}>
@@ -2126,14 +2126,14 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                     value={taskDescription}
                     onChange={(e) => setTaskDescription(e.target.value)}
                     placeholder="Type instructions or task details here..."
-                    className="mt-1 flex-1 resize-none rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-800 placeholder:text-gray-300 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20"
+                    className="mt-1 flex-1 resize-none rounded-sm border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-800 placeholder:text-gray-300 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20"
                   />
                   <div className="mt-3 flex justify-end">
                     <button
                       type="button"
                       onClick={handleSendNotification}
                       disabled={sendNotification.isPending || !notifyUserId || !taskDescription.trim()}
-                      className="flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-40"
+                      className="flex items-center gap-2 rounded-sm bg-blue-600 px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-40"
                     >
                       {sendNotification.isPending ? (
                         <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
@@ -2161,7 +2161,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
         <div className="w-full shrink-0 xl:w-lg">
           <div className="space-y-3 xl:sticky xl:top-5">
             {/* Status badge */}
-            <div className={`flex items-center gap-2 rounded-xl border px-4 py-3 ${statusCfg.badge}`}>
+            <div className={`flex items-center gap-2 rounded-sm border px-4 py-3 ${statusCfg.badge}`}>
               <span className={`h-2 w-2 rounded-full ${statusCfg.dot}`} />
               <span className="text-xs font-bold">{statusCfg.label}</span>
               <span className="ml-auto font-mono text-[10px] text-gray-400">{project.projectCode}</span>
@@ -2183,12 +2183,12 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                     rows={3} value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     placeholder="Log a site visit, milestone, or note..."
-                    className="mt-1 block w-full resize-none rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 placeholder:text-gray-300 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20"
+                    className="mt-1 block w-full resize-none rounded-sm border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 placeholder:text-gray-300 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20"
                   />
                   <button
                     type="button" onClick={() => { if (comment.trim()) addActivity.mutate({ projectId, description: comment.trim() }); }}
                     disabled={addActivity.isPending || !comment.trim()}
-                    className="mt-2 w-full rounded-lg bg-gray-900 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-gray-700 disabled:opacity-40"
+                    className="mt-2 w-full rounded-sm bg-gray-900 py-2 text-xs font-bold                                                                                                                                                                                           uppercase tracking-widest text-white transition hover:bg-gray-700 disabled:opacity-40"
                   >
                     {addActivity.isPending ? "Posting..." : "Post Comment"}
                   </button>
@@ -2202,7 +2202,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                         const displayName = a.createdBy.name ?? a.createdBy.email ?? "Unknown";
                         const initial = displayName.charAt(0).toUpperCase();
                         return (
-                          <div key={a.id} className={`rounded-lg p-3 ${idx === 0 ? "bg-blue-50 ring-1 ring-blue-100" : "bg-gray-50"}`}>
+                          <div key={a.id} className={`rounded-sm p-3 ${idx === 0 ? "bg-blue-50 ring-1 ring-blue-100" : "bg-gray-50"}`}>
                             <div className="flex items-start gap-2.5">
                               {a.createdBy.image ? (
                                 <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-full">
@@ -2254,7 +2254,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
           )}
           <Link
             href={`/admin/projects/${projectId}`}
-            className="shrink-0 whitespace-nowrap rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-center text-xs font-bold uppercase tracking-wide text-gray-600 transition hover:bg-gray-50 sm:px-6 sm:tracking-widest"
+            className="shrink-0 whitespace-nowrap rounded-sm border border-gray-200 bg-white px-3 py-2.5 text-center text-xs font-bold uppercase tracking-wide text-gray-600 transition hover:bg-gray-50 sm:px-6 sm:tracking-widest"
           >
             Cancel Changes
           </Link>
@@ -2262,7 +2262,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
             type="button"
             onClick={handleSaveChanges}
             disabled={updateProject.isPending}
-            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-blue-600 px-3 py-2.5 text-xs font-bold uppercase tracking-wide text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-50 sm:flex-initial sm:px-6 sm:tracking-widest"
+            className="flex flex-1 items-center justify-center gap-2 rounded-sm bg-blue-600 px-3 py-2.5 text-xs font-bold uppercase tracking-wide text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-50 sm:flex-initial sm:px-6 sm:tracking-widest"
           >
             {updateProject.isPending ? (
               <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />

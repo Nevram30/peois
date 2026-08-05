@@ -778,7 +778,7 @@ export const AddProjectForm = () => {
                     const file = e.dataTransfer.files[0];
                     if (file) void handleImageChange(file);
                   }}
-                  className="group relative flex aspect-video w-full cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 transition hover:border-blue-300 hover:bg-blue-50"
+                  className="group relative flex aspect-video w-full cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden rounded-sm border-2 border-dashed border-gray-200 bg-gray-50 transition hover:border-blue-300 hover:bg-blue-50"
                 >
                   {imagePreview ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -1378,22 +1378,19 @@ export const AddProjectForm = () => {
             <div className="flex flex-wrap items-end gap-4">
               {/* Live readout — actual minus target, with its stage */}
               <div
-                className={`flex min-w-70 flex-1 items-center justify-between gap-4 rounded-sm border px-4 py-3 ${
-                  slippageStage ? slippageStage.tile : "border-gray-200 bg-gray-50"
-                }`}
+                className={`flex min-w-70 flex-1 items-center justify-between gap-4 rounded-sm border px-4 py-3 ${slippageStage ? slippageStage.tile : "border-gray-200 bg-gray-50"
+                  }`}
               >
                 <div>
                   <p
-                    className={`text-[10px] font-bold uppercase tracking-widest ${
-                      slippageStage ? slippageStage.text : "text-gray-400"
-                    }`}
+                    className={`text-[10px] font-bold uppercase tracking-widest ${slippageStage ? slippageStage.text : "text-gray-400"
+                      }`}
                   >
                     Slippage
                   </p>
                   <p
-                    className={`mt-0.5 text-3xl font-extrabold ${
-                      slippageStage ? slippageStage.text : "text-gray-300"
-                    }`}
+                    className={`mt-0.5 text-3xl font-extrabold ${slippageStage ? slippageStage.text : "text-gray-300"
+                      }`}
                   >
                     {slippage !== null ? formatSlippage(slippage) : "—"}
                     <span className="ml-0.5 text-base font-bold">%</span>
@@ -1729,11 +1726,10 @@ export const AddProjectForm = () => {
                       className="flex items-start gap-3"
                     >
                       <span
-                        className={`mt-px flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition ${
-                          done
-                            ? "border-blue-600 bg-blue-600 text-white"
-                            : "border-gray-200 bg-white"
-                        }`}
+                        className={`mt-px flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition ${done
+                          ? "border-blue-600 bg-blue-600 text-white"
+                          : "border-gray-200 bg-white"
+                          }`}
                       >
                         {done && (
                           <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
@@ -1742,9 +1738,8 @@ export const AddProjectForm = () => {
                         )}
                       </span>
                       <span
-                        className={`text-sm leading-snug ${
-                          done ? "font-semibold text-gray-900" : "text-gray-600"
-                        }`}
+                        className={`text-sm leading-snug ${done ? "font-semibold text-gray-900" : "text-gray-600"
+                          }`}
                       >
                         {item.label}
                       </span>

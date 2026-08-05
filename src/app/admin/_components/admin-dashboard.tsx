@@ -97,59 +97,59 @@ export const AdminDashboardContent = () => {
                     <DistrictCardsSkeleton />
                 </div>
             ) : (
-            <div className={`grid grid-cols-1 ${districtOnSide ? "lg:grid-cols-2" : ""} gap-4 pb-5`}>
-                {statsLoading ? (
-                    <StatCardsSkeleton districtOnSide={districtOnSide} />
-                ) : districtOnSide ? (
-                    // District admins: big Budget Year card spanning both rows,
-                    // six status tiles (incl. OTHERS) in a 3×2 grid beside it.
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                        <div className="col-span-2 sm:col-span-1 sm:row-span-2 bg-white rounded-sm shadow-sm flex flex-col items-center justify-center gap-1 p-3 text-center">
-                            <p className="text-sm font-bold text-slate-700 leading-tight">Budget Year</p>
-                            <p className="text-3xl font-extrabold text-slate-900 leading-none">{dashboardYear || "All"}</p>
+                <div className={`grid grid-cols-1 ${districtOnSide ? "lg:grid-cols-2" : ""} gap-4 pb-5`}>
+                    {statsLoading ? (
+                        <StatCardsSkeleton districtOnSide={districtOnSide} />
+                    ) : districtOnSide ? (
+                        // District admins: big Budget Year card spanning both rows,
+                        // six status tiles (incl. OTHERS) in a 3×2 grid beside it.
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                            <div className="col-span-2 sm:col-span-1 sm:row-span-2 bg-white rounded-sm shadow-sm flex flex-col items-center justify-center gap-1 p-3 text-center">
+                                <p className="text-sm font-bold text-slate-700 leading-tight">Budget Year</p>
+                                <p className="text-3xl font-extrabold text-slate-900 leading-none">{dashboardYear || "All"}</p>
+                            </div>
+                            {statusTiles.map((c) => (
+                                <div key={c.label} className="bg-white rounded-sm shadow-sm p-3 flex items-center justify-between gap-2">
+                                    <div className="flex flex-col gap-1">
+                                        <div className={`w-6 h-6 rounded-sm ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>
+                                            {c.icon}
+                                        </div>
+                                        <p className="text-[9px] font-bold text-slate-500 leading-tight tracking-wide">{c.label}</p>
+                                    </div>
+                                    <p className="text-2xl font-extrabold text-slate-900 leading-none">{c.value}</p>
+                                </div>
+                            ))}
                         </div>
-                        {statusTiles.map((c) => (
-                            <div key={c.label} className="bg-white rounded-sm shadow-sm p-3 flex items-center justify-between gap-2">
-                                <div className="flex flex-col gap-1">
-                                    <div className={`w-6 h-6 rounded-md ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>
-                                        {c.icon}
+                    ) : (
+                        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+                            {statCards.map((c) => (
+                                <div key={c.label} className="bg-white rounded-sm shadow-sm p-3 flex items-center justify-between gap-2">
+                                    <div className="flex flex-col gap-1">
+                                        <div className={`w-6 h-6 rounded-sm ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>
+                                            {c.icon}
+                                        </div>
+                                        <p className="text-[9px] font-bold text-slate-500 leading-tight tracking-wide">{c.label}</p>
                                     </div>
-                                    <p className="text-[9px] font-bold text-slate-500 leading-tight tracking-wide">{c.label}</p>
+                                    <p className="text-2xl font-extrabold text-slate-900 leading-none">{c.value}</p>
                                 </div>
-                                <p className="text-2xl font-extrabold text-slate-900 leading-none">{c.value}</p>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
-                        {statCards.map((c) => (
-                            <div key={c.label} className="bg-white rounded-sm shadow-sm p-3 flex items-center justify-between gap-2">
-                                <div className="flex flex-col gap-1">
-                                    <div className={`w-6 h-6 rounded-md ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>
-                                        {c.icon}
-                                    </div>
-                                    <p className="text-[9px] font-bold text-slate-500 leading-tight tracking-wide">{c.label}</p>
-                                </div>
-                                <p className="text-2xl font-extrabold text-slate-900 leading-none">{c.value}</p>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                            ))}
+                        </div>
+                    )}
 
-                {districtLoading ? (
-                    <DistrictCardsSkeleton onSide={districtOnSide} count={districtOnSide ? 1 : 2} />
-                ) : (
-                    <div className={districtOnSide ? "flex flex-col gap-4" : "grid grid-cols-1 lg:grid-cols-2 gap-4 items-start"}>
-                        {districtData?.map((d) => (
-                            <DistrictCard
-                                key={d.district}
-                                title={`${d.district.replace('_', ' ')} PROJECT STATUS`}
-                                data={toCardData(d.counts)}
-                            />
-                        ))}
-                    </div>
-                )}
-            </div>
+                    {districtLoading ? (
+                        <DistrictCardsSkeleton onSide={districtOnSide} count={districtOnSide ? 1 : 2} />
+                    ) : (
+                        <div className={districtOnSide ? "flex flex-col gap-4" : "grid grid-cols-1 lg:grid-cols-2 gap-4 items-start"}>
+                            {districtData?.map((d) => (
+                                <DistrictCard
+                                    key={d.district}
+                                    title={`${d.district.replace('_', ' ')} PROJECT STATUS`}
+                                    data={toCardData(d.counts)}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </div>
             )}
 
             {/* Financial Overview Header */}
@@ -260,7 +260,7 @@ export const AdminDashboardContent = () => {
                                     setFiscalYear(e.target.value);
                                     setPage(1);
                                 }}
-                                className="w-full appearance-none rounded-xl border border-gray-200 bg-white py-2.5 pl-9 pr-9 text-sm text-gray-700 shadow-sm focus:border-[#1e3a4f] focus:outline-none focus:ring-2 focus:ring-[#1e3a4f]/20"
+                                className="w-full appearance-none rounded-sm border border-gray-200 bg-white py-2.5 pl-9 pr-9 text-sm text-gray-700 shadow-sm focus:border-[#1e3a4f] focus:outline-none focus:ring-2 focus:ring-[#1e3a4f]/20"
                             >
                                 <option value="">All Fiscal Years</option>
                                 {budgetYears?.map((y) => (
@@ -458,7 +458,7 @@ export const AdminDashboardContent = () => {
                                                     onClick={() =>
                                                         router.push(`/admin/projects/${p.id}/view`)
                                                     }
-                                                    className="inline-flex items-center gap-1.5 rounded-lg bg-green-500 px-3 py-1.5 text-white transition hover:bg-green-600"
+                                                    className="inline-flex items-center gap-1.5 rounded-sm bg-green-500 px-3 py-1.5 text-white transition hover:bg-green-600"
                                                     title="View project"
                                                 >
                                                     <svg
@@ -501,7 +501,7 @@ export const AdminDashboardContent = () => {
                                     setPageSize(Number(e.target.value));
                                     setPage(1);
                                 }}
-                                className="rounded-md border border-gray-200 bg-white px-2 py-1 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e3a4f]/20"
+                                className="rounded-sm border border-gray-200 bg-white px-2 py-1 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e3a4f]/20"
                             >
                                 {[10, 20, 50, 100].map((s) => (
                                     <option key={s} value={s}>{s}</option>
@@ -512,7 +512,7 @@ export const AdminDashboardContent = () => {
                             <button
                                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                                 disabled={page === 1}
-                                className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition hover:bg-gray-50 disabled:opacity-40"
+                                className="flex h-8 w-8 items-center justify-center rounded-sm border border-gray-200 text-gray-500 transition hover:bg-gray-50 disabled:opacity-40"
                             >
                                 &lsaquo;
                             </button>
@@ -520,7 +520,7 @@ export const AdminDashboardContent = () => {
                                 <button
                                     key={p}
                                     onClick={() => setPage(p)}
-                                    className={`flex h-8 w-8 items-center justify-center rounded-lg border text-sm font-medium transition ${p === page
+                                    className={`flex h-8 w-8 items-center justify-center rounded-sm border text-sm font-medium transition ${p === page
                                         ? "border-blue-500 bg-white text-blue-600 ring-1 ring-blue-500"
                                         : "border-gray-200 text-gray-600 hover:bg-gray-50"
                                         }`}
@@ -531,7 +531,7 @@ export const AdminDashboardContent = () => {
                             <button
                                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                                 disabled={page === totalPages}
-                                className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition hover:bg-gray-50 disabled:opacity-40"
+                                className="flex h-8 w-8 items-center justify-center rounded-sm border border-gray-200 text-gray-500 transition hover:bg-gray-50 disabled:opacity-40"
                             >
                                 &rsaquo;
                             </button>

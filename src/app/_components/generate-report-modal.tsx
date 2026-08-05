@@ -510,7 +510,7 @@ export const GenerateReportModal = ({
           </div>
           <button
             onClick={onClose}
-            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-gray-600"
+            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-sm text-gray-400 transition hover:bg-gray-100 hover:text-gray-600"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -557,12 +557,12 @@ export const GenerateReportModal = ({
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
               Export Format:
             </span>
-            <div className="flex rounded-xl border border-slate-200 bg-white p-1 shadow-sm">
+            <div className="flex rounded-sm border border-slate-200 bg-white p-1 shadow-sm">
               {FORMAT_OPTIONS.map((f) => (
                 <button
                   key={f.value}
                   onClick={() => setFormat(f.value)}
-                  className={`cursor-pointer rounded-lg px-5 py-2 text-xs font-bold uppercase tracking-wide transition ${format === f.value
+                  className={`cursor-pointer rounded-sm px-5 py-2 text-xs font-bold uppercase tracking-wide transition ${format === f.value
                     ? "bg-[#1e2a63] text-white shadow-sm"
                     : "text-slate-500 hover:text-slate-700"
                     }`}
@@ -582,7 +582,7 @@ export const GenerateReportModal = ({
             <button
               onClick={handleGenerate}
               disabled={selected.length === 0 || reportProjects.length === 0}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#1e2a63] px-7 py-3.5 text-sm font-bold uppercase tracking-wide text-white shadow-sm transition hover:bg-[#182050] disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex cursor-pointer items-center gap-2 rounded-sm bg-[#1e2a63] px-7 py-3.5 text-sm font-bold uppercase tracking-wide text-white shadow-sm transition hover:bg-[#182050] disabled:cursor-not-allowed disabled:opacity-50"
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />

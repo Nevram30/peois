@@ -161,7 +161,7 @@ const ProjectActions = ({
     <div className="flex items-center gap-2">
       <button
         onClick={() => router.push(`/admin/projects/${id}/view`)}
-        className={`inline-flex items-center justify-center gap-1.5 rounded-md bg-blue-500 px-2.5 py-1.5 text-xs font-medium text-white transition hover:bg-blue-600 ${growClass}`}
+        className={`inline-flex items-center justify-center gap-1.5 rounded-sm bg-blue-500 px-2.5 py-1.5 text-xs font-medium text-white transition hover:bg-blue-600 ${growClass}`}
       >
         <svg
           className="h-3.5 w-3.5"
@@ -185,7 +185,7 @@ const ProjectActions = ({
       </button>
       <button
         onClick={() => router.push(`/admin/projects/${id}`)}
-        className={`inline-flex items-center justify-center gap-1.5 rounded-md bg-green-500 px-2.5 py-1.5 text-xs font-medium text-white transition hover:bg-green-600 ${growClass}`}
+        className={`inline-flex items-center justify-center gap-1.5 rounded-sm bg-green-500 px-2.5 py-1.5 text-xs font-medium text-white transition hover:bg-green-600 ${growClass}`}
       >
         <svg
           className="h-3.5 w-3.5"
@@ -298,7 +298,7 @@ const ProjectsList = () => {
         : "All Projects";
 
   const selectClass =
-    "w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20";
+    "w-full rounded-sms border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20";
 
   const hasActiveFilters = !!(
     search ||
@@ -362,20 +362,20 @@ const ProjectsList = () => {
               placeholder="Project Code or Name..."
               value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-              className="w-full rounded-lg border border-gray-200 py-2.5 pl-9 pr-3 text-sm text-gray-700 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className="w-full rounded-sm border border-gray-200 py-2.5 pl-9 pr-3 text-sm text-gray-700 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             />
           </div>
           {(statusFilter ?? filterToday) && (
             <Link
               href="/admin/projects"
-              className="grow rounded-lg border border-gray-200 px-4 py-2.5 text-center text-sm font-medium text-gray-600 transition hover:bg-gray-50 sm:grow-0"
+              className="grow rounded-sm border border-gray-200 px-4 py-2.5 text-center text-sm font-medium text-gray-600 transition hover:bg-gray-50 sm:grow-0"
             >
               Clear Filter
             </Link>
           )}
           <button
             onClick={() => setReportModalOpen(true)}
-            className="inline-flex grow cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 sm:grow-0"
+            className="inline-flex grow cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-sm border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 sm:grow-0"
           >
             <svg
               className="h-4 w-4"
@@ -394,7 +394,7 @@ const ProjectsList = () => {
           </button>
           <Link
             href="/admin/projects/new"
-            className="grow whitespace-nowrap rounded-lg bg-[#1e3a4f] px-4 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition hover:bg-[#2a4d66] sm:grow-0"
+            className="grow whitespace-nowrap rounded-sm bg-[#1e3a4f] px-4 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition hover:bg-[#2a4d66] sm:grow-0"
           >
             + Add New Project
           </Link>
@@ -597,7 +597,7 @@ const ProjectsList = () => {
               <button
                 onClick={clearFilters}
                 disabled={!hasActiveFilters}
-                className="flex w-full cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-red-50"
+                className="flex w-full cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-sm border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-red-50"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -784,7 +784,7 @@ const ProjectsList = () => {
                 <select
                   value={PAGE_SIZE}
                   disabled
-                  className="rounded border border-gray-300 px-2 py-1 text-sm text-gray-700 focus:outline-none"
+                  className="rounded-sm border border-gray-300 px-2 py-1 text-sm text-gray-700 focus:outline-none"
                 >
                   <option value={20}>20</option>
                 </select>
@@ -795,7 +795,7 @@ const ProjectsList = () => {
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="flex h-8 w-8 items-center justify-center rounded border border-gray-300 text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="flex h-8 w-8 items-center justify-center rounded-sm border border-gray-300 text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   ‹
                 </button>
@@ -813,7 +813,7 @@ const ProjectsList = () => {
                       <button
                         key={item}
                         onClick={() => setPage(item)}
-                        className={`flex h-8 w-8 items-center justify-center rounded border text-sm font-medium transition ${page === item
+                        className={`flex h-8 w-8 items-center justify-center rounded-sm border text-sm font-medium transition ${page === item
                           ? "border-blue-500 text-blue-600"
                           : "border-gray-300 text-gray-600 hover:bg-gray-50"
                           }`}
@@ -825,7 +825,7 @@ const ProjectsList = () => {
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
-                  className="flex h-8 w-8 items-center justify-center rounded border border-gray-300 text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="flex h-8 w-8 items-center justify-center rounded-sm border border-gray-300 text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   ›
                 </button>
