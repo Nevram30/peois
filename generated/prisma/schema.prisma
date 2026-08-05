@@ -237,6 +237,7 @@ model User {
   taskReplies               TaskReply[]
   projectFiles              ProjectFile[]
   timelineAdjustments       TimelineAdjustment[]
+  slippageAssessments       SlippageAssessment[]
   accessRequestsMade        ProjectAccessRequest[]    @relation("AccessRequestsMade")
   accessRequestsReviewed    ProjectAccessRequest[]    @relation("AccessRequestsReviewed")
   archiveLocations          PhysicalArchiveLocation[]
@@ -307,7 +308,9 @@ model Project {
   // time of assessment. The slippage percentage itself is always derived
   // (actual − target) by ~/lib/slippage, so the two inputs stay the only
   // source of truth. `slippageRevision` counts the re-assessments recorded
-  // against the project (Rev. 0 is the first one).
+  // against the project (Rev. 0 is the first one). Every filed assessment also
+  // leaves a row in `slippageAssessments`; these three fields stay as the
+  // current figures so existing readers keep working.
   slippageTarget           Float?
   slippageActual           Float?
   slippageRevision         Int                  @default(0)
@@ -328,6 +331,7 @@ model Project {
   timelineAdjustments TimelineAdjustment[]
   accessRequests      ProjectAccessRequest[]
   archiveLocations    PhysicalArchiveLocation[]
+  slippageAssessments SlippageAssessment[]
 
   @@index([title])
   @@index([status])
@@ -459,6 +463,27 @@ model TimelineAdjustment {
   createdBy     User                   @relation(fields: [createdById], references: [id])
   createdById   String
   createdAt     DateTime               @default(now())
+
+  @@index([projectId])
+  @@index([createdById])
+}
+
+// One filed slippage assessment — the history behind Project.slippageTarget /
+// slippageActual. The slippage percentage is derived (actual − target) by
+// ~/lib/slippage, so only the two inputs are stored. `date` is the assessment
+// date, which may be back-dated and is therefore separate from `createdAt`.
+model SlippageAssessment {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  date        DateTime
+  target      Float
+  actual      Float
+  revision    Int      @default(0)
+  remarks     String?
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime @default(now())
 
   @@index([projectId])
   @@index([createdById])

@@ -69,6 +69,11 @@ export type LandbankLoanOption = $Result.DefaultSelection<Prisma.$LandbankLoanOp
  */
 export type TimelineAdjustment = $Result.DefaultSelection<Prisma.$TimelineAdjustmentPayload>
 /**
+ * Model SlippageAssessment
+ * 
+ */
+export type SlippageAssessment = $Result.DefaultSelection<Prisma.$SlippageAssessmentPayload>
+/**
  * Model TaskNotification
  * 
  */
@@ -671,6 +676,16 @@ export class PrismaClient<
   get timelineAdjustment(): Prisma.TimelineAdjustmentDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.slippageAssessment`: Exposes CRUD operations for the **SlippageAssessment** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SlippageAssessments
+    * const slippageAssessments = await prisma.slippageAssessment.findMany()
+    * ```
+    */
+  get slippageAssessment(): Prisma.SlippageAssessmentDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.taskNotification`: Exposes CRUD operations for the **TaskNotification** model.
     * Example usage:
     * ```ts
@@ -1191,6 +1206,7 @@ export namespace Prisma {
     FundingProjectOption: 'FundingProjectOption',
     LandbankLoanOption: 'LandbankLoanOption',
     TimelineAdjustment: 'TimelineAdjustment',
+    SlippageAssessment: 'SlippageAssessment',
     TaskNotification: 'TaskNotification',
     TaskReply: 'TaskReply',
     TaskReplyDocument: 'TaskReplyDocument',
@@ -1216,7 +1232,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "userSession" | "project" | "physicalArchiveLocation" | "projectActivity" | "disbursement" | "variationOrder" | "fundingProgramOption" | "fundingProjectOption" | "landbankLoanOption" | "timelineAdjustment" | "taskNotification" | "taskReply" | "taskReplyDocument" | "document" | "projectFile" | "projectAccessRequest" | "post"
+      modelProps: "user" | "userSession" | "project" | "physicalArchiveLocation" | "projectActivity" | "disbursement" | "variationOrder" | "fundingProgramOption" | "fundingProjectOption" | "landbankLoanOption" | "timelineAdjustment" | "slippageAssessment" | "taskNotification" | "taskReply" | "taskReplyDocument" | "document" | "projectFile" | "projectAccessRequest" | "post"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2034,6 +2050,80 @@ export namespace Prisma {
           }
         }
       }
+      SlippageAssessment: {
+        payload: Prisma.$SlippageAssessmentPayload<ExtArgs>
+        fields: Prisma.SlippageAssessmentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SlippageAssessmentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlippageAssessmentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SlippageAssessmentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlippageAssessmentPayload>
+          }
+          findFirst: {
+            args: Prisma.SlippageAssessmentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlippageAssessmentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SlippageAssessmentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlippageAssessmentPayload>
+          }
+          findMany: {
+            args: Prisma.SlippageAssessmentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlippageAssessmentPayload>[]
+          }
+          create: {
+            args: Prisma.SlippageAssessmentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlippageAssessmentPayload>
+          }
+          createMany: {
+            args: Prisma.SlippageAssessmentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SlippageAssessmentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlippageAssessmentPayload>[]
+          }
+          delete: {
+            args: Prisma.SlippageAssessmentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlippageAssessmentPayload>
+          }
+          update: {
+            args: Prisma.SlippageAssessmentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlippageAssessmentPayload>
+          }
+          deleteMany: {
+            args: Prisma.SlippageAssessmentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SlippageAssessmentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SlippageAssessmentUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlippageAssessmentPayload>[]
+          }
+          upsert: {
+            args: Prisma.SlippageAssessmentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlippageAssessmentPayload>
+          }
+          aggregate: {
+            args: Prisma.SlippageAssessmentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSlippageAssessment>
+          }
+          groupBy: {
+            args: Prisma.SlippageAssessmentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SlippageAssessmentGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SlippageAssessmentCountArgs<ExtArgs>
+            result: $Utils.Optional<SlippageAssessmentCountAggregateOutputType> | number
+          }
+        }
+      }
       TaskNotification: {
         payload: Prisma.$TaskNotificationPayload<ExtArgs>
         fields: Prisma.TaskNotificationFieldRefs
@@ -2659,6 +2749,7 @@ export namespace Prisma {
     fundingProjectOption?: FundingProjectOptionOmit
     landbankLoanOption?: LandbankLoanOptionOmit
     timelineAdjustment?: TimelineAdjustmentOmit
+    slippageAssessment?: SlippageAssessmentOmit
     taskNotification?: TaskNotificationOmit
     taskReply?: TaskReplyOmit
     taskReplyDocument?: TaskReplyDocumentOmit
@@ -2758,6 +2849,7 @@ export namespace Prisma {
     taskReplies: number
     projectFiles: number
     timelineAdjustments: number
+    slippageAssessments: number
     accessRequestsMade: number
     accessRequestsReviewed: number
     archiveLocations: number
@@ -2779,6 +2871,7 @@ export namespace Prisma {
     taskReplies?: boolean | UserCountOutputTypeCountTaskRepliesArgs
     projectFiles?: boolean | UserCountOutputTypeCountProjectFilesArgs
     timelineAdjustments?: boolean | UserCountOutputTypeCountTimelineAdjustmentsArgs
+    slippageAssessments?: boolean | UserCountOutputTypeCountSlippageAssessmentsArgs
     accessRequestsMade?: boolean | UserCountOutputTypeCountAccessRequestsMadeArgs
     accessRequestsReviewed?: boolean | UserCountOutputTypeCountAccessRequestsReviewedArgs
     archiveLocations?: boolean | UserCountOutputTypeCountArchiveLocationsArgs
@@ -2885,6 +2978,13 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
+  export type UserCountOutputTypeCountSlippageAssessmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SlippageAssessmentWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
   export type UserCountOutputTypeCountAccessRequestsMadeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ProjectAccessRequestWhereInput
   }
@@ -2938,6 +3038,7 @@ export namespace Prisma {
     timelineAdjustments: number
     accessRequests: number
     archiveLocations: number
+    slippageAssessments: number
   }
 
   export type ProjectCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2949,6 +3050,7 @@ export namespace Prisma {
     timelineAdjustments?: boolean | ProjectCountOutputTypeCountTimelineAdjustmentsArgs
     accessRequests?: boolean | ProjectCountOutputTypeCountAccessRequestsArgs
     archiveLocations?: boolean | ProjectCountOutputTypeCountArchiveLocationsArgs
+    slippageAssessments?: boolean | ProjectCountOutputTypeCountSlippageAssessmentsArgs
   }
 
   // Custom InputTypes
@@ -3016,6 +3118,13 @@ export namespace Prisma {
    */
   export type ProjectCountOutputTypeCountArchiveLocationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: PhysicalArchiveLocationWhereInput
+  }
+
+  /**
+   * ProjectCountOutputType without action
+   */
+  export type ProjectCountOutputTypeCountSlippageAssessmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SlippageAssessmentWhereInput
   }
 
 
@@ -3380,6 +3489,7 @@ export namespace Prisma {
     taskReplies?: boolean | User$taskRepliesArgs<ExtArgs>
     projectFiles?: boolean | User$projectFilesArgs<ExtArgs>
     timelineAdjustments?: boolean | User$timelineAdjustmentsArgs<ExtArgs>
+    slippageAssessments?: boolean | User$slippageAssessmentsArgs<ExtArgs>
     accessRequestsMade?: boolean | User$accessRequestsMadeArgs<ExtArgs>
     accessRequestsReviewed?: boolean | User$accessRequestsReviewedArgs<ExtArgs>
     archiveLocations?: boolean | User$archiveLocationsArgs<ExtArgs>
@@ -3460,6 +3570,7 @@ export namespace Prisma {
     taskReplies?: boolean | User$taskRepliesArgs<ExtArgs>
     projectFiles?: boolean | User$projectFilesArgs<ExtArgs>
     timelineAdjustments?: boolean | User$timelineAdjustmentsArgs<ExtArgs>
+    slippageAssessments?: boolean | User$slippageAssessmentsArgs<ExtArgs>
     accessRequestsMade?: boolean | User$accessRequestsMadeArgs<ExtArgs>
     accessRequestsReviewed?: boolean | User$accessRequestsReviewedArgs<ExtArgs>
     archiveLocations?: boolean | User$archiveLocationsArgs<ExtArgs>
@@ -3486,6 +3597,7 @@ export namespace Prisma {
       taskReplies: Prisma.$TaskReplyPayload<ExtArgs>[]
       projectFiles: Prisma.$ProjectFilePayload<ExtArgs>[]
       timelineAdjustments: Prisma.$TimelineAdjustmentPayload<ExtArgs>[]
+      slippageAssessments: Prisma.$SlippageAssessmentPayload<ExtArgs>[]
       accessRequestsMade: Prisma.$ProjectAccessRequestPayload<ExtArgs>[]
       accessRequestsReviewed: Prisma.$ProjectAccessRequestPayload<ExtArgs>[]
       archiveLocations: Prisma.$PhysicalArchiveLocationPayload<ExtArgs>[]
@@ -3916,6 +4028,7 @@ export namespace Prisma {
     taskReplies<T extends User$taskRepliesArgs<ExtArgs> = {}>(args?: Subset<T, User$taskRepliesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskReplyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     projectFiles<T extends User$projectFilesArgs<ExtArgs> = {}>(args?: Subset<T, User$projectFilesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectFilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     timelineAdjustments<T extends User$timelineAdjustmentsArgs<ExtArgs> = {}>(args?: Subset<T, User$timelineAdjustmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TimelineAdjustmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    slippageAssessments<T extends User$slippageAssessmentsArgs<ExtArgs> = {}>(args?: Subset<T, User$slippageAssessmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SlippageAssessmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     accessRequestsMade<T extends User$accessRequestsMadeArgs<ExtArgs> = {}>(args?: Subset<T, User$accessRequestsMadeArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     accessRequestsReviewed<T extends User$accessRequestsReviewedArgs<ExtArgs> = {}>(args?: Subset<T, User$accessRequestsReviewedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     archiveLocations<T extends User$archiveLocationsArgs<ExtArgs> = {}>(args?: Subset<T, User$archiveLocationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhysicalArchiveLocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -4640,6 +4753,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TimelineAdjustmentScalarFieldEnum | TimelineAdjustmentScalarFieldEnum[]
+  }
+
+  /**
+   * User.slippageAssessments
+   */
+  export type User$slippageAssessmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlippageAssessment
+     */
+    select?: SlippageAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlippageAssessment
+     */
+    omit?: SlippageAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlippageAssessmentInclude<ExtArgs> | null
+    where?: SlippageAssessmentWhereInput
+    orderBy?: SlippageAssessmentOrderByWithRelationInput | SlippageAssessmentOrderByWithRelationInput[]
+    cursor?: SlippageAssessmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SlippageAssessmentScalarFieldEnum | SlippageAssessmentScalarFieldEnum[]
   }
 
   /**
@@ -6488,6 +6625,7 @@ export namespace Prisma {
     timelineAdjustments?: boolean | Project$timelineAdjustmentsArgs<ExtArgs>
     accessRequests?: boolean | Project$accessRequestsArgs<ExtArgs>
     archiveLocations?: boolean | Project$archiveLocationsArgs<ExtArgs>
+    slippageAssessments?: boolean | Project$slippageAssessmentsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["project"]>
 
@@ -6654,6 +6792,7 @@ export namespace Prisma {
     timelineAdjustments?: boolean | Project$timelineAdjustmentsArgs<ExtArgs>
     accessRequests?: boolean | Project$accessRequestsArgs<ExtArgs>
     archiveLocations?: boolean | Project$archiveLocationsArgs<ExtArgs>
+    slippageAssessments?: boolean | Project$slippageAssessmentsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProjectIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6675,6 +6814,7 @@ export namespace Prisma {
       timelineAdjustments: Prisma.$TimelineAdjustmentPayload<ExtArgs>[]
       accessRequests: Prisma.$ProjectAccessRequestPayload<ExtArgs>[]
       archiveLocations: Prisma.$PhysicalArchiveLocationPayload<ExtArgs>[]
+      slippageAssessments: Prisma.$SlippageAssessmentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7127,6 +7267,7 @@ export namespace Prisma {
     timelineAdjustments<T extends Project$timelineAdjustmentsArgs<ExtArgs> = {}>(args?: Subset<T, Project$timelineAdjustmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TimelineAdjustmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     accessRequests<T extends Project$accessRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Project$accessRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     archiveLocations<T extends Project$archiveLocationsArgs<ExtArgs> = {}>(args?: Subset<T, Project$archiveLocationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhysicalArchiveLocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    slippageAssessments<T extends Project$slippageAssessmentsArgs<ExtArgs> = {}>(args?: Subset<T, Project$slippageAssessmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SlippageAssessmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7788,6 +7929,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: PhysicalArchiveLocationScalarFieldEnum | PhysicalArchiveLocationScalarFieldEnum[]
+  }
+
+  /**
+   * Project.slippageAssessments
+   */
+  export type Project$slippageAssessmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlippageAssessment
+     */
+    select?: SlippageAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlippageAssessment
+     */
+    omit?: SlippageAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlippageAssessmentInclude<ExtArgs> | null
+    where?: SlippageAssessmentWhereInput
+    orderBy?: SlippageAssessmentOrderByWithRelationInput | SlippageAssessmentOrderByWithRelationInput[]
+    cursor?: SlippageAssessmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SlippageAssessmentScalarFieldEnum | SlippageAssessmentScalarFieldEnum[]
   }
 
   /**
@@ -16628,6 +16793,1166 @@ export namespace Prisma {
 
 
   /**
+   * Model SlippageAssessment
+   */
+
+  export type AggregateSlippageAssessment = {
+    _count: SlippageAssessmentCountAggregateOutputType | null
+    _avg: SlippageAssessmentAvgAggregateOutputType | null
+    _sum: SlippageAssessmentSumAggregateOutputType | null
+    _min: SlippageAssessmentMinAggregateOutputType | null
+    _max: SlippageAssessmentMaxAggregateOutputType | null
+  }
+
+  export type SlippageAssessmentAvgAggregateOutputType = {
+    target: number | null
+    actual: number | null
+    revision: number | null
+  }
+
+  export type SlippageAssessmentSumAggregateOutputType = {
+    target: number | null
+    actual: number | null
+    revision: number | null
+  }
+
+  export type SlippageAssessmentMinAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    date: Date | null
+    target: number | null
+    actual: number | null
+    revision: number | null
+    remarks: string | null
+    createdById: string | null
+    createdAt: Date | null
+  }
+
+  export type SlippageAssessmentMaxAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    date: Date | null
+    target: number | null
+    actual: number | null
+    revision: number | null
+    remarks: string | null
+    createdById: string | null
+    createdAt: Date | null
+  }
+
+  export type SlippageAssessmentCountAggregateOutputType = {
+    id: number
+    projectId: number
+    date: number
+    target: number
+    actual: number
+    revision: number
+    remarks: number
+    createdById: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type SlippageAssessmentAvgAggregateInputType = {
+    target?: true
+    actual?: true
+    revision?: true
+  }
+
+  export type SlippageAssessmentSumAggregateInputType = {
+    target?: true
+    actual?: true
+    revision?: true
+  }
+
+  export type SlippageAssessmentMinAggregateInputType = {
+    id?: true
+    projectId?: true
+    date?: true
+    target?: true
+    actual?: true
+    revision?: true
+    remarks?: true
+    createdById?: true
+    createdAt?: true
+  }
+
+  export type SlippageAssessmentMaxAggregateInputType = {
+    id?: true
+    projectId?: true
+    date?: true
+    target?: true
+    actual?: true
+    revision?: true
+    remarks?: true
+    createdById?: true
+    createdAt?: true
+  }
+
+  export type SlippageAssessmentCountAggregateInputType = {
+    id?: true
+    projectId?: true
+    date?: true
+    target?: true
+    actual?: true
+    revision?: true
+    remarks?: true
+    createdById?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type SlippageAssessmentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SlippageAssessment to aggregate.
+     */
+    where?: SlippageAssessmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SlippageAssessments to fetch.
+     */
+    orderBy?: SlippageAssessmentOrderByWithRelationInput | SlippageAssessmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SlippageAssessmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SlippageAssessments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SlippageAssessments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SlippageAssessments
+    **/
+    _count?: true | SlippageAssessmentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SlippageAssessmentAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SlippageAssessmentSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SlippageAssessmentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SlippageAssessmentMaxAggregateInputType
+  }
+
+  export type GetSlippageAssessmentAggregateType<T extends SlippageAssessmentAggregateArgs> = {
+        [P in keyof T & keyof AggregateSlippageAssessment]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSlippageAssessment[P]>
+      : GetScalarType<T[P], AggregateSlippageAssessment[P]>
+  }
+
+
+
+
+  export type SlippageAssessmentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SlippageAssessmentWhereInput
+    orderBy?: SlippageAssessmentOrderByWithAggregationInput | SlippageAssessmentOrderByWithAggregationInput[]
+    by: SlippageAssessmentScalarFieldEnum[] | SlippageAssessmentScalarFieldEnum
+    having?: SlippageAssessmentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SlippageAssessmentCountAggregateInputType | true
+    _avg?: SlippageAssessmentAvgAggregateInputType
+    _sum?: SlippageAssessmentSumAggregateInputType
+    _min?: SlippageAssessmentMinAggregateInputType
+    _max?: SlippageAssessmentMaxAggregateInputType
+  }
+
+  export type SlippageAssessmentGroupByOutputType = {
+    id: string
+    projectId: string
+    date: Date
+    target: number
+    actual: number
+    revision: number
+    remarks: string | null
+    createdById: string
+    createdAt: Date
+    _count: SlippageAssessmentCountAggregateOutputType | null
+    _avg: SlippageAssessmentAvgAggregateOutputType | null
+    _sum: SlippageAssessmentSumAggregateOutputType | null
+    _min: SlippageAssessmentMinAggregateOutputType | null
+    _max: SlippageAssessmentMaxAggregateOutputType | null
+  }
+
+  type GetSlippageAssessmentGroupByPayload<T extends SlippageAssessmentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SlippageAssessmentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SlippageAssessmentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SlippageAssessmentGroupByOutputType[P]>
+            : GetScalarType<T[P], SlippageAssessmentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SlippageAssessmentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    date?: boolean
+    target?: boolean
+    actual?: boolean
+    revision?: boolean
+    remarks?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["slippageAssessment"]>
+
+  export type SlippageAssessmentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    date?: boolean
+    target?: boolean
+    actual?: boolean
+    revision?: boolean
+    remarks?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["slippageAssessment"]>
+
+  export type SlippageAssessmentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    date?: boolean
+    target?: boolean
+    actual?: boolean
+    revision?: boolean
+    remarks?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["slippageAssessment"]>
+
+  export type SlippageAssessmentSelectScalar = {
+    id?: boolean
+    projectId?: boolean
+    date?: boolean
+    target?: boolean
+    actual?: boolean
+    revision?: boolean
+    remarks?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+  }
+
+  export type SlippageAssessmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "date" | "target" | "actual" | "revision" | "remarks" | "createdById" | "createdAt", ExtArgs["result"]["slippageAssessment"]>
+  export type SlippageAssessmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type SlippageAssessmentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type SlippageAssessmentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $SlippageAssessmentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SlippageAssessment"
+    objects: {
+      project: Prisma.$ProjectPayload<ExtArgs>
+      createdBy: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      projectId: string
+      date: Date
+      target: number
+      actual: number
+      revision: number
+      remarks: string | null
+      createdById: string
+      createdAt: Date
+    }, ExtArgs["result"]["slippageAssessment"]>
+    composites: {}
+  }
+
+  type SlippageAssessmentGetPayload<S extends boolean | null | undefined | SlippageAssessmentDefaultArgs> = $Result.GetResult<Prisma.$SlippageAssessmentPayload, S>
+
+  type SlippageAssessmentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SlippageAssessmentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SlippageAssessmentCountAggregateInputType | true
+    }
+
+  export interface SlippageAssessmentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SlippageAssessment'], meta: { name: 'SlippageAssessment' } }
+    /**
+     * Find zero or one SlippageAssessment that matches the filter.
+     * @param {SlippageAssessmentFindUniqueArgs} args - Arguments to find a SlippageAssessment
+     * @example
+     * // Get one SlippageAssessment
+     * const slippageAssessment = await prisma.slippageAssessment.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SlippageAssessmentFindUniqueArgs>(args: SelectSubset<T, SlippageAssessmentFindUniqueArgs<ExtArgs>>): Prisma__SlippageAssessmentClient<$Result.GetResult<Prisma.$SlippageAssessmentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SlippageAssessment that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SlippageAssessmentFindUniqueOrThrowArgs} args - Arguments to find a SlippageAssessment
+     * @example
+     * // Get one SlippageAssessment
+     * const slippageAssessment = await prisma.slippageAssessment.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SlippageAssessmentFindUniqueOrThrowArgs>(args: SelectSubset<T, SlippageAssessmentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SlippageAssessmentClient<$Result.GetResult<Prisma.$SlippageAssessmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SlippageAssessment that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SlippageAssessmentFindFirstArgs} args - Arguments to find a SlippageAssessment
+     * @example
+     * // Get one SlippageAssessment
+     * const slippageAssessment = await prisma.slippageAssessment.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SlippageAssessmentFindFirstArgs>(args?: SelectSubset<T, SlippageAssessmentFindFirstArgs<ExtArgs>>): Prisma__SlippageAssessmentClient<$Result.GetResult<Prisma.$SlippageAssessmentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SlippageAssessment that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SlippageAssessmentFindFirstOrThrowArgs} args - Arguments to find a SlippageAssessment
+     * @example
+     * // Get one SlippageAssessment
+     * const slippageAssessment = await prisma.slippageAssessment.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SlippageAssessmentFindFirstOrThrowArgs>(args?: SelectSubset<T, SlippageAssessmentFindFirstOrThrowArgs<ExtArgs>>): Prisma__SlippageAssessmentClient<$Result.GetResult<Prisma.$SlippageAssessmentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SlippageAssessments that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SlippageAssessmentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SlippageAssessments
+     * const slippageAssessments = await prisma.slippageAssessment.findMany()
+     * 
+     * // Get first 10 SlippageAssessments
+     * const slippageAssessments = await prisma.slippageAssessment.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const slippageAssessmentWithIdOnly = await prisma.slippageAssessment.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SlippageAssessmentFindManyArgs>(args?: SelectSubset<T, SlippageAssessmentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SlippageAssessmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SlippageAssessment.
+     * @param {SlippageAssessmentCreateArgs} args - Arguments to create a SlippageAssessment.
+     * @example
+     * // Create one SlippageAssessment
+     * const SlippageAssessment = await prisma.slippageAssessment.create({
+     *   data: {
+     *     // ... data to create a SlippageAssessment
+     *   }
+     * })
+     * 
+     */
+    create<T extends SlippageAssessmentCreateArgs>(args: SelectSubset<T, SlippageAssessmentCreateArgs<ExtArgs>>): Prisma__SlippageAssessmentClient<$Result.GetResult<Prisma.$SlippageAssessmentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SlippageAssessments.
+     * @param {SlippageAssessmentCreateManyArgs} args - Arguments to create many SlippageAssessments.
+     * @example
+     * // Create many SlippageAssessments
+     * const slippageAssessment = await prisma.slippageAssessment.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SlippageAssessmentCreateManyArgs>(args?: SelectSubset<T, SlippageAssessmentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SlippageAssessments and returns the data saved in the database.
+     * @param {SlippageAssessmentCreateManyAndReturnArgs} args - Arguments to create many SlippageAssessments.
+     * @example
+     * // Create many SlippageAssessments
+     * const slippageAssessment = await prisma.slippageAssessment.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SlippageAssessments and only return the `id`
+     * const slippageAssessmentWithIdOnly = await prisma.slippageAssessment.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SlippageAssessmentCreateManyAndReturnArgs>(args?: SelectSubset<T, SlippageAssessmentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SlippageAssessmentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SlippageAssessment.
+     * @param {SlippageAssessmentDeleteArgs} args - Arguments to delete one SlippageAssessment.
+     * @example
+     * // Delete one SlippageAssessment
+     * const SlippageAssessment = await prisma.slippageAssessment.delete({
+     *   where: {
+     *     // ... filter to delete one SlippageAssessment
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SlippageAssessmentDeleteArgs>(args: SelectSubset<T, SlippageAssessmentDeleteArgs<ExtArgs>>): Prisma__SlippageAssessmentClient<$Result.GetResult<Prisma.$SlippageAssessmentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SlippageAssessment.
+     * @param {SlippageAssessmentUpdateArgs} args - Arguments to update one SlippageAssessment.
+     * @example
+     * // Update one SlippageAssessment
+     * const slippageAssessment = await prisma.slippageAssessment.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SlippageAssessmentUpdateArgs>(args: SelectSubset<T, SlippageAssessmentUpdateArgs<ExtArgs>>): Prisma__SlippageAssessmentClient<$Result.GetResult<Prisma.$SlippageAssessmentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SlippageAssessments.
+     * @param {SlippageAssessmentDeleteManyArgs} args - Arguments to filter SlippageAssessments to delete.
+     * @example
+     * // Delete a few SlippageAssessments
+     * const { count } = await prisma.slippageAssessment.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SlippageAssessmentDeleteManyArgs>(args?: SelectSubset<T, SlippageAssessmentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SlippageAssessments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SlippageAssessmentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SlippageAssessments
+     * const slippageAssessment = await prisma.slippageAssessment.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SlippageAssessmentUpdateManyArgs>(args: SelectSubset<T, SlippageAssessmentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SlippageAssessments and returns the data updated in the database.
+     * @param {SlippageAssessmentUpdateManyAndReturnArgs} args - Arguments to update many SlippageAssessments.
+     * @example
+     * // Update many SlippageAssessments
+     * const slippageAssessment = await prisma.slippageAssessment.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SlippageAssessments and only return the `id`
+     * const slippageAssessmentWithIdOnly = await prisma.slippageAssessment.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SlippageAssessmentUpdateManyAndReturnArgs>(args: SelectSubset<T, SlippageAssessmentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SlippageAssessmentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SlippageAssessment.
+     * @param {SlippageAssessmentUpsertArgs} args - Arguments to update or create a SlippageAssessment.
+     * @example
+     * // Update or create a SlippageAssessment
+     * const slippageAssessment = await prisma.slippageAssessment.upsert({
+     *   create: {
+     *     // ... data to create a SlippageAssessment
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SlippageAssessment we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SlippageAssessmentUpsertArgs>(args: SelectSubset<T, SlippageAssessmentUpsertArgs<ExtArgs>>): Prisma__SlippageAssessmentClient<$Result.GetResult<Prisma.$SlippageAssessmentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SlippageAssessments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SlippageAssessmentCountArgs} args - Arguments to filter SlippageAssessments to count.
+     * @example
+     * // Count the number of SlippageAssessments
+     * const count = await prisma.slippageAssessment.count({
+     *   where: {
+     *     // ... the filter for the SlippageAssessments we want to count
+     *   }
+     * })
+    **/
+    count<T extends SlippageAssessmentCountArgs>(
+      args?: Subset<T, SlippageAssessmentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SlippageAssessmentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SlippageAssessment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SlippageAssessmentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SlippageAssessmentAggregateArgs>(args: Subset<T, SlippageAssessmentAggregateArgs>): Prisma.PrismaPromise<GetSlippageAssessmentAggregateType<T>>
+
+    /**
+     * Group by SlippageAssessment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SlippageAssessmentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SlippageAssessmentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SlippageAssessmentGroupByArgs['orderBy'] }
+        : { orderBy?: SlippageAssessmentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SlippageAssessmentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSlippageAssessmentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SlippageAssessment model
+   */
+  readonly fields: SlippageAssessmentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SlippageAssessment.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SlippageAssessmentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SlippageAssessment model
+   */
+  interface SlippageAssessmentFieldRefs {
+    readonly id: FieldRef<"SlippageAssessment", 'String'>
+    readonly projectId: FieldRef<"SlippageAssessment", 'String'>
+    readonly date: FieldRef<"SlippageAssessment", 'DateTime'>
+    readonly target: FieldRef<"SlippageAssessment", 'Float'>
+    readonly actual: FieldRef<"SlippageAssessment", 'Float'>
+    readonly revision: FieldRef<"SlippageAssessment", 'Int'>
+    readonly remarks: FieldRef<"SlippageAssessment", 'String'>
+    readonly createdById: FieldRef<"SlippageAssessment", 'String'>
+    readonly createdAt: FieldRef<"SlippageAssessment", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SlippageAssessment findUnique
+   */
+  export type SlippageAssessmentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlippageAssessment
+     */
+    select?: SlippageAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlippageAssessment
+     */
+    omit?: SlippageAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlippageAssessmentInclude<ExtArgs> | null
+    /**
+     * Filter, which SlippageAssessment to fetch.
+     */
+    where: SlippageAssessmentWhereUniqueInput
+  }
+
+  /**
+   * SlippageAssessment findUniqueOrThrow
+   */
+  export type SlippageAssessmentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlippageAssessment
+     */
+    select?: SlippageAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlippageAssessment
+     */
+    omit?: SlippageAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlippageAssessmentInclude<ExtArgs> | null
+    /**
+     * Filter, which SlippageAssessment to fetch.
+     */
+    where: SlippageAssessmentWhereUniqueInput
+  }
+
+  /**
+   * SlippageAssessment findFirst
+   */
+  export type SlippageAssessmentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlippageAssessment
+     */
+    select?: SlippageAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlippageAssessment
+     */
+    omit?: SlippageAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlippageAssessmentInclude<ExtArgs> | null
+    /**
+     * Filter, which SlippageAssessment to fetch.
+     */
+    where?: SlippageAssessmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SlippageAssessments to fetch.
+     */
+    orderBy?: SlippageAssessmentOrderByWithRelationInput | SlippageAssessmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SlippageAssessments.
+     */
+    cursor?: SlippageAssessmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SlippageAssessments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SlippageAssessments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SlippageAssessments.
+     */
+    distinct?: SlippageAssessmentScalarFieldEnum | SlippageAssessmentScalarFieldEnum[]
+  }
+
+  /**
+   * SlippageAssessment findFirstOrThrow
+   */
+  export type SlippageAssessmentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlippageAssessment
+     */
+    select?: SlippageAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlippageAssessment
+     */
+    omit?: SlippageAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlippageAssessmentInclude<ExtArgs> | null
+    /**
+     * Filter, which SlippageAssessment to fetch.
+     */
+    where?: SlippageAssessmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SlippageAssessments to fetch.
+     */
+    orderBy?: SlippageAssessmentOrderByWithRelationInput | SlippageAssessmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SlippageAssessments.
+     */
+    cursor?: SlippageAssessmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SlippageAssessments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SlippageAssessments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SlippageAssessments.
+     */
+    distinct?: SlippageAssessmentScalarFieldEnum | SlippageAssessmentScalarFieldEnum[]
+  }
+
+  /**
+   * SlippageAssessment findMany
+   */
+  export type SlippageAssessmentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlippageAssessment
+     */
+    select?: SlippageAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlippageAssessment
+     */
+    omit?: SlippageAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlippageAssessmentInclude<ExtArgs> | null
+    /**
+     * Filter, which SlippageAssessments to fetch.
+     */
+    where?: SlippageAssessmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SlippageAssessments to fetch.
+     */
+    orderBy?: SlippageAssessmentOrderByWithRelationInput | SlippageAssessmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SlippageAssessments.
+     */
+    cursor?: SlippageAssessmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SlippageAssessments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SlippageAssessments.
+     */
+    skip?: number
+    distinct?: SlippageAssessmentScalarFieldEnum | SlippageAssessmentScalarFieldEnum[]
+  }
+
+  /**
+   * SlippageAssessment create
+   */
+  export type SlippageAssessmentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlippageAssessment
+     */
+    select?: SlippageAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlippageAssessment
+     */
+    omit?: SlippageAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlippageAssessmentInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SlippageAssessment.
+     */
+    data: XOR<SlippageAssessmentCreateInput, SlippageAssessmentUncheckedCreateInput>
+  }
+
+  /**
+   * SlippageAssessment createMany
+   */
+  export type SlippageAssessmentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SlippageAssessments.
+     */
+    data: SlippageAssessmentCreateManyInput | SlippageAssessmentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SlippageAssessment createManyAndReturn
+   */
+  export type SlippageAssessmentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlippageAssessment
+     */
+    select?: SlippageAssessmentSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlippageAssessment
+     */
+    omit?: SlippageAssessmentOmit<ExtArgs> | null
+    /**
+     * The data used to create many SlippageAssessments.
+     */
+    data: SlippageAssessmentCreateManyInput | SlippageAssessmentCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlippageAssessmentIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SlippageAssessment update
+   */
+  export type SlippageAssessmentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlippageAssessment
+     */
+    select?: SlippageAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlippageAssessment
+     */
+    omit?: SlippageAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlippageAssessmentInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SlippageAssessment.
+     */
+    data: XOR<SlippageAssessmentUpdateInput, SlippageAssessmentUncheckedUpdateInput>
+    /**
+     * Choose, which SlippageAssessment to update.
+     */
+    where: SlippageAssessmentWhereUniqueInput
+  }
+
+  /**
+   * SlippageAssessment updateMany
+   */
+  export type SlippageAssessmentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SlippageAssessments.
+     */
+    data: XOR<SlippageAssessmentUpdateManyMutationInput, SlippageAssessmentUncheckedUpdateManyInput>
+    /**
+     * Filter which SlippageAssessments to update
+     */
+    where?: SlippageAssessmentWhereInput
+    /**
+     * Limit how many SlippageAssessments to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SlippageAssessment updateManyAndReturn
+   */
+  export type SlippageAssessmentUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlippageAssessment
+     */
+    select?: SlippageAssessmentSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlippageAssessment
+     */
+    omit?: SlippageAssessmentOmit<ExtArgs> | null
+    /**
+     * The data used to update SlippageAssessments.
+     */
+    data: XOR<SlippageAssessmentUpdateManyMutationInput, SlippageAssessmentUncheckedUpdateManyInput>
+    /**
+     * Filter which SlippageAssessments to update
+     */
+    where?: SlippageAssessmentWhereInput
+    /**
+     * Limit how many SlippageAssessments to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlippageAssessmentIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SlippageAssessment upsert
+   */
+  export type SlippageAssessmentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlippageAssessment
+     */
+    select?: SlippageAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlippageAssessment
+     */
+    omit?: SlippageAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlippageAssessmentInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SlippageAssessment to update in case it exists.
+     */
+    where: SlippageAssessmentWhereUniqueInput
+    /**
+     * In case the SlippageAssessment found by the `where` argument doesn't exist, create a new SlippageAssessment with this data.
+     */
+    create: XOR<SlippageAssessmentCreateInput, SlippageAssessmentUncheckedCreateInput>
+    /**
+     * In case the SlippageAssessment was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SlippageAssessmentUpdateInput, SlippageAssessmentUncheckedUpdateInput>
+  }
+
+  /**
+   * SlippageAssessment delete
+   */
+  export type SlippageAssessmentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlippageAssessment
+     */
+    select?: SlippageAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlippageAssessment
+     */
+    omit?: SlippageAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlippageAssessmentInclude<ExtArgs> | null
+    /**
+     * Filter which SlippageAssessment to delete.
+     */
+    where: SlippageAssessmentWhereUniqueInput
+  }
+
+  /**
+   * SlippageAssessment deleteMany
+   */
+  export type SlippageAssessmentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SlippageAssessments to delete
+     */
+    where?: SlippageAssessmentWhereInput
+    /**
+     * Limit how many SlippageAssessments to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SlippageAssessment without action
+   */
+  export type SlippageAssessmentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SlippageAssessment
+     */
+    select?: SlippageAssessmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SlippageAssessment
+     */
+    omit?: SlippageAssessmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlippageAssessmentInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model TaskNotification
    */
 
@@ -24921,6 +26246,21 @@ export namespace Prisma {
   export type TimelineAdjustmentScalarFieldEnum = (typeof TimelineAdjustmentScalarFieldEnum)[keyof typeof TimelineAdjustmentScalarFieldEnum]
 
 
+  export const SlippageAssessmentScalarFieldEnum: {
+    id: 'id',
+    projectId: 'projectId',
+    date: 'date',
+    target: 'target',
+    actual: 'actual',
+    revision: 'revision',
+    remarks: 'remarks',
+    createdById: 'createdById',
+    createdAt: 'createdAt'
+  };
+
+  export type SlippageAssessmentScalarFieldEnum = (typeof SlippageAssessmentScalarFieldEnum)[keyof typeof SlippageAssessmentScalarFieldEnum]
+
+
   export const TaskNotificationScalarFieldEnum: {
     id: 'id',
     projectId: 'projectId',
@@ -25392,6 +26732,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyListRelationFilter
     projectFiles?: ProjectFileListRelationFilter
     timelineAdjustments?: TimelineAdjustmentListRelationFilter
+    slippageAssessments?: SlippageAssessmentListRelationFilter
     accessRequestsMade?: ProjectAccessRequestListRelationFilter
     accessRequestsReviewed?: ProjectAccessRequestListRelationFilter
     archiveLocations?: PhysicalArchiveLocationListRelationFilter
@@ -25429,6 +26770,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyOrderByRelationAggregateInput
     projectFiles?: ProjectFileOrderByRelationAggregateInput
     timelineAdjustments?: TimelineAdjustmentOrderByRelationAggregateInput
+    slippageAssessments?: SlippageAssessmentOrderByRelationAggregateInput
     accessRequestsMade?: ProjectAccessRequestOrderByRelationAggregateInput
     accessRequestsReviewed?: ProjectAccessRequestOrderByRelationAggregateInput
     archiveLocations?: PhysicalArchiveLocationOrderByRelationAggregateInput
@@ -25469,6 +26811,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyListRelationFilter
     projectFiles?: ProjectFileListRelationFilter
     timelineAdjustments?: TimelineAdjustmentListRelationFilter
+    slippageAssessments?: SlippageAssessmentListRelationFilter
     accessRequestsMade?: ProjectAccessRequestListRelationFilter
     accessRequestsReviewed?: ProjectAccessRequestListRelationFilter
     archiveLocations?: PhysicalArchiveLocationListRelationFilter
@@ -25646,6 +26989,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentListRelationFilter
     accessRequests?: ProjectAccessRequestListRelationFilter
     archiveLocations?: PhysicalArchiveLocationListRelationFilter
+    slippageAssessments?: SlippageAssessmentListRelationFilter
   }
 
   export type ProjectOrderByWithRelationInput = {
@@ -25705,6 +27049,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentOrderByRelationAggregateInput
     accessRequests?: ProjectAccessRequestOrderByRelationAggregateInput
     archiveLocations?: PhysicalArchiveLocationOrderByRelationAggregateInput
+    slippageAssessments?: SlippageAssessmentOrderByRelationAggregateInput
   }
 
   export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -25767,6 +27112,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentListRelationFilter
     accessRequests?: ProjectAccessRequestListRelationFilter
     archiveLocations?: PhysicalArchiveLocationListRelationFilter
+    slippageAssessments?: SlippageAssessmentListRelationFilter
   }, "id" | "projectCode">
 
   export type ProjectOrderByWithAggregationInput = {
@@ -26420,6 +27766,86 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"TimelineAdjustment"> | Date | string
   }
 
+  export type SlippageAssessmentWhereInput = {
+    AND?: SlippageAssessmentWhereInput | SlippageAssessmentWhereInput[]
+    OR?: SlippageAssessmentWhereInput[]
+    NOT?: SlippageAssessmentWhereInput | SlippageAssessmentWhereInput[]
+    id?: StringFilter<"SlippageAssessment"> | string
+    projectId?: StringFilter<"SlippageAssessment"> | string
+    date?: DateTimeFilter<"SlippageAssessment"> | Date | string
+    target?: FloatFilter<"SlippageAssessment"> | number
+    actual?: FloatFilter<"SlippageAssessment"> | number
+    revision?: IntFilter<"SlippageAssessment"> | number
+    remarks?: StringNullableFilter<"SlippageAssessment"> | string | null
+    createdById?: StringFilter<"SlippageAssessment"> | string
+    createdAt?: DateTimeFilter<"SlippageAssessment"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type SlippageAssessmentOrderByWithRelationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    date?: SortOrder
+    target?: SortOrder
+    actual?: SortOrder
+    revision?: SortOrder
+    remarks?: SortOrderInput | SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    project?: ProjectOrderByWithRelationInput
+    createdBy?: UserOrderByWithRelationInput
+  }
+
+  export type SlippageAssessmentWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: SlippageAssessmentWhereInput | SlippageAssessmentWhereInput[]
+    OR?: SlippageAssessmentWhereInput[]
+    NOT?: SlippageAssessmentWhereInput | SlippageAssessmentWhereInput[]
+    projectId?: StringFilter<"SlippageAssessment"> | string
+    date?: DateTimeFilter<"SlippageAssessment"> | Date | string
+    target?: FloatFilter<"SlippageAssessment"> | number
+    actual?: FloatFilter<"SlippageAssessment"> | number
+    revision?: IntFilter<"SlippageAssessment"> | number
+    remarks?: StringNullableFilter<"SlippageAssessment"> | string | null
+    createdById?: StringFilter<"SlippageAssessment"> | string
+    createdAt?: DateTimeFilter<"SlippageAssessment"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type SlippageAssessmentOrderByWithAggregationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    date?: SortOrder
+    target?: SortOrder
+    actual?: SortOrder
+    revision?: SortOrder
+    remarks?: SortOrderInput | SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    _count?: SlippageAssessmentCountOrderByAggregateInput
+    _avg?: SlippageAssessmentAvgOrderByAggregateInput
+    _max?: SlippageAssessmentMaxOrderByAggregateInput
+    _min?: SlippageAssessmentMinOrderByAggregateInput
+    _sum?: SlippageAssessmentSumOrderByAggregateInput
+  }
+
+  export type SlippageAssessmentScalarWhereWithAggregatesInput = {
+    AND?: SlippageAssessmentScalarWhereWithAggregatesInput | SlippageAssessmentScalarWhereWithAggregatesInput[]
+    OR?: SlippageAssessmentScalarWhereWithAggregatesInput[]
+    NOT?: SlippageAssessmentScalarWhereWithAggregatesInput | SlippageAssessmentScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"SlippageAssessment"> | string
+    projectId?: StringWithAggregatesFilter<"SlippageAssessment"> | string
+    date?: DateTimeWithAggregatesFilter<"SlippageAssessment"> | Date | string
+    target?: FloatWithAggregatesFilter<"SlippageAssessment"> | number
+    actual?: FloatWithAggregatesFilter<"SlippageAssessment"> | number
+    revision?: IntWithAggregatesFilter<"SlippageAssessment"> | number
+    remarks?: StringNullableWithAggregatesFilter<"SlippageAssessment"> | string | null
+    createdById?: StringWithAggregatesFilter<"SlippageAssessment"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"SlippageAssessment"> | Date | string
+  }
+
   export type TaskNotificationWhereInput = {
     AND?: TaskNotificationWhereInput | TaskNotificationWhereInput[]
     OR?: TaskNotificationWhereInput[]
@@ -27017,6 +28443,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
@@ -27054,6 +28481,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
@@ -27091,6 +28519,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
@@ -27128,6 +28557,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -27318,6 +28748,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutProjectInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateInput = {
@@ -27376,6 +28807,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutProjectInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUpdateInput = {
@@ -27434,6 +28866,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutProjectNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateInput = {
@@ -27492,6 +28925,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutProjectNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateManyInput = {
@@ -28186,6 +29620,88 @@ export namespace Prisma {
     duration?: IntFieldUpdateOperationsInput | number
     type?: EnumTimelineAdjustmentTypeFieldUpdateOperationsInput | $Enums.TimelineAdjustmentType
     justification?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SlippageAssessmentCreateInput = {
+    id?: string
+    date: Date | string
+    target: number
+    actual: number
+    revision?: number
+    remarks?: string | null
+    createdAt?: Date | string
+    project: ProjectCreateNestedOneWithoutSlippageAssessmentsInput
+    createdBy: UserCreateNestedOneWithoutSlippageAssessmentsInput
+  }
+
+  export type SlippageAssessmentUncheckedCreateInput = {
+    id?: string
+    projectId: string
+    date: Date | string
+    target: number
+    actual: number
+    revision?: number
+    remarks?: string | null
+    createdById: string
+    createdAt?: Date | string
+  }
+
+  export type SlippageAssessmentUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    target?: FloatFieldUpdateOperationsInput | number
+    actual?: FloatFieldUpdateOperationsInput | number
+    revision?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutSlippageAssessmentsNestedInput
+    createdBy?: UserUpdateOneRequiredWithoutSlippageAssessmentsNestedInput
+  }
+
+  export type SlippageAssessmentUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    target?: FloatFieldUpdateOperationsInput | number
+    actual?: FloatFieldUpdateOperationsInput | number
+    revision?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SlippageAssessmentCreateManyInput = {
+    id?: string
+    projectId: string
+    date: Date | string
+    target: number
+    actual: number
+    revision?: number
+    remarks?: string | null
+    createdById: string
+    createdAt?: Date | string
+  }
+
+  export type SlippageAssessmentUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    target?: FloatFieldUpdateOperationsInput | number
+    actual?: FloatFieldUpdateOperationsInput | number
+    revision?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SlippageAssessmentUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    target?: FloatFieldUpdateOperationsInput | number
+    actual?: FloatFieldUpdateOperationsInput | number
+    revision?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -28919,6 +30435,12 @@ export namespace Prisma {
     none?: TimelineAdjustmentWhereInput
   }
 
+  export type SlippageAssessmentListRelationFilter = {
+    every?: SlippageAssessmentWhereInput
+    some?: SlippageAssessmentWhereInput
+    none?: SlippageAssessmentWhereInput
+  }
+
   export type ProjectAccessRequestListRelationFilter = {
     every?: ProjectAccessRequestWhereInput
     some?: ProjectAccessRequestWhereInput
@@ -28995,6 +30517,10 @@ export namespace Prisma {
   }
 
   export type TimelineAdjustmentOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type SlippageAssessmentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -29922,6 +31448,54 @@ export namespace Prisma {
     _max?: NestedEnumTimelineAdjustmentTypeFilter<$PrismaModel>
   }
 
+  export type SlippageAssessmentCountOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    date?: SortOrder
+    target?: SortOrder
+    actual?: SortOrder
+    revision?: SortOrder
+    remarks?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SlippageAssessmentAvgOrderByAggregateInput = {
+    target?: SortOrder
+    actual?: SortOrder
+    revision?: SortOrder
+  }
+
+  export type SlippageAssessmentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    date?: SortOrder
+    target?: SortOrder
+    actual?: SortOrder
+    revision?: SortOrder
+    remarks?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SlippageAssessmentMinOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    date?: SortOrder
+    target?: SortOrder
+    actual?: SortOrder
+    revision?: SortOrder
+    remarks?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SlippageAssessmentSumOrderByAggregateInput = {
+    target?: SortOrder
+    actual?: SortOrder
+    revision?: SortOrder
+  }
+
   export type EnumNotificationPriorityFilter<$PrismaModel = never> = {
     equals?: $Enums.NotificationPriority | EnumNotificationPriorityFieldRefInput<$PrismaModel>
     in?: $Enums.NotificationPriority[] | ListEnumNotificationPriorityFieldRefInput<$PrismaModel>
@@ -30467,6 +32041,13 @@ export namespace Prisma {
     connect?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
   }
 
+  export type SlippageAssessmentCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<SlippageAssessmentCreateWithoutCreatedByInput, SlippageAssessmentUncheckedCreateWithoutCreatedByInput> | SlippageAssessmentCreateWithoutCreatedByInput[] | SlippageAssessmentUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: SlippageAssessmentCreateOrConnectWithoutCreatedByInput | SlippageAssessmentCreateOrConnectWithoutCreatedByInput[]
+    createMany?: SlippageAssessmentCreateManyCreatedByInputEnvelope
+    connect?: SlippageAssessmentWhereUniqueInput | SlippageAssessmentWhereUniqueInput[]
+  }
+
   export type ProjectAccessRequestCreateNestedManyWithoutRequestedByInput = {
     create?: XOR<ProjectAccessRequestCreateWithoutRequestedByInput, ProjectAccessRequestUncheckedCreateWithoutRequestedByInput> | ProjectAccessRequestCreateWithoutRequestedByInput[] | ProjectAccessRequestUncheckedCreateWithoutRequestedByInput[]
     connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutRequestedByInput | ProjectAccessRequestCreateOrConnectWithoutRequestedByInput[]
@@ -30591,6 +32172,13 @@ export namespace Prisma {
     connectOrCreate?: TimelineAdjustmentCreateOrConnectWithoutCreatedByInput | TimelineAdjustmentCreateOrConnectWithoutCreatedByInput[]
     createMany?: TimelineAdjustmentCreateManyCreatedByInputEnvelope
     connect?: TimelineAdjustmentWhereUniqueInput | TimelineAdjustmentWhereUniqueInput[]
+  }
+
+  export type SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<SlippageAssessmentCreateWithoutCreatedByInput, SlippageAssessmentUncheckedCreateWithoutCreatedByInput> | SlippageAssessmentCreateWithoutCreatedByInput[] | SlippageAssessmentUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: SlippageAssessmentCreateOrConnectWithoutCreatedByInput | SlippageAssessmentCreateOrConnectWithoutCreatedByInput[]
+    createMany?: SlippageAssessmentCreateManyCreatedByInputEnvelope
+    connect?: SlippageAssessmentWhereUniqueInput | SlippageAssessmentWhereUniqueInput[]
   }
 
   export type ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput = {
@@ -30829,6 +32417,20 @@ export namespace Prisma {
     update?: TimelineAdjustmentUpdateWithWhereUniqueWithoutCreatedByInput | TimelineAdjustmentUpdateWithWhereUniqueWithoutCreatedByInput[]
     updateMany?: TimelineAdjustmentUpdateManyWithWhereWithoutCreatedByInput | TimelineAdjustmentUpdateManyWithWhereWithoutCreatedByInput[]
     deleteMany?: TimelineAdjustmentScalarWhereInput | TimelineAdjustmentScalarWhereInput[]
+  }
+
+  export type SlippageAssessmentUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<SlippageAssessmentCreateWithoutCreatedByInput, SlippageAssessmentUncheckedCreateWithoutCreatedByInput> | SlippageAssessmentCreateWithoutCreatedByInput[] | SlippageAssessmentUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: SlippageAssessmentCreateOrConnectWithoutCreatedByInput | SlippageAssessmentCreateOrConnectWithoutCreatedByInput[]
+    upsert?: SlippageAssessmentUpsertWithWhereUniqueWithoutCreatedByInput | SlippageAssessmentUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: SlippageAssessmentCreateManyCreatedByInputEnvelope
+    set?: SlippageAssessmentWhereUniqueInput | SlippageAssessmentWhereUniqueInput[]
+    disconnect?: SlippageAssessmentWhereUniqueInput | SlippageAssessmentWhereUniqueInput[]
+    delete?: SlippageAssessmentWhereUniqueInput | SlippageAssessmentWhereUniqueInput[]
+    connect?: SlippageAssessmentWhereUniqueInput | SlippageAssessmentWhereUniqueInput[]
+    update?: SlippageAssessmentUpdateWithWhereUniqueWithoutCreatedByInput | SlippageAssessmentUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: SlippageAssessmentUpdateManyWithWhereWithoutCreatedByInput | SlippageAssessmentUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: SlippageAssessmentScalarWhereInput | SlippageAssessmentScalarWhereInput[]
   }
 
   export type ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput = {
@@ -31083,6 +32685,20 @@ export namespace Prisma {
     deleteMany?: TimelineAdjustmentScalarWhereInput | TimelineAdjustmentScalarWhereInput[]
   }
 
+  export type SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<SlippageAssessmentCreateWithoutCreatedByInput, SlippageAssessmentUncheckedCreateWithoutCreatedByInput> | SlippageAssessmentCreateWithoutCreatedByInput[] | SlippageAssessmentUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: SlippageAssessmentCreateOrConnectWithoutCreatedByInput | SlippageAssessmentCreateOrConnectWithoutCreatedByInput[]
+    upsert?: SlippageAssessmentUpsertWithWhereUniqueWithoutCreatedByInput | SlippageAssessmentUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: SlippageAssessmentCreateManyCreatedByInputEnvelope
+    set?: SlippageAssessmentWhereUniqueInput | SlippageAssessmentWhereUniqueInput[]
+    disconnect?: SlippageAssessmentWhereUniqueInput | SlippageAssessmentWhereUniqueInput[]
+    delete?: SlippageAssessmentWhereUniqueInput | SlippageAssessmentWhereUniqueInput[]
+    connect?: SlippageAssessmentWhereUniqueInput | SlippageAssessmentWhereUniqueInput[]
+    update?: SlippageAssessmentUpdateWithWhereUniqueWithoutCreatedByInput | SlippageAssessmentUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: SlippageAssessmentUpdateManyWithWhereWithoutCreatedByInput | SlippageAssessmentUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: SlippageAssessmentScalarWhereInput | SlippageAssessmentScalarWhereInput[]
+  }
+
   export type ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput = {
     create?: XOR<ProjectAccessRequestCreateWithoutRequestedByInput, ProjectAccessRequestUncheckedCreateWithoutRequestedByInput> | ProjectAccessRequestCreateWithoutRequestedByInput[] | ProjectAccessRequestUncheckedCreateWithoutRequestedByInput[]
     connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutRequestedByInput | ProjectAccessRequestCreateOrConnectWithoutRequestedByInput[]
@@ -31243,6 +32859,13 @@ export namespace Prisma {
     connect?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
   }
 
+  export type SlippageAssessmentCreateNestedManyWithoutProjectInput = {
+    create?: XOR<SlippageAssessmentCreateWithoutProjectInput, SlippageAssessmentUncheckedCreateWithoutProjectInput> | SlippageAssessmentCreateWithoutProjectInput[] | SlippageAssessmentUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: SlippageAssessmentCreateOrConnectWithoutProjectInput | SlippageAssessmentCreateOrConnectWithoutProjectInput[]
+    createMany?: SlippageAssessmentCreateManyProjectInputEnvelope
+    connect?: SlippageAssessmentWhereUniqueInput | SlippageAssessmentWhereUniqueInput[]
+  }
+
   export type ProjectActivityUncheckedCreateNestedManyWithoutProjectInput = {
     create?: XOR<ProjectActivityCreateWithoutProjectInput, ProjectActivityUncheckedCreateWithoutProjectInput> | ProjectActivityCreateWithoutProjectInput[] | ProjectActivityUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: ProjectActivityCreateOrConnectWithoutProjectInput | ProjectActivityCreateOrConnectWithoutProjectInput[]
@@ -31297,6 +32920,13 @@ export namespace Prisma {
     connectOrCreate?: PhysicalArchiveLocationCreateOrConnectWithoutProjectInput | PhysicalArchiveLocationCreateOrConnectWithoutProjectInput[]
     createMany?: PhysicalArchiveLocationCreateManyProjectInputEnvelope
     connect?: PhysicalArchiveLocationWhereUniqueInput | PhysicalArchiveLocationWhereUniqueInput[]
+  }
+
+  export type SlippageAssessmentUncheckedCreateNestedManyWithoutProjectInput = {
+    create?: XOR<SlippageAssessmentCreateWithoutProjectInput, SlippageAssessmentUncheckedCreateWithoutProjectInput> | SlippageAssessmentCreateWithoutProjectInput[] | SlippageAssessmentUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: SlippageAssessmentCreateOrConnectWithoutProjectInput | SlippageAssessmentCreateOrConnectWithoutProjectInput[]
+    createMany?: SlippageAssessmentCreateManyProjectInputEnvelope
+    connect?: SlippageAssessmentWhereUniqueInput | SlippageAssessmentWhereUniqueInput[]
   }
 
   export type NullableEnumProjectAccountFieldUpdateOperationsInput = {
@@ -31467,6 +33097,20 @@ export namespace Prisma {
     deleteMany?: PhysicalArchiveLocationScalarWhereInput | PhysicalArchiveLocationScalarWhereInput[]
   }
 
+  export type SlippageAssessmentUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<SlippageAssessmentCreateWithoutProjectInput, SlippageAssessmentUncheckedCreateWithoutProjectInput> | SlippageAssessmentCreateWithoutProjectInput[] | SlippageAssessmentUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: SlippageAssessmentCreateOrConnectWithoutProjectInput | SlippageAssessmentCreateOrConnectWithoutProjectInput[]
+    upsert?: SlippageAssessmentUpsertWithWhereUniqueWithoutProjectInput | SlippageAssessmentUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: SlippageAssessmentCreateManyProjectInputEnvelope
+    set?: SlippageAssessmentWhereUniqueInput | SlippageAssessmentWhereUniqueInput[]
+    disconnect?: SlippageAssessmentWhereUniqueInput | SlippageAssessmentWhereUniqueInput[]
+    delete?: SlippageAssessmentWhereUniqueInput | SlippageAssessmentWhereUniqueInput[]
+    connect?: SlippageAssessmentWhereUniqueInput | SlippageAssessmentWhereUniqueInput[]
+    update?: SlippageAssessmentUpdateWithWhereUniqueWithoutProjectInput | SlippageAssessmentUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: SlippageAssessmentUpdateManyWithWhereWithoutProjectInput | SlippageAssessmentUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: SlippageAssessmentScalarWhereInput | SlippageAssessmentScalarWhereInput[]
+  }
+
   export type ProjectActivityUncheckedUpdateManyWithoutProjectNestedInput = {
     create?: XOR<ProjectActivityCreateWithoutProjectInput, ProjectActivityUncheckedCreateWithoutProjectInput> | ProjectActivityCreateWithoutProjectInput[] | ProjectActivityUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: ProjectActivityCreateOrConnectWithoutProjectInput | ProjectActivityCreateOrConnectWithoutProjectInput[]
@@ -31577,6 +33221,20 @@ export namespace Prisma {
     update?: PhysicalArchiveLocationUpdateWithWhereUniqueWithoutProjectInput | PhysicalArchiveLocationUpdateWithWhereUniqueWithoutProjectInput[]
     updateMany?: PhysicalArchiveLocationUpdateManyWithWhereWithoutProjectInput | PhysicalArchiveLocationUpdateManyWithWhereWithoutProjectInput[]
     deleteMany?: PhysicalArchiveLocationScalarWhereInput | PhysicalArchiveLocationScalarWhereInput[]
+  }
+
+  export type SlippageAssessmentUncheckedUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<SlippageAssessmentCreateWithoutProjectInput, SlippageAssessmentUncheckedCreateWithoutProjectInput> | SlippageAssessmentCreateWithoutProjectInput[] | SlippageAssessmentUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: SlippageAssessmentCreateOrConnectWithoutProjectInput | SlippageAssessmentCreateOrConnectWithoutProjectInput[]
+    upsert?: SlippageAssessmentUpsertWithWhereUniqueWithoutProjectInput | SlippageAssessmentUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: SlippageAssessmentCreateManyProjectInputEnvelope
+    set?: SlippageAssessmentWhereUniqueInput | SlippageAssessmentWhereUniqueInput[]
+    disconnect?: SlippageAssessmentWhereUniqueInput | SlippageAssessmentWhereUniqueInput[]
+    delete?: SlippageAssessmentWhereUniqueInput | SlippageAssessmentWhereUniqueInput[]
+    connect?: SlippageAssessmentWhereUniqueInput | SlippageAssessmentWhereUniqueInput[]
+    update?: SlippageAssessmentUpdateWithWhereUniqueWithoutProjectInput | SlippageAssessmentUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: SlippageAssessmentUpdateManyWithWhereWithoutProjectInput | SlippageAssessmentUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: SlippageAssessmentScalarWhereInput | SlippageAssessmentScalarWhereInput[]
   }
 
   export type ProjectCreateNestedOneWithoutArchiveLocationsInput = {
@@ -31775,6 +33433,34 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutTimelineAdjustmentsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTimelineAdjustmentsInput, UserUpdateWithoutTimelineAdjustmentsInput>, UserUncheckedUpdateWithoutTimelineAdjustmentsInput>
+  }
+
+  export type ProjectCreateNestedOneWithoutSlippageAssessmentsInput = {
+    create?: XOR<ProjectCreateWithoutSlippageAssessmentsInput, ProjectUncheckedCreateWithoutSlippageAssessmentsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutSlippageAssessmentsInput
+    connect?: ProjectWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutSlippageAssessmentsInput = {
+    create?: XOR<UserCreateWithoutSlippageAssessmentsInput, UserUncheckedCreateWithoutSlippageAssessmentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSlippageAssessmentsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type ProjectUpdateOneRequiredWithoutSlippageAssessmentsNestedInput = {
+    create?: XOR<ProjectCreateWithoutSlippageAssessmentsInput, ProjectUncheckedCreateWithoutSlippageAssessmentsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutSlippageAssessmentsInput
+    upsert?: ProjectUpsertWithoutSlippageAssessmentsInput
+    connect?: ProjectWhereUniqueInput
+    update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutSlippageAssessmentsInput, ProjectUpdateWithoutSlippageAssessmentsInput>, ProjectUncheckedUpdateWithoutSlippageAssessmentsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutSlippageAssessmentsNestedInput = {
+    create?: XOR<UserCreateWithoutSlippageAssessmentsInput, UserUncheckedCreateWithoutSlippageAssessmentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSlippageAssessmentsInput
+    upsert?: UserUpsertWithoutSlippageAssessmentsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSlippageAssessmentsInput, UserUpdateWithoutSlippageAssessmentsInput>, UserUncheckedUpdateWithoutSlippageAssessmentsInput>
   }
 
   export type ProjectCreateNestedOneWithoutTaskNotificationsInput = {
@@ -32771,6 +34457,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutProjectInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutCreatedByInput = {
@@ -32828,6 +34515,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutProjectInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutCreatedByInput = {
@@ -33165,6 +34853,38 @@ export namespace Prisma {
 
   export type TimelineAdjustmentCreateManyCreatedByInputEnvelope = {
     data: TimelineAdjustmentCreateManyCreatedByInput | TimelineAdjustmentCreateManyCreatedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SlippageAssessmentCreateWithoutCreatedByInput = {
+    id?: string
+    date: Date | string
+    target: number
+    actual: number
+    revision?: number
+    remarks?: string | null
+    createdAt?: Date | string
+    project: ProjectCreateNestedOneWithoutSlippageAssessmentsInput
+  }
+
+  export type SlippageAssessmentUncheckedCreateWithoutCreatedByInput = {
+    id?: string
+    projectId: string
+    date: Date | string
+    target: number
+    actual: number
+    revision?: number
+    remarks?: string | null
+    createdAt?: Date | string
+  }
+
+  export type SlippageAssessmentCreateOrConnectWithoutCreatedByInput = {
+    where: SlippageAssessmentWhereUniqueInput
+    create: XOR<SlippageAssessmentCreateWithoutCreatedByInput, SlippageAssessmentUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type SlippageAssessmentCreateManyCreatedByInputEnvelope = {
+    data: SlippageAssessmentCreateManyCreatedByInput | SlippageAssessmentCreateManyCreatedByInput[]
     skipDuplicates?: boolean
   }
 
@@ -33733,6 +35453,37 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"TimelineAdjustment"> | Date | string
   }
 
+  export type SlippageAssessmentUpsertWithWhereUniqueWithoutCreatedByInput = {
+    where: SlippageAssessmentWhereUniqueInput
+    update: XOR<SlippageAssessmentUpdateWithoutCreatedByInput, SlippageAssessmentUncheckedUpdateWithoutCreatedByInput>
+    create: XOR<SlippageAssessmentCreateWithoutCreatedByInput, SlippageAssessmentUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type SlippageAssessmentUpdateWithWhereUniqueWithoutCreatedByInput = {
+    where: SlippageAssessmentWhereUniqueInput
+    data: XOR<SlippageAssessmentUpdateWithoutCreatedByInput, SlippageAssessmentUncheckedUpdateWithoutCreatedByInput>
+  }
+
+  export type SlippageAssessmentUpdateManyWithWhereWithoutCreatedByInput = {
+    where: SlippageAssessmentScalarWhereInput
+    data: XOR<SlippageAssessmentUpdateManyMutationInput, SlippageAssessmentUncheckedUpdateManyWithoutCreatedByInput>
+  }
+
+  export type SlippageAssessmentScalarWhereInput = {
+    AND?: SlippageAssessmentScalarWhereInput | SlippageAssessmentScalarWhereInput[]
+    OR?: SlippageAssessmentScalarWhereInput[]
+    NOT?: SlippageAssessmentScalarWhereInput | SlippageAssessmentScalarWhereInput[]
+    id?: StringFilter<"SlippageAssessment"> | string
+    projectId?: StringFilter<"SlippageAssessment"> | string
+    date?: DateTimeFilter<"SlippageAssessment"> | Date | string
+    target?: FloatFilter<"SlippageAssessment"> | number
+    actual?: FloatFilter<"SlippageAssessment"> | number
+    revision?: IntFilter<"SlippageAssessment"> | number
+    remarks?: StringNullableFilter<"SlippageAssessment"> | string | null
+    createdById?: StringFilter<"SlippageAssessment"> | string
+    createdAt?: DateTimeFilter<"SlippageAssessment"> | Date | string
+  }
+
   export type ProjectAccessRequestUpsertWithWhereUniqueWithoutRequestedByInput = {
     where: ProjectAccessRequestWhereUniqueInput
     update: XOR<ProjectAccessRequestUpdateWithoutRequestedByInput, ProjectAccessRequestUncheckedUpdateWithoutRequestedByInput>
@@ -33921,6 +35672,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
@@ -33957,6 +35709,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
@@ -34009,6 +35762,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
@@ -34045,6 +35799,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -34081,6 +35836,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
@@ -34117,6 +35873,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
@@ -34386,6 +36143,38 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type SlippageAssessmentCreateWithoutProjectInput = {
+    id?: string
+    date: Date | string
+    target: number
+    actual: number
+    revision?: number
+    remarks?: string | null
+    createdAt?: Date | string
+    createdBy: UserCreateNestedOneWithoutSlippageAssessmentsInput
+  }
+
+  export type SlippageAssessmentUncheckedCreateWithoutProjectInput = {
+    id?: string
+    date: Date | string
+    target: number
+    actual: number
+    revision?: number
+    remarks?: string | null
+    createdById: string
+    createdAt?: Date | string
+  }
+
+  export type SlippageAssessmentCreateOrConnectWithoutProjectInput = {
+    where: SlippageAssessmentWhereUniqueInput
+    create: XOR<SlippageAssessmentCreateWithoutProjectInput, SlippageAssessmentUncheckedCreateWithoutProjectInput>
+  }
+
+  export type SlippageAssessmentCreateManyProjectInputEnvelope = {
+    data: SlippageAssessmentCreateManyProjectInput | SlippageAssessmentCreateManyProjectInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutProjectsInput = {
     update: XOR<UserUpdateWithoutProjectsInput, UserUncheckedUpdateWithoutProjectsInput>
     create: XOR<UserCreateWithoutProjectsInput, UserUncheckedCreateWithoutProjectsInput>
@@ -34425,6 +36214,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
@@ -34461,6 +36251,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -34597,6 +36388,22 @@ export namespace Prisma {
     data: XOR<PhysicalArchiveLocationUpdateManyMutationInput, PhysicalArchiveLocationUncheckedUpdateManyWithoutProjectInput>
   }
 
+  export type SlippageAssessmentUpsertWithWhereUniqueWithoutProjectInput = {
+    where: SlippageAssessmentWhereUniqueInput
+    update: XOR<SlippageAssessmentUpdateWithoutProjectInput, SlippageAssessmentUncheckedUpdateWithoutProjectInput>
+    create: XOR<SlippageAssessmentCreateWithoutProjectInput, SlippageAssessmentUncheckedCreateWithoutProjectInput>
+  }
+
+  export type SlippageAssessmentUpdateWithWhereUniqueWithoutProjectInput = {
+    where: SlippageAssessmentWhereUniqueInput
+    data: XOR<SlippageAssessmentUpdateWithoutProjectInput, SlippageAssessmentUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type SlippageAssessmentUpdateManyWithWhereWithoutProjectInput = {
+    where: SlippageAssessmentScalarWhereInput
+    data: XOR<SlippageAssessmentUpdateManyMutationInput, SlippageAssessmentUncheckedUpdateManyWithoutProjectInput>
+  }
+
   export type ProjectCreateWithoutArchiveLocationsInput = {
     id?: string
     projectCode: string
@@ -34652,6 +36459,7 @@ export namespace Prisma {
     files?: ProjectFileCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutArchiveLocationsInput = {
@@ -34709,6 +36517,7 @@ export namespace Prisma {
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutArchiveLocationsInput = {
@@ -34745,6 +36554,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
@@ -34781,6 +36591,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
@@ -34859,6 +36670,7 @@ export namespace Prisma {
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutArchiveLocationsInput = {
@@ -34916,6 +36728,7 @@ export namespace Prisma {
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutArchiveLocationsInput = {
@@ -34958,6 +36771,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
@@ -34994,6 +36808,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -35056,6 +36871,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutProjectInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutActivitiesInput = {
@@ -35113,6 +36929,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutProjectInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutActivitiesInput = {
@@ -35148,6 +36965,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
@@ -35184,6 +37002,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
@@ -35263,6 +37082,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutProjectNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutActivitiesInput = {
@@ -35320,6 +37140,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutProjectNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutProjectActivitiesInput = {
@@ -35361,6 +37182,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
@@ -35397,6 +37219,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -35460,6 +37283,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutProjectInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutDisbursementsInput = {
@@ -35517,6 +37341,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutProjectInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutDisbursementsInput = {
@@ -35552,6 +37377,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
@@ -35588,6 +37414,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
@@ -35667,6 +37494,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutProjectNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutDisbursementsInput = {
@@ -35724,6 +37552,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutProjectNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutDisbursementsInput = {
@@ -35765,6 +37594,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
@@ -35801,6 +37631,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -35864,6 +37695,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutProjectInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutVariationOrdersInput = {
@@ -35921,6 +37753,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutProjectInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutVariationOrdersInput = {
@@ -35956,6 +37789,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
@@ -35992,6 +37826,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
@@ -36071,6 +37906,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutProjectNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutVariationOrdersInput = {
@@ -36128,6 +37964,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutProjectNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutVariationOrdersInput = {
@@ -36169,6 +38006,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
@@ -36205,6 +38043,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -36242,6 +38081,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
@@ -36278,6 +38118,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
@@ -36330,6 +38171,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
@@ -36366,6 +38208,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -36402,6 +38245,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
@@ -36438,6 +38282,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
@@ -36490,6 +38335,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
@@ -36526,6 +38372,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -36562,6 +38409,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
@@ -36598,6 +38446,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
@@ -36650,6 +38499,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
@@ -36686,6 +38536,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -36748,6 +38599,7 @@ export namespace Prisma {
     files?: ProjectFileCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutProjectInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutTimelineAdjustmentsInput = {
@@ -36805,6 +38657,7 @@ export namespace Prisma {
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutProjectInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutTimelineAdjustmentsInput = {
@@ -36840,6 +38693,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
@@ -36876,6 +38730,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
@@ -36955,6 +38810,7 @@ export namespace Prisma {
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutProjectNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutTimelineAdjustmentsInput = {
@@ -37012,6 +38868,7 @@ export namespace Prisma {
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutProjectNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutTimelineAdjustmentsInput = {
@@ -37053,6 +38910,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
@@ -37089,6 +38947,419 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type ProjectCreateWithoutSlippageAssessmentsInput = {
+    id?: string
+    projectCode: string
+    title: string
+    subType?: string | null
+    program?: string | null
+    projectAccount?: $Enums.ProjectAccount | null
+    modeOfImplementation: $Enums.ModeOfImplementation
+    locationImplementation: $Enums.District
+    sourceOfFund: $Enums.SourceOfFund
+    projectCost?: number
+    contractCost?: number
+    contractorName?: string | null
+    projectEngineer?: string | null
+    budgetYear?: string | null
+    landbankNumber?: string | null
+    supplementalBudgetYear?: string | null
+    supplementalBudgetNumber?: string | null
+    dateStarted?: Date | string | null
+    targetCompletionDate?: Date | string | null
+    duration?: number
+    revisedCompletionDate?: Date | string | null
+    dateCompleted?: Date | string | null
+    daysSuspended?: number
+    daysExtended?: number
+    numFemale?: number
+    numMale?: number
+    numPersons?: number
+    numManDays?: number
+    district?: $Enums.District | null
+    cityMunicipality?: string | null
+    barangay?: string | null
+    purok?: string | null
+    sitio?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    completionPercentage?: number
+    slippageTarget?: number | null
+    slippageActual?: number | null
+    slippageRevision?: number
+    imageUrl?: string | null
+    documentUrl?: string | null
+    documentName?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: UserCreateNestedOneWithoutProjectsInput
+    activities?: ProjectActivityCreateNestedManyWithoutProjectInput
+    disbursements?: DisbursementCreateNestedManyWithoutProjectInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutProjectInput
+    taskNotifications?: TaskNotificationCreateNestedManyWithoutProjectInput
+    files?: ProjectFileCreateNestedManyWithoutProjectInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
+    accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectUncheckedCreateWithoutSlippageAssessmentsInput = {
+    id?: string
+    projectCode: string
+    title: string
+    subType?: string | null
+    program?: string | null
+    projectAccount?: $Enums.ProjectAccount | null
+    modeOfImplementation: $Enums.ModeOfImplementation
+    locationImplementation: $Enums.District
+    sourceOfFund: $Enums.SourceOfFund
+    projectCost?: number
+    contractCost?: number
+    contractorName?: string | null
+    projectEngineer?: string | null
+    budgetYear?: string | null
+    landbankNumber?: string | null
+    supplementalBudgetYear?: string | null
+    supplementalBudgetNumber?: string | null
+    dateStarted?: Date | string | null
+    targetCompletionDate?: Date | string | null
+    duration?: number
+    revisedCompletionDate?: Date | string | null
+    dateCompleted?: Date | string | null
+    daysSuspended?: number
+    daysExtended?: number
+    numFemale?: number
+    numMale?: number
+    numPersons?: number
+    numManDays?: number
+    district?: $Enums.District | null
+    cityMunicipality?: string | null
+    barangay?: string | null
+    purok?: string | null
+    sitio?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    completionPercentage?: number
+    slippageTarget?: number | null
+    slippageActual?: number | null
+    slippageRevision?: number
+    imageUrl?: string | null
+    documentUrl?: string | null
+    documentName?: string | null
+    createdById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    activities?: ProjectActivityUncheckedCreateNestedManyWithoutProjectInput
+    disbursements?: DisbursementUncheckedCreateNestedManyWithoutProjectInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutProjectInput
+    taskNotifications?: TaskNotificationUncheckedCreateNestedManyWithoutProjectInput
+    files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
+    accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectCreateOrConnectWithoutSlippageAssessmentsInput = {
+    where: ProjectWhereUniqueInput
+    create: XOR<ProjectCreateWithoutSlippageAssessmentsInput, ProjectUncheckedCreateWithoutSlippageAssessmentsInput>
+  }
+
+  export type UserCreateWithoutSlippageAssessmentsInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password: string
+    role?: $Enums.UserRole
+    employeeId?: string | null
+    designation?: string | null
+    division?: string | null
+    contactNumber?: string | null
+    birthday?: Date | string | null
+    sex?: $Enums.Sex | null
+    status?: $Enums.UserStatus
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    posts?: PostCreateNestedManyWithoutCreatedByInput
+    projects?: ProjectCreateNestedManyWithoutCreatedByInput
+    sessions?: UserSessionCreateNestedManyWithoutUserInput
+    documents?: DocumentCreateNestedManyWithoutCreatedByInput
+    projectActivities?: ProjectActivityCreateNestedManyWithoutCreatedByInput
+    disbursements?: DisbursementCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutCreatedByInput
+    taskNotificationsReceived?: TaskNotificationCreateNestedManyWithoutNotifyUserInput
+    taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
+    taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
+    projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutSlippageAssessmentsInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password: string
+    role?: $Enums.UserRole
+    employeeId?: string | null
+    designation?: string | null
+    division?: string | null
+    contactNumber?: string | null
+    birthday?: Date | string | null
+    sex?: $Enums.Sex | null
+    status?: $Enums.UserStatus
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
+    projects?: ProjectUncheckedCreateNestedManyWithoutCreatedByInput
+    sessions?: UserSessionUncheckedCreateNestedManyWithoutUserInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutCreatedByInput
+    projectActivities?: ProjectActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    disbursements?: DisbursementUncheckedCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutCreatedByInput
+    taskNotificationsReceived?: TaskNotificationUncheckedCreateNestedManyWithoutNotifyUserInput
+    taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
+    taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
+    projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutSlippageAssessmentsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSlippageAssessmentsInput, UserUncheckedCreateWithoutSlippageAssessmentsInput>
+  }
+
+  export type ProjectUpsertWithoutSlippageAssessmentsInput = {
+    update: XOR<ProjectUpdateWithoutSlippageAssessmentsInput, ProjectUncheckedUpdateWithoutSlippageAssessmentsInput>
+    create: XOR<ProjectCreateWithoutSlippageAssessmentsInput, ProjectUncheckedCreateWithoutSlippageAssessmentsInput>
+    where?: ProjectWhereInput
+  }
+
+  export type ProjectUpdateToOneWithWhereWithoutSlippageAssessmentsInput = {
+    where?: ProjectWhereInput
+    data: XOR<ProjectUpdateWithoutSlippageAssessmentsInput, ProjectUncheckedUpdateWithoutSlippageAssessmentsInput>
+  }
+
+  export type ProjectUpdateWithoutSlippageAssessmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectCode?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
+    modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
+    locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
+    sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
+    projectCost?: FloatFieldUpdateOperationsInput | number
+    contractCost?: FloatFieldUpdateOperationsInput | number
+    contractorName?: NullableStringFieldUpdateOperationsInput | string | null
+    projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
+    budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duration?: IntFieldUpdateOperationsInput | number
+    revisedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCompleted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    daysSuspended?: IntFieldUpdateOperationsInput | number
+    daysExtended?: IntFieldUpdateOperationsInput | number
+    numFemale?: IntFieldUpdateOperationsInput | number
+    numMale?: IntFieldUpdateOperationsInput | number
+    numPersons?: IntFieldUpdateOperationsInput | number
+    numManDays?: IntFieldUpdateOperationsInput | number
+    district?: NullableEnumDistrictFieldUpdateOperationsInput | $Enums.District | null
+    cityMunicipality?: NullableStringFieldUpdateOperationsInput | string | null
+    barangay?: NullableStringFieldUpdateOperationsInput | string | null
+    purok?: NullableStringFieldUpdateOperationsInput | string | null
+    sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    documentName?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutProjectsNestedInput
+    activities?: ProjectActivityUpdateManyWithoutProjectNestedInput
+    disbursements?: DisbursementUpdateManyWithoutProjectNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutProjectNestedInput
+    taskNotifications?: TaskNotificationUpdateManyWithoutProjectNestedInput
+    files?: ProjectFileUpdateManyWithoutProjectNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
+    accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutProjectNestedInput
+  }
+
+  export type ProjectUncheckedUpdateWithoutSlippageAssessmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectCode?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    subType?: NullableStringFieldUpdateOperationsInput | string | null
+    program?: NullableStringFieldUpdateOperationsInput | string | null
+    projectAccount?: NullableEnumProjectAccountFieldUpdateOperationsInput | $Enums.ProjectAccount | null
+    modeOfImplementation?: EnumModeOfImplementationFieldUpdateOperationsInput | $Enums.ModeOfImplementation
+    locationImplementation?: EnumDistrictFieldUpdateOperationsInput | $Enums.District
+    sourceOfFund?: EnumSourceOfFundFieldUpdateOperationsInput | $Enums.SourceOfFund
+    projectCost?: FloatFieldUpdateOperationsInput | number
+    contractCost?: FloatFieldUpdateOperationsInput | number
+    contractorName?: NullableStringFieldUpdateOperationsInput | string | null
+    projectEngineer?: NullableStringFieldUpdateOperationsInput | string | null
+    budgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    landbankNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetYear?: NullableStringFieldUpdateOperationsInput | string | null
+    supplementalBudgetNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    dateStarted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    targetCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duration?: IntFieldUpdateOperationsInput | number
+    revisedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCompleted?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    daysSuspended?: IntFieldUpdateOperationsInput | number
+    daysExtended?: IntFieldUpdateOperationsInput | number
+    numFemale?: IntFieldUpdateOperationsInput | number
+    numMale?: IntFieldUpdateOperationsInput | number
+    numPersons?: IntFieldUpdateOperationsInput | number
+    numManDays?: IntFieldUpdateOperationsInput | number
+    district?: NullableEnumDistrictFieldUpdateOperationsInput | $Enums.District | null
+    cityMunicipality?: NullableStringFieldUpdateOperationsInput | string | null
+    barangay?: NullableStringFieldUpdateOperationsInput | string | null
+    purok?: NullableStringFieldUpdateOperationsInput | string | null
+    sitio?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    completionPercentage?: IntFieldUpdateOperationsInput | number
+    slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
+    slippageRevision?: IntFieldUpdateOperationsInput | number
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    documentName?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    activities?: ProjectActivityUncheckedUpdateManyWithoutProjectNestedInput
+    disbursements?: DisbursementUncheckedUpdateManyWithoutProjectNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutProjectNestedInput
+    taskNotifications?: TaskNotificationUncheckedUpdateManyWithoutProjectNestedInput
+    files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
+    accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutProjectNestedInput
+  }
+
+  export type UserUpsertWithoutSlippageAssessmentsInput = {
+    update: XOR<UserUpdateWithoutSlippageAssessmentsInput, UserUncheckedUpdateWithoutSlippageAssessmentsInput>
+    create: XOR<UserCreateWithoutSlippageAssessmentsInput, UserUncheckedCreateWithoutSlippageAssessmentsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSlippageAssessmentsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSlippageAssessmentsInput, UserUncheckedUpdateWithoutSlippageAssessmentsInput>
+  }
+
+  export type UserUpdateWithoutSlippageAssessmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    designation?: NullableStringFieldUpdateOperationsInput | string | null
+    division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    posts?: PostUpdateManyWithoutCreatedByNestedInput
+    projects?: ProjectUpdateManyWithoutCreatedByNestedInput
+    sessions?: UserSessionUpdateManyWithoutUserNestedInput
+    documents?: DocumentUpdateManyWithoutCreatedByNestedInput
+    projectActivities?: ProjectActivityUpdateManyWithoutCreatedByNestedInput
+    disbursements?: DisbursementUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutCreatedByNestedInput
+    taskNotificationsReceived?: TaskNotificationUpdateManyWithoutNotifyUserNestedInput
+    taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
+    taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
+    projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSlippageAssessmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    designation?: NullableStringFieldUpdateOperationsInput | string | null
+    division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
+    projects?: ProjectUncheckedUpdateManyWithoutCreatedByNestedInput
+    sessions?: UserSessionUncheckedUpdateManyWithoutUserNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectActivities?: ProjectActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    disbursements?: DisbursementUncheckedUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+    taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
+    taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
+    taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -37152,6 +39423,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutProjectInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutTaskNotificationsInput = {
@@ -37209,6 +39481,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutProjectInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutTaskNotificationsInput = {
@@ -37244,6 +39517,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
@@ -37280,6 +39554,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
@@ -37321,6 +39596,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
@@ -37357,6 +39633,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
@@ -37464,6 +39741,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutProjectNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutTaskNotificationsInput = {
@@ -37521,6 +39799,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutProjectNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutTaskNotificationsReceivedInput = {
@@ -37562,6 +39841,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
@@ -37598,6 +39878,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -37645,6 +39926,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
@@ -37681,6 +39963,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -37762,6 +40045,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
@@ -37798,6 +40082,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
@@ -37913,6 +40198,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
@@ -37949,6 +40235,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -38066,6 +40353,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
@@ -38102,6 +40390,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
@@ -38154,6 +40443,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
@@ -38190,6 +40480,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -38253,6 +40544,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestCreateNestedManyWithoutProjectInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutProjectInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutFilesInput = {
@@ -38310,6 +40602,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
     accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutProjectInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutFilesInput = {
@@ -38345,6 +40638,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
@@ -38381,6 +40675,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
@@ -38496,6 +40791,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutProjectNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutFilesInput = {
@@ -38553,6 +40849,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutProjectNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutProjectFilesInput = {
@@ -38594,6 +40891,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
@@ -38630,6 +40928,7 @@ export namespace Prisma {
     taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -38709,6 +41008,7 @@ export namespace Prisma {
     files?: ProjectFileCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutProjectInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutProjectInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutAccessRequestsInput = {
@@ -38766,6 +41066,7 @@ export namespace Prisma {
     files?: ProjectFileUncheckedCreateNestedManyWithoutProjectInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutProjectInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutProjectInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutAccessRequestsInput = {
@@ -38829,6 +41130,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
@@ -38865,6 +41167,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
@@ -38906,6 +41209,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
@@ -38942,6 +41246,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
@@ -39020,6 +41325,7 @@ export namespace Prisma {
     files?: ProjectFileUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutProjectNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutAccessRequestsInput = {
@@ -39077,6 +41383,7 @@ export namespace Prisma {
     files?: ProjectFileUncheckedUpdateManyWithoutProjectNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutProjectNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectFileUpsertWithoutAccessRequestsInput = {
@@ -39152,6 +41459,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
@@ -39188,6 +41496,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -39235,6 +41544,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
@@ -39271,6 +41581,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -39306,6 +41617,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
@@ -39342,6 +41654,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
     projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
@@ -39394,6 +41707,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
@@ -39430,6 +41744,7 @@ export namespace Prisma {
     taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -39604,6 +41919,17 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type SlippageAssessmentCreateManyCreatedByInput = {
+    id?: string
+    projectId: string
+    date: Date | string
+    target: number
+    actual: number
+    revision?: number
+    remarks?: string | null
+    createdAt?: Date | string
+  }
+
   export type ProjectAccessRequestCreateManyRequestedByInput = {
     id?: string
     projectId: string
@@ -39736,6 +42062,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUpdateManyWithoutProjectNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutProjectNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutCreatedByInput = {
@@ -39793,6 +42120,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutProjectNestedInput
     accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutProjectNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateManyWithoutCreatedByInput = {
@@ -40182,6 +42510,39 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type SlippageAssessmentUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    target?: FloatFieldUpdateOperationsInput | number
+    actual?: FloatFieldUpdateOperationsInput | number
+    revision?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutSlippageAssessmentsNestedInput
+  }
+
+  export type SlippageAssessmentUncheckedUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    target?: FloatFieldUpdateOperationsInput | number
+    actual?: FloatFieldUpdateOperationsInput | number
+    revision?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SlippageAssessmentUncheckedUpdateManyWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    target?: FloatFieldUpdateOperationsInput | number
+    actual?: FloatFieldUpdateOperationsInput | number
+    revision?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ProjectAccessRequestUpdateWithoutRequestedByInput = {
     id?: StringFieldUpdateOperationsInput | string
     action?: EnumAccessRequestActionFieldUpdateOperationsInput | $Enums.AccessRequestAction
@@ -40437,6 +42798,17 @@ export namespace Prisma {
     createdById: string
     createdAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type SlippageAssessmentCreateManyProjectInput = {
+    id?: string
+    date: Date | string
+    target: number
+    actual: number
+    revision?: number
+    remarks?: string | null
+    createdById: string
+    createdAt?: Date | string
   }
 
   export type ProjectActivityUpdateWithoutProjectInput = {
@@ -40699,6 +43071,39 @@ export namespace Prisma {
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SlippageAssessmentUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    target?: FloatFieldUpdateOperationsInput | number
+    actual?: FloatFieldUpdateOperationsInput | number
+    revision?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutSlippageAssessmentsNestedInput
+  }
+
+  export type SlippageAssessmentUncheckedUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    target?: FloatFieldUpdateOperationsInput | number
+    actual?: FloatFieldUpdateOperationsInput | number
+    revision?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SlippageAssessmentUncheckedUpdateManyWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    target?: FloatFieldUpdateOperationsInput | number
+    actual?: FloatFieldUpdateOperationsInput | number
+    revision?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TaskReplyCreateManyTaskNotificationInput = {

@@ -280,6 +280,18 @@ exports.Prisma.TimelineAdjustmentScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.SlippageAssessmentScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  date: 'date',
+  target: 'target',
+  actual: 'actual',
+  revision: 'revision',
+  remarks: 'remarks',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.TaskNotificationScalarFieldEnum = {
   id: 'id',
   projectId: 'projectId',
@@ -519,6 +531,7 @@ exports.Prisma.ModelName = {
   FundingProjectOption: 'FundingProjectOption',
   LandbankLoanOption: 'LandbankLoanOption',
   TimelineAdjustment: 'TimelineAdjustment',
+  SlippageAssessment: 'SlippageAssessment',
   TaskNotification: 'TaskNotification',
   TaskReply: 'TaskReply',
   TaskReplyDocument: 'TaskReplyDocument',

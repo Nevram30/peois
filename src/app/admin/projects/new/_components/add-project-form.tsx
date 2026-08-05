@@ -112,6 +112,27 @@ const fmtInputDate = (d: string) => {
   return new Date(d).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" });
 };
 
+// Today as a `yyyy-mm-dd` value for a date input, in local time — toISOString
+// would hand back the UTC day and shift the date for evening entries.
+const todayInputDate = () => {
+  const d = new Date();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${month}-${day}`;
+};
+
+// ─── Slippage history (filed locally, one row per saved assessment) ───────
+type SlippageEntry = {
+  id: string;
+  /** Assessment date, `yyyy-mm-dd`. Back-dating an assessment is allowed. */
+  date: string;
+  target: number;
+  actual: number;
+  /** Revision this row was filed as; Rev. 0 is the first assessment. */
+  revision: number;
+  remarks: string;
+};
+
 // ─── Section wrappers ─────────────────────────────────────────────────────
 const SectionHeader = ({
   icon, title, action,
@@ -260,6 +281,10 @@ export const AddProjectForm = () => {
   const [slippageActualInput, setSlippageActualInput] = useState("");
   const [slippageRevision, setSlippageRevision] = useState(0);
   const [savedSlippage, setSavedSlippage] = useState<string | null>(null);
+  // Each save also files a row in the history table below the card.
+  const [slippageDate, setSlippageDate] = useState(todayInputDate);
+  const [slippageRemarks, setSlippageRemarks] = useState("");
+  const [slippageHistory, setSlippageHistory] = useState<SlippageEntry[]>([]);
 
   // ── Workforce Distribution ───────────────────────────────────────────
   const [numFemale, setNumFemale] = useState(0);
@@ -350,13 +375,39 @@ export const AddProjectForm = () => {
   const slippageKey =
     slippage !== null ? `${slippageTarget}|${slippageActual}` : null;
   const isSlippageDirty = slippageKey !== null && slippageKey !== savedSlippage;
+  const canFileSlippage = isSlippageDirty && slippageDate !== "";
+
+  // Newest assessment first, matching how the history reads on the detail page.
+  // The sort is stable, so same-day entries keep the order they were filed in.
+  const slippageHistoryRows = useMemo(
+    () => [...slippageHistory].sort((a, b) => b.date.localeCompare(a.date)),
+    [slippageHistory],
+  );
 
   const handleSaveSlippage = () => {
-    if (slippageKey === null || !isSlippageDirty) return;
+    if (slippageTarget === null || slippageActual === null) return;
+    if (!canFileSlippage) return;
     // The first save files Rev. 0; every later change files the next revision.
-    if (savedSlippage !== null) setSlippageRevision((r) => r + 1);
+    const filedRevision =
+      savedSlippage !== null ? slippageRevision + 1 : slippageRevision;
+    if (savedSlippage !== null) setSlippageRevision(filedRevision);
     setSavedSlippage(slippageKey);
+    setSlippageHistory((prev) => [
+      {
+        id: `${Date.now()}-${Math.random()}`,
+        date: slippageDate,
+        target: slippageTarget,
+        actual: slippageActual,
+        revision: filedRevision,
+        remarks: slippageRemarks.trim(),
+      },
+      ...prev,
+    ]);
+    setSlippageRemarks("");
   };
+
+  const removeSlippageEntry = (id: string) =>
+    setSlippageHistory((prev) => prev.filter((e) => e.id !== id));
 
   const availableMunicipalities = useMemo(
     () => getMunicipalitiesByDistrict(district as "DISTRICT_I" | "DISTRICT_II" | ""),
@@ -512,11 +563,13 @@ export const AddProjectForm = () => {
 
   const createProjectFile = api.projectFile.create.useMutation();
   const createTimelineAdjustment = api.project.createTimelineAdjustment.useMutation();
+  const createSlippageAssessment = api.project.createSlippageAssessment.useMutation();
 
   const createProject = api.project.create.useMutation({
     onSuccess: async (project) => {
       // Persist each uploaded document as a ProjectFile record, and each
-      // queued timeline adjustment against the newly created project.
+      // queued timeline adjustment and slippage assessment against the newly
+      // created project.
       await Promise.all([
         ...pendingFiles.map((f) =>
           createProjectFile.mutateAsync({
@@ -535,6 +588,16 @@ export const AddProjectForm = () => {
             duration: a.duration,
             type: a.type,
             justification: a.justification || undefined,
+          }),
+        ),
+        ...slippageHistory.map((entry) =>
+          createSlippageAssessment.mutateAsync({
+            projectId: project.id,
+            date: new Date(entry.date),
+            target: entry.target,
+            actual: entry.actual,
+            revision: entry.revision,
+            remarks: entry.remarks || undefined,
           }),
         ),
       ]);
@@ -1346,6 +1409,16 @@ export const AddProjectForm = () => {
               </div>
 
               <div className="w-45 shrink-0">
+                <label className={fieldLabelClass}>Assessment Date</label>
+                <input
+                  type="date"
+                  value={slippageDate}
+                  onChange={(e) => setSlippageDate(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+
+              <div className="w-45 shrink-0">
                 <label className={fieldLabelClass}>Target %</label>
                 <div className="relative">
                   <input
@@ -1391,10 +1464,21 @@ export const AddProjectForm = () => {
                 </div>
               </div>
 
+              <div className="min-w-50 flex-1">
+                <label className={fieldLabelClass}>Remarks</label>
+                <input
+                  type="text"
+                  value={slippageRemarks}
+                  onChange={(e) => setSlippageRemarks(e.target.value)}
+                  placeholder="Remarks / basis of assessment..."
+                  className={inputClass}
+                />
+              </div>
+
               <button
                 type="button"
                 onClick={handleSaveSlippage}
-                disabled={!isSlippageDirty}
+                disabled={!canFileSlippage}
                 className="flex h-10.5 shrink-0 items-center justify-center gap-2 rounded-sm bg-blue-600 px-6 text-xs font-bold uppercase tracking-widest text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {SaveIcon}
@@ -1414,6 +1498,54 @@ export const AddProjectForm = () => {
                 )}
               </p>
             )}
+
+            {/* Slippage history — one row per filed assessment */}
+            <div className="mt-5">
+              <label className={labelClass}>Slippage History</label>
+              <div className="overflow-y-auto rounded-sm border border-gray-200" style={{ maxHeight: "392px" }}>
+                <table className="w-full border-separate border-spacing-0 text-xs">
+                  <thead className="sticky top-0 z-10 bg-gray-50">
+                    <tr className="[&>th]:border-b [&>th]:border-gray-100">
+                      <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Date</th>
+                      <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Target %</th>
+                      <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Actual %</th>
+                      <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Slippage (%)</th>
+                      <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Remarks</th>
+                      <th className="px-3 py-2" />
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {slippageHistoryRows.length > 0 ? slippageHistoryRows.map((entry) => {
+                      const value = computeSlippage(entry.target, entry.actual);
+                      const cfg = getSlippageStageConfig(value);
+                      return (
+                        <tr key={entry.id} className="hover:bg-gray-50/50">
+                          <td className="px-3 py-2.5 text-gray-600">{fmtInputDate(entry.date)}</td>
+                          <td className="px-3 py-2.5 text-gray-600">{entry.target.toFixed(2)}%</td>
+                          <td className="px-3 py-2.5 text-gray-600">{entry.actual.toFixed(2)}%</td>
+                          <td className={`px-3 py-2.5 font-bold ${cfg.text}`}>
+                            {formatSlippage(value)}%
+                          </td>
+                          <td className="px-3 py-2.5 text-gray-600">{entry.remarks || "—"}</td>
+                          <td className="px-3 py-2.5 text-right">
+                            <button
+                              type="button"
+                              onClick={() => removeSlippageEntry(entry.id)}
+                              className="text-gray-300 hover:text-red-500"
+                              aria-label="Remove slippage assessment"
+                            >
+                              ×
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    }) : (
+                      <tr><td colSpan={6} className="px-3 py-6 text-center text-gray-400">No slippage assessment has been filed yet.</td></tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
 
             {/* Stage legend */}
             <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-gray-100 pt-4">

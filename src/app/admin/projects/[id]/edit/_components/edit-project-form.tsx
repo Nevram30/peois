@@ -77,6 +77,15 @@ const toInputDate = (d: Date | string | null | undefined) => {
   return new Date(d).toISOString().slice(0, 10);
 }
 
+// Today as a `yyyy-mm-dd` value for a date input, in local time — toISOString
+// would hand back the UTC day and shift the date for evening entries.
+const todayInputDate = () => {
+  const d = new Date();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${month}-${day}`;
+};
+
 // ─── Section card wrapper ────────────────────────────────────────────────────
 const SectionCard = ({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) => {
   return (
@@ -175,6 +184,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   const { data: disbursements, refetch: refetchDisbursements } = api.project.getDisbursements.useQuery({ projectId });
   const { data: variationOrders, refetch: refetchVariationOrders } = api.project.getVariationOrders.useQuery({ projectId });
   const { data: timelineAdjustments, refetch: refetchTimelineAdjustments } = api.project.getTimelineAdjustments.useQuery({ projectId });
+  const { data: slippageAssessments, refetch: refetchSlippageAssessments } = api.project.getSlippageAssessments.useQuery({ projectId });
   const { data: projectFiles, refetch: refetchFiles } = api.projectFile.getByProjectId.useQuery({ projectId });
   const { startUpload } = useUploadThing("projectFileUploader");
   const { data: usersForSelect } = api.user.getForSelect.useQuery();
@@ -207,6 +217,10 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   const [slippageTargetInput, setSlippageTargetInput] = useState("");
   const [slippageActualInput, setSlippageActualInput] = useState("");
   const [slippageError, setSlippageError] = useState<string | null>(null);
+  // Assessment date and remarks travel with the save into the history row.
+  // The date may be back-dated, so it is not simply the time of filing.
+  const [slippageDate, setSlippageDate] = useState(todayInputDate);
+  const [slippageRemarks, setSlippageRemarks] = useState("");
 
   // ─ Funding ─────────────────────────────────────────────────────────────
   const [sourceOfFund, setSourceOfFund] = useState<SourceOfFundValue | "">("");
@@ -374,7 +388,9 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   const updateSlippage = api.project.updateSlippage.useMutation({
     onSuccess: (updated) => {
       void utils.project.getById.invalidate({ id: projectId });
+      void refetchSlippageAssessments();
       setSlippageError(null);
+      setSlippageRemarks("");
       addActivity.mutate({
         projectId,
         description: `Filed slippage assessment Rev. ${updated.slippageRevision} — target ${updated.slippageTarget}%, actual ${updated.slippageActual}%.`,
@@ -392,14 +408,25 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
       setSlippageError("Target and actual must each be between 0 and 100.");
       return;
     }
+    if (!slippageDate) {
+      setSlippageError("Enter the assessment date.");
+      return;
+    }
     if (!isSlippageDirty) return;
     setSlippageError(null);
     updateSlippage.mutate({
       id: projectId,
       slippageTarget,
       slippageActual,
+      date: new Date(slippageDate),
+      remarks: slippageRemarks.trim() || undefined,
     });
   };
+
+  const deleteSlippageAssessment = api.project.deleteSlippageAssessment.useMutation({
+    onSuccess: () => void refetchSlippageAssessments(),
+    onError: (error) => setSlippageError(error.message),
+  });
 
   const recordDisbursement = api.project.createDisbursement.useMutation({
     onSuccess: (_data, variables) => {
@@ -1624,6 +1651,16 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                 </div>
 
                 <div className="w-full shrink-0 sm:w-40">
+                  <FieldLabel>Assessment Date</FieldLabel>
+                  <Input
+                    type="date"
+                    value={slippageDate}
+                    onChange={(e) => { setSlippageDate(e.target.value); setSlippageError(null); }}
+                    error={!!slippageError && !slippageDate}
+                  />
+                </div>
+
+                <div className="w-full shrink-0 sm:w-40">
                   <FieldLabel>Target %</FieldLabel>
                   <div className="relative">
                     <Input
@@ -1663,6 +1700,16 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                   </div>
                 </div>
 
+                <div className="min-w-full flex-1 sm:min-w-48">
+                  <FieldLabel>Remarks</FieldLabel>
+                  <Input
+                    type="text"
+                    value={slippageRemarks}
+                    onChange={(e) => setSlippageRemarks(e.target.value)}
+                    placeholder="Remarks / basis of assessment..."
+                  />
+                </div>
+
                 <button
                   type="button"
                   onClick={handleSaveSlippage}
@@ -1685,6 +1732,58 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                   )}
                 </p>
               )}
+
+              {/* Slippage history — one row per assessment filed on this project */}
+              <div className="mt-5">
+                <FieldLabel>Slippage History</FieldLabel>
+                <div
+                  className="overflow-auto rounded-lg border border-gray-200"
+                  style={{ maxHeight: "392px" }}
+                >
+                  <table className="w-full min-w-160 border-separate border-spacing-0 text-xs">
+                    <thead className="sticky top-0 z-10 bg-gray-50">
+                      <tr className="[&>th]:border-b [&>th]:border-gray-100">
+                        <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Date</th>
+                        <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Target %</th>
+                        <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Actual %</th>
+                        <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Slippage (%)</th>
+                        <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Remarks</th>
+                        <th className="px-3 py-2" />
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {slippageAssessments && slippageAssessments.length > 0 ? slippageAssessments.map((entry) => {
+                        const value = computeSlippage(entry.target, entry.actual);
+                        const cfg = getSlippageStageConfig(value);
+                        return (
+                          <tr key={entry.id} className="hover:bg-gray-50/50">
+                            <td className="px-3 py-2.5 text-gray-600">{fmt(entry.date)}</td>
+                            <td className="px-3 py-2.5 text-gray-600">{entry.target.toFixed(2)}%</td>
+                            <td className="px-3 py-2.5 text-gray-600">{entry.actual.toFixed(2)}%</td>
+                            <td className={`px-3 py-2.5 font-bold ${cfg.text}`}>
+                              {formatSlippage(value)}%
+                            </td>
+                            <td className="px-3 py-2.5 text-gray-600">{entry.remarks ?? "—"}</td>
+                            <td className="px-3 py-2.5 text-right">
+                              <button
+                                type="button"
+                                onClick={() => deleteSlippageAssessment.mutate({ id: entry.id })}
+                                disabled={deleteSlippageAssessment.isPending}
+                                className="text-gray-300 transition hover:text-red-500 disabled:opacity-50"
+                                aria-label="Remove slippage assessment"
+                              >
+                                ×
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      }) : (
+                        <tr><td colSpan={6} className="px-3 py-6 text-center text-gray-400">No slippage assessment has been filed yet.</td></tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
 
               {/* Stage legend */}
               <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-gray-100 pt-4">

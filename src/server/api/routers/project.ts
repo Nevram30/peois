@@ -238,6 +238,10 @@ export const projectRouter = createTRPCRouter({
         id: z.string(),
         slippageTarget: z.number().min(0).max(100).nullable(),
         slippageActual: z.number().min(0).max(100).nullable(),
+        // Assessment date and remarks for the history row this save files.
+        // The date may be back-dated; it defaults to the moment of filing.
+        date: z.date().optional(),
+        remarks: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -263,13 +267,79 @@ export const projectRouter = createTRPCRouter({
           ? current.slippageRevision + 1
           : current.slippageRevision;
 
-      return ctx.db.project.update({
-        where: { id: input.id },
+      // Clearing the assessment leaves the history untouched — a filed
+      // revision stays on the record even once the current figures are gone.
+      const historyRow =
+        input.slippageTarget !== null && input.slippageActual !== null && changed
+          ? ctx.db.slippageAssessment.create({
+            data: {
+              projectId: input.id,
+              date: input.date ?? new Date(),
+              target: input.slippageTarget,
+              actual: input.slippageActual,
+              revision: slippageRevision,
+              remarks: input.remarks?.trim() ?? null,
+              createdById: ctx.session.user.id,
+            },
+          })
+          : null;
+
+      const [project] = await ctx.db.$transaction([
+        ctx.db.project.update({
+          where: { id: input.id },
+          data: {
+            slippageTarget: input.slippageTarget,
+            slippageActual: input.slippageActual,
+            slippageRevision,
+          },
+        }),
+        ...(historyRow ? [historyRow] : []),
+      ]);
+
+      return project;
+    }),
+
+  // Filing an assessment against a project that already exists — used by the
+  // Add New Project form to persist the rows queued before the project had an
+  // id. The revision is the one the form displayed for that row.
+  createSlippageAssessment: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+        date: z.date(),
+        target: z.number().min(0).max(100),
+        actual: z.number().min(0).max(100),
+        revision: z.number().int().min(0).default(0),
+        remarks: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.slippageAssessment.create({
         data: {
-          slippageTarget: input.slippageTarget,
-          slippageActual: input.slippageActual,
-          slippageRevision,
+          projectId: input.projectId,
+          date: input.date,
+          target: input.target,
+          actual: input.actual,
+          revision: input.revision,
+          remarks: input.remarks?.trim() ?? null,
+          createdById: ctx.session.user.id,
         },
+      });
+    }),
+
+  deleteSlippageAssessment: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.slippageAssessment.delete({ where: { id: input.id } });
+    }),
+
+  // Newest assessment first, the order the history table reads in.
+  getSlippageAssessments: protectedProcedure
+    .input(z.object({ projectId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return ctx.db.slippageAssessment.findMany({
+        where: { projectId: input.projectId },
+        orderBy: [{ date: "desc" }, { createdAt: "desc" }],
       });
     }),
 
