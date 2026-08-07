@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { InstallPrompt } from "../_components/InstallPrompt";
 
+/** Construction site render: crane, scaffolded building and site plans. */
+const HERO_IMAGE = "/image/construction_bg.jpg";
+
 const LoginPage = () => {
   const [employeeId, setEmployeeId] = useState("");
   const [password, setPassword] = useState("");
@@ -66,11 +69,32 @@ const LoginPage = () => {
   };
 
   return (
-    <main className="flex min-h-screen bg-white">
-      {/* Left side: white background with login form */}
-      <div className="flex w-full flex-col items-center justify-center bg-white px-4 py-8 sm:px-6 md:w-1/2 lg:px-16">
+    <main className="relative flex min-h-screen overflow-hidden bg-amber-500 lg:bg-white">
+      {/* Full-bleed backdrop photo; the amber curve paints over its left side */}
+      <div aria-hidden="true" className="absolute inset-0 hidden lg:block">
+        <Image
+          src={HERO_IMAGE}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+      </div>
+
+      {/* Curved brand shape: a rectangle down the left edge whose right
+          side bulges out via an oversized circle sitting on that edge. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-y-0 left-0 hidden w-[36%] bg-amber-500 filter-[drop-shadow(0_0_6px_rgba(255,255,255,1))_drop-shadow(0_0_16px_rgba(255,255,255,1))_drop-shadow(0_0_36px_rgba(255,255,255,0.85))] lg:block"
+      >
+        <div className="absolute top-1/2 right-[-17vh] h-[220vh] w-[220vh] -translate-y-1/2 rounded-full bg-amber-500" />
+      </div>
+
+      {/* Left: the login card, floating on the curve */}
+      <div className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-10 sm:px-6 lg:w-[42%] lg:px-12">
         <div className="w-full max-w-md">
-          <div className="bg-white px-6 py-8 sm:px-10 sm:py-10">
+          <div className="rounded-2xl bg-white px-6 py-8 shadow-2xl ring-1 ring-black/5 sm:px-8 sm:py-9">
             {/* Logo */}
             <div className="mb-6 flex flex-col items-center">
               <div className="mb-4 flex h-25 w-25 items-center justify-center rounded-full bg-gray-100">
@@ -239,21 +263,9 @@ const LoginPage = () => {
         </div>
 
         {/* Footer */}
-        <p className="mt-6 w-full max-w-md text-center text-xs text-gray-500">
+        <p className="mt-6 w-full max-w-md text-center text-xs text-white/90">
           © 2026 Provincial Government MIS. All rights reserved.
         </p>
-      </div>
-
-      {/* Right side: background image */}
-      <div className="relative hidden md:block md:w-1/2">
-        <Image
-          src="/image/construction_bg.jpg"
-          alt=""
-          fill
-          priority
-          className="object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-black/10" />
       </div>
 
       <InstallPrompt />
