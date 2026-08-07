@@ -743,25 +743,29 @@ export const AddProjectForm = () => {
     createProject.isPending || isUploadingImage || isUploadingDoc;
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-8">
+    <div className="min-h-screen bg-gray-50">
       {/* Breadcrumb */}
-      <nav className="mb-4 flex items-center gap-1.5 text-sm text-gray-500">
-        <Link href="/admin/dashboard" className="hover:text-gray-700">Dashboard</Link>
-        <span>/</span>
-        <Link href="/admin/projects" className="hover:text-gray-700">Projects</Link>
-        <span>/</span>
-        <span className="font-medium text-gray-900">Add New</span>
-      </nav>
-
-      {/* Page Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Add New Project</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Fill in the details below to create a new engineering project record.
-        </p>
+      <div className="border-b border-gray-200 bg-white px-4 py-4 sm:px-6">
+        <nav className="flex items-center gap-1.5 text-sm text-gray-500">
+          <Link href="/admin/dashboard" className="hover:text-gray-700">Dashboard</Link>
+          <span>/</span>
+          <Link href="/admin/projects" className="hover:text-gray-700">Projects</Link>
+          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
+          <span className="font-medium text-gray-900">Add New</span>
+        </nav>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-6 px-6 py-5 lg:px-8 lg:py-6">
+        {/* Page Header */}
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">Add New Project</h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Fill in the details below to create a new engineering project record.
+          </p>
+        </div>
+
         {/* ── Row 1: Identity & Status (2/3) + Location (1/3) ─────────── */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Project Identity & Status */}
