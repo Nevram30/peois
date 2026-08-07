@@ -24,16 +24,6 @@ import {
 } from "~/lib/slippage";
 import { GeospatialSummary } from "~/app/_components/geospatial-summary";
 
-const STATUS_PILL: Record<string, string> = {
-  NOT_YET_STARTED: "bg-gray-50 text-gray-600 border border-gray-200",
-  ON_GOING: "bg-orange-50 text-orange-600 border border-orange-200",
-  COMPLETED: "bg-green-50 text-green-600 border border-green-200",
-  SUSPENDED: "bg-red-50 text-red-600 border border-red-200",
-  FOR_IMPLEMENTATION: "bg-blue-50 text-blue-600 border border-blue-200",
-  RE_ALIGNMENT: "bg-amber-50 text-amber-600 border border-amber-200",
-  OTHERS: "bg-gray-50 text-gray-600 border border-gray-200",
-};
-
 const FILE_TYPE_PILL: Record<string, string> = {
   IMAGE: "bg-blue-50 text-blue-600 border border-blue-200",
   BLUEPRINT: "bg-indigo-50 text-indigo-600 border border-indigo-200",
@@ -103,8 +93,109 @@ const peso = (n: number | null | undefined) => {
 const card = "rounded-sm border border-gray-200 bg-white p-4 shadow-sm sm:p-6";
 const sectionTitle = "flex items-center gap-2 border-b border-gray-100 pb-4 mb-5";
 const fieldLabel = "text-[11px] font-semibold uppercase tracking-wider text-gray-400";
-// This is a read-only view, so values render as plain text instead of input-looking boxes.
 const fieldText = "mt-1 w-full text-sm font-medium text-gray-800";
+
+// ─── Identity & Location cards ───────────────────────────────────────────
+// These two cards mirror the add/edit forms field for field, so a record reads
+// the same wherever it is opened. The boxes here only look like inputs — the
+// page stays read-only and the pencil in each header is the way into the form.
+const cardShell = "rounded-sm border border-gray-200 bg-white shadow-sm";
+const boxLabel = "mb-1.5 block text-sm font-bold text-gray-600";
+const box =
+  "block w-full truncate rounded-sm border border-gray-200 bg-white px-3.5 py-2.5 text-sm shadow-sm";
+
+const InfoIcon = (
+  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+    />
+  </svg>
+);
+
+const PinIcon = (
+  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
+    />
+  </svg>
+);
+
+const PencilIcon = (
+  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Z"
+    />
+  </svg>
+);
+
+const CardHeader = ({
+  icon,
+  title,
+  editHref,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  editHref: string;
+}) => (
+  <div className="flex items-center justify-between gap-2 border-b border-gray-100 px-5 py-3.5">
+    <div className="flex items-center gap-2">
+      <span className="text-blue-500">{icon}</span>
+      <span className="text-xs font-bold uppercase tracking-widest text-gray-700">
+        {title}
+      </span>
+    </div>
+    <Link
+      href={editHref}
+      aria-label={`Edit ${title}`}
+      className="text-gray-400 transition hover:text-gray-600"
+    >
+      {PencilIcon}
+    </Link>
+  </div>
+);
+
+// `chevron` matches the dropdowns of the form this card mirrors; it is a marker
+// of where a value is chosen from a list, not a control — nothing opens here.
+const ViewField = ({
+  label,
+  value,
+  chevron = false,
+  muted = false,
+}: {
+  label: string;
+  value: string;
+  chevron?: boolean;
+  muted?: boolean;
+}) => (
+  <div className="min-w-0">
+    <label className={boxLabel}>{label}</label>
+    <div className="relative">
+      <div
+        className={`${box} ${muted ? "text-gray-400" : "text-gray-900"} ${chevron ? "pr-9" : ""}`}
+      >
+        {value}
+      </div>
+      {chevron && (
+        <svg
+          className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={2.5}
+          stroke="currentColor"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+        </svg>
+      )}
+    </div>
+  </div>
+);
 
 interface Props {
   projectId: string;
@@ -140,7 +231,7 @@ export const ProjectDetail = ({ projectId }: Props) => {
     );
   }
 
-  const pillClass = STATUS_PILL[project.status] ?? STATUS_PILL.OTHERS!;
+  const editHref = `/admin/projects/${projectId}/edit`;
   const statusLabel =
     PROJECT_STATUS_LABEL[project.status as ProjectStatusValue] ?? project.status;
 
@@ -238,46 +329,33 @@ export const ProjectDetail = ({ projectId }: Props) => {
       </div>
 
       <div className="space-y-6">
-        {/* ── Identity & Status, then Location stacked beneath it ── */}
-        <div className="space-y-6">
+        {/* ── Identity & Status (2/3) beside Location (1/3) ── */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Project Identity & Status */}
-          <section className={card}>
-            <div className={sectionTitle}>
-              <svg
-                className="h-5 w-5 text-blue-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
-                />
-              </svg>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-gray-700">
-                Project Identity &amp; Status
-              </h2>
-            </div>
+          <section className={`${cardShell} lg:col-span-2`}>
+            <CardHeader
+              icon={InfoIcon}
+              title="Project Identity & Status"
+              editHref={editHref}
+            />
 
-            <div className="flex flex-col gap-5 sm:flex-row">
-              {/* Image */}
-              <div className="relative h-56 w-full shrink-0 self-stretch overflow-hidden rounded-sm border border-gray-200 bg-linear-to-br from-slate-700 to-slate-900 sm:h-auto sm:w-72">
+            <div className="space-y-4 p-5">
+              {/* Project image — full-width banner */}
+              <div className="relative aspect-video w-full overflow-hidden rounded-sm border border-gray-200 bg-gray-50">
                 {project.imageUrl ? (
                   <Image
                     src={project.imageUrl}
                     alt={project.title}
                     fill
-                    className="object-contain"
+                    className="object-cover"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-gray-400">
+                  <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-gray-300">
                     <svg
-                      className="h-14 w-14"
+                      className="h-8 w-8"
                       fill="none"
                       viewBox="0 0 24 24"
-                      strokeWidth={1.2}
+                      strokeWidth={1.5}
                       stroke="currentColor"
                     >
                       <path
@@ -286,135 +364,96 @@ export const ProjectDetail = ({ projectId }: Props) => {
                         d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"
                       />
                     </svg>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                      No Image Uploaded
+                    </p>
                   </div>
                 )}
-                <span className="absolute bottom-2 left-2 rounded-md bg-black/60 px-2 py-0.5 text-[10px] font-mono font-semibold text-white">
-                  # {project.projectCode}
+                <span className="absolute top-3 left-3 rounded-md bg-gray-900/90 px-3 py-1.5 font-mono text-[10px] font-bold tracking-wider text-white">
+                  #{project.projectCode}
                 </span>
               </div>
 
-              {/* Right column - fields */}
-              <div className="flex-1 space-y-3">
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <div>
-                    <label className={fieldLabel}>Project Title</label>
-                    <div className={fieldText}>{project.title}</div>
-                  </div>
-                  <div>
-                    <label className={fieldLabel}>Project Cost</label>
-                    <div className={fieldText}>{peso(project.projectCost)}</div>
-                  </div>
-                </div>
+              <ViewField label="Project Title" value={project.title} />
 
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <div>
-                    <label className={fieldLabel}>Current Status</label>
-                    <div className="mt-1">
-                      <span
-                        className={`inline-flex rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${pillClass}`}
-                      >
-                        {statusLabel}
-                      </span>
-                    </div>
-                  </div>
-                  <div>
-                    <label className={fieldLabel}>Track Number</label>
-                    <div className={`${fieldText} font-mono`}>{project.projectCode}</div>
-                  </div>
-                </div>
+              <div className="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2">
+                <ViewField label="Project Cost" value={peso(project.projectCost)} />
+                {/* As Per Plan mirrors the Target Completion Date on file. */}
+                <ViewField
+                  label="As Per Plan"
+                  value={fmt(project.targetCompletionDate)}
+                  muted={!project.targetCompletionDate}
+                />
+                <ViewField label="Current Status" value={statusLabel} chevron />
+                <ViewField label="Project I.D." value={project.projectCode} />
+                <ViewField
+                  label="Implementation Mode"
+                  value={
+                    project.modeOfImplementation === "BY_ADMINISTRATION"
+                      ? "By Administration"
+                      : "By Contract"
+                  }
+                  chevron
+                />
+                <ViewField
+                  label="Contractor Name"
+                  value={project.contractorName ?? "—"}
+                  muted={!project.contractorName}
+                />
+              </div>
 
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <div>
-                    <label className={fieldLabel}>Implementation Mode</label>
-                    <div className={fieldText}>
-                      {project.modeOfImplementation === "BY_ADMINISTRATION"
-                        ? "By Administration"
-                        : "By Contract"}
-                    </div>
-                  </div>
-                  <div>
-                    <label className={fieldLabel}>Contractor Name</label>
-                    <div className={fieldText}>{project.contractorName ?? "—"}</div>
-                  </div>
+              {/* Progress */}
+              <div>
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <span className="text-sm font-bold text-gray-600">
+                    Physical Progress
+                  </span>
+                  <span className="text-xs font-bold text-blue-600">
+                    {project.completionPercentage}%
+                  </span>
                 </div>
-
-                {/* Progress */}
-                <div className="pt-2">
-                  <div className="flex items-center justify-between">
-                    <label className={fieldLabel}>Physical Progress</label>
-                    <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
-                      {project.completionPercentage}%
-                    </span>
-                  </div>
-                  <div className="mt-2 flex items-center gap-3">
-                    <div className="relative h-2.5 flex-1 overflow-hidden rounded-full bg-gray-200">
-                      <div
-                        className="h-full rounded-full bg-blue-700 transition-all"
-                        style={{ width: `${project.completionPercentage}%` }}
-                      />
-                    </div>
-                    <span className="text-xs font-bold text-gray-700">
-                      {project.completionPercentage}%
-                    </span>
-                  </div>
+                <div className="h-2.5 w-full overflow-hidden rounded-full bg-gray-100">
+                  <div
+                    className="h-full rounded-full bg-blue-700 transition-all"
+                    style={{ width: `${project.completionPercentage}%` }}
+                  />
                 </div>
               </div>
             </div>
           </section>
 
           {/* Project Location */}
-          <section className={card}>
-            <div className={sectionTitle}>
-              <svg
-                className="h-5 w-5 text-blue-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
-                />
-              </svg>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-gray-700">
-                Project Location
-              </h2>
-            </div>
+          <section className={cardShell}>
+            <CardHeader icon={PinIcon} title="Project Location" editHref={editHref} />
 
-            <div className="space-y-3">
-              {/* Full-width card, so the administrative levels sit in one row */}
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                <div>
-                  <label className={fieldLabel}>District</label>
-                  <div className={fieldText}>{districtLabel}</div>
-                </div>
-                <div>
-                  <label className={fieldLabel}>City/Municipality</label>
-                  <div className={fieldText}>{project.cityMunicipality ?? "—"}</div>
-                </div>
-                <div>
-                  <label className={fieldLabel}>Barangay</label>
-                  <div className={fieldText}>{project.barangay ?? "—"}</div>
-                </div>
-              </div>
-              {/* Same 3-up grid as the row above, so Purok sits under District
-                  and Sitio under City/Municipality */}
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                <div>
-                  <label className={fieldLabel}>Purok</label>
-                  <div className={fieldText}>{project.purok ?? "—"}</div>
-                </div>
-                <div>
-                  <label className={fieldLabel}>Sitio</label>
-                  <div className={fieldText}>{project.sitio ?? "N/A"}</div>
-                </div>
+            <div className="space-y-3 p-5">
+              {/* The card is a third of the row, so the administrative levels
+                  stack instead of sitting side by side */}
+              <ViewField label="District" value={districtLabel} chevron />
+              <ViewField
+                label="City / Municipality"
+                value={project.cityMunicipality ?? "—"}
+                muted={!project.cityMunicipality}
+                chevron
+              />
+              <ViewField
+                label="Barangay"
+                value={project.barangay ?? "—"}
+                muted={!project.barangay}
+                chevron
+              />
+              <div className="grid grid-cols-2 gap-3">
+                <ViewField
+                  label="Purok"
+                  value={project.purok ?? "—"}
+                  muted={!project.purok}
+                  chevron
+                />
+                <ViewField
+                  label="Sitio"
+                  value={project.sitio ?? "N/A"}
+                  muted={!project.sitio}
+                />
               </div>
 
               {/* ── Geospatial Data ── */}
@@ -422,8 +461,9 @@ export const ProjectDetail = ({ projectId }: Props) => {
                 <GeospatialSummary
                   latitude={project.latitude}
                   longitude={project.longitude}
-                  labelClassName={fieldLabel}
-                  valueClassName={fieldText}
+                  labelClassName={boxLabel}
+                  valueClassName={`${box} text-gray-900`}
+                  mapClassName="h-150"
                 />
               </div>
             </div>
@@ -451,39 +491,57 @@ export const ProjectDetail = ({ projectId }: Props) => {
             </h2>
           </div>
 
+          {/* Every field here is a dropdown on the form, so they all carry the
+              chevron marker. */}
           <div className="grid grid-cols-1 gap-x-6 gap-y-4 lg:grid-cols-2">
-            <div>
-              <label className={fieldLabel}>Budget Year</label>
-              <div className={fieldText}>{project.budgetYear ?? "\u2014"}</div>
-            </div>
-            <div>
-              <label className={fieldLabel}>Program</label>
-              <div className={fieldText}>{programLabel}</div>
-            </div>
-            <div>
-              <label className={fieldLabel}>Source of Fund</label>
-              <div className={fieldText}>{sourceLabel}</div>
-            </div>
-            <div>
-              <label className={fieldLabel}>Project</label>
-              <div className={fieldText}>{subTypeLabel}</div>
-            </div>
-            <div>
-              <label className={fieldLabel}>Supplemental Budget Year</label>
-              <div className={fieldText}>{project.supplementalBudgetYear ?? "\u2014"}</div>
-            </div>
-            <div>
-              <label className={fieldLabel}>Project Account</label>
-              <div className={fieldText}>{projectAccountLabel}</div>
-            </div>
-            <div>
-              <label className={fieldLabel}>Supplemental Budget Number</label>
-              <div className={fieldText}>{project.supplementalBudgetNumber ?? "\u2014"}</div>
-            </div>
-            <div>
-              <label className={fieldLabel}>* LANDBANK [LBP-TL#]</label>
-              <div className={fieldText}>{project.landbankNumber ?? "\u2014"}</div>
-            </div>
+            <ViewField
+              label="Budget Year"
+              value={project.budgetYear ?? "\u2014"}
+              muted={!project.budgetYear}
+              chevron
+            />
+            <ViewField
+              label="Program"
+              value={programLabel}
+              muted={!project.program}
+              chevron
+            />
+            <ViewField
+              label="Source of Fund"
+              value={sourceLabel}
+              muted={!project.sourceOfFund}
+              chevron
+            />
+            <ViewField
+              label="Project"
+              value={subTypeLabel}
+              muted={!project.subType}
+              chevron
+            />
+            <ViewField
+              label="Supplemental Budget Year"
+              value={project.supplementalBudgetYear ?? "\u2014"}
+              muted={!project.supplementalBudgetYear}
+              chevron
+            />
+            <ViewField
+              label="Project Account"
+              value={projectAccountLabel}
+              muted={!project.projectAccount}
+              chevron
+            />
+            <ViewField
+              label="Supplemental Budget Number"
+              value={project.supplementalBudgetNumber ?? "\u2014"}
+              muted={!project.supplementalBudgetNumber}
+              chevron
+            />
+            <ViewField
+              label="* LANDBANK [LBP-TL#]"
+              value={project.landbankNumber ?? "\u2014"}
+              muted={!project.landbankNumber}
+              chevron
+            />
           </div>
         </section>
 
