@@ -302,18 +302,18 @@ export const ProjectDetail = ({ projectId }: Props) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6">
+    <div className="min-h-screen bg-gray-50">
       {/* Breadcrumb + Edit action */}
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3 sm:px-7 border-gray-200 bg-white">
         <nav className="flex flex-wrap items-center gap-1.5 text-sm text-gray-500">
-          <Link href="/admin/dashboard" className="hover:text-gray-700">
-            Dashboard
-          </Link>
+          <Link href="/admin/dashboard" className="hover:text-gray-600">Dashboard</Link>
           <span>/</span>
           <Link href="/admin/projects" className="hover:text-gray-700">
             Projects
           </Link>
-          <span>/</span>
+          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
           <span className="font-medium text-gray-900">Project Details</span>
         </nav>
 
@@ -328,7 +328,7 @@ export const ProjectDetail = ({ projectId }: Props) => {
         </Link>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-6 px-4 py-8 sm:px-6">
         {/* ── Identity & Status (2/3) beside Location (1/3) ── */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Project Identity & Status */}

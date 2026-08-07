@@ -850,6 +850,8 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
       {/* ── Page Header / Breadcrumb ── */}
       <div className="border-b border-gray-200 bg-white px-4 py-4 sm:px-6">
         <nav className="flex items-center gap-1.5 text-sm text-gray-400">
+          <Link href="/admin/dashboard" className="hover:text-gray-600">Dashboard</Link>
+          <span>/</span>
           <Link href="/admin/projects" className="hover:text-gray-600">Projects</Link>
           <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
