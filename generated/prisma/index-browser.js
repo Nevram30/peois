@@ -416,7 +416,8 @@ exports.ProjectAccount = exports.$Enums.ProjectAccount = {
 
 exports.ModeOfImplementation = exports.$Enums.ModeOfImplementation = {
   BY_ADMINISTRATION: 'BY_ADMINISTRATION',
-  BY_CONTRACT: 'BY_CONTRACT'
+  BY_CONTRACT: 'BY_CONTRACT',
+  UNASSIGNED_FOR_DETERMINATION: 'UNASSIGNED_FOR_DETERMINATION'
 };
 
 exports.District = exports.$Enums.District = {

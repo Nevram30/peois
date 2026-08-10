@@ -23,6 +23,7 @@ import {
   getSlippageStageConfig,
 } from "~/lib/slippage";
 import { GeospatialSummary } from "~/app/_components/geospatial-summary";
+import { MODE_LABELS } from "~/app/admin/_components/admin-constant/constant";
 
 const FILE_TYPE_PILL: Record<string, string> = {
   IMAGE: "bg-blue-50 text-blue-600 border border-blue-200",
@@ -389,9 +390,8 @@ export const ProjectDetail = ({ projectId }: Props) => {
                 <ViewField
                   label="Implementation Mode"
                   value={
-                    project.modeOfImplementation === "BY_ADMINISTRATION"
-                      ? "By Administration"
-                      : "By Contract"
+                    MODE_LABELS[project.modeOfImplementation] ??
+                    project.modeOfImplementation
                   }
                   chevron
                 />

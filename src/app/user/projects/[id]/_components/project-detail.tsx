@@ -312,7 +312,9 @@ export const UserProjectDetail = ({ projectId }: Props) => {
                     <div className={fieldBox}>
                       {project.modeOfImplementation === "BY_ADMINISTRATION"
                         ? "By Administration"
-                        : "By Contract"}
+                        : project.modeOfImplementation === "BY_CONTRACT"
+                          ? "By Contract"
+                          : "Unassigned - For Determination"}
                     </div>
                   </div>
                 </div>

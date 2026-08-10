@@ -16,6 +16,7 @@ import {
   type ProjectSubTypeValue,
   type ProjectStatusValue,
 } from "~/lib/fund-constants";
+import { MODE_LABELS } from "~/app/admin/_components/admin-constant/constant";
 
 const STATUS_STYLES: Record<ProjectStatusValue, { bg: string; dot: string; text: string }> = {
   COMPLETED: { bg: "bg-green-100", dot: "bg-green-500", text: "text-green-700" },
@@ -619,7 +620,7 @@ export default function ProjectsDataListPage() {
                         {project.locationImplementation === "DISTRICT_I" ? "District 1" : "District 2"}
                       </td>
                       <td className="px-4 py-3 text-gray-600">
-                        {project.modeOfImplementation === "BY_CONTRACT" ? "By Contract" : "By Administration"}
+                        {MODE_LABELS[project.modeOfImplementation] ?? project.modeOfImplementation}
                       </td>
                       <td className="px-4 py-3 text-gray-600">
                         <p>{FUND_SOURCE_LABELS[project.sourceOfFund] ?? project.sourceOfFund}</p>

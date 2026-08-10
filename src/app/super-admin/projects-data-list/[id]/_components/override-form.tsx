@@ -340,7 +340,10 @@ export function OverrideForm({ projectId }: { projectId: string }) {
   const [form, setForm] = useState({
     title: "",
     projectCost: 0,
-    modeOfImplementation: "BY_CONTRACT" as "BY_ADMINISTRATION" | "BY_CONTRACT",
+    modeOfImplementation: "BY_CONTRACT" as
+      | "BY_ADMINISTRATION"
+      | "BY_CONTRACT"
+      | "UNASSIGNED_FOR_DETERMINATION",
     locationImplementation: "DISTRICT_I" as "DISTRICT_I" | "DISTRICT_II",
     status: "ON_GOING" as ProjectStatusValue,
     sourceOfFund: "GENERAL_FUND" as SourceOfFundValue,

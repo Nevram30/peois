@@ -75,6 +75,7 @@ export const SOURCE_LABELS: Record<string, string> = {
 export const MODE_LABELS: Record<string, string> = {
     BY_ADMINISTRATION: "By Administration",
     BY_CONTRACT: "By Contract",
+    UNASSIGNED_FOR_DETERMINATION: "Unassigned - For Determination",
 };
 
 export const STATUS_CONFIG: Record<

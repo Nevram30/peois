@@ -30,6 +30,7 @@ enum Sex {
 enum ModeOfImplementation {
   BY_ADMINISTRATION
   BY_CONTRACT
+  UNASSIGNED_FOR_DETERMINATION
 }
 
 enum SourceOfFund {

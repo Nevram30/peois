@@ -46,6 +46,7 @@ const DISTRICT_LABELS: Record<string, string> = {
 const MODE_LABELS: Record<string, string> = {
   BY_ADMINISTRATION: "By Administration",
   BY_CONTRACT: "By Contract",
+  UNASSIGNED_FOR_DETERMINATION: "Unassigned - For Determination",
 };
 
 const progressBarColor = (status: string, pct: number) => {

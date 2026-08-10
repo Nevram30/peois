@@ -142,7 +142,8 @@ export type Sex = (typeof Sex)[keyof typeof Sex]
 
 export const ModeOfImplementation: {
   BY_ADMINISTRATION: 'BY_ADMINISTRATION',
-  BY_CONTRACT: 'BY_CONTRACT'
+  BY_CONTRACT: 'BY_CONTRACT',
+  UNASSIGNED_FOR_DETERMINATION: 'UNASSIGNED_FOR_DETERMINATION'
 };
 
 export type ModeOfImplementation = (typeof ModeOfImplementation)[keyof typeof ModeOfImplementation]

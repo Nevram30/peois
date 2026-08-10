@@ -211,9 +211,11 @@ export const DISBURSEMENT_TYPE_LABEL: Record<DisbursementTypeValue, string> = {
 };
 
 export const MODE_TO_DISBURSEMENT_TYPES: Record<
-  "BY_ADMINISTRATION" | "BY_CONTRACT",
+  "BY_ADMINISTRATION" | "BY_CONTRACT" | "UNASSIGNED_FOR_DETERMINATION",
   DisbursementTypeValue[]
 > = {
+  // No disbursement types apply until the implementation mode is determined.
+  UNASSIGNED_FOR_DETERMINATION: [],
   BY_ADMINISTRATION: [
     "BILL_OF_LADING",
     "CONTINGENCIES",

@@ -698,7 +698,10 @@ export const AddProjectForm = () => {
       landbankNumber: landbankNumber.trim() || null,
       supplementalBudgetYear: supplementalBudgetYear || null,
       supplementalBudgetNumber: supplementalBudgetNumber || null,
-      modeOfImplementation: modeOfImplementation as "BY_ADMINISTRATION" | "BY_CONTRACT",
+      modeOfImplementation: modeOfImplementation as
+        | "BY_ADMINISTRATION"
+        | "BY_CONTRACT"
+        | "UNASSIGNED_FOR_DETERMINATION",
       locationImplementation: district as "DISTRICT_I" | "DISTRICT_II",
       sourceOfFund: sourceOfFund as SourceOfFundValue,
       projectCost: parseAmount(projectCost) || 0,
@@ -907,6 +910,9 @@ export const AddProjectForm = () => {
                     <option value="">Select Mode</option>
                     <option value="BY_ADMINISTRATION">By Administration</option>
                     <option value="BY_CONTRACT">By Contract</option>
+                    <option value="UNASSIGNED_FOR_DETERMINATION">
+                      Unassigned - For Determination
+                    </option>
                   </select>
                   <FieldError show={showErrors && fieldErrors.modeOfImplementation} />
                 </div>

@@ -20,6 +20,7 @@ import {
   type FundingProgramValue,
 } from "~/lib/fund-constants";
 import { projectLabel } from "~/lib/funding-options";
+import { MODE_LABELS } from "~/app/admin/_components/admin-constant/constant";
 import { HardHat } from "lucide-react";
 
 const STATUS_LABELS: Record<string, { label: string; className: string }> = {
@@ -646,7 +647,7 @@ const ProjectsList = () => {
                           Mode
                         </dt>
                         <dd className="text-gray-600">
-                          {p.modeOfImplementation === "BY_CONTRACT" ? "By Contract" : "By Administration"}
+                          {MODE_LABELS[p.modeOfImplementation] ?? p.modeOfImplementation}
                         </dd>
                         {p.modeOfImplementation === "BY_CONTRACT" && p.contractorName && (
                           <dd className="text-xs text-gray-400">{p.contractorName}</dd>
@@ -735,7 +736,7 @@ const ProjectsList = () => {
                           </p>
                         </td>
                         <td className="px-4 py-3 text-gray-600">
-                          <p>{p.modeOfImplementation === "BY_CONTRACT" ? "By Contract" : "By Administration"}</p>
+                          <p>{MODE_LABELS[p.modeOfImplementation] ?? p.modeOfImplementation}</p>
                           {p.modeOfImplementation === "BY_CONTRACT" && p.contractorName && (
                             <p className="text-xs text-gray-400 mt-0.5">{p.contractorName}</p>
                           )}
