@@ -373,6 +373,7 @@ export const projectRouter = createTRPCRouter({
         id: z.string(),
         reason: z.string().min(1, "Reason is required"),
         title: z.string().min(1),
+        projectCode: z.string().min(1, "Project ID is required").optional(),
         modeOfImplementation: z.enum([
           "BY_ADMINISTRATION",
           "BY_CONTRACT",
@@ -408,7 +409,7 @@ export const projectRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { id, reason, ...data } = input;
+      const { id, reason, projectCode, ...data } = input;
       const numPersons = data.numFemale + data.numMale;
       const duration =
         data.dateStarted && data.targetCompletionDate
@@ -418,10 +419,31 @@ export const projectRouter = createTRPCRouter({
           )
           : 0;
 
+      // projectCode is unique, so reject a code already held by another project
+      // rather than letting the update fail on the constraint.
+      const newProjectCode = projectCode?.trim();
+      if (newProjectCode) {
+        const taken = await ctx.db.project.findUnique({
+          where: { projectCode: newProjectCode },
+          select: { id: true },
+        });
+        if (taken && taken.id !== id) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: `Project ID "${newProjectCode}" is already used by another project`,
+          });
+        }
+      }
+
       const [project] = await ctx.db.$transaction([
         ctx.db.project.update({
           where: { id },
-          data: { ...data, numPersons, duration },
+          data: {
+            ...data,
+            ...(newProjectCode ? { projectCode: newProjectCode } : {}),
+            numPersons,
+            duration,
+          },
         }),
         ctx.db.projectActivity.create({
           data: {

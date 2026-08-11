@@ -339,6 +339,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
 
   const [form, setForm] = useState({
     title: "",
+    projectCode: "",
     projectCost: 0,
     modeOfImplementation: "BY_CONTRACT" as
       | "BY_ADMINISTRATION"
@@ -412,6 +413,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
     if (!project) return;
     setForm({
       title: project.title,
+      projectCode: project.projectCode,
       projectCost: project.projectCost,
       modeOfImplementation: project.modeOfImplementation,
       locationImplementation: project.locationImplementation,
@@ -472,6 +474,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
       reason,
       // Project Identity & Status
       title: form.title,
+      projectCode: form.projectCode.trim() || undefined,
       projectCost: form.projectCost,
       status: form.status,
       modeOfImplementation: form.modeOfImplementation,
@@ -670,6 +673,12 @@ export function OverrideForm({ projectId }: { projectId: string }) {
         </div>
       )}
 
+      {override.error && (
+        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {override.error.message}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-4 pb-36">
         {/* Row 1 — Identity & Location */}
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
@@ -743,11 +752,16 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                     </select>
                   </div>
                 </div>
-                {/* Track Number | Implementation Mode */}
+                {/* Project ID | Implementation Mode */}
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div>
-                    <FieldLabel>Track Number</FieldLabel>
-                    <TextInput value={project.projectCode} disabled />
+                    <FieldLabel required>Project ID</FieldLabel>
+                    <TextInput
+                      value={form.projectCode}
+                      onChange={(v) => set("projectCode", v)}
+                      placeholder="Enter project ID"
+                      required
+                    />
                   </div>
                   <div>
                     <FieldLabel required>Implementation Mode</FieldLabel>
