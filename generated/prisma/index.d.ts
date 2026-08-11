@@ -22627,6 +22627,7 @@ export namespace Prisma {
     fileName: string | null
     fileUrl: string | null
     fileType: $Enums.ProjectFileType | null
+    docType: string | null
     fileSize: number | null
     createdById: string | null
     createdAt: Date | null
@@ -22638,6 +22639,7 @@ export namespace Prisma {
     fileName: string | null
     fileUrl: string | null
     fileType: $Enums.ProjectFileType | null
+    docType: string | null
     fileSize: number | null
     createdById: string | null
     createdAt: Date | null
@@ -22649,6 +22651,7 @@ export namespace Prisma {
     fileName: number
     fileUrl: number
     fileType: number
+    docType: number
     fileSize: number
     createdById: number
     createdAt: number
@@ -22670,6 +22673,7 @@ export namespace Prisma {
     fileName?: true
     fileUrl?: true
     fileType?: true
+    docType?: true
     fileSize?: true
     createdById?: true
     createdAt?: true
@@ -22681,6 +22685,7 @@ export namespace Prisma {
     fileName?: true
     fileUrl?: true
     fileType?: true
+    docType?: true
     fileSize?: true
     createdById?: true
     createdAt?: true
@@ -22692,6 +22697,7 @@ export namespace Prisma {
     fileName?: true
     fileUrl?: true
     fileType?: true
+    docType?: true
     fileSize?: true
     createdById?: true
     createdAt?: true
@@ -22790,6 +22796,7 @@ export namespace Prisma {
     fileName: string
     fileUrl: string
     fileType: $Enums.ProjectFileType
+    docType: string | null
     fileSize: number | null
     createdById: string
     createdAt: Date
@@ -22820,6 +22827,7 @@ export namespace Prisma {
     fileName?: boolean
     fileUrl?: boolean
     fileType?: boolean
+    docType?: boolean
     fileSize?: boolean
     createdById?: boolean
     createdAt?: boolean
@@ -22835,6 +22843,7 @@ export namespace Prisma {
     fileName?: boolean
     fileUrl?: boolean
     fileType?: boolean
+    docType?: boolean
     fileSize?: boolean
     createdById?: boolean
     createdAt?: boolean
@@ -22848,6 +22857,7 @@ export namespace Prisma {
     fileName?: boolean
     fileUrl?: boolean
     fileType?: boolean
+    docType?: boolean
     fileSize?: boolean
     createdById?: boolean
     createdAt?: boolean
@@ -22861,12 +22871,13 @@ export namespace Prisma {
     fileName?: boolean
     fileUrl?: boolean
     fileType?: boolean
+    docType?: boolean
     fileSize?: boolean
     createdById?: boolean
     createdAt?: boolean
   }
 
-  export type ProjectFileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "fileName" | "fileUrl" | "fileType" | "fileSize" | "createdById" | "createdAt", ExtArgs["result"]["projectFile"]>
+  export type ProjectFileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "fileName" | "fileUrl" | "fileType" | "docType" | "fileSize" | "createdById" | "createdAt", ExtArgs["result"]["projectFile"]>
   export type ProjectFileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
@@ -22895,6 +22906,7 @@ export namespace Prisma {
       fileName: string
       fileUrl: string
       fileType: $Enums.ProjectFileType
+      docType: string | null
       fileSize: number | null
       createdById: string
       createdAt: Date
@@ -23329,6 +23341,7 @@ export namespace Prisma {
     readonly fileName: FieldRef<"ProjectFile", 'String'>
     readonly fileUrl: FieldRef<"ProjectFile", 'String'>
     readonly fileType: FieldRef<"ProjectFile", 'ProjectFileType'>
+    readonly docType: FieldRef<"ProjectFile", 'String'>
     readonly fileSize: FieldRef<"ProjectFile", 'Int'>
     readonly createdById: FieldRef<"ProjectFile", 'String'>
     readonly createdAt: FieldRef<"ProjectFile", 'DateTime'>
@@ -26332,6 +26345,7 @@ export namespace Prisma {
     fileName: 'fileName',
     fileUrl: 'fileUrl',
     fileType: 'fileType',
+    docType: 'docType',
     fileSize: 'fileSize',
     createdById: 'createdById',
     createdAt: 'createdAt'
@@ -28195,6 +28209,7 @@ export namespace Prisma {
     fileName?: StringFilter<"ProjectFile"> | string
     fileUrl?: StringFilter<"ProjectFile"> | string
     fileType?: EnumProjectFileTypeFilter<"ProjectFile"> | $Enums.ProjectFileType
+    docType?: StringNullableFilter<"ProjectFile"> | string | null
     fileSize?: IntNullableFilter<"ProjectFile"> | number | null
     createdById?: StringFilter<"ProjectFile"> | string
     createdAt?: DateTimeFilter<"ProjectFile"> | Date | string
@@ -28209,6 +28224,7 @@ export namespace Prisma {
     fileName?: SortOrder
     fileUrl?: SortOrder
     fileType?: SortOrder
+    docType?: SortOrderInput | SortOrder
     fileSize?: SortOrderInput | SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
@@ -28226,6 +28242,7 @@ export namespace Prisma {
     fileName?: StringFilter<"ProjectFile"> | string
     fileUrl?: StringFilter<"ProjectFile"> | string
     fileType?: EnumProjectFileTypeFilter<"ProjectFile"> | $Enums.ProjectFileType
+    docType?: StringNullableFilter<"ProjectFile"> | string | null
     fileSize?: IntNullableFilter<"ProjectFile"> | number | null
     createdById?: StringFilter<"ProjectFile"> | string
     createdAt?: DateTimeFilter<"ProjectFile"> | Date | string
@@ -28240,6 +28257,7 @@ export namespace Prisma {
     fileName?: SortOrder
     fileUrl?: SortOrder
     fileType?: SortOrder
+    docType?: SortOrderInput | SortOrder
     fileSize?: SortOrderInput | SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
@@ -28259,6 +28277,7 @@ export namespace Prisma {
     fileName?: StringWithAggregatesFilter<"ProjectFile"> | string
     fileUrl?: StringWithAggregatesFilter<"ProjectFile"> | string
     fileType?: EnumProjectFileTypeWithAggregatesFilter<"ProjectFile"> | $Enums.ProjectFileType
+    docType?: StringNullableWithAggregatesFilter<"ProjectFile"> | string | null
     fileSize?: IntNullableWithAggregatesFilter<"ProjectFile"> | number | null
     createdById?: StringWithAggregatesFilter<"ProjectFile"> | string
     createdAt?: DateTimeWithAggregatesFilter<"ProjectFile"> | Date | string
@@ -30077,6 +30096,7 @@ export namespace Prisma {
     fileName: string
     fileUrl: string
     fileType?: $Enums.ProjectFileType
+    docType?: string | null
     fileSize?: number | null
     createdAt?: Date | string
     project: ProjectCreateNestedOneWithoutFilesInput
@@ -30090,6 +30110,7 @@ export namespace Prisma {
     fileName: string
     fileUrl: string
     fileType?: $Enums.ProjectFileType
+    docType?: string | null
     fileSize?: number | null
     createdById: string
     createdAt?: Date | string
@@ -30101,6 +30122,7 @@ export namespace Prisma {
     fileName?: StringFieldUpdateOperationsInput | string
     fileUrl?: StringFieldUpdateOperationsInput | string
     fileType?: EnumProjectFileTypeFieldUpdateOperationsInput | $Enums.ProjectFileType
+    docType?: NullableStringFieldUpdateOperationsInput | string | null
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutFilesNestedInput
@@ -30114,6 +30136,7 @@ export namespace Prisma {
     fileName?: StringFieldUpdateOperationsInput | string
     fileUrl?: StringFieldUpdateOperationsInput | string
     fileType?: EnumProjectFileTypeFieldUpdateOperationsInput | $Enums.ProjectFileType
+    docType?: NullableStringFieldUpdateOperationsInput | string | null
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30126,6 +30149,7 @@ export namespace Prisma {
     fileName: string
     fileUrl: string
     fileType?: $Enums.ProjectFileType
+    docType?: string | null
     fileSize?: number | null
     createdById: string
     createdAt?: Date | string
@@ -30136,6 +30160,7 @@ export namespace Prisma {
     fileName?: StringFieldUpdateOperationsInput | string
     fileUrl?: StringFieldUpdateOperationsInput | string
     fileType?: EnumProjectFileTypeFieldUpdateOperationsInput | $Enums.ProjectFileType
+    docType?: NullableStringFieldUpdateOperationsInput | string | null
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -30146,6 +30171,7 @@ export namespace Prisma {
     fileName?: StringFieldUpdateOperationsInput | string
     fileUrl?: StringFieldUpdateOperationsInput | string
     fileType?: EnumProjectFileTypeFieldUpdateOperationsInput | $Enums.ProjectFileType
+    docType?: NullableStringFieldUpdateOperationsInput | string | null
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -31795,6 +31821,7 @@ export namespace Prisma {
     fileName?: SortOrder
     fileUrl?: SortOrder
     fileType?: SortOrder
+    docType?: SortOrder
     fileSize?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
@@ -31810,6 +31837,7 @@ export namespace Prisma {
     fileName?: SortOrder
     fileUrl?: SortOrder
     fileType?: SortOrder
+    docType?: SortOrder
     fileSize?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
@@ -31821,6 +31849,7 @@ export namespace Prisma {
     fileName?: SortOrder
     fileUrl?: SortOrder
     fileType?: SortOrder
+    docType?: SortOrder
     fileSize?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
@@ -34798,6 +34827,7 @@ export namespace Prisma {
     fileName: string
     fileUrl: string
     fileType?: $Enums.ProjectFileType
+    docType?: string | null
     fileSize?: number | null
     createdAt?: Date | string
     project: ProjectCreateNestedOneWithoutFilesInput
@@ -34810,6 +34840,7 @@ export namespace Prisma {
     fileName: string
     fileUrl: string
     fileType?: $Enums.ProjectFileType
+    docType?: string | null
     fileSize?: number | null
     createdAt?: Date | string
     accessRequests?: ProjectAccessRequestUncheckedCreateNestedManyWithoutProjectFileInput
@@ -35418,6 +35449,7 @@ export namespace Prisma {
     fileName?: StringFilter<"ProjectFile"> | string
     fileUrl?: StringFilter<"ProjectFile"> | string
     fileType?: EnumProjectFileTypeFilter<"ProjectFile"> | $Enums.ProjectFileType
+    docType?: StringNullableFilter<"ProjectFile"> | string | null
     fileSize?: IntNullableFilter<"ProjectFile"> | number | null
     createdById?: StringFilter<"ProjectFile"> | string
     createdAt?: DateTimeFilter<"ProjectFile"> | Date | string
@@ -36017,6 +36049,7 @@ export namespace Prisma {
     fileName: string
     fileUrl: string
     fileType?: $Enums.ProjectFileType
+    docType?: string | null
     fileSize?: number | null
     createdAt?: Date | string
     createdBy: UserCreateNestedOneWithoutProjectFilesInput
@@ -36028,6 +36061,7 @@ export namespace Prisma {
     fileName: string
     fileUrl: string
     fileType?: $Enums.ProjectFileType
+    docType?: string | null
     fileSize?: number | null
     createdById: string
     createdAt?: Date | string
@@ -41080,6 +41114,7 @@ export namespace Prisma {
     fileName: string
     fileUrl: string
     fileType?: $Enums.ProjectFileType
+    docType?: string | null
     fileSize?: number | null
     createdAt?: Date | string
     project: ProjectCreateNestedOneWithoutFilesInput
@@ -41092,6 +41127,7 @@ export namespace Prisma {
     fileName: string
     fileUrl: string
     fileType?: $Enums.ProjectFileType
+    docType?: string | null
     fileSize?: number | null
     createdById: string
     createdAt?: Date | string
@@ -41403,6 +41439,7 @@ export namespace Prisma {
     fileName?: StringFieldUpdateOperationsInput | string
     fileUrl?: StringFieldUpdateOperationsInput | string
     fileType?: EnumProjectFileTypeFieldUpdateOperationsInput | $Enums.ProjectFileType
+    docType?: NullableStringFieldUpdateOperationsInput | string | null
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutFilesNestedInput
@@ -41415,6 +41452,7 @@ export namespace Prisma {
     fileName?: StringFieldUpdateOperationsInput | string
     fileUrl?: StringFieldUpdateOperationsInput | string
     fileType?: EnumProjectFileTypeFieldUpdateOperationsInput | $Enums.ProjectFileType
+    docType?: NullableStringFieldUpdateOperationsInput | string | null
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -41905,6 +41943,7 @@ export namespace Prisma {
     fileName: string
     fileUrl: string
     fileType?: $Enums.ProjectFileType
+    docType?: string | null
     fileSize?: number | null
     createdAt?: Date | string
   }
@@ -42451,6 +42490,7 @@ export namespace Prisma {
     fileName?: StringFieldUpdateOperationsInput | string
     fileUrl?: StringFieldUpdateOperationsInput | string
     fileType?: EnumProjectFileTypeFieldUpdateOperationsInput | $Enums.ProjectFileType
+    docType?: NullableStringFieldUpdateOperationsInput | string | null
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutFilesNestedInput
@@ -42463,6 +42503,7 @@ export namespace Prisma {
     fileName?: StringFieldUpdateOperationsInput | string
     fileUrl?: StringFieldUpdateOperationsInput | string
     fileType?: EnumProjectFileTypeFieldUpdateOperationsInput | $Enums.ProjectFileType
+    docType?: NullableStringFieldUpdateOperationsInput | string | null
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accessRequests?: ProjectAccessRequestUncheckedUpdateManyWithoutProjectFileNestedInput
@@ -42474,6 +42515,7 @@ export namespace Prisma {
     fileName?: StringFieldUpdateOperationsInput | string
     fileUrl?: StringFieldUpdateOperationsInput | string
     fileType?: EnumProjectFileTypeFieldUpdateOperationsInput | $Enums.ProjectFileType
+    docType?: NullableStringFieldUpdateOperationsInput | string | null
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -42761,6 +42803,7 @@ export namespace Prisma {
     fileName: string
     fileUrl: string
     fileType?: $Enums.ProjectFileType
+    docType?: string | null
     fileSize?: number | null
     createdById: string
     createdAt?: Date | string
@@ -42942,6 +42985,7 @@ export namespace Prisma {
     fileName?: StringFieldUpdateOperationsInput | string
     fileUrl?: StringFieldUpdateOperationsInput | string
     fileType?: EnumProjectFileTypeFieldUpdateOperationsInput | $Enums.ProjectFileType
+    docType?: NullableStringFieldUpdateOperationsInput | string | null
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneRequiredWithoutProjectFilesNestedInput
@@ -42953,6 +42997,7 @@ export namespace Prisma {
     fileName?: StringFieldUpdateOperationsInput | string
     fileUrl?: StringFieldUpdateOperationsInput | string
     fileType?: EnumProjectFileTypeFieldUpdateOperationsInput | $Enums.ProjectFileType
+    docType?: NullableStringFieldUpdateOperationsInput | string | null
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -42964,6 +43009,7 @@ export namespace Prisma {
     fileName?: StringFieldUpdateOperationsInput | string
     fileUrl?: StringFieldUpdateOperationsInput | string
     fileType?: EnumProjectFileTypeFieldUpdateOperationsInput | $Enums.ProjectFileType
+    docType?: NullableStringFieldUpdateOperationsInput | string | null
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

@@ -350,6 +350,7 @@ exports.Prisma.ProjectFileScalarFieldEnum = {
   fileName: 'fileName',
   fileUrl: 'fileUrl',
   fileType: 'fileType',
+  docType: 'docType',
   fileSize: 'fileSize',
   createdById: 'createdById',
   createdAt: 'createdAt'

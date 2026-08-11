@@ -37,10 +37,11 @@ import {
 import {
   DOC_CHECKLIST,
   docFileType,
+  fileIconColor,
   type DocType,
   type ProjectFileType,
 } from "~/lib/project-documents";
-import { UploadDocumentModal } from "./upload-document-modal";
+import { UploadDocumentModal } from "~/app/_components/upload-document-modal";
 import { GeospatialFields } from "~/app/_components/geospatial-fields";
 import { parseCoord } from "~/lib/geo";
 import { handleAmountChange, parseAmount, formatAmountValue } from "~/lib/currency";
@@ -75,15 +76,6 @@ type PendingFile = {
   docType: DocType;
   fileSize: number;
   uploadedAt: Date;
-};
-
-const fileIconColor = (fileType: ProjectFileType, fileName: string) => {
-  if (fileType === "IMAGE") return { bg: "bg-blue-100", text: "text-blue-600" };
-  if (fileName.toLowerCase().endsWith(".pdf"))
-    return { bg: "bg-red-100", text: "text-red-600" };
-  if (/\.(doc|docx)$/.exec(fileName.toLowerCase()))
-    return { bg: "bg-emerald-100", text: "text-emerald-600" };
-  return { bg: "bg-gray-100", text: "text-gray-600" };
 };
 
 const fmtDate = (d: Date) => {
@@ -577,6 +569,7 @@ export const AddProjectForm = () => {
             fileName: f.fileName,
             fileUrl: f.fileUrl,
             fileType: f.fileType,
+            docType: f.docType,
             fileSize: f.fileSize,
           }),
         ),

@@ -118,6 +118,22 @@ const DOC_MATCH_ORDER = [...DOC_CHECKLIST].sort(
   (a, b) => Number(a.matchLast ?? false) - Number(b.matchLast ?? false),
 );
 
+// Every value `docType` may take, for the tRPC input schemas that persist it.
+// Derived from the checklist so a new row here needs no change on the server.
+export const DOC_TYPE_VALUES: [DocType, ...DocType[]] = [
+  "OTHER",
+  ...DOC_CHECKLIST.map((item) => item.key),
+];
+
+export const PROJECT_FILE_TYPE_VALUES = [
+  "IMAGE",
+  "BLUEPRINT",
+  "REPORT",
+  "CONTRACT",
+  "PERMIT",
+  "OTHER",
+] as [ProjectFileType, ...ProjectFileType[]];
+
 export const docItem = (docType: DocType) =>
   DOC_CHECKLIST.find((item) => item.key === docType);
 
@@ -146,6 +162,16 @@ export const docFileType = (
   fileName: string,
 ): ProjectFileType =>
   docItem(docType)?.fileType ?? (isImageName(fileName) ? "IMAGE" : "OTHER");
+
+// Tint for the little file badge in the document lists.
+export const fileIconColor = (fileType: ProjectFileType, fileName: string) => {
+  if (fileType === "IMAGE") return { bg: "bg-blue-100", text: "text-blue-600" };
+  if (fileName.toLowerCase().endsWith(".pdf"))
+    return { bg: "bg-red-100", text: "text-red-600" };
+  if (/\.(doc|docx)$/.exec(fileName.toLowerCase()))
+    return { bg: "bg-emerald-100", text: "text-emerald-600" };
+  return { bg: "bg-gray-100", text: "text-gray-600" };
+};
 
 // ─── Upload constraints ───────────────────────────────────────────────────
 // Mirrors the `projectFileUploader` route in src/app/api/uploadthing/core.ts so

@@ -577,6 +577,11 @@ model ProjectFile {
   fileName    String
   fileUrl     String
   fileType    ProjectFileType @default(OTHER)
+  // Which documentary requirement this file satisfies (a DocKey from
+  // src/lib/project-documents.ts, or "OTHER"). Kept separate from fileType
+  // because fileType is a lossy many-to-one collapse of these categories.
+  // Nullable: files uploaded before this column existed have no key.
+  docType     String?
   fileSize    Int?
   createdBy   User            @relation(fields: [createdById], references: [id])
   createdById String

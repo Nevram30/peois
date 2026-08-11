@@ -1,5 +1,9 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import {
+  DOC_TYPE_VALUES,
+  PROJECT_FILE_TYPE_VALUES,
+} from "~/lib/project-documents";
 
 export const projectFileRouter = createTRPCRouter({
   getByProjectId: protectedProcedure
@@ -18,9 +22,8 @@ export const projectFileRouter = createTRPCRouter({
         projectId: z.string(),
         fileName: z.string().min(1),
         fileUrl: z.string().min(1),
-        fileType: z
-          .enum(["IMAGE", "BLUEPRINT", "REPORT", "CONTRACT", "PERMIT", "OTHER"])
-          .default("OTHER"),
+        fileType: z.enum(PROJECT_FILE_TYPE_VALUES).default("OTHER"),
+        docType: z.enum(DOC_TYPE_VALUES).optional(),
         fileSize: z.number().int().optional(),
       }),
     )
@@ -31,9 +34,27 @@ export const projectFileRouter = createTRPCRouter({
           fileName: input.fileName,
           fileUrl: input.fileUrl,
           fileType: input.fileType,
+          docType: input.docType,
           fileSize: input.fileSize,
           createdById: ctx.session.user.id,
         },
+      });
+    }),
+
+  // Re-filing a document under a different requirement. fileType travels with
+  // docType because it is derived from it (see docFileType).
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        docType: z.enum(DOC_TYPE_VALUES),
+        fileType: z.enum(PROJECT_FILE_TYPE_VALUES),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.projectFile.update({
+        where: { id: input.id },
+        data: { docType: input.docType, fileType: input.fileType },
       });
     }),
 

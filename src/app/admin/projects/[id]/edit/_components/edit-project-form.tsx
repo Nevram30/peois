@@ -43,6 +43,15 @@ import {
 import { parseCoord } from "~/lib/geo";
 import { handleAmountChange, parseAmount, formatAmountValue } from "~/lib/currency";
 import { GeospatialFields } from "~/app/_components/geospatial-fields";
+import { UploadDocumentModal } from "~/app/_components/upload-document-modal";
+import {
+  DOC_CHECKLIST,
+  docFileType,
+  docLabel,
+  fileIconColor,
+  inferDocType,
+  type DocType,
+} from "~/lib/project-documents";
 
 const STATUS_CONFIG: Record<string, { label: string; badge: string; dot: string }> = {
   NOT_YET_STARTED: { label: "Not Yet Started", badge: "bg-gray-100 text-gray-600 border-gray-200", dot: "bg-gray-400" },
@@ -104,12 +113,12 @@ const SectionHeader = ({
   action?: React.ReactNode;
 }) => {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 px-5 py-3.5">
-      <div className="flex items-center gap-2">
+    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-5 py-3.5">
+      <div className="flex min-w-0 items-center gap-2">
         <span className="text-blue-500">{icon}</span>
         <span className="text-xs font-bold uppercase tracking-widest text-gray-700">{title}</span>
       </div>
-      {action && <div>{action}</div>}
+      {action && <div className="shrink-0">{action}</div>}
     </div>
   );
 }
@@ -176,7 +185,6 @@ const EditIcon = () => (
 export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   const utils = api.useUtils();
   const mediaInputRef = useRef<HTMLInputElement>(null);
-  const docInputRef = useRef<HTMLInputElement>(null);
   const engineerRef = useRef<HTMLInputElement>(null);
 
   const { data: project, isLoading } = api.project.getById.useQuery({ id: projectId });
@@ -186,6 +194,18 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   const { data: timelineAdjustments, refetch: refetchTimelineAdjustments } = api.project.getTimelineAdjustments.useQuery({ projectId });
   const { data: slippageAssessments, refetch: refetchSlippageAssessments } = api.project.getSlippageAssessments.useQuery({ projectId });
   const { data: projectFiles, refetch: refetchFiles } = api.projectFile.getByProjectId.useQuery({ projectId });
+  // Files saved before docType existed fall back to a guess from the file name,
+  // so the checklist is not blank on older projects. Correcting a row's Type
+  // persists the real key and the guess stops being used for that file.
+  const resolveDocType = (f: { docType: string | null; fileName: string }): DocType =>
+    (f.docType as DocType | null) ?? inferDocType(f.fileName);
+  const satisfiedDocs = useMemo(
+    () => new Set((projectFiles ?? []).map(resolveDocType)),
+    [projectFiles],
+  );
+  const satisfiedCount = DOC_CHECKLIST.filter((item) =>
+    satisfiedDocs.has(item.key),
+  ).length;
   const { startUpload } = useUploadThing("projectFileUploader");
   const { data: usersForSelect } = api.user.getForSelect.useQuery();
   // Programs / Projects / LBP-TL numbers a super admin registered from the
@@ -250,9 +270,15 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   const [mediaUrl, setMediaUrl] = useState("");
   const [mediaName, setMediaName] = useState("");
   const [isUploadingMedia, setIsUploadingMedia] = useState(false);
-  const [pendingFileType, setPendingFileType] = useState<"IMAGE" | "BLUEPRINT" | "REPORT" | "CONTRACT" | "PERMIT" | "OTHER">("OTHER");
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [deleteNotice, setDeleteNotice] = useState<string | null>(null);
+
+  // ─ Document upload modal ───────────────────────────────────────────────
+  // The modal asks for the requirement before anything is uploaded, so the
+  // category is always confirmed rather than guessed from the file name.
+  const [isDocModalOpen, setIsDocModalOpen] = useState(false);
+  const [isUploadingDoc, setIsUploadingDoc] = useState(false);
+  const [docModalFiles, setDocModalFiles] = useState<File[]>([]);
 
   // ─ Activity ────────────────────────────────────────────────────────────
   const [comment, setComment] = useState("");
@@ -504,6 +530,16 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     },
   });
 
+  const updateProjectFile = api.projectFile.update.useMutation({
+    onSuccess: (data) => {
+      void refetchFiles();
+      addActivity.mutate({
+        projectId: data.projectId,
+        description: `Re-filed document "${data.fileName}" as ${docLabel((data.docType ?? "OTHER") as DocType)}.`,
+      });
+    },
+  });
+
   const deleteProjectFile = api.projectFile.delete.useMutation({
     onSuccess: (data) => {
       void refetchFiles();
@@ -517,6 +553,8 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   });
 
   // ─ Handlers ────────────────────────────────────────────────────────────
+  // The project cover image. Files picked here are not documentary
+  // requirements, so they are filed as "OTHER" and typed from the file name.
   const handleDocUpload = async (file: File) => {
     setIsUploadingMedia(true);
     setUploadError(null);
@@ -530,7 +568,8 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
         projectId,
         fileName: file.name,
         fileUrl: uploaded.ufsUrl,
-        fileType: pendingFileType,
+        fileType: docFileType("OTHER", file.name),
+        docType: "OTHER",
         fileSize: file.size,
       });
     } catch {
@@ -539,6 +578,55 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
       setIsUploadingMedia(false);
     }
   };
+
+  const openDocModal = (files: File[] = []) => {
+    setDocModalFiles(files);
+    setIsDocModalOpen(true);
+  };
+
+  const closeDocModal = () => {
+    setDocModalFiles([]);
+    setIsDocModalOpen(false);
+  };
+
+  // Documentary requirements, filed under the category the modal collected.
+  // projectFileUploader is maxFileCount: 1, so each file goes up on its own.
+  const handleDocumentsUpload = async (files: File[], docType: DocType) => {
+    setIsUploadingDoc(true);
+    setUploadError(null);
+    try {
+      for (const file of files) {
+        const result = await startUpload([file]);
+        if (!result?.[0]) {
+          setUploadError(`Upload failed for "${file.name}". Please try again.`);
+          return;
+        }
+        await createProjectFile.mutateAsync({
+          projectId,
+          fileName: file.name,
+          fileUrl: result[0].ufsUrl,
+          fileType: docFileType(docType, file.name),
+          docType,
+          fileSize: file.size,
+        });
+      }
+      closeDocModal();
+    } catch {
+      setUploadError("Upload failed. Please try again.");
+    } finally {
+      setIsUploadingDoc(false);
+    }
+  };
+
+  const changeDocType = (
+    file: { id: string; fileName: string },
+    docType: DocType,
+  ) =>
+    updateProjectFile.mutate({
+      id: file.id,
+      docType,
+      fileType: docFileType(docType, file.fileName),
+    });
 
   // Compare the current form state against the project as last loaded and return
   // the human-readable names of the cards the user actually changed, so each one
@@ -893,11 +981,17 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                       </svg>
                     </div>
                   )}
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition group-hover:bg-black/30">
-                    <svg className="h-6 w-6 text-white opacity-0 transition group-hover:opacity-100" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" /><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
-                    </svg>
-                  </div>
+                  {isUploadingMedia ? (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+                    </div>
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition group-hover:bg-black/30">
+                      <svg className="h-6 w-6 text-white opacity-0 transition group-hover:opacity-100" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" /><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
+                      </svg>
+                    </div>
+                  )}
                   <input ref={mediaInputRef} type="file" accept="image/jpeg,image/png,application/pdf" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleDocUpload(f); }} />
                 </div>
 
@@ -1930,47 +2024,21 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
               icon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>}
               title="Project Documentation"
               action={
-                <div className="flex items-center gap-2">
-                  {/* File type selector */}
-                  <select
-                    value={pendingFileType}
-                    onChange={(e) => setPendingFileType(e.target.value as typeof pendingFileType)}
-                    className="rounded-sm border border-gray-200 bg-white px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-gray-500 focus:outline-none"
-                  >
-                    <option value="OTHER">Other</option>
-                    <option value="IMAGE">Image</option>
-                    <option value="BLUEPRINT">Blueprint</option>
-                    <option value="REPORT">Report</option>
-                    <option value="CONTRACT">Contract</option>
-                    <option value="PERMIT">Permit</option>
-                  </select>
-                  <button
-                    type="button"
-                    onClick={() => docInputRef.current?.click()}
-                    disabled={isUploadingMedia}
-                    className="flex items-center gap-1.5 rounded-sm border border-gray-200 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-                  >
-                    {isUploadingMedia ? (
-                      <div className="h-3 w-3 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />
-                    ) : (
-                      <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                      </svg>
-                    )}
-                    {isUploadingMedia ? "Uploading..." : "Upload File"}
-                  </button>
-                  <input
-                    ref={docInputRef}
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    className="hidden"
-                    onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleDocUpload(f); e.target.value = ""; }}
-                  />
-                </div>
+                <button
+                  type="button"
+                  onClick={() => openDocModal()}
+                  disabled={isUploadingDoc}
+                  className="inline-flex items-center gap-2 whitespace-nowrap rounded-sm bg-blue-600 px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0 3 3m-3-3-3 3m9-6.75V18a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 18V6a2.25 2.25 0 0 1 2.25-2.25h6.879a1.5 1.5 0 0 1 1.06.44l3.622 3.62a1.5 1.5 0 0 1 .439 1.061Z" />
+                  </svg>
+                  {isUploadingDoc ? "Uploading..." : "Upload Document"}
+                </button>
               }
             />
-            <div className="p-4">
-              {uploadError && (
+            <div className="p-4 sm:p-5">
+              {uploadError && !isDocModalOpen && (
                 <div className="mb-3 flex items-center gap-2 rounded-sm border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600">
                   <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" /></svg>
                   {uploadError}
@@ -1984,79 +2052,228 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                   <button type="button" onClick={() => setDeleteNotice(null)} className="ml-auto text-green-400 hover:text-green-600">✕</button>
                 </div>
               )}
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-140 text-xs">
-                  <thead>
-                    <tr className="border-b border-gray-100 bg-gray-50">
-                      <th className="px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">File Name</th>
-                      <th className="px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Type</th>
-                      <th className="px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Upload Date</th>
-                      <th className="px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Uploaded By</th>
-                      <th className="px-3 py-2.5 text-center text-[10px] font-bold uppercase tracking-wider text-gray-400">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {projectFiles && projectFiles.length > 0 ? projectFiles.map((f) => {
-                      const isImage = f.fileType === "IMAGE" || /\.(jpg|jpeg|png|webp)$/i.exec(f.fileName);
-                      const typeColors: Record<string, string> = {
-                        IMAGE: "bg-purple-50 text-purple-600",
-                        BLUEPRINT: "bg-blue-50   text-blue-600",
-                        REPORT: "bg-amber-50  text-amber-600",
-                        CONTRACT: "bg-green-50  text-green-600",
-                        PERMIT: "bg-teal-50   text-teal-600",
-                        OTHER: "bg-gray-100  text-gray-600",
-                      };
+              <div className="grid gap-5 xl:grid-cols-[minmax(0,17rem)_minmax(0,1fr)]">
+                {/* Document checklist — ticked by the category each file is filed under */}
+                <div className="rounded-xl border border-gray-200 bg-gray-50/70 p-5">
+                  <div className="mb-4 flex items-center justify-between gap-2">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                      Document Checklist
+                    </span>
+                    <span className="text-[10px] font-bold tracking-wider text-gray-400">
+                      {satisfiedCount}/{DOC_CHECKLIST.length}
+                    </span>
+                  </div>
+                  <ul className="grid gap-3.5 sm:grid-cols-2 xl:grid-cols-1">
+                    {DOC_CHECKLIST.map((item) => {
+                      const done = satisfiedDocs.has(item.key);
                       return (
-                        <tr key={f.id} className="hover:bg-gray-50/50">
-                          <td className="px-3 py-3">
-                            <div className="flex items-center gap-2">
-                              <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-sm ${isImage ? "bg-purple-50" : "bg-red-50"}`}>
-                                {isImage ? (
-                                  <svg className="h-4 w-4 text-purple-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M2.25 19.5h19.5M2.25 4.5h19.5" /></svg>
-                                ) : (
-                                  <svg className="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
-                                )}
-                              </div>
-                              <span className="max-w-45 truncate font-medium text-gray-700">{f.fileName}</span>
+                        <li
+                          key={item.key}
+                          role="checkbox"
+                          aria-checked={done}
+                          aria-readonly
+                          className="flex items-start gap-3"
+                        >
+                          <span
+                            className={`mt-px flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition ${done
+                              ? "border-blue-600 bg-blue-600 text-white"
+                              : "border-gray-200 bg-white"
+                              }`}
+                          >
+                            {done && (
+                              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                              </svg>
+                            )}
+                          </span>
+                          <span className={`text-sm leading-snug ${done ? "font-semibold text-gray-900" : "text-gray-600"}`}>
+                            {item.label}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+
+                {/* Uploaded files */}
+                <div
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    const dropped = Array.from(e.dataTransfer.files);
+                    // Dropping here opens the modal with the files staged so the
+                    // category is still chosen before anything is uploaded.
+                    if (dropped.length > 0) openDocModal(dropped);
+                  }}
+                >
+                  {/* Mobile / tablet card list */}
+                  <div className="divide-y divide-gray-100 rounded-xl border border-gray-200 lg:hidden">
+                    {!projectFiles?.length && (
+                      <button
+                        type="button"
+                        onClick={() => openDocModal()}
+                        className="flex w-full cursor-pointer flex-col items-center justify-center gap-3 px-4 py-16 text-center transition hover:bg-gray-50/70"
+                      >
+                        <svg className="h-12 w-12 text-gray-200" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15a4.5 4.5 0 0 0 4.5 4.5H18a3.75 3.75 0 0 0 1.332-7.257 3 3 0 0 0-3.758-3.848 5.25 5.25 0 0 0-8.6-1.9M2.25 15a4.5 4.5 0 0 1 4.5-4.5M3 3l18 18" />
+                        </svg>
+                        <span className="text-sm text-gray-400">
+                          No documents uploaded yet.
+                        </span>
+                      </button>
+                    )}
+                    {projectFiles?.map((f) => {
+                      const colors = fileIconColor(f.fileType, f.fileName);
+                      return (
+                        <div key={f.id} className="space-y-3 p-4">
+                          <div className="flex items-center gap-2">
+                            <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded ${colors.bg}`}>
+                              <svg className={`h-4 w-4 ${colors.text}`} fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
+                              </svg>
                             </div>
-                          </td>
-                          <td className="px-3 py-3">
-                            <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${typeColors[f.fileType] ?? "bg-gray-100 text-gray-600"}`}>
-                              {f.fileType}
+                            <span className="min-w-0 flex-1 truncate text-sm text-gray-700" title={f.fileName}>
+                              {f.fileName}
                             </span>
-                          </td>
-                          <td className="px-3 py-3 text-gray-500">{fmt(f.createdAt)}</td>
-                          <td className="px-3 py-3 text-gray-500">{f.createdBy.name ?? f.createdBy.email}</td>
-                          <td className="px-3 py-3">
-                            <div className="flex items-center justify-center gap-2">
-                              <a href={f.fileUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-500" title="View">
+                            <div className="flex shrink-0 gap-2">
+                              <a href={f.fileUrl} target="_blank" rel="noopener noreferrer" className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-blue-600" aria-label="Preview">
                                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178Z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
                               </a>
-                              <a href={f.fileUrl} download={f.fileName} className="text-gray-400 hover:text-blue-500" title="Download">
+                              <a href={f.fileUrl} download={f.fileName} className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-blue-600" aria-label="Download">
                                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
                               </a>
                               <button
                                 type="button"
                                 onClick={() => { if (confirm(`Delete "${f.fileName}"?`)) deleteProjectFile.mutate({ id: f.id }); }}
-                                className="text-gray-400 hover:text-red-500" title="Delete"
+                                className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-red-600"
+                                aria-label="Delete"
                               >
                                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>
                               </button>
                             </div>
-                          </td>
-                        </tr>
+                          </div>
+                          <select
+                            value={resolveDocType(f)}
+                            onChange={(e) => changeDocType(f, e.target.value as DocType)}
+                            aria-label={`Document type for ${f.fileName}`}
+                            className="w-full rounded-md border border-gray-200 bg-gray-50 px-2 py-1.5 text-xs font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                          >
+                            {DOC_CHECKLIST.map((item) => (
+                              <option key={item.key} value={item.key}>{item.label}</option>
+                            ))}
+                            <option value="OTHER">Other</option>
+                          </select>
+                          <p className="text-xs text-gray-500">
+                            {fmt(f.createdAt)} &middot; {f.createdBy.name ?? f.createdBy.email}
+                          </p>
+                        </div>
                       );
-                    }) : (
-                      <tr>
-                        <td colSpan={5} className="px-3 py-8 text-center text-gray-400">
-                          No files uploaded yet. Select a file type above and click <strong>Upload File</strong>.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+                    })}
+                  </div>
+
+                  {/* Desktop table */}
+                  <div className="hidden overflow-x-auto rounded-xl border border-gray-200 lg:block">
+                    <table className="w-full min-w-160 text-sm">
+                      <thead>
+                        <tr className="border-b border-gray-100 bg-gray-50">
+                          <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">File Name</th>
+                          <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Type</th>
+                          <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Upload Date</th>
+                          <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Uploaded By</th>
+                          <th className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-wider text-gray-400">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100">
+                        {!projectFiles?.length && (
+                          <tr>
+                            <td colSpan={5}>
+                              <button
+                                type="button"
+                                onClick={() => openDocModal()}
+                                className="flex w-full cursor-pointer flex-col items-center justify-center gap-3 px-4 py-16 text-center transition hover:bg-gray-50/70"
+                              >
+                                <svg className="h-12 w-12 text-gray-200" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15a4.5 4.5 0 0 0 4.5 4.5H18a3.75 3.75 0 0 0 1.332-7.257 3 3 0 0 0-3.758-3.848 5.25 5.25 0 0 0-8.6-1.9M2.25 15a4.5 4.5 0 0 1 4.5-4.5M3 3l18 18" />
+                                </svg>
+                                <span className="text-sm text-gray-400">
+                                  No documents uploaded yet.
+                                </span>
+                              </button>
+                            </td>
+                          </tr>
+                        )}
+                        {projectFiles?.map((f) => {
+                          const colors = fileIconColor(f.fileType, f.fileName);
+                          return (
+                            <tr key={f.id} className="hover:bg-gray-50/50">
+                              <td className="px-4 py-3">
+                                <div className="flex min-w-0 items-center gap-2">
+                                  <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded ${colors.bg}`}>
+                                    <svg className={`h-4 w-4 ${colors.text}`} fill="currentColor" viewBox="0 0 20 20">
+                                      <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
+                                    </svg>
+                                  </div>
+                                  <span className="block max-w-80 truncate text-sm text-gray-700" title={f.fileName}>
+                                    {f.fileName}
+                                  </span>
+                                </div>
+                              </td>
+                              <td className="px-4 py-3">
+                                <select
+                                  value={resolveDocType(f)}
+                                  onChange={(e) => changeDocType(f, e.target.value as DocType)}
+                                  aria-label={`Document type for ${f.fileName}`}
+                                  className="max-w-45 truncate rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                                >
+                                  {DOC_CHECKLIST.map((item) => (
+                                    <option key={item.key} value={item.key}>{item.label}</option>
+                                  ))}
+                                  <option value="OTHER">Other</option>
+                                </select>
+                              </td>
+                              <td className="px-4 py-3 whitespace-nowrap text-gray-600">{fmt(f.createdAt)}</td>
+                              <td className="px-4 py-3 text-gray-600">{f.createdBy.name ?? f.createdBy.email}</td>
+                              <td className="px-4 py-3 text-right">
+                                <div className="flex justify-end gap-2">
+                                  <a href={f.fileUrl} target="_blank" rel="noopener noreferrer" className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-blue-600" aria-label="Preview">
+                                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178Z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
+                                  </a>
+                                  <a href={f.fileUrl} download={f.fileName} className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-blue-600" aria-label="Download">
+                                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+                                  </a>
+                                  <button
+                                    type="button"
+                                    onClick={() => { if (confirm(`Delete "${f.fileName}"?`)) deleteProjectFile.mutate({ id: f.id }); }}
+                                    className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-red-600"
+                                    aria-label="Delete"
+                                  >
+                                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                  <p className="mt-2 text-xs text-gray-400">
+                    Drag and drop here or use Upload Document — both open the upload
+                    form, where the requirement the document satisfies is chosen.
+                    Correct the Type column if one lands on the wrong row.
+                  </p>
+                </div>
               </div>
             </div>
+
+            <UploadDocumentModal
+              open={isDocModalOpen}
+              onClose={closeDocModal}
+              onSubmit={handleDocumentsUpload}
+              isUploading={isUploadingDoc}
+              initialFiles={docModalFiles}
+              uploadError={uploadError}
+            />
           </SectionCard>
 
           {/* ── Task Notification ── */}
