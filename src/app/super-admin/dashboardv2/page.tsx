@@ -6,7 +6,6 @@ import type { DistrictCardProps, Segment, StatCard, UserCard, UserIconProps, Don
 import type { AnnualAllocationCardProps, DistrictCardItem, ProjectStatus, SourceBreakdownCardProps, StatusCounts } from "./super.adminv2.types";
 import { STATUS_COLORS, STATUS_LABELS } from "./super.adminv2.types";
 import { formatPeso } from "~/helper/formatter"
-import { formatToPHPBillions, formatToPHPMillions } from "~/helper/formatter";
 import {
     SOURCE_OF_FUND_ORDER,
     PROJECT_SUB_TYPE_LABEL,
@@ -47,7 +46,16 @@ const DonutChart = ({ segments, size = 120, thickness = 28, centerLabel }: Donut
                     <text x={cx} y={cy - 6} textAnchor="middle" fontSize="8" fill="#64748b" fontFamily="Inter,sans-serif">
                         TOTAL VALUE
                     </text>
-                    <text x={cx} y={cy + 9} textAnchor="middle" fontSize="13" fontWeight="800" fill="#1e293b" fontFamily="Inter,sans-serif">
+                    <text
+                        x={cx}
+                        y={cy + 9}
+                        textAnchor="middle"
+                        // Full peso amounts are long, so shrink the label to keep it inside the hole.
+                        fontSize={Math.min(13, ((size - thickness * 2) * 1.6) / Math.max(centerLabel.length, 1))}
+                        fontWeight="800"
+                        fill="#1e293b"
+                        fontFamily="Inter,sans-serif"
+                    >
                         {centerLabel}
                     </text>
                 </>
@@ -227,7 +235,7 @@ const AnnualAllocationCard = ({ bySource, bySubType, variationBySource, variatio
 
                 <div className="flex flex-col items-center gap-6 md:flex-row md:items-start md:gap-8">
                     <div className="shrink-0 pt-2">
-                        <DonutChart segments={segments} size={150} thickness={34} centerLabel={formatToPHPBillions(total)} />
+                        <DonutChart segments={segments} size={150} thickness={34} centerLabel={formatPeso(total)} />
                     </div>
 
                     <div className="w-full flex-1 columns-1 gap-12 *:break-inside-avoid sm:columns-2">
@@ -243,7 +251,7 @@ const AnnualAllocationCard = ({ bySource, bySubType, variationBySource, variatio
                                     <div className="flex items-center gap-3 shrink-0">
                                         <span className="text-[10px] text-slate-400">{e.pct}%</span>
                                         <span className="text-[12px] font-bold text-slate-800 tabular-nums">
-                                            {formatToPHPMillions(e.amount)}
+                                            {formatPeso(e.amount)}
                                         </span>
                                     </div>
                                 </div>
@@ -254,7 +262,7 @@ const AnnualAllocationCard = ({ bySource, bySubType, variationBySource, variatio
                                             <div key={s.label} className="flex items-center justify-between gap-2">
                                                 <span className="text-[10.5px] text-slate-500 truncate">{s.label}</span>
                                                 <span className="text-[10.5px] text-slate-500 tabular-nums shrink-0">
-                                                    {formatToPHPMillions(s.amount)}
+                                                    {formatPeso(s.amount)}
                                                 </span>
                                             </div>
                                         ))}
@@ -267,7 +275,7 @@ const AnnualAllocationCard = ({ bySource, bySubType, variationBySource, variatio
                                                     <div key={vp.trackingNumber} className="flex items-center justify-between gap-2 pl-2">
                                                         <span className="text-[10.5px] text-slate-500 truncate">{vp.trackingNumber}</span>
                                                         <span className="text-[10.5px] text-slate-500 tabular-nums shrink-0">
-                                                            {formatToPHPMillions(vp.amount)}
+                                                            {formatPeso(vp.amount)}
                                                         </span>
                                                     </div>
                                                 ))}
@@ -365,7 +373,7 @@ const SourceBreakdownCard = ({ title, footerLabel, bySource, bySubType, variatio
                                         </span>
                                     </div>
                                     <span className="text-[12px] font-bold text-slate-800 tabular-nums shrink-0">
-                                        {formatToPHPMillions(e.amount)}
+                                        {formatPeso(e.amount)}
                                     </span>
                                 </div>
 
@@ -375,7 +383,7 @@ const SourceBreakdownCard = ({ title, footerLabel, bySource, bySubType, variatio
                                             <div key={s.label} className="flex items-center justify-between gap-2">
                                                 <span className="text-[10.5px] text-slate-500 truncate">{s.label}</span>
                                                 <span className="text-[10.5px] text-slate-500 tabular-nums shrink-0">
-                                                    {formatToPHPMillions(s.amount)}
+                                                    {formatPeso(s.amount)}
                                                 </span>
                                             </div>
                                         ))}
@@ -388,7 +396,7 @@ const SourceBreakdownCard = ({ title, footerLabel, bySource, bySubType, variatio
                                                     <div key={vp.trackingNumber} className="flex items-center justify-between gap-2 pl-2">
                                                         <span className="text-[10.5px] text-slate-500 truncate">{vp.trackingNumber}</span>
                                                         <span className="text-[10.5px] text-slate-500 tabular-nums shrink-0">
-                                                            {formatToPHPMillions(vp.amount)}
+                                                            {formatPeso(vp.amount)}
                                                         </span>
                                                     </div>
                                                 ))}
