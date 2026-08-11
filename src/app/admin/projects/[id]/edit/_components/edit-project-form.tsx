@@ -715,7 +715,10 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
       {
         id: projectId,
         title: project.title,
-        modeOfImplementation: modeOfImplementation as "BY_ADMINISTRATION" | "BY_CONTRACT",
+        modeOfImplementation: modeOfImplementation as
+          | "BY_ADMINISTRATION"
+          | "BY_CONTRACT"
+          | "UNASSIGNED_FOR_DETERMINATION",
         locationImplementation: (locDistrict as "DISTRICT_I" | "DISTRICT_II") || project.locationImplementation,
         sourceOfFund: (sourceOfFund || project.sourceOfFund) as Parameters<typeof updateProject.mutate>[0]["sourceOfFund"],
         contractCost: project.contractCost,
@@ -1036,14 +1039,18 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                           setModeOfImplementation(e.target.value);
                           // The disbursement type options depend on the mode, so
                           // drop a selection that is no longer valid.
-                          const types = MODE_TO_DISBURSEMENT_TYPES[
-                            e.target.value === "BY_ADMINISTRATION" ? "BY_ADMINISTRATION" : "BY_CONTRACT"
-                          ];
+                          const types =
+                            MODE_TO_DISBURSEMENT_TYPES[
+                              e.target.value as keyof typeof MODE_TO_DISBURSEMENT_TYPES
+                            ] ?? [];
                           if (disbType && !types.includes(disbType)) setDisbType("");
                         }}
                       >
                         <option value="BY_ADMINISTRATION">By Administration</option>
                         <option value="BY_CONTRACT">By Contract</option>
+                        <option value="UNASSIGNED_FOR_DETERMINATION">
+                          Unassigned - For Determination
+                        </option>
                       </Select>
                     </div>
                     <div>
@@ -1437,9 +1444,11 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                       className={disbErrors.type ? "border-red-300" : ""}
                     >
                       <option value="">Select Type</option>
-                      {MODE_TO_DISBURSEMENT_TYPES[
-                        modeOfImplementation === "BY_ADMINISTRATION" ? "BY_ADMINISTRATION" : "BY_CONTRACT"
-                      ].map((t) => (
+                      {(
+                        MODE_TO_DISBURSEMENT_TYPES[
+                          modeOfImplementation as keyof typeof MODE_TO_DISBURSEMENT_TYPES
+                        ] ?? []
+                      ).map((t) => (
                         <option key={t} value={t}>{DISBURSEMENT_TYPE_LABEL[t]}</option>
                       ))}
                     </Select>
