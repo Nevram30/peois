@@ -114,11 +114,11 @@ export function UploadDocumentModal({
         className="relative flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-sm bg-white shadow-2xl"
       >
         {/* Header */}
-        <div className="flex items-start justify-between border-b border-gray-100 px-8 pb-5 pt-7">
-          <div>
+        <div className="flex items-start justify-between gap-3 border-b border-gray-100 px-5 pb-5 pt-7 sm:px-8">
+          <div className="min-w-0">
             <h3
               id="upload-document-title"
-              className="text-2xl font-extrabold text-[#1e2a63]"
+              className="text-xl font-extrabold text-[#1e2a63] sm:text-2xl"
             >
               Upload Project Document
             </h3>
@@ -134,7 +134,7 @@ export function UploadDocumentModal({
             onClick={onClose}
             disabled={isUploading}
             aria-label="Close"
-            className="rounded-sm p-1 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
+            className="shrink-0 rounded-sm p-1 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -143,7 +143,7 @@ export function UploadDocumentModal({
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto px-8 py-7">
+        <div className="flex-1 overflow-y-auto px-5 py-7 sm:px-8">
           {/* Document category */}
           <div className="mb-7">
             <label
@@ -193,7 +193,7 @@ export function UploadDocumentModal({
                 setIsDragging(false);
                 if (!isUploading) addFiles(e.dataTransfer.files);
               }}
-              className={`rounded-sm border-2 border-dashed px-6 py-12 text-center transition ${isDragging
+              className={`rounded-sm border-2 border-dashed px-4 py-10 text-center transition sm:px-6 sm:py-12 ${isDragging
                 ? "border-blue-500 bg-blue-50/70"
                 : missingFiles
                   ? "border-red-300 bg-red-50/40"
@@ -292,12 +292,12 @@ export function UploadDocumentModal({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 border-t border-gray-100 bg-gray-50/70 px-8 py-5">
+        <div className="flex flex-wrap items-center justify-end gap-3 border-t border-gray-100 bg-gray-50/70 px-5 py-5 sm:px-8">
           <button
             type="button"
             onClick={onClose}
             disabled={isUploading}
-            className="rounded-sm px-5 py-3 text-sm font-bold text-gray-500 transition hover:bg-gray-100 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex-1 rounded-sm px-5 py-3 text-sm font-bold text-gray-500 transition hover:bg-gray-100 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
           >
             Cancel
           </button>
@@ -305,7 +305,7 @@ export function UploadDocumentModal({
             type="button"
             onClick={() => void handleSubmit()}
             disabled={isUploading}
-            className="inline-flex items-center gap-2 rounded-sm bg-blue-700 px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex flex-1 items-center justify-center gap-2 rounded-sm bg-blue-700 px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
           >
             {isUploading ? "Uploading..." : "Upload Document"}
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">

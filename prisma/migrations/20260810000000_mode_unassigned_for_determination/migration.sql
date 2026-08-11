@@ -1,3 +1,4 @@
 -- Projects can be encoded before the implementation mode has been decided.
 -- AlterEnum
-ALTER TYPE "ModeOfImplementation" ADD VALUE 'UNASSIGNED_FOR_DETERMINATION';
+-- IF NOT EXISTS because this value was first applied via `prisma db push`.
+ALTER TYPE "ModeOfImplementation" ADD VALUE IF NOT EXISTS 'UNASSIGNED_FOR_DETERMINATION';

@@ -142,12 +142,12 @@ const SectionHeader = ({
   action?: React.ReactNode;
 }) => {
   return (
-    <div className="flex items-center justify-between border-b border-gray-100 px-5 py-3.5">
-      <div className="flex items-center gap-2">
+    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-5 py-3.5">
+      <div className="flex min-w-0 items-center gap-2">
         <span className="text-blue-500">{icon}</span>
         <span className="text-xs font-bold uppercase tracking-widest text-gray-700">{title}</span>
       </div>
-      {action && <div>{action}</div>}
+      {action && <div className="shrink-0">{action}</div>}
     </div>
   );
 };
@@ -1704,7 +1704,7 @@ export const AddProjectForm = () => {
                 type="button"
                 onClick={() => openDocModal()}
                 disabled={isUploadingDoc}
-                className="inline-flex items-center gap-2 rounded-sm bg-blue-600 px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex items-center gap-2 whitespace-nowrap rounded-sm bg-blue-600 px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0 3 3m-3-3-3 3m9-6.75V18a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 18V6a2.25 2.25 0 0 1 2.25-2.25h6.879a1.5 1.5 0 0 1 1.06.44l3.622 3.62a1.5 1.5 0 0 1 .439 1.061Z" />
@@ -1713,7 +1713,7 @@ export const AddProjectForm = () => {
               </button>
             }
           />
-          <div className="grid gap-5 p-5 lg:grid-cols-[minmax(0,17rem)_minmax(0,1fr)]">
+          <div className="grid gap-5 p-4 sm:p-5 xl:grid-cols-[minmax(0,17rem)_minmax(0,1fr)]">
             {/* Document checklist — ticked by the category each upload is filed under */}
             <div className="rounded-xl border border-gray-200 bg-gray-50/70 p-5">
               <div className="mb-4 flex items-center justify-between gap-2">
@@ -1724,7 +1724,7 @@ export const AddProjectForm = () => {
                   {satisfiedCount}/{DOC_CHECKLIST.length}
                 </span>
               </div>
-              <ul className="space-y-3.5">
+              <ul className="grid gap-3.5 sm:grid-cols-2 xl:grid-cols-1">
                 {DOC_CHECKLIST.map((item) => {
                   const done = satisfiedDocs.has(item.key);
                   return (
@@ -1770,7 +1770,83 @@ export const AddProjectForm = () => {
                 if (dropped.length > 0) openDocModal(dropped);
               }}
             >
-              <div className="overflow-x-auto rounded-xl border border-gray-200">
+              {/* Mobile / tablet card list */}
+              <div className="divide-y divide-gray-100 rounded-xl border border-gray-200 lg:hidden">
+                {pendingFiles.length === 0 && (
+                  <button
+                    type="button"
+                    onClick={() => openDocModal()}
+                    className="flex w-full cursor-pointer flex-col items-center justify-center gap-3 px-4 py-16 text-center transition hover:bg-gray-50/70"
+                  >
+                    <svg className="h-12 w-12 text-gray-200" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15a4.5 4.5 0 0 0 4.5 4.5H18a3.75 3.75 0 0 0 1.332-7.257 3 3 0 0 0-3.758-3.848 5.25 5.25 0 0 0-8.6-1.9M2.25 15a4.5 4.5 0 0 1 4.5-4.5M3 3l18 18" />
+                    </svg>
+                    <span className="text-sm text-gray-400">
+                      No documents uploaded yet.
+                    </span>
+                  </button>
+                )}
+                {pendingFiles.map((f) => {
+                  const colors = fileIconColor(f.fileType, f.fileName);
+                  return (
+                    <div key={f.id} className="space-y-3 p-4">
+                      <div className="flex items-center gap-2">
+                        <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded ${colors.bg}`}>
+                          <svg className={`h-4 w-4 ${colors.text}`} fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        <span className="min-w-0 flex-1 truncate text-sm text-gray-700" title={f.fileName}>
+                          {f.fileName}
+                        </span>
+                        <div className="flex shrink-0 gap-2">
+                          <a
+                            href={f.fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-blue-600"
+                            aria-label="Preview"
+                          >
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                            </svg>
+                          </a>
+                          <button
+                            type="button"
+                            onClick={() => removeFile(f.id)}
+                            className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-red-600"
+                            aria-label="Remove"
+                          >
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                      <select
+                        value={f.docType}
+                        onChange={(e) => changeDocType(f.id, e.target.value as DocType)}
+                        aria-label={`Document type for ${f.fileName}`}
+                        className="w-full rounded-md border border-gray-200 bg-gray-50 px-2 py-1.5 text-xs font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                      >
+                        {DOC_CHECKLIST.map((item) => (
+                          <option key={item.key} value={item.key}>
+                            {item.label}
+                          </option>
+                        ))}
+                        <option value="OTHER">Other</option>
+                      </select>
+                      <p className="text-xs text-gray-500">
+                        {fmtDate(f.uploadedAt)} &middot; {me?.name ?? me?.email ?? "—"}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Desktop table */}
+              <div className="hidden overflow-x-auto rounded-xl border border-gray-200 lg:block">
                 <table className="w-full min-w-160 text-sm">
                   <thead>
                     <tr className="border-b border-gray-100 bg-gray-50">
@@ -1805,13 +1881,15 @@ export const AddProjectForm = () => {
                       return (
                         <tr key={f.id} className="hover:bg-gray-50/50">
                           <td className="px-4 py-3">
-                            <div className="flex items-center gap-2">
+                            <div className="flex min-w-0 items-center gap-2">
                               <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded ${colors.bg}`}>
                                 <svg className={`h-4 w-4 ${colors.text}`} fill="currentColor" viewBox="0 0 20 20">
                                   <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
                                 </svg>
                               </div>
-                              <span className="text-sm text-gray-700">{f.fileName}</span>
+                              <span className="block max-w-80 truncate text-sm text-gray-700" title={f.fileName}>
+                                {f.fileName}
+                              </span>
                             </div>
                           </td>
                           <td className="px-4 py-3">
@@ -1819,7 +1897,7 @@ export const AddProjectForm = () => {
                               value={f.docType}
                               onChange={(e) => changeDocType(f.id, e.target.value as DocType)}
                               aria-label={`Document type for ${f.fileName}`}
-                              className="max-w-60 rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                              className="max-w-45 truncate rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                             >
                               {DOC_CHECKLIST.map((item) => (
                                 <option key={item.key} value={item.key}>
@@ -1830,7 +1908,7 @@ export const AddProjectForm = () => {
                             </select>
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap text-gray-600">{fmtDate(f.uploadedAt)}</td>
-                          <td className="px-4 py-3 whitespace-nowrap text-gray-600">{me?.name ?? me?.email ?? "—"}</td>
+                          <td className="px-4 py-3 text-gray-600">{me?.name ?? me?.email ?? "—"}</td>
                           <td className="px-4 py-3 text-right">
                             <div className="flex justify-end gap-2">
                               <a
