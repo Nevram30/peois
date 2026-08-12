@@ -8,16 +8,16 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { GenerateReportModal } from "~/app/_components/generate-report-modal";
 import {
   SOURCE_OF_FUND_LABEL,
-  SOURCE_OF_FUND_ORDER,
+  SOURCE_OF_FUND_SELECTABLE,
   PROJECT_SUB_TYPE_LABEL,
   PROJECT_STATUS_LABEL,
-  PROJECT_STATUS_ORDER,
   SOURCE_TO_SUB_TYPES,
   FUNDING_PROGRAM_LABEL,
   SOURCE_TO_PROGRAMS,
   PROGRAM_TO_PROJECTS,
   type SourceOfFundValue,
   type FundingProgramValue,
+  type ProjectStatusValue,
 } from "~/lib/fund-constants";
 import { projectLabel } from "~/lib/funding-options";
 import { MODE_LABELS } from "~/app/admin/_components/admin-constant/constant";
@@ -46,6 +46,24 @@ const STATUS_LABELS: Record<string, { label: string; className: string }> = {
     label: "Others",
     className: "bg-slate-100 text-slate-700",
   },
+};
+
+// Filter-only status list: the office filters by these statuses, in this order.
+// `NOT_YET_STARTED` is shown as "For Preparation" here; the underlying value is
+// unchanged so it keeps matching stored projects.
+const FILTER_STATUS_ORDER: ProjectStatusValue[] = [
+  "NOT_YET_STARTED",
+  "FOR_IMPLEMENTATION",
+  "ON_GOING",
+  "RE_ALIGNMENT",
+  "SUSPENDED",
+  "COMPLETED",
+  "OTHERS",
+];
+
+const FILTER_STATUS_LABEL: Record<ProjectStatusValue, string> = {
+  ...PROJECT_STATUS_LABEL,
+  NOT_YET_STARTED: "For Preparation",
 };
 
 const STATUS_TITLES: Record<string, string> = {
@@ -461,7 +479,7 @@ const ProjectsList = () => {
                   className={selectClass}
                 >
                   <option value="">All</option>
-                  {SOURCE_OF_FUND_ORDER.map((k) => (
+                  {SOURCE_OF_FUND_SELECTABLE.map((k) => (
                     <option key={k} value={k}>{SOURCE_OF_FUND_LABEL[k]}</option>
                   ))}
                 </select>
@@ -570,8 +588,8 @@ const ProjectsList = () => {
                   className={selectClass}
                 >
                   <option value="">All Status</option>
-                  {PROJECT_STATUS_ORDER.map((k) => (
-                    <option key={k} value={k}>{PROJECT_STATUS_LABEL[k]}</option>
+                  {FILTER_STATUS_ORDER.map((k) => (
+                    <option key={k} value={k}>{FILTER_STATUS_LABEL[k]}</option>
                   ))}
                 </select>
               </div>
