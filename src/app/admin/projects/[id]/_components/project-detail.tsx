@@ -24,6 +24,7 @@ import {
 } from "~/lib/slippage";
 import { GeospatialSummary } from "~/app/_components/geospatial-summary";
 import { MODE_LABELS } from "~/app/admin/_components/admin-constant/constant";
+import { DOC_CHECKLIST, inferDocType, type DocType } from "~/lib/project-documents";
 
 const FILE_TYPE_PILL: Record<string, string> = {
   IMAGE: "bg-blue-50 text-blue-600 border border-blue-200",
@@ -209,6 +210,18 @@ export const ProjectDetail = ({ projectId }: Props) => {
   const { data: variationOrders } = api.project.getVariationOrders.useQuery({ projectId });
   const { data: timelineAdjustments } = api.project.getTimelineAdjustments.useQuery({ projectId });
   const { data: files } = api.projectFile.getByProjectId.useQuery({ projectId });
+
+  // Which documentary requirements are on file. Mirrors the edit form: files
+  // saved before docType existed fall back to a guess from the file name, so
+  // the checklist is not blank on older projects.
+  const satisfiedDocs = new Set(
+    (files ?? []).map(
+      (f) => (f.docType as DocType | null) ?? inferDocType(f.fileName),
+    ),
+  );
+  const satisfiedCount = DOC_CHECKLIST.filter((item) =>
+    satisfiedDocs.has(item.key),
+  ).length;
 
   if (isLoading) {
     return (
@@ -1020,130 +1033,187 @@ export const ProjectDetail = ({ projectId }: Props) => {
             </h2>
           </div>
 
-          <div className="overflow-x-auto rounded-lg border border-gray-200">
-            <table className="w-full min-w-160 text-sm">
-              <thead className="bg-gray-50">
-                <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
-                  <th className="px-4 py-3">File Name</th>
-                  <th className="px-4 py-3">Type</th>
-                  <th className="px-4 py-3">Upload Date</th>
-                  <th className="px-4 py-3">Uploaded By</th>
-                  <th className="px-4 py-3 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {files && files.length > 0 ? (
-                  files.map((f) => (
-                    <tr key={f.id} className="text-gray-700">
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2.5">
-                          {f.fileType === "IMAGE" ? (
-                            <svg
-                              className="h-4 w-4 text-blue-500"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={2}
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25z"
-                              />
-                            </svg>
-                          ) : (
-                            <svg
-                              className="h-4 w-4 text-red-500"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={2}
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                              />
-                            </svg>
-                          )}
-                          <span className="font-medium">{f.fileName}</span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span
-                          className={`inline-flex rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${FILE_TYPE_PILL[f.fileType] ?? FILE_TYPE_PILL.OTHER}`}
-                        >
-                          {FILE_TYPE_LABEL[f.fileType] ?? f.fileType}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-gray-500">{fmt(f.createdAt)}</td>
-                      <td className="px-4 py-3 text-gray-700">
-                        {f.createdBy.name ?? f.createdBy.email ?? "—"}
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center justify-end gap-3">
-                          <a
-                            href={f.fileUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-500 hover:text-blue-700"
-                            aria-label={`View ${f.fileName}`}
+          <div className="grid gap-5 xl:grid-cols-[minmax(0,17rem)_minmax(0,1fr)]">
+            {/* Document checklist — ticked by the category each file is filed
+                under. Read-only here; uploading is done from the edit form. */}
+            <div className="rounded-xl border border-gray-200 bg-gray-50/70 p-5">
+              <div className="mb-4 flex items-center justify-between gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                  Document Checklist
+                </span>
+                <span className="text-[10px] font-bold tracking-wider text-gray-400">
+                  {satisfiedCount}/{DOC_CHECKLIST.length}
+                </span>
+              </div>
+              <ul className="grid gap-3.5 sm:grid-cols-2 xl:grid-cols-1">
+                {DOC_CHECKLIST.map((item) => {
+                  const done = satisfiedDocs.has(item.key);
+                  return (
+                    <li
+                      key={item.key}
+                      role="checkbox"
+                      aria-checked={done}
+                      aria-readonly
+                      className="flex items-start gap-3"
+                    >
+                      <span
+                        className={`mt-px flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition ${done
+                          ? "border-blue-600 bg-blue-600 text-white"
+                          : "border-gray-200 bg-white"
+                          }`}
+                      >
+                        {done && (
+                          <svg
+                            className="h-3.5 w-3.5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={3}
+                            stroke="currentColor"
                           >
-                            <svg
-                              className="h-4 w-4"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={2}
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
-                              />
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                              />
-                            </svg>
-                          </a>
-                          <a
-                            href={f.fileUrl}
-                            download={f.fileName}
-                            className="text-blue-500 hover:text-blue-700"
-                            aria-label={`Download ${f.fileName}`}
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="m4.5 12.75 6 6 9-13.5"
+                            />
+                          </svg>
+                        )}
+                      </span>
+                      <span
+                        className={`text-sm leading-snug ${done ? "font-semibold text-gray-900" : "text-gray-600"}`}
+                      >
+                        {item.label}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+
+            <div className="overflow-x-auto rounded-lg border border-gray-200">
+              <table className="w-full min-w-160 text-sm">
+                <thead className="bg-gray-50">
+                  <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                    <th className="px-4 py-3">File Name</th>
+                    <th className="px-4 py-3">Type</th>
+                    <th className="px-4 py-3">Upload Date</th>
+                    <th className="px-4 py-3">Uploaded By</th>
+                    <th className="px-4 py-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {files && files.length > 0 ? (
+                    files.map((f) => (
+                      <tr key={f.id} className="text-gray-700">
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2.5">
+                            {f.fileType === "IMAGE" ? (
+                              <svg
+                                className="h-4 w-4 text-blue-500"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={2}
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25z"
+                                />
+                              </svg>
+                            ) : (
+                              <svg
+                                className="h-4 w-4 text-red-500"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={2}
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                                />
+                              </svg>
+                            )}
+                            <span className="font-medium">{f.fileName}</span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span
+                            className={`inline-flex rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${FILE_TYPE_PILL[f.fileType] ?? FILE_TYPE_PILL.OTHER}`}
                           >
-                            <svg
-                              className="h-4 w-4"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={2}
-                              stroke="currentColor"
+                            {FILE_TYPE_LABEL[f.fileType] ?? f.fileType}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-gray-500">{fmt(f.createdAt)}</td>
+                        <td className="px-4 py-3 text-gray-700">
+                          {f.createdBy.name ?? f.createdBy.email ?? "—"}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center justify-end gap-3">
+                            <a
+                              href={f.fileUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-500 hover:text-blue-700"
+                              aria-label={`View ${f.fileName}`}
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
-                              />
-                            </svg>
-                          </a>
-                        </div>
+                              <svg
+                                className="h-4 w-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={2}
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                                />
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                />
+                              </svg>
+                            </a>
+                            <a
+                              href={f.fileUrl}
+                              download={f.fileName}
+                              className="text-blue-500 hover:text-blue-700"
+                              aria-label={`Download ${f.fileName}`}
+                            >
+                              <svg
+                                className="h-4 w-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={2}
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
+                                />
+                              </svg>
+                            </a>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={5}
+                        className="px-4 py-8 text-center text-sm text-gray-400"
+                      >
+                        No documents uploaded yet.
                       </td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td
-                      colSpan={5}
-                      className="px-4 py-8 text-center text-sm text-gray-400"
-                    >
-                      No documents uploaded yet.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </section>
 

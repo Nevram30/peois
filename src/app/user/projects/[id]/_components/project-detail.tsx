@@ -16,6 +16,7 @@ import {
   type ProjectSubTypeValue,
   type SourceOfFundValue,
 } from "~/lib/fund-constants";
+import { DOC_CHECKLIST, inferDocType, type DocType } from "~/lib/project-documents";
 
 const STATUS_DOT: Record<string, string> = {
   NOT_YET_STARTED: "bg-gray-400",
@@ -92,6 +93,18 @@ export const UserProjectDetail = ({ projectId }: Props) => {
   const { data: timelineAdjustmentsData } = api.project.getTimelineAdjustments.useQuery({ projectId });
   const { data: files } = api.projectFile.getByProjectId.useQuery({ projectId });
   const { data: me } = api.user.getMe.useQuery();
+
+  // Which documentary requirements are on file. Mirrors the edit form: files
+  // saved before docType existed fall back to a guess from the file name, so
+  // the checklist is not blank on older projects.
+  const satisfiedDocs = new Set(
+    (files ?? []).map(
+      (f) => (f.docType as DocType | null) ?? inferDocType(f.fileName),
+    ),
+  );
+  const satisfiedCount = DOC_CHECKLIST.filter((item) =>
+    satisfiedDocs.has(item.key),
+  ).length;
 
   if (isLoading) {
     return (
@@ -822,72 +835,129 @@ export const UserProjectDetail = ({ projectId }: Props) => {
             </h2>
           </div>
 
-          <div className="overflow-x-auto rounded-lg border border-gray-200">
-            <table className="w-full min-w-160 text-sm">
-              <thead className="bg-gray-50">
-                <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
-                  <th className="px-4 py-3">File Name</th>
-                  <th className="px-4 py-3">Type</th>
-                  <th className="px-4 py-3">Upload Date</th>
-                  <th className="px-4 py-3 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {files && files.length > 0 ? (
-                  files.map((f) => (
-                    <tr key={f.id} className="text-gray-700">
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2.5">
+          <div className="grid gap-5 xl:grid-cols-[minmax(0,17rem)_minmax(0,1fr)]">
+            {/* Document checklist — ticked by the category each file is filed
+                under. Read-only: uploading is an administrator action. */}
+            <div className="rounded-xl border border-gray-200 bg-gray-50/70 p-5">
+              <div className="mb-4 flex items-center justify-between gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                  Document Checklist
+                </span>
+                <span className="text-[10px] font-bold tracking-wider text-gray-400">
+                  {satisfiedCount}/{DOC_CHECKLIST.length}
+                </span>
+              </div>
+              <ul className="grid gap-3.5 sm:grid-cols-2 xl:grid-cols-1">
+                {DOC_CHECKLIST.map((item) => {
+                  const done = satisfiedDocs.has(item.key);
+                  return (
+                    <li
+                      key={item.key}
+                      role="checkbox"
+                      aria-checked={done}
+                      aria-readonly
+                      className="flex items-start gap-3"
+                    >
+                      <span
+                        className={`mt-px flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition ${done
+                          ? "border-blue-600 bg-blue-600 text-white"
+                          : "border-gray-200 bg-white"
+                          }`}
+                      >
+                        {done && (
                           <svg
-                            className="h-4 w-4 text-blue-500"
+                            className="h-3.5 w-3.5"
                             fill="none"
                             viewBox="0 0 24 24"
-                            strokeWidth={2}
+                            strokeWidth={3}
                             stroke="currentColor"
                           >
                             <path
                               strokeLinecap="round"
                               strokeLinejoin="round"
-                              d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                              d="m4.5 12.75 6 6 9-13.5"
                             />
                           </svg>
-                          <span className="font-medium">{f.fileName}</span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span
-                          className={`inline-flex rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${FILE_TYPE_PILL[f.fileType] ?? FILE_TYPE_PILL.OTHER}`}
-                        >
-                          {FILE_TYPE_LABEL[f.fileType] ?? f.fileType}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-gray-500">{fmt(f.createdAt)}</td>
-                      <td className="px-4 py-3">
-                        <DocumentAccessActions
-                          projectId={projectId}
-                          fileId={f.id}
-                          fileName={f.fileName}
-                          fileUrl={f.fileUrl}
-                          requestMode="form"
-                          projectTitle={project.title}
-                          requesterName={me?.name ?? ""}
-                          requesterEmployeeId={me?.employeeId ?? ""}
-                        />
+                        )}
+                      </span>
+                      <span
+                        className={`text-sm leading-snug ${done ? "font-semibold text-gray-900" : "text-gray-600"}`}
+                      >
+                        {item.label}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+
+            <div className="overflow-x-auto rounded-lg border border-gray-200">
+              <table className="w-full min-w-160 text-sm">
+                <thead className="bg-gray-50">
+                  <tr className="text-left text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                    <th className="px-4 py-3">File Name</th>
+                    <th className="px-4 py-3">Type</th>
+                    <th className="px-4 py-3">Upload Date</th>
+                    <th className="px-4 py-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {files && files.length > 0 ? (
+                    files.map((f) => (
+                      <tr key={f.id} className="text-gray-700">
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2.5">
+                            <svg
+                              className="h-4 w-4 text-blue-500"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={2}
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                              />
+                            </svg>
+                            <span className="font-medium">{f.fileName}</span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span
+                            className={`inline-flex rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${FILE_TYPE_PILL[f.fileType] ?? FILE_TYPE_PILL.OTHER}`}
+                          >
+                            {FILE_TYPE_LABEL[f.fileType] ?? f.fileType}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-gray-500">{fmt(f.createdAt)}</td>
+                        <td className="px-4 py-3">
+                          <DocumentAccessActions
+                            projectId={projectId}
+                            fileId={f.id}
+                            fileName={f.fileName}
+                            fileUrl={f.fileUrl}
+                            requestMode="form"
+                            projectTitle={project.title}
+                            requesterName={me?.name ?? ""}
+                            requesterEmployeeId={me?.employeeId ?? ""}
+                          />
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={4}
+                        className="px-4 py-8 text-center text-sm text-gray-400"
+                      >
+                        No documents uploaded yet.
                       </td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td
-                      colSpan={4}
-                      className="px-4 py-8 text-center text-sm text-gray-400"
-                    >
-                      No documents uploaded yet.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </section>
 
