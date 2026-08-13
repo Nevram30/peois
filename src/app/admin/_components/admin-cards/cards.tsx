@@ -2,7 +2,7 @@ import { DonutChartProps, Segment } from "~/app/super-admin/dashboardv2/super.ad
 import { type AnnualAllocationCardProps, type DistrictCardItem, type DistrictCardProps, type ProjectStatus, type SourceBreakdownCardProps, STATUS_COLORS, STATUS_LABELS, type StatusCounts } from "~/app/super-admin/dashboardv2/super.adminv2.types";
 import { PROJECT_SUB_TYPE_LABEL, type ProjectSubTypeValue, SOURCE_OF_FUND_ORDER } from "~/lib/fund-constants";
 import { REM_SOURCE_LABEL, SOURCE_COLORS, SOURCE_SHORT_LABEL } from "../admin-constant/constant";
-import { formatPeso, formatToPHPBillions, formatToPHPMillions } from "~/helper/formatter";
+import { formatPeso } from "~/helper/formatter";
 
 // ── DonutChart ─────────────────────────────────────────────────
 export const DonutChart = ({ segments, size = 120, thickness = 28, centerLabel }: DonutChartProps) => {
@@ -38,7 +38,17 @@ export const DonutChart = ({ segments, size = 120, thickness = 28, centerLabel }
                     <text x={cx} y={cy - 6} textAnchor="middle" fontSize="8" fill="#64748b" fontFamily="Inter,sans-serif">
                         TOTAL VALUE
                     </text>
-                    <text x={cx} y={cy + 9} textAnchor="middle" fontSize="13" fontWeight="800" fill="#1e293b" fontFamily="Inter,sans-serif">
+                    <text
+                        x={cx}
+                        y={cy + 9}
+                        textAnchor="middle"
+                        // Shrink to fit: full peso amounts are long, so scale the
+                        // label down to the donut hole width.
+                        fontSize={Math.min(13, ((size - thickness * 2) * 1.6) / Math.max(centerLabel.length, 1))}
+                        fontWeight="800"
+                        fill="#1e293b"
+                        fontFamily="Inter,sans-serif"
+                    >
                         {centerLabel}
                     </text>
                 </>
@@ -146,7 +156,7 @@ export const AnnualAllocationCard = ({ bySource, bySubType, variationBySource, v
 
                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-8">
                     <div className="shrink-0 pt-2">
-                        <DonutChart segments={segments} size={150} thickness={34} centerLabel={formatToPHPBillions(total)} />
+                        <DonutChart segments={segments} size={150} thickness={34} centerLabel={formatPeso(total)} />
                     </div>
 
                     <div className="w-full flex-1 columns-1 sm:columns-2 gap-6 sm:gap-12 *:break-inside-avoid">
@@ -162,7 +172,7 @@ export const AnnualAllocationCard = ({ bySource, bySubType, variationBySource, v
                                     <div className="flex items-center gap-3 shrink-0">
                                         <span className="text-[10px] text-slate-400">{e.pct}%</span>
                                         <span className="text-[12px] font-bold text-slate-800 tabular-nums">
-                                            {formatToPHPMillions(e.amount)}
+                                            {formatPeso(e.amount)}
                                         </span>
                                     </div>
                                 </div>
@@ -173,7 +183,7 @@ export const AnnualAllocationCard = ({ bySource, bySubType, variationBySource, v
                                         <div key={s.label} className="flex items-center justify-between gap-2">
                                             <span className="text-[10.5px] text-slate-500 truncate">{s.label}</span>
                                             <span className="text-[10.5px] text-slate-500 tabular-nums shrink-0">
-                                                {formatToPHPMillions(s.amount)}
+                                                {formatPeso(s.amount)}
                                             </span>
                                         </div>
                                     ))}
@@ -186,7 +196,7 @@ export const AnnualAllocationCard = ({ bySource, bySubType, variationBySource, v
                                                 <div key={vp.trackingNumber} className="flex items-center justify-between gap-2 pl-2">
                                                     <span className="text-[10.5px] text-slate-500 truncate">{vp.trackingNumber}</span>
                                                     <span className="text-[10.5px] text-slate-500 tabular-nums shrink-0">
-                                                        {formatToPHPMillions(vp.amount)}
+                                                        {formatPeso(vp.amount)}
                                                     </span>
                                                 </div>
                                             ))}
@@ -263,7 +273,7 @@ export const SourceBreakdownCard = ({ title, footerLabel, bySource, bySubType, v
                                         </span>
                                     </div>
                                     <span className="text-[12px] font-bold text-slate-800 tabular-nums shrink-0">
-                                        {formatToPHPMillions(e.amount)}
+                                        {formatPeso(e.amount)}
                                     </span>
                                 </div>
 
@@ -273,7 +283,7 @@ export const SourceBreakdownCard = ({ title, footerLabel, bySource, bySubType, v
                                             <div key={s.label} className="flex items-center justify-between gap-2">
                                                 <span className="text-[10.5px] text-slate-500 truncate">{s.label}</span>
                                                 <span className="text-[10.5px] text-slate-500 tabular-nums shrink-0">
-                                                    {formatToPHPMillions(s.amount)}
+                                                    {formatPeso(s.amount)}
                                                 </span>
                                             </div>
                                         ))}
@@ -286,7 +296,7 @@ export const SourceBreakdownCard = ({ title, footerLabel, bySource, bySubType, v
                                                     <div key={vp.trackingNumber} className="flex items-center justify-between gap-2 pl-2">
                                                         <span className="text-[10.5px] text-slate-500 truncate">{vp.trackingNumber}</span>
                                                         <span className="text-[10.5px] text-slate-500 tabular-nums shrink-0">
-                                                            {formatToPHPMillions(vp.amount)}
+                                                            {formatPeso(vp.amount)}
                                                         </span>
                                                     </div>
                                                 ))}
