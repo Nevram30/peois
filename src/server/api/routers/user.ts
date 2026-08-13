@@ -280,6 +280,46 @@ export const userRouter = createTRPCRouter({
       });
     }),
 
+  // Lets a super admin set another user's password without knowing the old one.
+  setPassword: superAdminProcedure
+    .input(
+      z
+        .object({
+          id: z.string(),
+          newPassword: z
+            .string()
+            .min(8, "New password must be at least 8 characters"),
+          confirmPassword: z.string().min(1, "Confirm password is required"),
+        })
+        .refine((data) => data.newPassword === data.confirmPassword, {
+          message: "Passwords do not match",
+          path: ["confirmPassword"],
+        }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({
+        where: { id: input.id },
+        select: { role: true },
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      if (user.role === "SUPER_ADMIN") {
+        throw new Error("Cannot modify super admin");
+      }
+
+      const hashed = await bcrypt.hash(input.newPassword, 12);
+
+      await ctx.db.user.update({
+        where: { id: input.id },
+        data: { password: hashed },
+      });
+
+      return { success: true };
+    }),
+
   updateStatus: superAdminProcedure
     .input(
       z.object({
