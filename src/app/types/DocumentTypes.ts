@@ -17,3 +17,14 @@ export type DocumentProps = {
     requesterName?: string;
     requesterEmployeeId?: string;
 }
+
+/** An admin the request can be addressed to, as listed in the dropdown. */
+export type ProjectInChargeOption = {
+    id: string;
+    name: string | null;
+    email: string;
+    employeeId: string | null;
+    designation: string | null;
+    /** True when the admin is an Engineer In-Charge or the project's creator. */
+    isInCharge: boolean;
+}

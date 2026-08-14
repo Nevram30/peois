@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "~/trpc/react";
 import { type Action } from "../types/DocumentTypes";
 import { type DocumentProps } from "../types/DocumentTypes";
@@ -27,6 +27,11 @@ export const DocumentAccessActions = ({
   const utils = api.useUtils();
 
   const { data: myRequests } = api.projectAccessRequest.getMyForProject.useQuery({ projectId });
+  // Only the "form" mode asks the requester to address an in-charge.
+  const { data: projectAdmins } = api.projectAccessRequest.getProjectAdmins.useQuery(
+    { projectId },
+    { enabled: requestMode === "form" },
+  );
   const requestAccess = api.projectAccessRequest.request.useMutation({
     onSuccess: () => void utils.projectAccessRequest.getMyForProject.invalidate({ projectId }),
   });
@@ -34,9 +39,19 @@ export const DocumentAccessActions = ({
   const [modalAction, setModalAction] = useState<Action | null>(null);
   const [modalView, setModalView] = useState<"confirm" | "form">("confirm");
   const [justification, setJustification] = useState("");
+  const [inChargeId, setInChargeId] = useState("");
+
+  // Preselect a real project in-charge (they sort first) once the admins load,
+  // leaving the requester free to pick a different one.
+  useEffect(() => {
+    if (!modalAction || inChargeId) return;
+    const preferred = projectAdmins?.find((a) => a.isInCharge);
+    if (preferred) setInChargeId(preferred.id);
+  }, [modalAction, inChargeId, projectAdmins]);
 
   const openModal = (action: Action) => {
     setJustification("");
+    setInChargeId("");
     setModalAction(action);
     // "form" mode (USER) jumps straight to the form; "confirm" mode (ADMIN)
     // shows the confirm modal first, then opens the form on "Request Access".
@@ -76,6 +91,7 @@ export const DocumentAccessActions = ({
         projectFileId: fileId,
         action: modalAction,
         note: justification.trim() || undefined,
+        assignedToId: inChargeId || undefined,
       },
       { onSuccess: () => setModalAction(null) },
     );
@@ -176,6 +192,46 @@ export const DocumentAccessActions = ({
               </div>
 
               <div>
+                <label
+                  htmlFor={`in-charge-${fileId}`}
+                  className="text-[11px] font-bold uppercase tracking-wider text-gray-500"
+                >
+                  Project In-Charge <span className="text-red-500">*</span>
+                </label>
+                <div className="relative mt-1.5">
+                  <svg className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                  </svg>
+                  <select
+                    id={`in-charge-${fileId}`}
+                    value={inChargeId}
+                    onChange={(e) => setInChargeId(e.target.value)}
+                    className="w-full appearance-none rounded-lg border border-gray-200 bg-white py-2.5 pl-9 pr-9 text-sm font-semibold text-gray-800 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-gray-400"
+                    disabled={!projectAdmins || projectAdmins.length === 0}
+                  >
+                    <option value="">
+                      {projectAdmins?.length === 0
+                        ? "No admin available for this project"
+                        : "Select the admin in-charge…"}
+                    </option>
+                    {projectAdmins?.map((admin) => (
+                      <option key={admin.id} value={admin.id}>
+                        {admin.name ?? admin.email}
+                        {admin.designation ? ` · ${admin.designation}` : ""}
+                        {admin.isInCharge ? " (Project In-Charge)" : ""}
+                      </option>
+                    ))}
+                  </select>
+                  <svg className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                  </svg>
+                </div>
+                <p className="mt-1.5 text-[11px] text-gray-400">
+                  The request will be addressed to this admin for review.
+                </p>
+              </div>
+
+              <div>
                 <label className="text-[11px] font-bold uppercase tracking-wider text-gray-500">
                   Justification / Business Reason <span className="text-red-500">*</span>
                 </label>
@@ -211,7 +267,7 @@ export const DocumentAccessActions = ({
               </button>
               <button
                 type="button"
-                disabled={requestAccess.isPending || !justification.trim()}
+                disabled={requestAccess.isPending || !justification.trim() || !inChargeId}
                 onClick={submitRequest}
                 className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-6 py-3 text-sm font-bold uppercase tracking-wide text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-60"
               >

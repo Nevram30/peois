@@ -364,6 +364,7 @@ exports.Prisma.ProjectAccessRequestScalarFieldEnum = {
   status: 'status',
   note: 'note',
   requestedById: 'requestedById',
+  assignedToId: 'assignedToId',
   reviewedById: 'reviewedById',
   reviewedAt: 'reviewedAt',
   createdAt: 'createdAt',

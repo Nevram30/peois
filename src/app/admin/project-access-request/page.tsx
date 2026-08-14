@@ -77,6 +77,7 @@ const ProjectAccessRequestPage = () => {
     projectTitle: string;
     requesterName: string;
     role: string;
+    inCharge: string;
   } | null>(null);
 
   const counts = useMemo(() => {
@@ -308,6 +309,7 @@ const ProjectAccessRequestPage = () => {
                                 projectTitle: r.project.title,
                                 requesterName: r.requestedBy.name ?? r.requestedBy.email ?? "—",
                                 role: ROLE_LABEL[r.requestedBy.role] ?? r.requestedBy.role,
+                                inCharge: r.assignedTo?.name ?? r.assignedTo?.email ?? "—",
                               })
                             }
                             className="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white p-1.5 text-blue-500 shadow-sm transition hover:bg-blue-50 hover:text-blue-700"
@@ -440,6 +442,7 @@ const ProjectAccessRequestPage = () => {
               <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-gray-500">
                 <p><span className="font-semibold text-gray-700">Project:</span> {noteModal.projectTitle}</p>
                 <p><span className="font-semibold text-gray-700">Document:</span> {noteModal.fileName}</p>
+                <p><span className="font-semibold text-gray-700">Project In-Charge:</span> {noteModal.inCharge}</p>
               </div>
               <div className="rounded-lg border border-gray-100 bg-gray-50 px-4 py-3 text-sm leading-relaxed text-gray-700">
                 {noteModal.note}

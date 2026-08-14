@@ -241,6 +241,7 @@ model User {
   slippageAssessments       SlippageAssessment[]
   accessRequestsMade        ProjectAccessRequest[]    @relation("AccessRequestsMade")
   accessRequestsReviewed    ProjectAccessRequest[]    @relation("AccessRequestsReviewed")
+  accessRequestsAssigned    ProjectAccessRequest[]    @relation("AccessRequestsAssigned")
   archiveLocations          PhysicalArchiveLocation[]
   fundingProgramOptions     FundingProgramOption[]
   fundingProjectOptions     FundingProjectOption[]
@@ -606,6 +607,12 @@ model ProjectAccessRequest {
   requestedById String
   requestedBy   User   @relation("AccessRequestsMade", fields: [requestedById], references: [id])
 
+  // The project in-charge (an ADMIN) the requester addressed the request to.
+  // Nullable: requests filed before this column existed, and the admin-side
+  // "confirm" request flow, do not pick one.
+  assignedToId String?
+  assignedTo   User?   @relation("AccessRequestsAssigned", fields: [assignedToId], references: [id])
+
   reviewedById String?
   reviewedBy   User?     @relation("AccessRequestsReviewed", fields: [reviewedById], references: [id])
   reviewedAt   DateTime?
@@ -616,6 +623,7 @@ model ProjectAccessRequest {
   @@index([projectId])
   @@index([projectFileId])
   @@index([requestedById])
+  @@index([assignedToId])
   @@index([status])
 }
 

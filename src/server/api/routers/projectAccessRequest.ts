@@ -7,7 +7,56 @@ import {
 
 const actionEnum = z.enum(["VIEW", "DOWNLOAD"]);
 
+/** Normalises a person's name so free-text engineers match user accounts. */
+const normalizeName = (value: string) =>
+  value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+
 export const projectAccessRequestRouter = createTRPCRouter({
+  /**
+   * Admins a document access request for this project can be addressed to.
+   * `isInCharge` marks the ones actually tied to the project — an admin whose
+   * name is listed under "Engineers In-Charge" (free text on the project) or
+   * who created the record — and those are returned first so the dropdown
+   * defaults to a real project in-charge.
+   */
+  getProjectAdmins: protectedProcedure
+    .input(z.object({ projectId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const [project, admins] = await Promise.all([
+        ctx.db.project.findUnique({
+          where: { id: input.projectId },
+          select: { projectEngineer: true, createdById: true },
+        }),
+        ctx.db.user.findMany({
+          where: { role: "ADMIN", status: "ACTIVE" },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            employeeId: true,
+            designation: true,
+          },
+          orderBy: { name: "asc" },
+        }),
+      ]);
+
+      const engineers = new Set(
+        (project?.projectEngineer ?? "")
+          .split(",")
+          .map((e) => normalizeName(e))
+          .filter(Boolean),
+      );
+
+      return admins
+        .map((admin) => ({
+          ...admin,
+          isInCharge:
+            admin.id === project?.createdById ||
+            engineers.has(normalizeName(admin.name ?? "")),
+        }))
+        .sort((a, b) => Number(b.isInCharge) - Number(a.isInCharge));
+    }),
+
   /**
    * Admin requests access to a specific document action (view or download).
    * Idempotent: if a PENDING or APPROVED request already exists for the same
@@ -20,6 +69,8 @@ export const projectAccessRequestRouter = createTRPCRouter({
         projectFileId: z.string(),
         action: actionEnum,
         note: z.string().max(500).optional(),
+        /** The project in-charge (an ADMIN) the request is addressed to. */
+        assignedToId: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -29,6 +80,16 @@ export const projectAccessRequestRouter = createTRPCRouter({
       });
       if (!file) {
         throw new Error("Document not found.");
+      }
+
+      if (input.assignedToId) {
+        const inCharge = await ctx.db.user.findFirst({
+          where: { id: input.assignedToId, role: "ADMIN", status: "ACTIVE" },
+          select: { id: true },
+        });
+        if (!inCharge) {
+          throw new Error("Selected project in-charge is not an active admin.");
+        }
       }
 
       const existing = await ctx.db.projectAccessRequest.findFirst({
@@ -50,6 +111,7 @@ export const projectAccessRequestRouter = createTRPCRouter({
           data: {
             status: "PENDING",
             note: input.note,
+            assignedToId: input.assignedToId ?? null,
             reviewedById: null,
             reviewedAt: null,
           },
@@ -62,6 +124,7 @@ export const projectAccessRequestRouter = createTRPCRouter({
           projectFileId: input.projectFileId,
           action: input.action,
           note: input.note,
+          assignedToId: input.assignedToId,
           requestedById: ctx.session.user.id,
         },
       });
@@ -95,6 +158,7 @@ export const projectAccessRequestRouter = createTRPCRouter({
         project: { select: { id: true, title: true, projectCode: true } },
         projectFile: { select: { id: true, fileName: true, fileType: true, fileUrl: true } },
         requestedBy: { select: { name: true, email: true, image: true, employeeId: true, role: true } },
+        assignedTo: { select: { name: true, email: true, designation: true } },
         reviewedBy: { select: { name: true, email: true } },
       },
       orderBy: { createdAt: "desc" },

@@ -2853,6 +2853,7 @@ export namespace Prisma {
     slippageAssessments: number
     accessRequestsMade: number
     accessRequestsReviewed: number
+    accessRequestsAssigned: number
     archiveLocations: number
     fundingProgramOptions: number
     fundingProjectOptions: number
@@ -2875,6 +2876,7 @@ export namespace Prisma {
     slippageAssessments?: boolean | UserCountOutputTypeCountSlippageAssessmentsArgs
     accessRequestsMade?: boolean | UserCountOutputTypeCountAccessRequestsMadeArgs
     accessRequestsReviewed?: boolean | UserCountOutputTypeCountAccessRequestsReviewedArgs
+    accessRequestsAssigned?: boolean | UserCountOutputTypeCountAccessRequestsAssignedArgs
     archiveLocations?: boolean | UserCountOutputTypeCountArchiveLocationsArgs
     fundingProgramOptions?: boolean | UserCountOutputTypeCountFundingProgramOptionsArgs
     fundingProjectOptions?: boolean | UserCountOutputTypeCountFundingProjectOptionsArgs
@@ -2994,6 +2996,13 @@ export namespace Prisma {
    * UserCountOutputType without action
    */
   export type UserCountOutputTypeCountAccessRequestsReviewedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectAccessRequestWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountAccessRequestsAssignedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ProjectAccessRequestWhereInput
   }
 
@@ -3493,6 +3502,7 @@ export namespace Prisma {
     slippageAssessments?: boolean | User$slippageAssessmentsArgs<ExtArgs>
     accessRequestsMade?: boolean | User$accessRequestsMadeArgs<ExtArgs>
     accessRequestsReviewed?: boolean | User$accessRequestsReviewedArgs<ExtArgs>
+    accessRequestsAssigned?: boolean | User$accessRequestsAssignedArgs<ExtArgs>
     archiveLocations?: boolean | User$archiveLocationsArgs<ExtArgs>
     fundingProgramOptions?: boolean | User$fundingProgramOptionsArgs<ExtArgs>
     fundingProjectOptions?: boolean | User$fundingProjectOptionsArgs<ExtArgs>
@@ -3574,6 +3584,7 @@ export namespace Prisma {
     slippageAssessments?: boolean | User$slippageAssessmentsArgs<ExtArgs>
     accessRequestsMade?: boolean | User$accessRequestsMadeArgs<ExtArgs>
     accessRequestsReviewed?: boolean | User$accessRequestsReviewedArgs<ExtArgs>
+    accessRequestsAssigned?: boolean | User$accessRequestsAssignedArgs<ExtArgs>
     archiveLocations?: boolean | User$archiveLocationsArgs<ExtArgs>
     fundingProgramOptions?: boolean | User$fundingProgramOptionsArgs<ExtArgs>
     fundingProjectOptions?: boolean | User$fundingProjectOptionsArgs<ExtArgs>
@@ -3601,6 +3612,7 @@ export namespace Prisma {
       slippageAssessments: Prisma.$SlippageAssessmentPayload<ExtArgs>[]
       accessRequestsMade: Prisma.$ProjectAccessRequestPayload<ExtArgs>[]
       accessRequestsReviewed: Prisma.$ProjectAccessRequestPayload<ExtArgs>[]
+      accessRequestsAssigned: Prisma.$ProjectAccessRequestPayload<ExtArgs>[]
       archiveLocations: Prisma.$PhysicalArchiveLocationPayload<ExtArgs>[]
       fundingProgramOptions: Prisma.$FundingProgramOptionPayload<ExtArgs>[]
       fundingProjectOptions: Prisma.$FundingProjectOptionPayload<ExtArgs>[]
@@ -4032,6 +4044,7 @@ export namespace Prisma {
     slippageAssessments<T extends User$slippageAssessmentsArgs<ExtArgs> = {}>(args?: Subset<T, User$slippageAssessmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SlippageAssessmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     accessRequestsMade<T extends User$accessRequestsMadeArgs<ExtArgs> = {}>(args?: Subset<T, User$accessRequestsMadeArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     accessRequestsReviewed<T extends User$accessRequestsReviewedArgs<ExtArgs> = {}>(args?: Subset<T, User$accessRequestsReviewedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    accessRequestsAssigned<T extends User$accessRequestsAssignedArgs<ExtArgs> = {}>(args?: Subset<T, User$accessRequestsAssignedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectAccessRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     archiveLocations<T extends User$archiveLocationsArgs<ExtArgs> = {}>(args?: Subset<T, User$archiveLocationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhysicalArchiveLocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     fundingProgramOptions<T extends User$fundingProgramOptionsArgs<ExtArgs> = {}>(args?: Subset<T, User$fundingProgramOptionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FundingProgramOptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     fundingProjectOptions<T extends User$fundingProjectOptionsArgs<ExtArgs> = {}>(args?: Subset<T, User$fundingProjectOptionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FundingProjectOptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -4808,6 +4821,30 @@ export namespace Prisma {
    * User.accessRequestsReviewed
    */
   export type User$accessRequestsReviewedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectAccessRequest
+     */
+    select?: ProjectAccessRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectAccessRequest
+     */
+    omit?: ProjectAccessRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectAccessRequestInclude<ExtArgs> | null
+    where?: ProjectAccessRequestWhereInput
+    orderBy?: ProjectAccessRequestOrderByWithRelationInput | ProjectAccessRequestOrderByWithRelationInput[]
+    cursor?: ProjectAccessRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProjectAccessRequestScalarFieldEnum | ProjectAccessRequestScalarFieldEnum[]
+  }
+
+  /**
+   * User.accessRequestsAssigned
+   */
+  export type User$accessRequestsAssignedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the ProjectAccessRequest
      */
@@ -23801,6 +23838,7 @@ export namespace Prisma {
     status: $Enums.AccessRequestStatus | null
     note: string | null
     requestedById: string | null
+    assignedToId: string | null
     reviewedById: string | null
     reviewedAt: Date | null
     createdAt: Date | null
@@ -23815,6 +23853,7 @@ export namespace Prisma {
     status: $Enums.AccessRequestStatus | null
     note: string | null
     requestedById: string | null
+    assignedToId: string | null
     reviewedById: string | null
     reviewedAt: Date | null
     createdAt: Date | null
@@ -23829,6 +23868,7 @@ export namespace Prisma {
     status: number
     note: number
     requestedById: number
+    assignedToId: number
     reviewedById: number
     reviewedAt: number
     createdAt: number
@@ -23845,6 +23885,7 @@ export namespace Prisma {
     status?: true
     note?: true
     requestedById?: true
+    assignedToId?: true
     reviewedById?: true
     reviewedAt?: true
     createdAt?: true
@@ -23859,6 +23900,7 @@ export namespace Prisma {
     status?: true
     note?: true
     requestedById?: true
+    assignedToId?: true
     reviewedById?: true
     reviewedAt?: true
     createdAt?: true
@@ -23873,6 +23915,7 @@ export namespace Prisma {
     status?: true
     note?: true
     requestedById?: true
+    assignedToId?: true
     reviewedById?: true
     reviewedAt?: true
     createdAt?: true
@@ -23960,6 +24003,7 @@ export namespace Prisma {
     status: $Enums.AccessRequestStatus
     note: string | null
     requestedById: string
+    assignedToId: string | null
     reviewedById: string | null
     reviewedAt: Date | null
     createdAt: Date
@@ -23991,6 +24035,7 @@ export namespace Prisma {
     status?: boolean
     note?: boolean
     requestedById?: boolean
+    assignedToId?: boolean
     reviewedById?: boolean
     reviewedAt?: boolean
     createdAt?: boolean
@@ -23998,6 +24043,7 @@ export namespace Prisma {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
     projectFile?: boolean | ProjectFileDefaultArgs<ExtArgs>
     requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+    assignedTo?: boolean | ProjectAccessRequest$assignedToArgs<ExtArgs>
     reviewedBy?: boolean | ProjectAccessRequest$reviewedByArgs<ExtArgs>
   }, ExtArgs["result"]["projectAccessRequest"]>
 
@@ -24009,6 +24055,7 @@ export namespace Prisma {
     status?: boolean
     note?: boolean
     requestedById?: boolean
+    assignedToId?: boolean
     reviewedById?: boolean
     reviewedAt?: boolean
     createdAt?: boolean
@@ -24016,6 +24063,7 @@ export namespace Prisma {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
     projectFile?: boolean | ProjectFileDefaultArgs<ExtArgs>
     requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+    assignedTo?: boolean | ProjectAccessRequest$assignedToArgs<ExtArgs>
     reviewedBy?: boolean | ProjectAccessRequest$reviewedByArgs<ExtArgs>
   }, ExtArgs["result"]["projectAccessRequest"]>
 
@@ -24027,6 +24075,7 @@ export namespace Prisma {
     status?: boolean
     note?: boolean
     requestedById?: boolean
+    assignedToId?: boolean
     reviewedById?: boolean
     reviewedAt?: boolean
     createdAt?: boolean
@@ -24034,6 +24083,7 @@ export namespace Prisma {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
     projectFile?: boolean | ProjectFileDefaultArgs<ExtArgs>
     requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+    assignedTo?: boolean | ProjectAccessRequest$assignedToArgs<ExtArgs>
     reviewedBy?: boolean | ProjectAccessRequest$reviewedByArgs<ExtArgs>
   }, ExtArgs["result"]["projectAccessRequest"]>
 
@@ -24045,29 +24095,33 @@ export namespace Prisma {
     status?: boolean
     note?: boolean
     requestedById?: boolean
+    assignedToId?: boolean
     reviewedById?: boolean
     reviewedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ProjectAccessRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "projectFileId" | "action" | "status" | "note" | "requestedById" | "reviewedById" | "reviewedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["projectAccessRequest"]>
+  export type ProjectAccessRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "projectFileId" | "action" | "status" | "note" | "requestedById" | "assignedToId" | "reviewedById" | "reviewedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["projectAccessRequest"]>
   export type ProjectAccessRequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
     projectFile?: boolean | ProjectFileDefaultArgs<ExtArgs>
     requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+    assignedTo?: boolean | ProjectAccessRequest$assignedToArgs<ExtArgs>
     reviewedBy?: boolean | ProjectAccessRequest$reviewedByArgs<ExtArgs>
   }
   export type ProjectAccessRequestIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
     projectFile?: boolean | ProjectFileDefaultArgs<ExtArgs>
     requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+    assignedTo?: boolean | ProjectAccessRequest$assignedToArgs<ExtArgs>
     reviewedBy?: boolean | ProjectAccessRequest$reviewedByArgs<ExtArgs>
   }
   export type ProjectAccessRequestIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
     projectFile?: boolean | ProjectFileDefaultArgs<ExtArgs>
     requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+    assignedTo?: boolean | ProjectAccessRequest$assignedToArgs<ExtArgs>
     reviewedBy?: boolean | ProjectAccessRequest$reviewedByArgs<ExtArgs>
   }
 
@@ -24077,6 +24131,7 @@ export namespace Prisma {
       project: Prisma.$ProjectPayload<ExtArgs>
       projectFile: Prisma.$ProjectFilePayload<ExtArgs>
       requestedBy: Prisma.$UserPayload<ExtArgs>
+      assignedTo: Prisma.$UserPayload<ExtArgs> | null
       reviewedBy: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -24087,6 +24142,7 @@ export namespace Prisma {
       status: $Enums.AccessRequestStatus
       note: string | null
       requestedById: string
+      assignedToId: string | null
       reviewedById: string | null
       reviewedAt: Date | null
       createdAt: Date
@@ -24488,6 +24544,7 @@ export namespace Prisma {
     project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     projectFile<T extends ProjectFileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectFileDefaultArgs<ExtArgs>>): Prisma__ProjectFileClient<$Result.GetResult<Prisma.$ProjectFilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     requestedBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    assignedTo<T extends ProjectAccessRequest$assignedToArgs<ExtArgs> = {}>(args?: Subset<T, ProjectAccessRequest$assignedToArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     reviewedBy<T extends ProjectAccessRequest$reviewedByArgs<ExtArgs> = {}>(args?: Subset<T, ProjectAccessRequest$reviewedByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -24525,6 +24582,7 @@ export namespace Prisma {
     readonly status: FieldRef<"ProjectAccessRequest", 'AccessRequestStatus'>
     readonly note: FieldRef<"ProjectAccessRequest", 'String'>
     readonly requestedById: FieldRef<"ProjectAccessRequest", 'String'>
+    readonly assignedToId: FieldRef<"ProjectAccessRequest", 'String'>
     readonly reviewedById: FieldRef<"ProjectAccessRequest", 'String'>
     readonly reviewedAt: FieldRef<"ProjectAccessRequest", 'DateTime'>
     readonly createdAt: FieldRef<"ProjectAccessRequest", 'DateTime'>
@@ -24922,6 +24980,25 @@ export namespace Prisma {
      * Limit how many ProjectAccessRequests to delete.
      */
     limit?: number
+  }
+
+  /**
+   * ProjectAccessRequest.assignedTo
+   */
+  export type ProjectAccessRequest$assignedToArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
   }
 
   /**
@@ -26362,6 +26439,7 @@ export namespace Prisma {
     status: 'status',
     note: 'note',
     requestedById: 'requestedById',
+    assignedToId: 'assignedToId',
     reviewedById: 'reviewedById',
     reviewedAt: 'reviewedAt',
     createdAt: 'createdAt',
@@ -26750,6 +26828,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentListRelationFilter
     accessRequestsMade?: ProjectAccessRequestListRelationFilter
     accessRequestsReviewed?: ProjectAccessRequestListRelationFilter
+    accessRequestsAssigned?: ProjectAccessRequestListRelationFilter
     archiveLocations?: PhysicalArchiveLocationListRelationFilter
     fundingProgramOptions?: FundingProgramOptionListRelationFilter
     fundingProjectOptions?: FundingProjectOptionListRelationFilter
@@ -26788,6 +26867,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentOrderByRelationAggregateInput
     accessRequestsMade?: ProjectAccessRequestOrderByRelationAggregateInput
     accessRequestsReviewed?: ProjectAccessRequestOrderByRelationAggregateInput
+    accessRequestsAssigned?: ProjectAccessRequestOrderByRelationAggregateInput
     archiveLocations?: PhysicalArchiveLocationOrderByRelationAggregateInput
     fundingProgramOptions?: FundingProgramOptionOrderByRelationAggregateInput
     fundingProjectOptions?: FundingProjectOptionOrderByRelationAggregateInput
@@ -26829,6 +26909,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentListRelationFilter
     accessRequestsMade?: ProjectAccessRequestListRelationFilter
     accessRequestsReviewed?: ProjectAccessRequestListRelationFilter
+    accessRequestsAssigned?: ProjectAccessRequestListRelationFilter
     archiveLocations?: PhysicalArchiveLocationListRelationFilter
     fundingProgramOptions?: FundingProgramOptionListRelationFilter
     fundingProjectOptions?: FundingProjectOptionListRelationFilter
@@ -28294,6 +28375,7 @@ export namespace Prisma {
     status?: EnumAccessRequestStatusFilter<"ProjectAccessRequest"> | $Enums.AccessRequestStatus
     note?: StringNullableFilter<"ProjectAccessRequest"> | string | null
     requestedById?: StringFilter<"ProjectAccessRequest"> | string
+    assignedToId?: StringNullableFilter<"ProjectAccessRequest"> | string | null
     reviewedById?: StringNullableFilter<"ProjectAccessRequest"> | string | null
     reviewedAt?: DateTimeNullableFilter<"ProjectAccessRequest"> | Date | string | null
     createdAt?: DateTimeFilter<"ProjectAccessRequest"> | Date | string
@@ -28301,6 +28383,7 @@ export namespace Prisma {
     project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
     projectFile?: XOR<ProjectFileScalarRelationFilter, ProjectFileWhereInput>
     requestedBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+    assignedTo?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     reviewedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
@@ -28312,6 +28395,7 @@ export namespace Prisma {
     status?: SortOrder
     note?: SortOrderInput | SortOrder
     requestedById?: SortOrder
+    assignedToId?: SortOrderInput | SortOrder
     reviewedById?: SortOrderInput | SortOrder
     reviewedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -28319,6 +28403,7 @@ export namespace Prisma {
     project?: ProjectOrderByWithRelationInput
     projectFile?: ProjectFileOrderByWithRelationInput
     requestedBy?: UserOrderByWithRelationInput
+    assignedTo?: UserOrderByWithRelationInput
     reviewedBy?: UserOrderByWithRelationInput
   }
 
@@ -28333,6 +28418,7 @@ export namespace Prisma {
     status?: EnumAccessRequestStatusFilter<"ProjectAccessRequest"> | $Enums.AccessRequestStatus
     note?: StringNullableFilter<"ProjectAccessRequest"> | string | null
     requestedById?: StringFilter<"ProjectAccessRequest"> | string
+    assignedToId?: StringNullableFilter<"ProjectAccessRequest"> | string | null
     reviewedById?: StringNullableFilter<"ProjectAccessRequest"> | string | null
     reviewedAt?: DateTimeNullableFilter<"ProjectAccessRequest"> | Date | string | null
     createdAt?: DateTimeFilter<"ProjectAccessRequest"> | Date | string
@@ -28340,6 +28426,7 @@ export namespace Prisma {
     project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
     projectFile?: XOR<ProjectFileScalarRelationFilter, ProjectFileWhereInput>
     requestedBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+    assignedTo?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     reviewedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }, "id">
 
@@ -28351,6 +28438,7 @@ export namespace Prisma {
     status?: SortOrder
     note?: SortOrderInput | SortOrder
     requestedById?: SortOrder
+    assignedToId?: SortOrderInput | SortOrder
     reviewedById?: SortOrderInput | SortOrder
     reviewedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -28371,6 +28459,7 @@ export namespace Prisma {
     status?: EnumAccessRequestStatusWithAggregatesFilter<"ProjectAccessRequest"> | $Enums.AccessRequestStatus
     note?: StringNullableWithAggregatesFilter<"ProjectAccessRequest"> | string | null
     requestedById?: StringWithAggregatesFilter<"ProjectAccessRequest"> | string
+    assignedToId?: StringNullableWithAggregatesFilter<"ProjectAccessRequest"> | string | null
     reviewedById?: StringNullableWithAggregatesFilter<"ProjectAccessRequest"> | string | null
     reviewedAt?: DateTimeNullableWithAggregatesFilter<"ProjectAccessRequest"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"ProjectAccessRequest"> | Date | string
@@ -28466,6 +28555,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
@@ -28504,6 +28594,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
@@ -28542,6 +28633,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
@@ -28580,6 +28672,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -30188,6 +30281,7 @@ export namespace Prisma {
     project: ProjectCreateNestedOneWithoutAccessRequestsInput
     projectFile: ProjectFileCreateNestedOneWithoutAccessRequestsInput
     requestedBy: UserCreateNestedOneWithoutAccessRequestsMadeInput
+    assignedTo?: UserCreateNestedOneWithoutAccessRequestsAssignedInput
     reviewedBy?: UserCreateNestedOneWithoutAccessRequestsReviewedInput
   }
 
@@ -30199,6 +30293,7 @@ export namespace Prisma {
     status?: $Enums.AccessRequestStatus
     note?: string | null
     requestedById: string
+    assignedToId?: string | null
     reviewedById?: string | null
     reviewedAt?: Date | string | null
     createdAt?: Date | string
@@ -30216,6 +30311,7 @@ export namespace Prisma {
     project?: ProjectUpdateOneRequiredWithoutAccessRequestsNestedInput
     projectFile?: ProjectFileUpdateOneRequiredWithoutAccessRequestsNestedInput
     requestedBy?: UserUpdateOneRequiredWithoutAccessRequestsMadeNestedInput
+    assignedTo?: UserUpdateOneWithoutAccessRequestsAssignedNestedInput
     reviewedBy?: UserUpdateOneWithoutAccessRequestsReviewedNestedInput
   }
 
@@ -30227,6 +30323,7 @@ export namespace Prisma {
     status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
     note?: NullableStringFieldUpdateOperationsInput | string | null
     requestedById?: StringFieldUpdateOperationsInput | string
+    assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30241,6 +30338,7 @@ export namespace Prisma {
     status?: $Enums.AccessRequestStatus
     note?: string | null
     requestedById: string
+    assignedToId?: string | null
     reviewedById?: string | null
     reviewedAt?: Date | string | null
     createdAt?: Date | string
@@ -30265,6 +30363,7 @@ export namespace Prisma {
     status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
     note?: NullableStringFieldUpdateOperationsInput | string | null
     requestedById?: StringFieldUpdateOperationsInput | string
+    assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -31901,6 +32000,7 @@ export namespace Prisma {
     status?: SortOrder
     note?: SortOrder
     requestedById?: SortOrder
+    assignedToId?: SortOrder
     reviewedById?: SortOrder
     reviewedAt?: SortOrder
     createdAt?: SortOrder
@@ -31915,6 +32015,7 @@ export namespace Prisma {
     status?: SortOrder
     note?: SortOrder
     requestedById?: SortOrder
+    assignedToId?: SortOrder
     reviewedById?: SortOrder
     reviewedAt?: SortOrder
     createdAt?: SortOrder
@@ -31929,6 +32030,7 @@ export namespace Prisma {
     status?: SortOrder
     note?: SortOrder
     requestedById?: SortOrder
+    assignedToId?: SortOrder
     reviewedById?: SortOrder
     reviewedAt?: SortOrder
     createdAt?: SortOrder
@@ -32092,6 +32194,13 @@ export namespace Prisma {
     connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
   }
 
+  export type ProjectAccessRequestCreateNestedManyWithoutAssignedToInput = {
+    create?: XOR<ProjectAccessRequestCreateWithoutAssignedToInput, ProjectAccessRequestUncheckedCreateWithoutAssignedToInput> | ProjectAccessRequestCreateWithoutAssignedToInput[] | ProjectAccessRequestUncheckedCreateWithoutAssignedToInput[]
+    connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutAssignedToInput | ProjectAccessRequestCreateOrConnectWithoutAssignedToInput[]
+    createMany?: ProjectAccessRequestCreateManyAssignedToInputEnvelope
+    connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+  }
+
   export type PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput = {
     create?: XOR<PhysicalArchiveLocationCreateWithoutCreatedByInput, PhysicalArchiveLocationUncheckedCreateWithoutCreatedByInput> | PhysicalArchiveLocationCreateWithoutCreatedByInput[] | PhysicalArchiveLocationUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: PhysicalArchiveLocationCreateOrConnectWithoutCreatedByInput | PhysicalArchiveLocationCreateOrConnectWithoutCreatedByInput[]
@@ -32222,6 +32331,13 @@ export namespace Prisma {
     create?: XOR<ProjectAccessRequestCreateWithoutReviewedByInput, ProjectAccessRequestUncheckedCreateWithoutReviewedByInput> | ProjectAccessRequestCreateWithoutReviewedByInput[] | ProjectAccessRequestUncheckedCreateWithoutReviewedByInput[]
     connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutReviewedByInput | ProjectAccessRequestCreateOrConnectWithoutReviewedByInput[]
     createMany?: ProjectAccessRequestCreateManyReviewedByInputEnvelope
+    connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+  }
+
+  export type ProjectAccessRequestUncheckedCreateNestedManyWithoutAssignedToInput = {
+    create?: XOR<ProjectAccessRequestCreateWithoutAssignedToInput, ProjectAccessRequestUncheckedCreateWithoutAssignedToInput> | ProjectAccessRequestCreateWithoutAssignedToInput[] | ProjectAccessRequestUncheckedCreateWithoutAssignedToInput[]
+    connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutAssignedToInput | ProjectAccessRequestCreateOrConnectWithoutAssignedToInput[]
+    createMany?: ProjectAccessRequestCreateManyAssignedToInputEnvelope
     connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
   }
 
@@ -32491,6 +32607,20 @@ export namespace Prisma {
     deleteMany?: ProjectAccessRequestScalarWhereInput | ProjectAccessRequestScalarWhereInput[]
   }
 
+  export type ProjectAccessRequestUpdateManyWithoutAssignedToNestedInput = {
+    create?: XOR<ProjectAccessRequestCreateWithoutAssignedToInput, ProjectAccessRequestUncheckedCreateWithoutAssignedToInput> | ProjectAccessRequestCreateWithoutAssignedToInput[] | ProjectAccessRequestUncheckedCreateWithoutAssignedToInput[]
+    connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutAssignedToInput | ProjectAccessRequestCreateOrConnectWithoutAssignedToInput[]
+    upsert?: ProjectAccessRequestUpsertWithWhereUniqueWithoutAssignedToInput | ProjectAccessRequestUpsertWithWhereUniqueWithoutAssignedToInput[]
+    createMany?: ProjectAccessRequestCreateManyAssignedToInputEnvelope
+    set?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    disconnect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    delete?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    update?: ProjectAccessRequestUpdateWithWhereUniqueWithoutAssignedToInput | ProjectAccessRequestUpdateWithWhereUniqueWithoutAssignedToInput[]
+    updateMany?: ProjectAccessRequestUpdateManyWithWhereWithoutAssignedToInput | ProjectAccessRequestUpdateManyWithWhereWithoutAssignedToInput[]
+    deleteMany?: ProjectAccessRequestScalarWhereInput | ProjectAccessRequestScalarWhereInput[]
+  }
+
   export type PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput = {
     create?: XOR<PhysicalArchiveLocationCreateWithoutCreatedByInput, PhysicalArchiveLocationUncheckedCreateWithoutCreatedByInput> | PhysicalArchiveLocationCreateWithoutCreatedByInput[] | PhysicalArchiveLocationUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: PhysicalArchiveLocationCreateOrConnectWithoutCreatedByInput | PhysicalArchiveLocationCreateOrConnectWithoutCreatedByInput[]
@@ -32754,6 +32884,20 @@ export namespace Prisma {
     connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
     update?: ProjectAccessRequestUpdateWithWhereUniqueWithoutReviewedByInput | ProjectAccessRequestUpdateWithWhereUniqueWithoutReviewedByInput[]
     updateMany?: ProjectAccessRequestUpdateManyWithWhereWithoutReviewedByInput | ProjectAccessRequestUpdateManyWithWhereWithoutReviewedByInput[]
+    deleteMany?: ProjectAccessRequestScalarWhereInput | ProjectAccessRequestScalarWhereInput[]
+  }
+
+  export type ProjectAccessRequestUncheckedUpdateManyWithoutAssignedToNestedInput = {
+    create?: XOR<ProjectAccessRequestCreateWithoutAssignedToInput, ProjectAccessRequestUncheckedCreateWithoutAssignedToInput> | ProjectAccessRequestCreateWithoutAssignedToInput[] | ProjectAccessRequestUncheckedCreateWithoutAssignedToInput[]
+    connectOrCreate?: ProjectAccessRequestCreateOrConnectWithoutAssignedToInput | ProjectAccessRequestCreateOrConnectWithoutAssignedToInput[]
+    upsert?: ProjectAccessRequestUpsertWithWhereUniqueWithoutAssignedToInput | ProjectAccessRequestUpsertWithWhereUniqueWithoutAssignedToInput[]
+    createMany?: ProjectAccessRequestCreateManyAssignedToInputEnvelope
+    set?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    disconnect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    delete?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    connect?: ProjectAccessRequestWhereUniqueInput | ProjectAccessRequestWhereUniqueInput[]
+    update?: ProjectAccessRequestUpdateWithWhereUniqueWithoutAssignedToInput | ProjectAccessRequestUpdateWithWhereUniqueWithoutAssignedToInput[]
+    updateMany?: ProjectAccessRequestUpdateManyWithWhereWithoutAssignedToInput | ProjectAccessRequestUpdateManyWithWhereWithoutAssignedToInput[]
     deleteMany?: ProjectAccessRequestScalarWhereInput | ProjectAccessRequestScalarWhereInput[]
   }
 
@@ -33791,6 +33935,12 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type UserCreateNestedOneWithoutAccessRequestsAssignedInput = {
+    create?: XOR<UserCreateWithoutAccessRequestsAssignedInput, UserUncheckedCreateWithoutAccessRequestsAssignedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAccessRequestsAssignedInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type UserCreateNestedOneWithoutAccessRequestsReviewedInput = {
     create?: XOR<UserCreateWithoutAccessRequestsReviewedInput, UserUncheckedCreateWithoutAccessRequestsReviewedInput>
     connectOrCreate?: UserCreateOrConnectWithoutAccessRequestsReviewedInput
@@ -33827,6 +33977,16 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutAccessRequestsMadeInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAccessRequestsMadeInput, UserUpdateWithoutAccessRequestsMadeInput>, UserUncheckedUpdateWithoutAccessRequestsMadeInput>
+  }
+
+  export type UserUpdateOneWithoutAccessRequestsAssignedNestedInput = {
+    create?: XOR<UserCreateWithoutAccessRequestsAssignedInput, UserUncheckedCreateWithoutAccessRequestsAssignedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAccessRequestsAssignedInput
+    upsert?: UserUpsertWithoutAccessRequestsAssignedInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAccessRequestsAssignedInput, UserUpdateWithoutAccessRequestsAssignedInput>, UserUncheckedUpdateWithoutAccessRequestsAssignedInput>
   }
 
   export type UserUpdateOneWithoutAccessRequestsReviewedNestedInput = {
@@ -34930,6 +35090,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     project: ProjectCreateNestedOneWithoutAccessRequestsInput
     projectFile: ProjectFileCreateNestedOneWithoutAccessRequestsInput
+    assignedTo?: UserCreateNestedOneWithoutAccessRequestsAssignedInput
     reviewedBy?: UserCreateNestedOneWithoutAccessRequestsReviewedInput
   }
 
@@ -34940,6 +35101,7 @@ export namespace Prisma {
     action: $Enums.AccessRequestAction
     status?: $Enums.AccessRequestStatus
     note?: string | null
+    assignedToId?: string | null
     reviewedById?: string | null
     reviewedAt?: Date | string | null
     createdAt?: Date | string
@@ -34967,6 +35129,7 @@ export namespace Prisma {
     project: ProjectCreateNestedOneWithoutAccessRequestsInput
     projectFile: ProjectFileCreateNestedOneWithoutAccessRequestsInput
     requestedBy: UserCreateNestedOneWithoutAccessRequestsMadeInput
+    assignedTo?: UserCreateNestedOneWithoutAccessRequestsAssignedInput
   }
 
   export type ProjectAccessRequestUncheckedCreateWithoutReviewedByInput = {
@@ -34977,6 +35140,7 @@ export namespace Prisma {
     status?: $Enums.AccessRequestStatus
     note?: string | null
     requestedById: string
+    assignedToId?: string | null
     reviewedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -34989,6 +35153,44 @@ export namespace Prisma {
 
   export type ProjectAccessRequestCreateManyReviewedByInputEnvelope = {
     data: ProjectAccessRequestCreateManyReviewedByInput | ProjectAccessRequestCreateManyReviewedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProjectAccessRequestCreateWithoutAssignedToInput = {
+    id?: string
+    action: $Enums.AccessRequestAction
+    status?: $Enums.AccessRequestStatus
+    note?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutAccessRequestsInput
+    projectFile: ProjectFileCreateNestedOneWithoutAccessRequestsInput
+    requestedBy: UserCreateNestedOneWithoutAccessRequestsMadeInput
+    reviewedBy?: UserCreateNestedOneWithoutAccessRequestsReviewedInput
+  }
+
+  export type ProjectAccessRequestUncheckedCreateWithoutAssignedToInput = {
+    id?: string
+    projectId: string
+    projectFileId: string
+    action: $Enums.AccessRequestAction
+    status?: $Enums.AccessRequestStatus
+    note?: string | null
+    requestedById: string
+    reviewedById?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectAccessRequestCreateOrConnectWithoutAssignedToInput = {
+    where: ProjectAccessRequestWhereUniqueInput
+    create: XOR<ProjectAccessRequestCreateWithoutAssignedToInput, ProjectAccessRequestUncheckedCreateWithoutAssignedToInput>
+  }
+
+  export type ProjectAccessRequestCreateManyAssignedToInputEnvelope = {
+    data: ProjectAccessRequestCreateManyAssignedToInput | ProjectAccessRequestCreateManyAssignedToInput[]
     skipDuplicates?: boolean
   }
 
@@ -35544,6 +35746,7 @@ export namespace Prisma {
     status?: EnumAccessRequestStatusFilter<"ProjectAccessRequest"> | $Enums.AccessRequestStatus
     note?: StringNullableFilter<"ProjectAccessRequest"> | string | null
     requestedById?: StringFilter<"ProjectAccessRequest"> | string
+    assignedToId?: StringNullableFilter<"ProjectAccessRequest"> | string | null
     reviewedById?: StringNullableFilter<"ProjectAccessRequest"> | string | null
     reviewedAt?: DateTimeNullableFilter<"ProjectAccessRequest"> | Date | string | null
     createdAt?: DateTimeFilter<"ProjectAccessRequest"> | Date | string
@@ -35564,6 +35767,22 @@ export namespace Prisma {
   export type ProjectAccessRequestUpdateManyWithWhereWithoutReviewedByInput = {
     where: ProjectAccessRequestScalarWhereInput
     data: XOR<ProjectAccessRequestUpdateManyMutationInput, ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByInput>
+  }
+
+  export type ProjectAccessRequestUpsertWithWhereUniqueWithoutAssignedToInput = {
+    where: ProjectAccessRequestWhereUniqueInput
+    update: XOR<ProjectAccessRequestUpdateWithoutAssignedToInput, ProjectAccessRequestUncheckedUpdateWithoutAssignedToInput>
+    create: XOR<ProjectAccessRequestCreateWithoutAssignedToInput, ProjectAccessRequestUncheckedCreateWithoutAssignedToInput>
+  }
+
+  export type ProjectAccessRequestUpdateWithWhereUniqueWithoutAssignedToInput = {
+    where: ProjectAccessRequestWhereUniqueInput
+    data: XOR<ProjectAccessRequestUpdateWithoutAssignedToInput, ProjectAccessRequestUncheckedUpdateWithoutAssignedToInput>
+  }
+
+  export type ProjectAccessRequestUpdateManyWithWhereWithoutAssignedToInput = {
+    where: ProjectAccessRequestScalarWhereInput
+    data: XOR<ProjectAccessRequestUpdateManyMutationInput, ProjectAccessRequestUncheckedUpdateManyWithoutAssignedToInput>
   }
 
   export type PhysicalArchiveLocationUpsertWithWhereUniqueWithoutCreatedByInput = {
@@ -35708,6 +35927,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
@@ -35745,6 +35965,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
@@ -35798,6 +36019,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
@@ -35835,6 +36057,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -35872,6 +36095,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
@@ -35909,6 +36133,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
@@ -36120,6 +36345,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     projectFile: ProjectFileCreateNestedOneWithoutAccessRequestsInput
     requestedBy: UserCreateNestedOneWithoutAccessRequestsMadeInput
+    assignedTo?: UserCreateNestedOneWithoutAccessRequestsAssignedInput
     reviewedBy?: UserCreateNestedOneWithoutAccessRequestsReviewedInput
   }
 
@@ -36130,6 +36356,7 @@ export namespace Prisma {
     status?: $Enums.AccessRequestStatus
     note?: string | null
     requestedById: string
+    assignedToId?: string | null
     reviewedById?: string | null
     reviewedAt?: Date | string | null
     createdAt?: Date | string
@@ -36252,6 +36479,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
@@ -36289,6 +36517,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -36592,6 +36821,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestCreateNestedManyWithoutAssignedToInput
     fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
     landbankLoanOptions?: LandbankLoanOptionCreateNestedManyWithoutCreatedByInput
@@ -36629,6 +36859,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedCreateNestedManyWithoutAssignedToInput
     fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
     landbankLoanOptions?: LandbankLoanOptionUncheckedCreateNestedManyWithoutCreatedByInput
@@ -36809,6 +37040,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUpdateManyWithoutAssignedToNestedInput
     fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
     landbankLoanOptions?: LandbankLoanOptionUpdateManyWithoutCreatedByNestedInput
@@ -36846,6 +37078,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedUpdateManyWithoutAssignedToNestedInput
     fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
     landbankLoanOptions?: LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -37003,6 +37236,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
@@ -37040,6 +37274,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
@@ -37220,6 +37455,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
@@ -37257,6 +37493,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -37415,6 +37652,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
@@ -37452,6 +37690,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
@@ -37632,6 +37871,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
@@ -37669,6 +37909,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -37827,6 +38068,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
@@ -37864,6 +38106,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
@@ -38044,6 +38287,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
@@ -38081,6 +38325,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -38119,6 +38364,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
     landbankLoanOptions?: LandbankLoanOptionCreateNestedManyWithoutCreatedByInput
@@ -38156,6 +38402,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
     landbankLoanOptions?: LandbankLoanOptionUncheckedCreateNestedManyWithoutCreatedByInput
@@ -38209,6 +38456,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
     landbankLoanOptions?: LandbankLoanOptionUpdateManyWithoutCreatedByNestedInput
@@ -38246,6 +38494,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
     landbankLoanOptions?: LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -38283,6 +38532,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
     landbankLoanOptions?: LandbankLoanOptionCreateNestedManyWithoutCreatedByInput
@@ -38320,6 +38570,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
     landbankLoanOptions?: LandbankLoanOptionUncheckedCreateNestedManyWithoutCreatedByInput
@@ -38373,6 +38624,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
     landbankLoanOptions?: LandbankLoanOptionUpdateManyWithoutCreatedByNestedInput
@@ -38410,6 +38662,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
     landbankLoanOptions?: LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -38447,6 +38700,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
@@ -38484,6 +38738,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
@@ -38537,6 +38792,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
@@ -38574,6 +38830,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -38731,6 +38988,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
@@ -38768,6 +39026,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
@@ -38948,6 +39207,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
@@ -38985,6 +39245,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -39143,6 +39404,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
@@ -39180,6 +39442,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
@@ -39360,6 +39623,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
@@ -39397,6 +39661,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -39555,6 +39820,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
@@ -39592,6 +39858,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
@@ -39634,6 +39901,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
@@ -39671,6 +39939,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
@@ -39879,6 +40148,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
@@ -39916,6 +40186,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -39964,6 +40235,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
@@ -40001,6 +40273,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -40083,6 +40356,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
@@ -40120,6 +40394,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
@@ -40236,6 +40511,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
@@ -40273,6 +40549,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -40391,6 +40668,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
@@ -40428,6 +40706,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
@@ -40481,6 +40760,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
@@ -40518,6 +40798,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -40676,6 +40957,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
@@ -40713,6 +40995,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
@@ -40734,6 +41017,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     project: ProjectCreateNestedOneWithoutAccessRequestsInput
     requestedBy: UserCreateNestedOneWithoutAccessRequestsMadeInput
+    assignedTo?: UserCreateNestedOneWithoutAccessRequestsAssignedInput
     reviewedBy?: UserCreateNestedOneWithoutAccessRequestsReviewedInput
   }
 
@@ -40744,6 +41028,7 @@ export namespace Prisma {
     status?: $Enums.AccessRequestStatus
     note?: string | null
     requestedById: string
+    assignedToId?: string | null
     reviewedById?: string | null
     reviewedAt?: Date | string | null
     createdAt?: Date | string
@@ -40929,6 +41214,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
@@ -40966,6 +41252,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -41169,6 +41456,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
     slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
@@ -41206,6 +41494,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
     slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
@@ -41215,6 +41504,87 @@ export namespace Prisma {
   export type UserCreateOrConnectWithoutAccessRequestsMadeInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutAccessRequestsMadeInput, UserUncheckedCreateWithoutAccessRequestsMadeInput>
+  }
+
+  export type UserCreateWithoutAccessRequestsAssignedInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password: string
+    role?: $Enums.UserRole
+    employeeId?: string | null
+    designation?: string | null
+    division?: string | null
+    contactNumber?: string | null
+    birthday?: Date | string | null
+    sex?: $Enums.Sex | null
+    status?: $Enums.UserStatus
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    posts?: PostCreateNestedManyWithoutCreatedByInput
+    projects?: ProjectCreateNestedManyWithoutCreatedByInput
+    sessions?: UserSessionCreateNestedManyWithoutUserInput
+    documents?: DocumentCreateNestedManyWithoutCreatedByInput
+    projectActivities?: ProjectActivityCreateNestedManyWithoutCreatedByInput
+    disbursements?: DisbursementCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderCreateNestedManyWithoutCreatedByInput
+    taskNotificationsReceived?: TaskNotificationCreateNestedManyWithoutNotifyUserInput
+    taskNotificationsCreated?: TaskNotificationCreateNestedManyWithoutCreatedByInput
+    taskReplies?: TaskReplyCreateNestedManyWithoutCreatedByInput
+    projectFiles?: ProjectFileCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutAccessRequestsAssignedInput = {
+    id?: string
+    name?: string | null
+    email: string
+    password: string
+    role?: $Enums.UserRole
+    employeeId?: string | null
+    designation?: string | null
+    division?: string | null
+    contactNumber?: string | null
+    birthday?: Date | string | null
+    sex?: $Enums.Sex | null
+    status?: $Enums.UserStatus
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
+    projects?: ProjectUncheckedCreateNestedManyWithoutCreatedByInput
+    sessions?: UserSessionUncheckedCreateNestedManyWithoutUserInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutCreatedByInput
+    projectActivities?: ProjectActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    disbursements?: DisbursementUncheckedCreateNestedManyWithoutCreatedByInput
+    variationOrders?: VariationOrderUncheckedCreateNestedManyWithoutCreatedByInput
+    taskNotificationsReceived?: TaskNotificationUncheckedCreateNestedManyWithoutNotifyUserInput
+    taskNotificationsCreated?: TaskNotificationUncheckedCreateNestedManyWithoutCreatedByInput
+    taskReplies?: TaskReplyUncheckedCreateNestedManyWithoutCreatedByInput
+    projectFiles?: ProjectFileUncheckedCreateNestedManyWithoutCreatedByInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
+    slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutAccessRequestsAssignedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutAccessRequestsAssignedInput, UserUncheckedCreateWithoutAccessRequestsAssignedInput>
   }
 
   export type UserCreateWithoutAccessRequestsReviewedInput = {
@@ -41248,6 +41618,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentCreateNestedManyWithoutCreatedByInput
     slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
+    accessRequestsAssigned?: ProjectAccessRequestCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
@@ -41285,6 +41656,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedCreateNestedManyWithoutCreatedByInput
     slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
@@ -41500,6 +41872,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
     slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
@@ -41536,6 +41909,94 @@ export namespace Prisma {
     projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
     slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedUpdateManyWithoutAssignedToNestedInput
+    archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUpsertWithoutAccessRequestsAssignedInput = {
+    update: XOR<UserUpdateWithoutAccessRequestsAssignedInput, UserUncheckedUpdateWithoutAccessRequestsAssignedInput>
+    create: XOR<UserCreateWithoutAccessRequestsAssignedInput, UserUncheckedCreateWithoutAccessRequestsAssignedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutAccessRequestsAssignedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutAccessRequestsAssignedInput, UserUncheckedUpdateWithoutAccessRequestsAssignedInput>
+  }
+
+  export type UserUpdateWithoutAccessRequestsAssignedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    designation?: NullableStringFieldUpdateOperationsInput | string | null
+    division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    posts?: PostUpdateManyWithoutCreatedByNestedInput
+    projects?: ProjectUpdateManyWithoutCreatedByNestedInput
+    sessions?: UserSessionUpdateManyWithoutUserNestedInput
+    documents?: DocumentUpdateManyWithoutCreatedByNestedInput
+    projectActivities?: ProjectActivityUpdateManyWithoutCreatedByNestedInput
+    disbursements?: DisbursementUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUpdateManyWithoutCreatedByNestedInput
+    taskNotificationsReceived?: TaskNotificationUpdateManyWithoutNotifyUserNestedInput
+    taskNotificationsCreated?: TaskNotificationUpdateManyWithoutCreatedByNestedInput
+    taskReplies?: TaskReplyUpdateManyWithoutCreatedByNestedInput
+    projectFiles?: ProjectFileUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
+    accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
+    fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
+    fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
+    landbankLoanOptions?: LandbankLoanOptionUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutAccessRequestsAssignedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
+    designation?: NullableStringFieldUpdateOperationsInput | string | null
+    division?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
+    projects?: ProjectUncheckedUpdateManyWithoutCreatedByNestedInput
+    sessions?: UserSessionUncheckedUpdateManyWithoutUserNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectActivities?: ProjectActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    disbursements?: DisbursementUncheckedUpdateManyWithoutCreatedByNestedInput
+    variationOrders?: VariationOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+    taskNotificationsReceived?: TaskNotificationUncheckedUpdateManyWithoutNotifyUserNestedInput
+    taskNotificationsCreated?: TaskNotificationUncheckedUpdateManyWithoutCreatedByNestedInput
+    taskReplies?: TaskReplyUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectFiles?: ProjectFileUncheckedUpdateManyWithoutCreatedByNestedInput
+    timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -41585,6 +42046,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUpdateManyWithoutCreatedByNestedInput
     slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
@@ -41622,6 +42084,7 @@ export namespace Prisma {
     timelineAdjustments?: TimelineAdjustmentUncheckedUpdateManyWithoutCreatedByNestedInput
     slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -41659,6 +42122,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionCreateNestedManyWithoutCreatedByInput
@@ -41696,6 +42160,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedCreateNestedManyWithoutCreatedByInput
     accessRequestsMade?: ProjectAccessRequestUncheckedCreateNestedManyWithoutRequestedByInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedCreateNestedManyWithoutReviewedByInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedCreateNestedManyWithoutAssignedToInput
     archiveLocations?: PhysicalArchiveLocationUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProgramOptions?: FundingProgramOptionUncheckedCreateNestedManyWithoutCreatedByInput
     fundingProjectOptions?: FundingProjectOptionUncheckedCreateNestedManyWithoutCreatedByInput
@@ -41749,6 +42214,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUpdateManyWithoutCreatedByNestedInput
@@ -41786,6 +42252,7 @@ export namespace Prisma {
     slippageAssessments?: SlippageAssessmentUncheckedUpdateManyWithoutCreatedByNestedInput
     accessRequestsMade?: ProjectAccessRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     accessRequestsReviewed?: ProjectAccessRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+    accessRequestsAssigned?: ProjectAccessRequestUncheckedUpdateManyWithoutAssignedToNestedInput
     archiveLocations?: PhysicalArchiveLocationUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProgramOptions?: FundingProgramOptionUncheckedUpdateManyWithoutCreatedByNestedInput
     fundingProjectOptions?: FundingProjectOptionUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -41977,6 +42444,7 @@ export namespace Prisma {
     action: $Enums.AccessRequestAction
     status?: $Enums.AccessRequestStatus
     note?: string | null
+    assignedToId?: string | null
     reviewedById?: string | null
     reviewedAt?: Date | string | null
     createdAt?: Date | string
@@ -41991,6 +42459,21 @@ export namespace Prisma {
     status?: $Enums.AccessRequestStatus
     note?: string | null
     requestedById: string
+    assignedToId?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectAccessRequestCreateManyAssignedToInput = {
+    id?: string
+    projectId: string
+    projectFileId: string
+    action: $Enums.AccessRequestAction
+    status?: $Enums.AccessRequestStatus
+    note?: string | null
+    requestedById: string
+    reviewedById?: string | null
     reviewedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -42596,6 +43079,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutAccessRequestsNestedInput
     projectFile?: ProjectFileUpdateOneRequiredWithoutAccessRequestsNestedInput
+    assignedTo?: UserUpdateOneWithoutAccessRequestsAssignedNestedInput
     reviewedBy?: UserUpdateOneWithoutAccessRequestsReviewedNestedInput
   }
 
@@ -42606,6 +43090,7 @@ export namespace Prisma {
     action?: EnumAccessRequestActionFieldUpdateOperationsInput | $Enums.AccessRequestAction
     status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
     note?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -42619,6 +43104,7 @@ export namespace Prisma {
     action?: EnumAccessRequestActionFieldUpdateOperationsInput | $Enums.AccessRequestAction
     status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
     note?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -42636,6 +43122,7 @@ export namespace Prisma {
     project?: ProjectUpdateOneRequiredWithoutAccessRequestsNestedInput
     projectFile?: ProjectFileUpdateOneRequiredWithoutAccessRequestsNestedInput
     requestedBy?: UserUpdateOneRequiredWithoutAccessRequestsMadeNestedInput
+    assignedTo?: UserUpdateOneWithoutAccessRequestsAssignedNestedInput
   }
 
   export type ProjectAccessRequestUncheckedUpdateWithoutReviewedByInput = {
@@ -42646,6 +43133,7 @@ export namespace Prisma {
     status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
     note?: NullableStringFieldUpdateOperationsInput | string | null
     requestedById?: StringFieldUpdateOperationsInput | string
+    assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -42659,6 +43147,49 @@ export namespace Prisma {
     status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
     note?: NullableStringFieldUpdateOperationsInput | string | null
     requestedById?: StringFieldUpdateOperationsInput | string
+    assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectAccessRequestUpdateWithoutAssignedToInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: EnumAccessRequestActionFieldUpdateOperationsInput | $Enums.AccessRequestAction
+    status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutAccessRequestsNestedInput
+    projectFile?: ProjectFileUpdateOneRequiredWithoutAccessRequestsNestedInput
+    requestedBy?: UserUpdateOneRequiredWithoutAccessRequestsMadeNestedInput
+    reviewedBy?: UserUpdateOneWithoutAccessRequestsReviewedNestedInput
+  }
+
+  export type ProjectAccessRequestUncheckedUpdateWithoutAssignedToInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    projectFileId?: StringFieldUpdateOperationsInput | string
+    action?: EnumAccessRequestActionFieldUpdateOperationsInput | $Enums.AccessRequestAction
+    status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedById?: StringFieldUpdateOperationsInput | string
+    reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectAccessRequestUncheckedUpdateManyWithoutAssignedToInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    projectFileId?: StringFieldUpdateOperationsInput | string
+    action?: EnumAccessRequestActionFieldUpdateOperationsInput | $Enums.AccessRequestAction
+    status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedById?: StringFieldUpdateOperationsInput | string
+    reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -42827,6 +43358,7 @@ export namespace Prisma {
     status?: $Enums.AccessRequestStatus
     note?: string | null
     requestedById: string
+    assignedToId?: string | null
     reviewedById?: string | null
     reviewedAt?: Date | string | null
     createdAt?: Date | string
@@ -43058,6 +43590,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     projectFile?: ProjectFileUpdateOneRequiredWithoutAccessRequestsNestedInput
     requestedBy?: UserUpdateOneRequiredWithoutAccessRequestsMadeNestedInput
+    assignedTo?: UserUpdateOneWithoutAccessRequestsAssignedNestedInput
     reviewedBy?: UserUpdateOneWithoutAccessRequestsReviewedNestedInput
   }
 
@@ -43068,6 +43601,7 @@ export namespace Prisma {
     status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
     note?: NullableStringFieldUpdateOperationsInput | string | null
     requestedById?: StringFieldUpdateOperationsInput | string
+    assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -43081,6 +43615,7 @@ export namespace Prisma {
     status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
     note?: NullableStringFieldUpdateOperationsInput | string | null
     requestedById?: StringFieldUpdateOperationsInput | string
+    assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -43230,6 +43765,7 @@ export namespace Prisma {
     status?: $Enums.AccessRequestStatus
     note?: string | null
     requestedById: string
+    assignedToId?: string | null
     reviewedById?: string | null
     reviewedAt?: Date | string | null
     createdAt?: Date | string
@@ -43246,6 +43782,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutAccessRequestsNestedInput
     requestedBy?: UserUpdateOneRequiredWithoutAccessRequestsMadeNestedInput
+    assignedTo?: UserUpdateOneWithoutAccessRequestsAssignedNestedInput
     reviewedBy?: UserUpdateOneWithoutAccessRequestsReviewedNestedInput
   }
 
@@ -43256,6 +43793,7 @@ export namespace Prisma {
     status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
     note?: NullableStringFieldUpdateOperationsInput | string | null
     requestedById?: StringFieldUpdateOperationsInput | string
+    assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -43269,6 +43807,7 @@ export namespace Prisma {
     status?: EnumAccessRequestStatusFieldUpdateOperationsInput | $Enums.AccessRequestStatus
     note?: NullableStringFieldUpdateOperationsInput | string | null
     requestedById?: StringFieldUpdateOperationsInput | string
+    assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
