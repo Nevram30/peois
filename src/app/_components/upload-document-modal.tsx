@@ -10,7 +10,7 @@ import {
   type DocType,
 } from "~/lib/project-documents";
 
-type Props = {
+type UploadDocumentModalProps = {
   open: boolean;
   onClose: () => void;
   // Resolves once the files have been uploaded and filed; rejects on failure so
@@ -22,14 +22,14 @@ type Props = {
   initialFiles?: File[];
 };
 
-export function UploadDocumentModal({
+export const UploadDocumentModal = ({
   open,
   onClose,
   onSubmit,
   isUploading,
   uploadError,
   initialFiles,
-}: Props) {
+}: UploadDocumentModalProps) => {
   const [docType, setDocType] = useState<DocType | "">("");
   const [files, setFiles] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState(false);

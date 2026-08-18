@@ -91,6 +91,50 @@ const ProjectActivityLogPage = () => {
   const safePage = Math.min(page, totalPages);
   const paginated = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
+  // Rendered above and below the table so long pages can be paged without
+  // scrolling to the bottom; only the divider side differs.
+  const renderPagination = (position: "top" | "bottom") => (
+    <div
+      className={`flex flex-col gap-3 ${position === "top" ? "border-b" : "border-t"
+        } border-gray-100 px-4 py-3 sm:flex-row sm:items-center sm:justify-between`}
+    >
+      <p className="text-xs text-gray-500">
+        {filtered.length === 0 ? (
+          "No results"
+        ) : (
+          <>
+            Showing <span className="font-bold">{(safePage - 1) * PAGE_SIZE + 1}</span> to{" "}
+            <span className="font-bold">{Math.min(safePage * PAGE_SIZE, filtered.length)}</span> of{" "}
+            <span className="font-bold">{filtered.length}</span> entries
+          </>
+        )}
+      </p>
+      <div className="flex items-center gap-1">
+        <button
+          onClick={() => setPage((p) => Math.max(1, p - 1))}
+          disabled={safePage === 1}
+          className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition hover:bg-gray-50 disabled:opacity-40"
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+          </svg>
+        </button>
+        <span className="px-3 text-xs font-medium text-gray-600">
+          Page {safePage} of {totalPages}
+        </span>
+        <button
+          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+          disabled={safePage === totalPages}
+          className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition hover:bg-gray-50 disabled:opacity-40"
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+
   const counts = useMemo(() => {
     const c = { total: 0, Created: 0, Disbursement: 0, Document: 0, Override: 0, Comment: 0 };
     for (const a of activities ?? []) {
@@ -257,6 +301,8 @@ const ProjectActivityLogPage = () => {
           )}
         </div>
 
+        {renderPagination("top")}
+
         <div className="overflow-x-auto">
           <table className="w-full min-w-200 text-sm">
             <thead>
@@ -356,42 +402,7 @@ const ProjectActivityLogPage = () => {
           </table>
         </div>
 
-        <div className="flex flex-col gap-3 border-t border-gray-100 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs text-gray-500">
-            {filtered.length === 0 ? (
-              "No results"
-            ) : (
-              <>
-                Showing <span className="font-bold">{(safePage - 1) * PAGE_SIZE + 1}</span> to{" "}
-                <span className="font-bold">{Math.min(safePage * PAGE_SIZE, filtered.length)}</span> of{" "}
-                <span className="font-bold">{filtered.length}</span> entries
-              </>
-            )}
-          </p>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={safePage === 1}
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition hover:bg-gray-50 disabled:opacity-40"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-              </svg>
-            </button>
-            <span className="px-3 text-xs font-medium text-gray-600">
-              Page {safePage} of {totalPages}
-            </span>
-            <button
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={safePage === totalPages}
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition hover:bg-gray-50 disabled:opacity-40"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-              </svg>
-            </button>
-          </div>
-        </div>
+        {renderPagination("bottom")}
       </div>
     </>
   );

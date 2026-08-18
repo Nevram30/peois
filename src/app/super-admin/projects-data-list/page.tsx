@@ -309,6 +309,59 @@ export default function ProjectsDataListPage() {
 
   const resetPage = () => setPage(1);
 
+  // Rendered above and below the table so long pages can be paged without
+  // scrolling to the bottom; only the divider side differs.
+  const renderPagination = (position: "top" | "bottom") => (
+    <div
+      className={`flex flex-col gap-3 ${position === "top" ? "border-b" : "border-t"
+        } border-gray-100 px-4 py-3 sm:flex-row sm:items-center sm:justify-between`}
+    >
+      <p className="text-xs text-gray-500">
+        {filtered.length === 0 ? (
+          "No results"
+        ) : (
+          <>
+            Showing <span className="font-bold">{(safePage - 1) * PAGE_SIZE + 1}</span> to{" "}
+            <span className="font-bold">{Math.min(safePage * PAGE_SIZE, filtered.length)}</span> of{" "}
+            <span className="font-bold">{filtered.length}</span> results
+          </>
+        )}
+      </p>
+      <div className="flex flex-wrap items-center gap-1">
+        <button
+          onClick={() => setPage((p) => Math.max(1, p - 1))}
+          disabled={safePage === 1}
+          className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition hover:bg-gray-50 disabled:opacity-40"
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+          </svg>
+        </button>
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+          <button
+            key={p}
+            onClick={() => setPage(p)}
+            className={`flex h-8 w-8 items-center justify-center rounded-lg text-xs font-medium transition ${p === safePage
+              ? "bg-blue-600 text-white shadow-sm"
+              : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+              }`}
+          >
+            {p}
+          </button>
+        ))}
+        <button
+          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+          disabled={safePage === totalPages}
+          className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition hover:bg-gray-50 disabled:opacity-40"
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+
   const hasActiveFilters = !!(
     search ||
     districtFilter ||
@@ -530,6 +583,8 @@ export default function ProjectsDataListPage() {
             Generate Report
           </button>
         </div>
+        {renderPagination("top")}
+
         <div className="overflow-x-auto">
           <table className="w-full min-w-250 text-sm">
             <thead>
@@ -706,51 +761,7 @@ export default function ProjectsDataListPage() {
           </table>
         </div>
 
-        <div className="flex flex-col gap-3 border-t border-gray-100 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs text-gray-500">
-            {filtered.length === 0 ? (
-              "No results"
-            ) : (
-              <>
-                Showing <span className="font-bold">{(safePage - 1) * PAGE_SIZE + 1}</span> to{" "}
-                <span className="font-bold">{Math.min(safePage * PAGE_SIZE, filtered.length)}</span> of{" "}
-                <span className="font-bold">{filtered.length}</span> results
-              </>
-            )}
-          </p>
-          <div className="flex flex-wrap items-center gap-1">
-            <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={safePage === 1}
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition hover:bg-gray-50 disabled:opacity-40"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-              </svg>
-            </button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-              <button
-                key={p}
-                onClick={() => setPage(p)}
-                className={`flex h-8 w-8 items-center justify-center rounded-lg text-xs font-medium transition ${p === safePage
-                  ? "bg-blue-600 text-white shadow-sm"
-                  : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
-                  }`}
-              >
-                {p}
-              </button>
-            ))}
-            <button
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={safePage === totalPages}
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition hover:bg-gray-50 disabled:opacity-40"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-              </svg>
-            </button>
-          </div>
-        </div>
+        {renderPagination("bottom")}
       </div>
 
       <GenerateReportModal

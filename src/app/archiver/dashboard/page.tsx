@@ -119,6 +119,44 @@ const ArchiverProjectsPage = () => {
 
   const resetPage = () => setPage(1);
 
+  // Rendered above and below the table so long pages can be paged without
+  // scrolling to the bottom; only the divider side differs.
+  const renderPagination = (position: "top" | "bottom") => (
+    <div
+      className={`flex items-center justify-between gap-3 ${position === "top" ? "border-b" : "border-t"
+        } border-gray-200 px-5 py-4`}
+    >
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+        Showing {pageRows.length} of {filtered.length} projects
+      </p>
+      <div className="flex items-center gap-1">
+        <button
+          onClick={() => setPage((v) => Math.max(1, v - 1))}
+          disabled={currentPage <= 1}
+          className="rounded-md p-1.5 text-gray-500 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40"
+          aria-label="Previous page"
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+          </svg>
+        </button>
+        <span className="px-1 text-xs text-gray-500">
+          {currentPage} / {totalPages}
+        </span>
+        <button
+          onClick={() => setPage((v) => Math.min(totalPages, v + 1))}
+          disabled={currentPage >= totalPages}
+          className="rounded-md p-1.5 text-gray-500 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40"
+          aria-label="Next page"
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
       {/* Stat cards */}
@@ -262,6 +300,9 @@ const ArchiverProjectsPage = () => {
 
       {/* Projects table */}
       <div className="mt-4 rounded-xl bg-white shadow-sm">
+        {/* Pagination header */}
+        {renderPagination("top")}
+
         <div className="overflow-x-auto">
           <table className="w-full min-w-225 text-left text-sm">
             <thead>
@@ -364,36 +405,7 @@ const ArchiverProjectsPage = () => {
         </div>
 
         {/* Pagination footer */}
-        <div className="flex items-center justify-between gap-3 border-t border-gray-200 px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
-            Showing {pageRows.length} of {filtered.length} projects
-          </p>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => setPage((v) => Math.max(1, v - 1))}
-              disabled={currentPage <= 1}
-              className="rounded-md p-1.5 text-gray-500 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40"
-              aria-label="Previous page"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-              </svg>
-            </button>
-            <span className="px-1 text-xs text-gray-500">
-              {currentPage} / {totalPages}
-            </span>
-            <button
-              onClick={() => setPage((v) => Math.min(totalPages, v + 1))}
-              disabled={currentPage >= totalPages}
-              className="rounded-md p-1.5 text-gray-500 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40"
-              aria-label="Next page"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-              </svg>
-            </button>
-          </div>
-        </div>
+        {renderPagination("bottom")}
       </div>
 
       {archiveTarget && (

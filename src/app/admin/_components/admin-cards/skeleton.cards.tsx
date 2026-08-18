@@ -1,14 +1,14 @@
 // ── Skeletons ──────────────────────────────────────────────────
 
 // Single stat tile placeholder — matches the real tile's
-// "icon+label on the left, value on the right" layout.
+// "label on top, icon left / value right below" layout.
 const StatTileSkeleton = () => (
-    <div className="bg-white rounded-sm shadow-sm p-3 flex items-center justify-between gap-2 animate-pulse">
-        <div className="flex flex-col gap-1">
-            <div className="w-6 h-6 rounded-md bg-slate-200 mb-1" />
-            <div className="h-2 w-14 rounded bg-slate-200" />
+    <div className="bg-white rounded-sm shadow-sm p-3 flex flex-col gap-2 animate-pulse">
+        <div className="h-2.5 w-16 rounded bg-slate-200" />
+        <div className="flex items-center justify-between gap-2">
+            <div className="w-6 h-6 rounded-md bg-slate-200" />
+            <div className="h-6 w-8 rounded bg-slate-200" />
         </div>
-        <div className="h-6 w-8 rounded bg-slate-200" />
     </div>
 );
 
@@ -48,7 +48,7 @@ export const DistrictCardsSkeleton = ({ count = 2, onSide = false }: { count?: n
             {Array.from({ length: count }).map((_, i) => (
                 <div key={i} className="bg-white rounded-sm overflow-hidden border border-slate-200">
                     <div className="p-4 animate-pulse">
-                        <div className="h-2.5 w-40 rounded bg-slate-200 mb-3" />
+                        <div className="h-3.5 w-52 rounded bg-slate-200 mb-3" />
                         <div className="flex items-center gap-4">
                             <div className="w-[100px] h-[100px] rounded-full bg-slate-200 shrink-0" />
                             <div className="grid grid-cols-2 gap-x-3 gap-y-2 flex-1">

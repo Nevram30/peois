@@ -77,6 +77,56 @@ export const AdminDashboardContent = () => {
         page * pageSize,
     );
 
+    // Rendered above and below the table so long pages can be paged without
+    // scrolling to the bottom; only the divider side differs.
+    const renderPagination = (position: "top" | "bottom") => (
+        <div className={`flex flex-wrap items-center justify-between gap-3 ${position === "top" ? "border-b" : "border-t"} border-gray-100 px-4 py-4 sm:px-6`}>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+                <span>Rows per page:</span>
+                <select
+                    value={pageSize}
+                    onChange={(e) => {
+                        setPageSize(Number(e.target.value));
+                        setPage(1);
+                    }}
+                    className="rounded-sm border border-gray-200 bg-white px-2 py-1 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e3a4f]/20"
+                >
+                    {[10, 20, 50, 100].map((s) => (
+                        <option key={s} value={s}>{s}</option>
+                    ))}
+                </select>
+            </div>
+            <div className="flex flex-wrap items-center gap-1">
+                <button
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    className="flex h-8 w-8 items-center justify-center rounded-sm border border-gray-200 text-gray-500 transition hover:bg-gray-50 disabled:opacity-40"
+                >
+                    &lsaquo;
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                    <button
+                        key={p}
+                        onClick={() => setPage(p)}
+                        className={`flex h-8 w-8 items-center justify-center rounded-sm border text-sm font-medium transition ${p === page
+                            ? "border-blue-500 bg-white text-blue-600 ring-1 ring-blue-500"
+                            : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                            }`}
+                    >
+                        {p}
+                    </button>
+                ))}
+                <button
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={page === totalPages}
+                    className="flex h-8 w-8 items-center justify-center rounded-sm border border-gray-200 text-gray-500 transition hover:bg-gray-50 disabled:opacity-40"
+                >
+                    &rsaquo;
+                </button>
+            </div>
+        </div>
+    );
+
     return (
         <div className="bg-slate-100 min-h-screen p-4 font-sans text-slate-800">
             {/* Project Status Overview Header */}
@@ -109,28 +159,28 @@ export const AdminDashboardContent = () => {
                                 <p className="text-3xl font-extrabold text-slate-900 leading-none">{dashboardYear || "All"}</p>
                             </div>
                             {statusTiles.map((c) => (
-                                <div key={c.label} className="bg-white rounded-sm shadow-sm p-3 flex items-center justify-between gap-2">
-                                    <div className="flex flex-col gap-1">
-                                        <div className={`w-6 h-6 rounded-sm ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>
+                                <div key={c.label} className="bg-white rounded-sm shadow-sm p-3 flex flex-col gap-2">
+                                    <p className="text-[11px] font-bold text-slate-500 leading-tight tracking-wide">{c.label}</p>
+                                    <div className="flex items-center justify-between gap-2">
+                                        <div className={`w-6 h-6 rounded-sm ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs`}>
                                             {c.icon}
                                         </div>
-                                        <p className="text-[9px] font-bold text-slate-500 leading-tight tracking-wide">{c.label}</p>
+                                        <p className="text-2xl font-extrabold text-slate-900 leading-none">{c.value}</p>
                                     </div>
-                                    <p className="text-2xl font-extrabold text-slate-900 leading-none">{c.value}</p>
                                 </div>
                             ))}
                         </div>
                     ) : (
                         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
                             {statCards.map((c) => (
-                                <div key={c.label} className="bg-white rounded-sm shadow-sm p-3 flex items-center justify-between gap-2">
-                                    <div className="flex flex-col gap-1">
-                                        <div className={`w-6 h-6 rounded-sm ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs mb-1`}>
+                                <div key={c.label} className="bg-white rounded-sm shadow-sm p-3 flex flex-col gap-2">
+                                    <p className="text-[11px] font-bold text-slate-500 leading-tight tracking-wide">{c.label}</p>
+                                    <div className="flex items-center justify-between gap-2">
+                                        <div className={`w-6 h-6 rounded-sm ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs`}>
                                             {c.icon}
                                         </div>
-                                        <p className="text-[9px] font-bold text-slate-500 leading-tight tracking-wide">{c.label}</p>
+                                        <p className="text-2xl font-extrabold text-slate-900 leading-none">{c.value}</p>
                                     </div>
-                                    <p className="text-2xl font-extrabold text-slate-900 leading-none">{c.value}</p>
                                 </div>
                             ))}
                         </div>
@@ -281,6 +331,9 @@ export const AdminDashboardContent = () => {
                         </div>
                     </div>
                 </div>
+
+                {/* Pagination Header */}
+                {!isLoading && totalFiltered > 0 && renderPagination("top")}
 
                 {/* Table */}
                 <div className="overflow-x-auto">
@@ -491,53 +544,7 @@ export const AdminDashboardContent = () => {
                 </div>
 
                 {/* Pagination Footer */}
-                {!isLoading && totalFiltered > 0 && (
-                    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 px-4 py-4 sm:px-6">
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
-                            <span>Rows per page:</span>
-                            <select
-                                value={pageSize}
-                                onChange={(e) => {
-                                    setPageSize(Number(e.target.value));
-                                    setPage(1);
-                                }}
-                                className="rounded-sm border border-gray-200 bg-white px-2 py-1 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e3a4f]/20"
-                            >
-                                {[10, 20, 50, 100].map((s) => (
-                                    <option key={s} value={s}>{s}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="flex flex-wrap items-center gap-1">
-                            <button
-                                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                                disabled={page === 1}
-                                className="flex h-8 w-8 items-center justify-center rounded-sm border border-gray-200 text-gray-500 transition hover:bg-gray-50 disabled:opacity-40"
-                            >
-                                &lsaquo;
-                            </button>
-                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                                <button
-                                    key={p}
-                                    onClick={() => setPage(p)}
-                                    className={`flex h-8 w-8 items-center justify-center rounded-sm border text-sm font-medium transition ${p === page
-                                        ? "border-blue-500 bg-white text-blue-600 ring-1 ring-blue-500"
-                                        : "border-gray-200 text-gray-600 hover:bg-gray-50"
-                                        }`}
-                                >
-                                    {p}
-                                </button>
-                            ))}
-                            <button
-                                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                                disabled={page === totalPages}
-                                className="flex h-8 w-8 items-center justify-center rounded-sm border border-gray-200 text-gray-500 transition hover:bg-gray-50 disabled:opacity-40"
-                            >
-                                &rsaquo;
-                            </button>
-                        </div>
-                    </div>
-                )}
+                {!isLoading && totalFiltered > 0 && renderPagination("bottom")}
             </div>
         </div>
     );

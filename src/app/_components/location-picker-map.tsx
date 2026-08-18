@@ -44,7 +44,7 @@ const unproject = (x: number, y: number, zoom: number): LatLng => {
 const isSameSpot = (a: LatLng, b: LatLng) =>
   Math.abs(a.lat - b.lat) < 1e-6 && Math.abs(a.lng - b.lng) < 1e-6;
 
-type Props = {
+type LocationProps = {
   latitude: number | null;
   longitude: number | null;
   // Fired once a gesture settles, never on every frame of a drag.
@@ -52,12 +52,12 @@ type Props = {
   className?: string;
 };
 
-export function LocationPickerMap({
+export const LocationPickerMap = ({
   latitude,
   longitude,
   onChange,
   className = "",
-}: Props) {
+}: LocationProps) => {
   const hasPin = latitude !== null && longitude !== null;
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -242,9 +242,8 @@ export function LocationPickerMap({
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerCancel}
         onKeyDown={handleKeyDown}
-        className={`h-full w-full touch-none select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500 ${
-          isDragging ? "cursor-grabbing" : "cursor-grab"
-        }`}
+        className={`h-full w-full touch-none select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500 ${isDragging ? "cursor-grabbing" : "cursor-grab"
+          }`}
       >
         {tiles.map((tile) => (
           <img
@@ -264,9 +263,8 @@ export function LocationPickerMap({
       {/* Centre pin — hollow until coordinates are actually set */}
       <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-full">
         <svg
-          className={`h-9 w-9 drop-shadow-md transition-transform ${
-            isDragging ? "-translate-y-1.5" : ""
-          } ${hasPin ? "text-blue-600" : "text-gray-400"}`}
+          className={`h-9 w-9 drop-shadow-md transition-transform ${isDragging ? "-translate-y-1.5" : ""
+            } ${hasPin ? "text-blue-600" : "text-gray-400"}`}
           viewBox="0 0 24 24"
           fill={hasPin ? "currentColor" : "none"}
           stroke="currentColor"

@@ -75,7 +75,7 @@ export const DistrictCard = ({ title, data }: DistrictCardProps) => {
     return (
         <div className="bg-white rounded-sm overflow-hidden border border-slate-200">
             <div className="p-4">
-                <p className="text-[11px] font-extrabold text-[#1e3a8a] tracking-widest uppercase mb-3">
+                <p className="text-[15px] font-extrabold text-[#1e3a8a] tracking-widest uppercase mb-3">
                     {title}
                 </p>
                 <div className="flex items-center gap-4">

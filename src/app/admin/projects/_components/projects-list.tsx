@@ -309,6 +309,68 @@ const ProjectsList = () => {
   const totalPages = Math.max(1, Math.ceil((filtered?.length ?? 0) / PAGE_SIZE));
   const paginated = filtered?.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
+  // Same control rendered above and below the table so long pages can be paged
+  // without scrolling to the bottom; only the divider side differs.
+  const renderPagination = (position: "top" | "bottom") => (
+    <div
+      className={`flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between ${position === "top" ? "border-b" : "border-t"
+        } border-gray-200`}
+    >
+      {/* Rows per page */}
+      <div className="flex items-center gap-2 text-sm text-gray-600">
+        <span>Rows per page:</span>
+        <select
+          value={PAGE_SIZE}
+          disabled
+          className="rounded-sm border border-gray-300 px-2 py-1 text-sm text-gray-700 focus:outline-none"
+        >
+          <option value={20}>20</option>
+        </select>
+      </div>
+
+      {/* Page controls */}
+      <div className="flex items-center gap-1">
+        <button
+          onClick={() => setPage((p) => Math.max(1, p - 1))}
+          disabled={page === 1}
+          className="flex h-8 w-8 items-center justify-center rounded-sm border border-gray-300 text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
+        >
+          ‹
+        </button>
+        {Array.from({ length: totalPages }, (_, i) => i + 1)
+          .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+          .reduce<(number | "…")[]>((acc, p, idx, arr) => {
+            if (idx > 0 && p - arr[idx - 1]! > 1) acc.push("…");
+            acc.push(p);
+            return acc;
+          }, [])
+          .map((item, idx) =>
+            item === "…" ? (
+              <span key={`ellipsis-${idx}`} className="flex h-8 w-8 items-center justify-center text-sm text-gray-400">…</span>
+            ) : (
+              <button
+                key={item}
+                onClick={() => setPage(item)}
+                className={`flex h-8 w-8 items-center justify-center rounded-sm border text-sm font-medium transition ${page === item
+                  ? "border-blue-500 text-blue-600"
+                  : "border-gray-300 text-gray-600 hover:bg-gray-50"
+                  }`}
+              >
+                {item}
+              </button>
+            )
+          )}
+        <button
+          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+          disabled={page === totalPages}
+          className="flex h-8 w-8 items-center justify-center rounded-sm border border-gray-300 text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
+        >
+          ›
+        </button>
+      </div>
+    </div>
+  );
+
   const pageTitle =
     filterToday
       ? STATUS_TITLES.today
@@ -646,6 +708,9 @@ const ProjectsList = () => {
             </div>
           ) : (
             <>
+              {/* Pagination (top) */}
+              {renderPagination("top")}
+
               {/* Mobile / tablet card list */}
               <div className="divide-y divide-gray-100 lg:hidden">
                 {paginated?.map((p) => (
@@ -795,61 +860,8 @@ const ProjectsList = () => {
                 </table>
               </div>
 
-              {/* Pagination */}
-              <div className="flex flex-col gap-3 border-t border-gray-200 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-                {/* Rows per page */}
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <span>Rows per page:</span>
-                  <select
-                    value={PAGE_SIZE}
-                    disabled
-                    className="rounded-sm border border-gray-300 px-2 py-1 text-sm text-gray-700 focus:outline-none"
-                  >
-                    <option value={20}>20</option>
-                  </select>
-                </div>
-
-                {/* Page controls */}
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={page === 1}
-                    className="flex h-8 w-8 items-center justify-center rounded-sm border border-gray-300 text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
-                  >
-                    ‹
-                  </button>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1)
-                    .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
-                    .reduce<(number | "…")[]>((acc, p, idx, arr) => {
-                      if (idx > 0 && p - arr[idx - 1]! > 1) acc.push("…");
-                      acc.push(p);
-                      return acc;
-                    }, [])
-                    .map((item, idx) =>
-                      item === "…" ? (
-                        <span key={`ellipsis-${idx}`} className="flex h-8 w-8 items-center justify-center text-sm text-gray-400">…</span>
-                      ) : (
-                        <button
-                          key={item}
-                          onClick={() => setPage(item)}
-                          className={`flex h-8 w-8 items-center justify-center rounded-sm border text-sm font-medium transition ${page === item
-                            ? "border-blue-500 text-blue-600"
-                            : "border-gray-300 text-gray-600 hover:bg-gray-50"
-                            }`}
-                        >
-                          {item}
-                        </button>
-                      )
-                    )}
-                  <button
-                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={page === totalPages}
-                    className="flex h-8 w-8 items-center justify-center rounded-sm border border-gray-300 text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
-                  >
-                    ›
-                  </button>
-                </div>
-              </div>
+              {/* Pagination (bottom) */}
+              {renderPagination("bottom")}
             </>
           )}
         </div>

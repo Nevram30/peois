@@ -1374,6 +1374,44 @@ export function UserManagementContent() {
     return pages;
   };
 
+  // Rendered above and below the table so long pages can be paged without
+  // scrolling to the bottom; only the divider side differs.
+  const renderPagination = (position: "top" | "bottom") => (
+    <div className={`flex flex-col gap-3 ${position === "top" ? "border-b" : "border-t"} border-gray-200 px-4 py-3 sm:flex-row sm:items-center sm:justify-between`}>
+      <p className="text-sm text-gray-500">
+        Showing <span className="font-medium text-gray-900">{(page - 1) * pageSize + 1}</span> to{" "}
+        <span className="font-medium text-gray-900">{Math.min(page * pageSize, total)}</span> of{" "}
+        <span className="font-medium text-gray-900">{total}</span> results
+      </p>
+      <div className="flex flex-wrap items-center gap-1">
+        <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page === 1} className="rounded-sm border border-gray-300 p-2 text-gray-500 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40">
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+          </svg>
+        </button>
+        {getPageNumbers().map((p, i) =>
+          p === "..." ? (
+            <span key={`dots-${i}`} className="px-2 text-gray-400">...</span>
+          ) : (
+            <button
+              key={p}
+              onClick={() => setPage(Number(p))}
+              className={`min-w-9 rounded-sm border px-3 py-2 text-sm font-medium transition ${page === p ? "border-blue-600 bg-blue-600 text-white" : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                }`}
+            >
+              {p}
+            </button>
+          ),
+        )}
+        <button onClick={() => setPage(Math.min(totalPages, page + 1))} disabled={page === totalPages} className="rounded-sm border border-gray-300 p-2 text-gray-500 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40">
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <>
       {/* Page Title */}
@@ -1443,6 +1481,9 @@ export function UserManagementContent() {
 
       {/* Users Table */}
       <div className="rounded-sm border border-gray-200 bg-white shadow-sm">
+        {/* Pagination */}
+        {total > 0 && renderPagination("top")}
+
         <div className="overflow-x-auto">
           <table className="w-full min-w-250 text-left text-sm">
             <thead>
@@ -1550,42 +1591,7 @@ export function UserManagementContent() {
           </table>
         </div>
 
-        {/* Pagination */}
-        {total > 0 && (
-          <div className="flex flex-col gap-3 border-t border-gray-200 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-gray-500">
-              Showing <span className="font-medium text-gray-900">{(page - 1) * pageSize + 1}</span> to{" "}
-              <span className="font-medium text-gray-900">{Math.min(page * pageSize, total)}</span> of{" "}
-              <span className="font-medium text-gray-900">{total}</span> results
-            </p>
-            <div className="flex flex-wrap items-center gap-1">
-              <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page === 1} className="rounded-sm border border-gray-300 p-2 text-gray-500 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40">
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-                </svg>
-              </button>
-              {getPageNumbers().map((p, i) =>
-                p === "..." ? (
-                  <span key={`dots-${i}`} className="px-2 text-gray-400">...</span>
-                ) : (
-                  <button
-                    key={p}
-                    onClick={() => setPage(Number(p))}
-                    className={`min-w-9 rounded-sm border px-3 py-2 text-sm font-medium transition ${page === p ? "border-blue-600 bg-blue-600 text-white" : "border-gray-300 text-gray-700 hover:bg-gray-50"
-                      }`}
-                  >
-                    {p}
-                  </button>
-                ),
-              )}
-              <button onClick={() => setPage(Math.min(totalPages, page + 1))} disabled={page === totalPages} className="rounded-sm border border-gray-300 p-2 text-gray-500 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40">
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        )}
+        {total > 0 && renderPagination("bottom")}
       </div>
 
       {/* Modals */}

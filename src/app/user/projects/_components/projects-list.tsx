@@ -356,6 +356,42 @@ export const UserProjectsList = () => {
   const totalPages = Math.max(1, Math.ceil(totalFiltered / PAGE_SIZE));
   const paginated = filtered?.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
+  // Rendered above and below the table so long pages can be paged without
+  // scrolling to the bottom; only the divider side differs.
+  const renderPagination = (position: "top" | "bottom") => (
+    <div
+      className={`flex flex-col gap-2 ${position === "top" ? "border-b" : "border-t"
+        } border-gray-200 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5`}
+    >
+      <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400">
+        Showing {paginated?.length ?? 0} of {totalFiltered} projects
+      </p>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => setPage((p) => Math.max(1, p - 1))}
+          disabled={page === 1}
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-30"
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+          </svg>
+        </button>
+        <span className="text-xs text-gray-500">
+          {page} / {totalPages}
+        </span>
+        <button
+          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+          disabled={page === totalPages}
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-30"
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+
   const selectClass =
     "w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20";
 
@@ -672,6 +708,9 @@ export const UserProjectsList = () => {
           <div className="p-8 text-center text-gray-500">No projects found.</div>
         ) : (
           <>
+            {/* Header */}
+            {renderPagination("top")}
+
             {/* Mobile / tablet card list */}
             <div className="divide-y divide-gray-100 lg:hidden">
               {paginated?.map((p) => {
@@ -908,34 +947,7 @@ export const UserProjectsList = () => {
             </div>
 
             {/* Footer */}
-            <div className="flex flex-col gap-2 border-t border-gray-200 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400">
-                Showing {paginated?.length ?? 0} of {totalFiltered} projects
-              </p>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-30"
-                >
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-                  </svg>
-                </button>
-                <span className="text-xs text-gray-500">
-                  {page} / {totalPages}
-                </span>
-                <button
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-30"
-                >
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                  </svg>
-                </button>
-              </div>
-            </div>
+            {renderPagination("bottom")}
           </>
         )}
       </div>
