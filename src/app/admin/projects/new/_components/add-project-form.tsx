@@ -595,7 +595,7 @@ export const AddProjectForm = () => {
           }),
         ),
       ]);
-      await utils.project.getAll.invalidate();
+      await utils.project.invalidate();
       router.push("/admin/projects");
     },
   });
@@ -954,6 +954,9 @@ export const AddProjectForm = () => {
                   type="range"
                   min={0}
                   max={100}
+                  // Steps in 0.25 so dragging can land on a decimal instead of
+                  // snapping a typed 45.75 back to a whole number.
+                  step={0.25}
                   value={progressValue}
                   onChange={(e) => setCompletionPercentage(e.target.value)}
                   style={{

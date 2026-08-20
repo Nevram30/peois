@@ -234,7 +234,9 @@ export function OverrideForm({ projectId }: { projectId: string }) {
 
   const override = api.project.superAdminOverride.useMutation({
     onSuccess: async () => {
-      await utils.project.getById.invalidate({ id: projectId });
+      // Whole router, so the admin projects list and the dashboard aggregates
+      // pick the override up instead of serving their cached rows.
+      await utils.project.invalidate();
       await utils.projectActivity.getByProjectId.invalidate({ projectId });
       setReason("");
       setSuccess(true);

@@ -408,7 +408,10 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   // ─ Mutations ───────────────────────────────────────────────────────────
   const updateProject = api.project.update.useMutation({
     onSuccess: () => {
-      void utils.project.getById.invalidate({ id: projectId });
+      // Invalidate the whole router, not just this project: the projects list
+      // and the dashboard read `getAll` and the yearly aggregates, so a
+      // getById-only invalidate leaves them showing pre-save figures.
+      void utils.project.invalidate();
       setShowSuccess(true);
     },
   });
@@ -422,7 +425,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
 
   const updateSlippage = api.project.updateSlippage.useMutation({
     onSuccess: (updated) => {
-      void utils.project.getById.invalidate({ id: projectId });
+      void utils.project.invalidate();
       void refetchSlippageAssessments();
       setSlippageError(null);
       setSlippageRemarks("");
@@ -467,6 +470,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     onSuccess: (_data, variables) => {
       setDisbAmount(""); setDisbRef(""); setDisbType(""); setDisbErrors({});
       void refetchDisbursements();
+      void utils.project.invalidate();
       const formatted = variables.amount.toLocaleString("en-PH", { minimumFractionDigits: 2 });
       const refPart = variables.referenceNumber ? ` (Ref: ${variables.referenceNumber})` : "";
       const typePart = variables.type ? ` [${DISBURSEMENT_TYPE_LABEL[variables.type]}]` : "";
@@ -490,6 +494,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     onSuccess: (_data, variables) => {
       resetVariationForm();
       void refetchVariationOrders();
+      void utils.project.invalidate();
       const formatted = variables.amount.toLocaleString("en-PH", { minimumFractionDigits: 2 });
       const srcPart = variables.sourceOfFund ? ` (${SOURCE_OF_FUND_LABEL[variables.sourceOfFund]})` : "";
       addActivity.mutate({
@@ -503,6 +508,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     onSuccess: (_data, variables) => {
       resetVariationForm();
       void refetchVariationOrders();
+      void utils.project.invalidate();
       const formatted = variables.amount.toLocaleString("en-PH", { minimumFractionDigits: 2 });
       addActivity.mutate({
         projectId,
@@ -515,6 +521,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     onSuccess: (_data, variables) => {
       setAdjDays(""); setAdjType(""); setAdjJustification(""); setAdjError(null);
       void refetchTimelineAdjustments();
+      void utils.project.invalidate();
       addActivity.mutate({
         projectId: variables.projectId,
         description: `Recorded ${variables.type.toLowerCase()} timeline adjustment of ${variables.duration} day(s).`,
@@ -1111,12 +1118,15 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                         className="pointer-events-none absolute z-10 h-5 w-5 -translate-x-1/2 rounded-full border-2 border-blue-500 bg-white shadow-md transition-all duration-150"
                         style={{ left: `${completion}%` }}
                       />
-                      {/* Draggable range — overlaid transparently */}
+                      {/* Draggable range — overlaid transparently. Steps in
+                          0.25 so dragging can land on a decimal instead of
+                          snapping a typed 45.75 back to a whole number. */}
                       <input
-                        type="range" min={0} max={100} value={completion}
+                        type="range" min={0} max={100} step={0.25} value={completion}
                         onChange={(e) => {
-                          setCompletion(Number(e.target.value));
-                          setCompletionText(e.target.value);
+                          const next = clampPercent(Number(e.target.value));
+                          setCompletion(next);
+                          setCompletionText(String(next));
                         }}
                         className="absolute inset-0 h-full w-full cursor-grab appearance-none bg-transparent opacity-0 active:cursor-grabbing"
                       />
