@@ -7372,7 +7372,7 @@ export namespace Prisma {
     readonly longitude: FieldRef<"Project", 'Float'>
     readonly description: FieldRef<"Project", 'String'>
     readonly status: FieldRef<"Project", 'ProjectStatus'>
-    readonly completionPercentage: FieldRef<"Project", 'Int'>
+    readonly completionPercentage: FieldRef<"Project", 'Float'>
     readonly slippageTarget: FieldRef<"Project", 'Float'>
     readonly slippageActual: FieldRef<"Project", 'Float'>
     readonly slippageRevision: FieldRef<"Project", 'Int'>
@@ -27066,7 +27066,7 @@ export namespace Prisma {
     longitude?: FloatNullableFilter<"Project"> | number | null
     description?: StringNullableFilter<"Project"> | string | null
     status?: EnumProjectStatusFilter<"Project"> | $Enums.ProjectStatus
-    completionPercentage?: IntFilter<"Project"> | number
+    completionPercentage?: FloatFilter<"Project"> | number
     slippageTarget?: FloatNullableFilter<"Project"> | number | null
     slippageActual?: FloatNullableFilter<"Project"> | number | null
     slippageRevision?: IntFilter<"Project"> | number
@@ -27189,7 +27189,7 @@ export namespace Prisma {
     longitude?: FloatNullableFilter<"Project"> | number | null
     description?: StringNullableFilter<"Project"> | string | null
     status?: EnumProjectStatusFilter<"Project"> | $Enums.ProjectStatus
-    completionPercentage?: IntFilter<"Project"> | number
+    completionPercentage?: FloatFilter<"Project"> | number
     slippageTarget?: FloatNullableFilter<"Project"> | number | null
     slippageActual?: FloatNullableFilter<"Project"> | number | null
     slippageRevision?: IntFilter<"Project"> | number
@@ -27307,7 +27307,7 @@ export namespace Prisma {
     longitude?: FloatNullableWithAggregatesFilter<"Project"> | number | null
     description?: StringNullableWithAggregatesFilter<"Project"> | string | null
     status?: EnumProjectStatusWithAggregatesFilter<"Project"> | $Enums.ProjectStatus
-    completionPercentage?: IntWithAggregatesFilter<"Project"> | number
+    completionPercentage?: FloatWithAggregatesFilter<"Project"> | number
     slippageTarget?: FloatNullableWithAggregatesFilter<"Project"> | number | null
     slippageActual?: FloatNullableWithAggregatesFilter<"Project"> | number | null
     slippageRevision?: IntWithAggregatesFilter<"Project"> | number
@@ -28961,7 +28961,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
@@ -29020,7 +29020,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
@@ -29129,7 +29129,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
@@ -29178,7 +29178,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
@@ -35380,7 +35380,7 @@ export namespace Prisma {
     longitude?: FloatNullableFilter<"Project"> | number | null
     description?: StringNullableFilter<"Project"> | string | null
     status?: EnumProjectStatusFilter<"Project"> | $Enums.ProjectStatus
-    completionPercentage?: IntFilter<"Project"> | number
+    completionPercentage?: FloatFilter<"Project"> | number
     slippageTarget?: FloatNullableFilter<"Project"> | number | null
     slippageActual?: FloatNullableFilter<"Project"> | number | null
     slippageRevision?: IntFilter<"Project"> | number
@@ -36919,7 +36919,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
@@ -36977,7 +36977,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
@@ -37335,7 +37335,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
@@ -37393,7 +37393,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
@@ -37751,7 +37751,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
@@ -37809,7 +37809,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
@@ -38167,7 +38167,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
@@ -38225,7 +38225,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
@@ -39087,7 +39087,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
@@ -39145,7 +39145,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
@@ -39503,7 +39503,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
@@ -39561,7 +39561,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
@@ -40028,7 +40028,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
@@ -40086,7 +40086,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
@@ -41094,7 +41094,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
@@ -41152,7 +41152,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
@@ -41717,7 +41717,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
@@ -41775,7 +41775,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
@@ -42568,7 +42568,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
@@ -42626,7 +42626,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
@@ -42684,7 +42684,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-    completionPercentage?: IntFieldUpdateOperationsInput | number
+    completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number

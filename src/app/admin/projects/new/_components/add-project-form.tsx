@@ -343,10 +343,11 @@ export const AddProjectForm = () => {
 
   const totalWorkforce = numFemale + numMale;
 
-  const progressValue = Math.max(
-    0,
-    Math.min(100, parseInt(completionPercentage) || 0),
-  );
+  // Physical accomplishment is a float (e.g. 45.75%), kept to two decimals.
+  const progressValue =
+    Math.round(
+      Math.max(0, Math.min(100, parseFloat(completionPercentage) || 0)) * 100,
+    ) / 100;
 
   // ── Slippage derived values ──────────────────────────────────────────
   const slippageTarget = useMemo(
@@ -699,7 +700,7 @@ export const AddProjectForm = () => {
       sourceOfFund: sourceOfFund as SourceOfFundValue,
       projectCost: parseAmount(projectCost) || 0,
       contractCost: parseAmount(contractCost) || 0,
-      completionPercentage: Math.max(0, Math.min(100, parseInt(completionPercentage) || 0)),
+      completionPercentage: progressValue,
       contractorName:
         modeOfImplementation === "BY_CONTRACT" ? contractorName || undefined : undefined,
       projectEngineer: engineers.join(", ") || undefined,
@@ -932,7 +933,22 @@ export const AddProjectForm = () => {
               <div>
                 <div className="mb-2 flex items-center justify-between">
                   <label className="text-sm font-bold text-gray-600">Physical Progress</label>
-                  <span className="text-xs font-bold text-gray-400">{progressValue}%</span>
+                  {/* Typeable percentage — the raw string is kept so the box can
+                      sit empty, or hold a half-written decimal like "45.", while
+                      it is being retyped instead of snapping back to a number. */}
+                  <div className="relative w-24 shrink-0">
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      step={0.01}
+                      value={completionPercentage}
+                      onChange={(e) => setCompletionPercentage(e.target.value)}
+                      onBlur={() => setCompletionPercentage(String(progressValue))}
+                      className="block w-full rounded-sm border border-gray-200 bg-white py-1.5 pl-2.5 pr-6 text-sm font-bold text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-sm font-bold text-blue-400">%</span>
+                  </div>
                 </div>
                 <input
                   type="range"

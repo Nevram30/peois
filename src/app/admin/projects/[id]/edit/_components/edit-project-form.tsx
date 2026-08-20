@@ -167,6 +167,11 @@ const parsePercent = (value: string) => {
   return parsed;
 };
 
+// Physical accomplishment is stored as a float, so it keeps two decimals and
+// stays inside 0–100.
+const clampPercent = (value: number) =>
+  Math.round(Math.min(100, Math.max(0, value)) * 100) / 100;
+
 // Styling handed to the shared <GeospatialFields> so it matches this form's
 // Input / FieldLabel rather than the new-project form's.
 const GEO_INPUT_CLASS =
@@ -214,6 +219,9 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
 
   // ─ Identity & Status ───────────────────────────────────────────────────
   const [completion, setCompletion] = useState(0);
+  // Raw text of the percentage box, kept apart from `completion` so the field
+  // can sit empty while it is being retyped instead of snapping back to 0.
+  const [completionText, setCompletionText] = useState("0");
   const [status, setStatus] = useState("ON_GOING");
   const [contractorName, setContractorName] = useState("");
   const [modeOfImplementation, setModeOfImplementation] = useState("BY_CONTRACT");
@@ -316,6 +324,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   useEffect(() => {
     if (!project) return;
     setCompletion(project.completionPercentage);
+    setCompletionText(String(project.completionPercentage));
     setStatus(project.status);
     setContractorName(project.contractorName ?? "");
     setModeOfImplementation(project.modeOfImplementation);
@@ -1058,47 +1067,61 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                       <Input value={contractorName} onChange={(e) => setContractorName(e.target.value)} placeholder="Contractor name" />
                     </div>
                   </div>
-                </div>
-              </div>
 
-              {/* Progress */}
-              <div className="border-t border-gray-100 px-4 py-3">
-                <div className="mb-2 flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2">
-                    <FieldLabel>Project Progress</FieldLabel>
-                    <span className="flex items-center gap-1 text-[10px] font-semibold text-green-500">
-                      <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
-                      Real-time
-                    </span>
+                  {/* Progress — sits with the rest of the identity fields */}
+                  <div>
+                    <div className="mb-1.5 flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-2">
+                        <FieldLabel>Project Progress</FieldLabel>
+                        <span className="flex items-center gap-1 text-[10px] font-semibold text-green-500">
+                          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
+                          Real-time
+                        </span>
+                      </div>
+                      <div className="relative w-24 shrink-0">
+                        <input
+                          type="number" min={0} max={100} step={0.01} value={completionText}
+                          onChange={(e) => {
+                            // Keep whatever was typed — including an empty box or a
+                            // half-written decimal like "45." — and only mirror it
+                            // into `completion` once it parses.
+                            const raw = e.target.value;
+                            setCompletionText(raw);
+                            if (raw === "") return;
+                            const parsed = Number(raw);
+                            if (Number.isNaN(parsed)) return;
+                            setCompletion(clampPercent(parsed));
+                          }}
+                          onBlur={() => setCompletionText(String(completion))}
+                          className="block w-full rounded-sm border border-gray-200 bg-white py-1.5 pl-2.5 pr-6 text-sm font-bold text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-sm font-bold text-blue-400">%</span>
+                      </div>
+                    </div>
+                    <div className="relative flex h-5 w-full items-center">
+                      {/* Track */}
+                      <div className="absolute inset-x-0 h-2.5 overflow-hidden rounded-full bg-gray-100">
+                        <div
+                          className="h-full rounded-full bg-blue-500 transition-all duration-150"
+                          style={{ width: `${completion}%` }}
+                        />
+                      </div>
+                      {/* Thumb circle */}
+                      <div
+                        className="pointer-events-none absolute z-10 h-5 w-5 -translate-x-1/2 rounded-full border-2 border-blue-500 bg-white shadow-md transition-all duration-150"
+                        style={{ left: `${completion}%` }}
+                      />
+                      {/* Draggable range — overlaid transparently */}
+                      <input
+                        type="range" min={0} max={100} value={completion}
+                        onChange={(e) => {
+                          setCompletion(Number(e.target.value));
+                          setCompletionText(e.target.value);
+                        }}
+                        className="absolute inset-0 h-full w-full cursor-grab appearance-none bg-transparent opacity-0 active:cursor-grabbing"
+                      />
+                    </div>
                   </div>
-                  <div className="relative w-24 shrink-0">
-                    <input
-                      type="number" min={0} max={100} value={completion}
-                      onChange={(e) => setCompletion(Math.min(100, Math.max(0, Number(e.target.value))))}
-                      className="block w-full rounded-sm border-0 bg-transparent py-2 pl-3 pr-7 text-sm font-bold text-blue-600 focus:outline-none"
-                    />
-                    <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-sm font-bold text-blue-400">%</span>
-                  </div>
-                </div>
-                <div className="relative flex h-5 w-full items-center">
-                  {/* Track */}
-                  <div className="absolute inset-x-0 h-2.5 overflow-hidden rounded-full bg-gray-100">
-                    <div
-                      className="h-full rounded-full bg-blue-500 transition-all duration-150"
-                      style={{ width: `${completion}%` }}
-                    />
-                  </div>
-                  {/* Thumb circle */}
-                  <div
-                    className="pointer-events-none absolute z-10 h-5 w-5 -translate-x-1/2 rounded-full border-2 border-blue-500 bg-white shadow-md transition-all duration-150"
-                    style={{ left: `${completion}%` }}
-                  />
-                  {/* Draggable range — overlaid transparently */}
-                  <input
-                    type="range" min={0} max={100} value={completion}
-                    onChange={(e) => setCompletion(Number(e.target.value))}
-                    className="absolute inset-0 h-full w-full cursor-grab appearance-none bg-transparent opacity-0 active:cursor-grabbing"
-                  />
                 </div>
               </div>
             </SectionCard>

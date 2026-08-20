@@ -305,7 +305,8 @@ model Project {
   longitude                Float?
   description              String?
   status                   ProjectStatus        @default(NOT_YET_STARTED)
-  completionPercentage     Int                  @default(0)
+  // Physical accomplishment, recorded to the decimal (e.g. 45.75%).
+  completionPercentage     Float                @default(0)
   // Slippage tracking: the planned vs. actual physical accomplishment at the
   // time of assessment. The slippage percentage itself is always derived
   // (actual − target) by ~/lib/slippage, so the two inputs stay the only
