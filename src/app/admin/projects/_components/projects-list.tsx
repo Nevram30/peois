@@ -180,7 +180,7 @@ const ProjectActions = ({
     <div className="flex items-center gap-2">
       <button
         onClick={() => router.push(`/admin/projects/${id}/view`)}
-        className={`inline-flex items-center justify-center gap-1.5 rounded-sm bg-blue-500 px-2.5 py-1.5 text-xs font-medium text-white transition hover:bg-blue-600 ${growClass}`}
+        className={`inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-sm bg-blue-500 px-2.5 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-blue-600 ${growClass}`}
       >
         <svg
           className="h-3.5 w-3.5"
@@ -204,7 +204,7 @@ const ProjectActions = ({
       </button>
       <button
         onClick={() => router.push(`/admin/projects/${id}`)}
-        className={`inline-flex items-center justify-center gap-1.5 rounded-sm bg-green-500 px-2.5 py-1.5 text-xs font-medium text-white transition hover:bg-green-600 ${growClass}`}
+        className={`inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-sm bg-green-500 px-2.5 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-green-600 ${growClass}`}
       >
         <svg
           className="h-3.5 w-3.5"
@@ -424,9 +424,9 @@ const ProjectsList = () => {
           </div>
           <div className="flex flex-wrap items-center gap-3">
             {/* Search */}
-            <div className="relative w-full sm:w-72">
+            <div className="relative w-full sm:w-md lg:w-xl">
               <svg
-                className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+                className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
@@ -443,7 +443,7 @@ const ProjectsList = () => {
                 placeholder="Project Code or Name..."
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                className="w-full rounded-sm border border-gray-200 py-2.5 pl-9 pr-3 text-sm text-gray-700 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                className="w-full rounded-sm border border-gray-300 bg-gray-50 py-2.5 pl-9 pr-3 text-sm text-gray-800 shadow-sm placeholder:text-gray-500 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
             {(statusFilter ?? filterToday) && (
@@ -456,7 +456,7 @@ const ProjectsList = () => {
             )}
             <button
               onClick={() => setReportModalOpen(true)}
-              className="inline-flex grow cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-sm border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 sm:grow-0"
+              className="inline-flex grow cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-sm border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 sm:grow-0"
             >
               <svg
                 className="h-4 w-4"

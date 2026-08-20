@@ -272,6 +272,8 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   // ─ Responsibility & Scope ──────────────────────────────────────────────
   const [engineers, setEngineers] = useState<string[]>([]);
   const [engineerInput, setEngineerInput] = useState("");
+  const [editingEngineer, setEditingEngineer] = useState<string | null>(null);
+  const [editingEngineerValue, setEditingEngineerValue] = useState("");
   const [description, setDescription] = useState("");
 
   // ─ Media / upload ──────────────────────────────────────────────────────
@@ -871,6 +873,30 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   };
 
   const removeEngineer = (name: string) => setEngineers((prev) => prev.filter((e) => e !== name));
+
+  const startEditEngineer = (name: string) => {
+    setEditingEngineer(name);
+    setEditingEngineerValue(name);
+  };
+
+  const cancelEditEngineer = () => {
+    setEditingEngineer(null);
+    setEditingEngineerValue("");
+  };
+
+  /** Renames the pill in place; renaming onto an existing name merges the two. */
+  const commitEditEngineer = () => {
+    if (editingEngineer === null) return;
+    const original = editingEngineer;
+    const name = editingEngineerValue.trim();
+    cancelEditEngineer();
+    if (!name || name === original) return;
+    setEngineers((prev) =>
+      prev.some((e) => e !== original && e === name)
+        ? prev.filter((e) => e !== original)
+        : prev.map((e) => (e === original ? name : e)),
+    );
+  };
 
   // ─ Loading / not found ─────────────────────────────────────────────────
   if (isLoading) {
@@ -2016,16 +2042,47 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                 <div>
                   <FieldLabel>Engineers In-Charge</FieldLabel>
                   <div className="mt-2 flex flex-wrap gap-2">
-                    {engineers.map((eng) => (
-                      <span key={eng} className="flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-                        {eng}
-                        <button type="button" onClick={() => removeEngineer(eng)} className="text-blue-400 hover:text-blue-600">
-                          <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                          </svg>
-                        </button>
-                      </span>
-                    ))}
+                    {engineers.map((eng) =>
+                      editingEngineer === eng ? (
+                        <span key={eng} className="flex items-center gap-1.5 rounded-full border border-blue-400 bg-white px-3 py-1 text-xs font-semibold text-blue-700 ring-2 ring-blue-400/20">
+                          <input
+                            autoFocus
+                            type="text"
+                            value={editingEngineerValue}
+                            onChange={(e) => setEditingEngineerValue(e.target.value)}
+                            onBlur={commitEditEngineer}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") { e.preventDefault(); commitEditEngineer(); }
+                              if (e.key === "Escape") { e.preventDefault(); cancelEditEngineer(); }
+                            }}
+                            aria-label={`Rename ${eng}`}
+                            style={{ width: `${Math.max(6, editingEngineerValue.length + 1)}ch` }}
+                            className="bg-transparent text-xs font-semibold text-blue-700 focus:outline-none"
+                          />
+                          <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={commitEditEngineer} title="Save" className="text-blue-400 hover:text-blue-600">
+                            <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                            </svg>
+                          </button>
+                        </span>
+                      ) : (
+                        <span key={eng} className="flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                          <button type="button" onClick={() => startEditEngineer(eng)} title="Click to edit" className="hover:underline">
+                            {eng}
+                          </button>
+                          <button type="button" onClick={() => startEditEngineer(eng)} title="Edit engineer" className="text-blue-400 hover:text-blue-600">
+                            <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z" />
+                            </svg>
+                          </button>
+                          <button type="button" onClick={() => removeEngineer(eng)} title="Remove engineer" className="text-blue-400 hover:text-blue-600">
+                            <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </span>
+                      ),
+                    )}
                     <div className="flex gap-1.5">
                       <input
                         ref={engineerRef}
