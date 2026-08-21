@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "~/trpc/react";
 import {
@@ -28,6 +28,7 @@ import {
   projectOptions,
   withSelected,
 } from "~/lib/funding-options";
+import { divisionLabel, groupByDivision } from "~/lib/divisions";
 import { HardHat } from "lucide-react";
 
 const STATUS_STYLES: Record<string, string> = {
@@ -228,6 +229,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
   const { data: timelineAdjustmentsData, refetch: refetchTimelineAdjustments } = api.project.getTimelineAdjustments.useQuery({ projectId });
   const { data: projectFilesData, refetch: refetchProjectFiles } = api.projectFile.getByProjectId.useQuery({ projectId });
   const { data: users } = api.user.getForSelect.useQuery();
+  const groupedUsers = useMemo(() => groupByDivision(users ?? []), [users]);
   // Programs / Projects / LBP-TL numbers this super admin (or another) added via
   // the Manual Entry card — merged into the Funding Information dropdowns.
   const { data: customOptions } = api.fundingOption.getAll.useQuery();
@@ -409,6 +411,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
   const [notifPriority, setNotifPriority] = useState<PriorityValue>("HIGH");
   const [notifDesc, setNotifDesc] = useState("");
   const [notifSuccess, setNotifSuccess] = useState(false);
+  const notifSelectedUser = users?.find((u) => u.id === notifUserId);
 
   // Re-applies the saved project values to the form, discarding any edits.
   const resetForm = useCallback(() => {
@@ -1781,15 +1784,33 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                   className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">-- Select user --</option>
-                  {(users ?? []).map((u) => (
-                    <option key={u.id} value={u.id}>
-                      {`${u.name ?? "Unnamed"} — ${u.email}${u.employeeId ? ` (${u.employeeId})` : ""}`}
-                    </option>
+                  {/* Grouped by division so recipients are picked by the
+                      district they belong to. */}
+                  {groupedUsers.map((group) => (
+                    <optgroup key={group.label} label={group.label}>
+                      {group.people.map((u) => (
+                        <option key={u.id} value={u.id}>
+                          {`${u.name ?? "Unnamed"} — ${u.email}${u.employeeId ? ` (${u.employeeId})` : ""} · ${u.role === "ADMIN" ? "Admin" : "User"}`}
+                        </option>
+                      ))}
+                    </optgroup>
                   ))}
                 </select>
+                {/* A collapsed select hides the optgroup, so the chosen
+                    recipient's division is repeated here. */}
+                {notifSelectedUser && (
+                  <p className="mt-1 text-xs font-semibold text-blue-600">
+                    {divisionLabel(notifSelectedUser.division)}
+                    <span className="font-normal text-gray-400">
+                      {" · "}
+                      {notifSelectedUser.role === "ADMIN" ? "Admin" : "User"}
+                    </span>
+                  </p>
+                )}
                 {users?.length === 0 && (
                   <p className="mt-1 text-xs text-amber-600">
-                    No active users available — activate users first.
+                    No recipients available — a recipient must be an active admin
+                    or user account.
                   </p>
                 )}
               </div>

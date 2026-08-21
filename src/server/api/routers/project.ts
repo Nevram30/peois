@@ -1,11 +1,12 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import {
-  adminProcedure,
   createTRPCRouter,
+  districtScopedAdminProcedure,
   districtScopedProcedure,
   protectedProcedure,
 } from "~/server/api/trpc";
+import { isReachableFromDistrict } from "~/lib/divisions";
 import { type District } from "../../../../generated/prisma";
 import { notificationEmitter } from "~/server/api/events";
 import {
@@ -601,7 +602,7 @@ export const projectRouter = createTRPCRouter({
       });
     }),
 
-  sendTaskNotification: adminProcedure
+  sendTaskNotification: districtScopedAdminProcedure
     .input(
       z.object({
         projectId: z.string(),
@@ -613,12 +614,26 @@ export const projectRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const recipient = await ctx.db.user.findUnique({
         where: { id: input.notifyUserId },
-        select: { role: true, status: true },
+        select: { role: true, status: true, division: true },
       });
-      if (recipient?.role !== "USER" || recipient.status !== "ACTIVE") {
+      // Must mirror `user.getForSelect`, which is what populates the recipient
+      // dropdown — widening one without the other only produces send errors.
+      const canReceiveTasks =
+        recipient?.status === "ACTIVE" &&
+        (recipient.role === "USER" || recipient.role === "ADMIN");
+      if (!canReceiveTasks) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Recipient must be an active user account",
+          message: "Recipient must be an active user or admin account",
+        });
+      }
+      // District separation, re-checked here because the dropdown filter is a
+      // convenience and not a boundary — a crafted request must not cross it.
+      // Office-division recipients serve both districts and stay reachable.
+      if (!isReachableFromDistrict(recipient.division, ctx.districtScope)) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Recipient must belong to your engineering district",
         });
       }
 

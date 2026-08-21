@@ -63,13 +63,6 @@ const STATUS_CONFIG: Record<string, { label: string; badge: string; dot: string 
   OTHERS: { label: "Others", badge: "bg-slate-50 text-slate-700 border-slate-200", dot: "bg-slate-500" },
 };
 
-const PRIORITY_CONFIG = {
-  HIGH: { label: "HIGH PRIORITY", bg: "bg-red-50", border: "border-red-200", text: "text-red-700", dot: "bg-red-500", activeBg: "bg-red-500", activeText: "text-white" },
-  MEDIUM: { label: "MEDIUM PRIORITY", bg: "bg-amber-50", border: "border-amber-200", text: "text-amber-700", dot: "bg-amber-400", activeBg: "bg-amber-500", activeText: "text-white" },
-  LOW: { label: "LOW PRIORITY", bg: "bg-green-50", border: "border-green-200", text: "text-green-700", dot: "bg-green-500", activeBg: "bg-green-600", activeText: "text-white" },
-  URGENT: { label: "URGENT", bg: "bg-purple-50", border: "border-purple-200", text: "text-purple-700", dot: "bg-purple-500", activeBg: "bg-purple-600", activeText: "text-white" },
-} as const;
-
 const TIMELINE_ADJ_TYPE_CONFIG: Record<string, { label: string; badge: string }> = {
   EXTENSION: { label: "Extension", badge: "bg-blue-50 text-blue-700 border-blue-200" },
   SUSPENSION: { label: "Suspension", badge: "bg-red-50 text-red-700 border-red-200" },
@@ -212,7 +205,6 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     satisfiedDocs.has(item.key),
   ).length;
   const { startUpload } = useUploadThing("projectFileUploader");
-  const { data: usersForSelect } = api.user.getForSelect.useQuery();
   // Programs / Projects / LBP-TL numbers a super admin registered from the
   // project override page, merged into the Funding Information dropdowns below.
   const { data: customOptions } = api.fundingOption.getAll.useQuery();
@@ -297,7 +289,10 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   const [disbAmount, setDisbAmount] = useState("");
   const [disbRef, setDisbRef] = useState("");
   const [disbType, setDisbType] = useState<"" | DisbursementTypeValue>("");
-  const [disbErrors, setDisbErrors] = useState<{ amount?: string; ref?: string; type?: string }>({});
+  // The actual date the money moved, which may be back-dated rather than the
+  // time of filing — same reasoning as the slippage assessment date.
+  const [disbDate, setDisbDate] = useState(todayInputDate);
+  const [disbErrors, setDisbErrors] = useState<{ amount?: string; ref?: string; type?: string; date?: string }>({});
 
   // ─ Timeline Adjustment ──────────────────────────────────────────────────
   const [adjDays, setAdjDays] = useState("");
@@ -312,12 +307,6 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   const [revisedVariation, setRevisedVariation] = useState("");
   const [variationError, setVariationError] = useState<string | null>(null);
   const [editingVoId, setEditingVoId] = useState<string | null>(null);
-
-  // ─ Task notification ───────────────────────────────────────────────────
-  const [notifyUserId, setNotifyUserId] = useState("");
-  const [notifyPriority, setNotifyPriority] = useState<"LOW" | "MEDIUM" | "HIGH" | "URGENT">("MEDIUM");
-  const [taskDescription, setTaskDescription] = useState("");
-  const [showNotifSuccess, setShowNotifSuccess] = useState(false);
 
   // ─ UI ──────────────────────────────────────────────────────────────────
   const [showSuccess, setShowSuccess] = useState(false);
@@ -470,15 +459,16 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
 
   const recordDisbursement = api.project.createDisbursement.useMutation({
     onSuccess: (_data, variables) => {
-      setDisbAmount(""); setDisbRef(""); setDisbType(""); setDisbErrors({});
+      setDisbAmount(""); setDisbRef(""); setDisbType(""); setDisbDate(todayInputDate()); setDisbErrors({});
       void refetchDisbursements();
       void utils.project.invalidate();
       const formatted = variables.amount.toLocaleString("en-PH", { minimumFractionDigits: 2 });
       const refPart = variables.referenceNumber ? ` (Ref: ${variables.referenceNumber})` : "";
       const typePart = variables.type ? ` [${DISBURSEMENT_TYPE_LABEL[variables.type]}]` : "";
+      const datePart = variables.date ? ` dated ${fmt(variables.date)}` : "";
       addActivity.mutate({
         projectId: variables.projectId,
-        description: `Recorded disbursement of ₱${formatted}${refPart}${typePart}.`,
+        description: `Recorded disbursement of ₱${formatted}${datePart}${refPart}${typePart}.`,
       });
     },
   });
@@ -528,13 +518,6 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
         projectId: variables.projectId,
         description: `Recorded ${variables.type.toLowerCase()} timeline adjustment of ${variables.duration} day(s).`,
       });
-    },
-  });
-
-  const sendNotification = api.project.sendTaskNotification.useMutation({
-    onSuccess: () => {
-      setTaskDescription(""); setNotifyUserId(""); setNotifyPriority("MEDIUM");
-      setShowNotifSuccess(true);
     },
   });
 
@@ -787,11 +770,12 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   };
 
   const handleRecordDisbursement = () => {
-    const errors: { amount?: string; ref?: string; type?: string } = {};
+    const errors: { amount?: string; ref?: string; type?: string; date?: string } = {};
     const amount = parseAmount(disbAmount);
     if (!disbAmount || isNaN(amount) || amount <= 0) errors.amount = "Amount must be greater than 0.";
     else if (amount > totalRemainingBalance)
       errors.amount = `Insufficient balance. Amount exceeds the total remaining balance of ₱${totalRemainingBalance.toLocaleString("en-PH", { minimumFractionDigits: 2 })}.`;
+    if (!disbDate) errors.date = "Disbursement date is required.";
     if (!disbRef.trim()) errors.ref = "Reference number is required.";
     if (!disbType) errors.type = "Type is required.";
     if (Object.keys(errors).length > 0) { setDisbErrors(errors); return; }
@@ -799,6 +783,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     recordDisbursement.mutate({
       projectId,
       amount,
+      date: new Date(disbDate),
       referenceNumber: disbRef.trim(),
       type: disbType as DisbursementTypeValue,
     });
@@ -859,11 +844,6 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
       type: adjType,
       justification: adjJustification.trim() || undefined,
     });
-  };
-
-  const handleSendNotification = () => {
-    if (!notifyUserId || !taskDescription.trim()) return;
-    sendNotification.mutate({ projectId, notifyUserId, priority: notifyPriority, description: taskDescription.trim() });
   };
 
   const addEngineer = () => {
@@ -1486,6 +1466,15 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                       className="pl-7"
                     />
                   </div>
+                  <div className="w-full shrink-0 sm:w-40">
+                    <Input
+                      type="date"
+                      title="Disbursement date"
+                      value={disbDate}
+                      onChange={(e) => { setDisbDate(e.target.value); setDisbErrors((p) => ({ ...p, date: undefined })); }}
+                      error={!!disbErrors.date}
+                    />
+                  </div>
                   <Input
                     type="text" placeholder="Ref # *"
                     value={disbRef}
@@ -1520,9 +1509,10 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                     {recordDisbursement.isPending ? "..." : "Record"}
                   </button>
                 </div>
-                {(disbErrors.amount ?? disbErrors.ref ?? disbErrors.type) && (
+                {(disbErrors.amount ?? disbErrors.date ?? disbErrors.ref ?? disbErrors.type) && (
                   <div className="mt-1 space-y-0.5">
                     {disbErrors.amount && <p className="text-xs text-red-500">{disbErrors.amount}</p>}
+                    {disbErrors.date && <p className="text-xs text-red-500">{disbErrors.date}</p>}
                     {disbErrors.ref && <p className="text-xs text-red-500">{disbErrors.ref}</p>}
                     {disbErrors.type && <p className="text-xs text-red-500">{disbErrors.type}</p>}
                   </div>
@@ -2373,102 +2363,6 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
               initialFiles={docModalFiles}
               uploadError={uploadError}
             />
-          </SectionCard>
-
-          {/* ── Task Notification ── */}
-          <SectionCard>
-            <SectionHeader
-              icon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" /></svg>}
-              title="Task Notification"
-            />
-            <div className="p-4">
-              {showNotifSuccess && (
-                <div className="mb-4 flex items-center gap-2 rounded-sm border border-green-200 bg-green-50 px-4 py-3 text-xs text-green-700">
-                  <svg className="h-4 w-4 text-green-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
-                  Notification sent successfully.
-                  <button type="button" onClick={() => setShowNotifSuccess(false)} className="ml-auto text-green-400 hover:text-green-600">✕</button>
-                </div>
-              )}
-              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                {/* Left */}
-                <div className="space-y-4">
-                  <div>
-                    <FieldLabel>Select User to Notify</FieldLabel>
-                    <Select value={notifyUserId} onChange={(e) => setNotifyUserId(e.target.value)}>
-                      <option value="">Select a user...</option>
-                      {usersForSelect?.map((u) => (
-                        <option key={u.id} value={u.id}>
-                          {`${u.name ?? "Unnamed"} — ${u.email}${u.employeeId ? ` (${u.employeeId})` : ""}`}
-                        </option>
-                      ))}
-                    </Select>
-                    {usersForSelect?.length === 0 && (
-                      <p className="mt-1 text-xs text-amber-600">
-                        No active users available — activate users first.
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <FieldLabel>Priority Level</FieldLabel>
-                    <div className="mt-2 space-y-2">
-                      {(["URGENT", "HIGH", "MEDIUM", "LOW"] as const).map((p) => {
-                        const cfg = PRIORITY_CONFIG[p];
-                        const isActive = notifyPriority === p;
-                        return (
-                          <button
-                            key={p} type="button"
-                            onClick={() => setNotifyPriority(p)}
-                            className={`flex w-full items-start gap-3 rounded-sm border px-3 py-2.5 text-left transition ${isActive ? `${cfg.activeBg} border-transparent text-white` : `${cfg.bg} ${cfg.border}`
-                              }`}
-                          >
-                            <span className={`mt-0.5 h-3 w-3 shrink-0 rounded-sm ${isActive ? "bg-white/80" : cfg.dot}`} />
-                            <div>
-                              <p className={`text-xs font-bold uppercase tracking-widest ${isActive ? "text-white" : cfg.text}`}>{cfg.label}</p>
-                              <p className={`mt-0.5 text-[10px] ${isActive ? "text-white/80" : "text-gray-400"}`}>
-                                {p === "URGENT" ? "Acknowledge & respond immediately" : p === "HIGH" ? "Acknowledge & respond within 4 hours" : p === "MEDIUM" ? "Acknowledge & respond within 24 hours" : "Acknowledge & respond within 48 hours"}
-                              </p>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right */}
-                <div className="flex flex-col">
-                  <FieldLabel>Task Description / Instructions</FieldLabel>
-                  <textarea
-                    rows={8}
-                    value={taskDescription}
-                    onChange={(e) => setTaskDescription(e.target.value)}
-                    placeholder="Type instructions or task details here..."
-                    className="mt-1 flex-1 resize-none rounded-sm border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-800 placeholder:text-gray-300 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20"
-                  />
-                  <div className="mt-3 flex justify-end">
-                    <button
-                      type="button"
-                      onClick={handleSendNotification}
-                      disabled={sendNotification.isPending || !notifyUserId || !taskDescription.trim()}
-                      className="flex items-center gap-2 rounded-sm bg-blue-600 px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-40"
-                    >
-                      {sendNotification.isPending ? (
-                        <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                      ) : (
-                        <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
-                        </svg>
-                      )}
-                      {sendNotification.isPending ? "Sending..." : "Send Notification"}
-                    </button>
-                  </div>
-                  {sendNotification.isError && (
-                    <p className="mt-2 text-right text-xs text-red-600">{sendNotification.error.message}</p>
-                  )}
-                </div>
-              </div>
-            </div>
           </SectionCard>
 
         </div>

@@ -145,18 +145,20 @@ export const protectedProcedure = t.procedure
  * project access is limited to, or null for unrestricted divisions
  * (SMAD/PDPM/EPM/QACD) and SUPER_ADMIN.
  */
+const districtScopeMiddleware = t.middleware(async ({ ctx, next }) => {
+  let districtScope: District | null = null;
+  if (ctx.session?.user && ctx.session.user.role !== "SUPER_ADMIN") {
+    const user = await ctx.db.user.findUnique({
+      where: { id: ctx.session.user.id },
+      select: { division: true },
+    });
+    districtScope = divisionToDistrict(user?.division);
+  }
+  return next({ ctx: { districtScope } });
+});
+
 export const districtScopedProcedure = protectedProcedure.use(
-  async ({ ctx, next }) => {
-    let districtScope: District | null = null;
-    if (ctx.session.user.role !== "SUPER_ADMIN") {
-      const user = await ctx.db.user.findUnique({
-        where: { id: ctx.session.user.id },
-        select: { division: true },
-      });
-      districtScope = divisionToDistrict(user?.division);
-    }
-    return next({ ctx: { districtScope } });
-  },
+  districtScopeMiddleware,
 );
 
 export const superAdminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -188,4 +190,13 @@ export const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
   }
   return next({ ctx });
 });
+
+/**
+ * Admin-only procedure that also exposes `ctx.districtScope`, for admin actions
+ * that must stay inside the caller's engineering district (picking a task
+ * notification recipient, for one).
+ */
+export const districtScopedAdminProcedure = adminProcedure.use(
+  districtScopeMiddleware,
+);
 

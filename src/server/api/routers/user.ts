@@ -6,7 +6,9 @@ import {
   protectedProcedure,
   superAdminProcedure,
   adminProcedure,
+  districtScopedAdminProcedure,
 } from "~/server/api/trpc";
+import { isReachableFromDistrict } from "~/lib/divisions";
 export const userRouter = createTRPCRouter({
   getMe: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.user.findUnique({
@@ -94,12 +96,39 @@ export const userRouter = createTRPCRouter({
     return { total, active, inactive, pending };
   }),
 
-  getForSelect: adminProcedure.query(async ({ ctx }) => {
-    return ctx.db.user.findMany({
-      where: { role: "USER", status: "ACTIVE" },
-      select: { id: true, name: true, email: true, employeeId: true, image: true },
-      orderBy: { name: "asc" },
+  // Task-notification recipients. Admins are valid recipients alongside plain
+  // users — they have their own /admin/my-task inbox — so both roles are listed
+  // here. Super admins and archivers stay out.
+  //
+  // The list is confined to the caller's engineering district: a 1st District
+  // admin sees 1st District people, and likewise for the 2nd. Office-division
+  // staff (SMAD/PDPM/EPM/QACD) serve both districts, so they stay in both
+  // lists. Callers who are themselves office division, and super admins, have
+  // no scope and see everyone. `sendTaskNotification` in the project router
+  // re-checks both rules, since a filtered dropdown is not by itself a
+  // permission boundary.
+  getForSelect: districtScopedAdminProcedure.query(async ({ ctx }) => {
+    const candidates = await ctx.db.user.findMany({
+      where: { role: { in: ["ADMIN", "USER"] }, status: "ACTIVE" },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        employeeId: true,
+        image: true,
+        role: true,
+        division: true,
+      },
+      orderBy: [{ division: "asc" }, { name: "asc" }],
     });
+
+    if (!ctx.districtScope) return candidates;
+    // Filtered here rather than in the `where` clause because division is a
+    // free-text column: the normalization behind `isReachableFromDistrict`
+    // handles legacy spellings that an exact SQL match would miss.
+    return candidates.filter((u) =>
+      isReachableFromDistrict(u.division, ctx.districtScope),
+    );
   }),
 
   getDivisions: superAdminProcedure.query(async ({ ctx }) => {
