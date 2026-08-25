@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo } from "react";
 import { api } from "~/trpc/react";
 import { useUploadThing } from "~/lib/uploadthing";
 import {
@@ -41,7 +41,13 @@ import {
   type DocType,
   type ProjectFileType,
 } from "~/lib/project-documents";
+import {
+  PROJECT_IMAGE_SLOTS,
+  filledImages,
+  type ProjectImageSlots,
+} from "~/lib/project-images";
 import { UploadDocumentModal } from "~/app/_components/upload-document-modal";
+import { ProjectImageUploader } from "~/app/_components/project-image-uploader";
 import { GeospatialFields } from "~/app/_components/geospatial-fields";
 import { parseCoord } from "~/lib/geo";
 import { handleAmountChange, parseAmount, formatAmountValue } from "~/lib/currency";
@@ -287,11 +293,13 @@ export const AddProjectForm = () => {
   const [engineerInput, setEngineerInput] = useState("");
   const [description, setDescription] = useState("");
 
-  // ── Project Image ────────────────────────────────────────────────────
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [imageUrl, setImageUrl] = useState("");
-  const [imageUploadError, setImageUploadError] = useState<string | null>(null);
-  const imageInputRef = useRef<HTMLInputElement>(null);
+  // ── Project Images ───────────────────────────────────────────────────
+  // Four photos per project. The uploader owns the per-slot upload state; the
+  // form only keeps the resulting URLs and whether any slot is still in flight.
+  const [imageSlots, setImageSlots] = useState<ProjectImageSlots>(
+    Array.from({ length: PROJECT_IMAGE_SLOTS }, () => null),
+  );
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   // ── Multi-file Project Documentation ─────────────────────────────────
   // Documents go in through the upload modal, which asks for the requirement
@@ -307,18 +315,8 @@ export const AddProjectForm = () => {
   // ── Validation ───────────────────────────────────────────────────────
   const [showErrors, setShowErrors] = useState(false);
 
-  const { startUpload: startImageUpload, isUploading: isUploadingImage } =
-    useUploadThing("imageUploader", {
-      onClientUploadComplete: (res) => {
-        const url = res[0]?.ufsUrl ?? res[0]?.url;
-        if (url) {
-          setImageUrl(url);
-          setImagePreview(url);
-        }
-        setImageUploadError(null);
-      },
-      onUploadError: (err) => setImageUploadError(err.message),
-    });
+  const setImageSlot = (index: number, url: string | null) =>
+    setImageSlots((prev) => prev.map((u, i) => (i === index ? url : u)));
 
   const { startUpload: startFileUpload } = useUploadThing("projectFileUploader");
 
@@ -462,13 +460,6 @@ export const AddProjectForm = () => {
     }
   };
 
-  const handleImageChange = async (file: File) => {
-    if (!file) return;
-    setImagePreview(URL.createObjectURL(file));
-    setImageUploadError(null);
-    await startImageUpload([file]);
-  };
-
   const openDocModal = (dropped: File[] = []) => {
     setStagedDropFiles(dropped);
     setDocUploadError(null);
@@ -606,7 +597,8 @@ export const AddProjectForm = () => {
   const fieldErrors = useMemo(
     () => ({
       title: !title.trim(),
-      image: !imageUrl,
+      // All four photo slots must be filled for a full submission.
+      image: imageSlots.some((url) => !url),
       projectCost: !(parseAmount(projectCost) > 0),
       // trackingNumber: !trackingNumber.trim(),
       modeOfImplementation: !modeOfImplementation,
@@ -641,7 +633,7 @@ export const AddProjectForm = () => {
     }),
     [
       title,
-      imageUrl,
+      imageSlots,
       projectCost,
       // trackingNumber,
       modeOfImplementation,
@@ -683,6 +675,10 @@ export const AddProjectForm = () => {
       setShowErrors(true);
       return;
     }
+
+    // `imageUrl` mirrors slot 1 so the readers that predate the gallery — the
+    // project list, updateProgress — still find a cover photo.
+    const images = filledImages(imageSlots);
 
     createProject.mutate({
       title,
@@ -728,7 +724,8 @@ export const AddProjectForm = () => {
       slippageActual,
       slippageRevision,
       status: isDraft ? "NOT_YET_STARTED" : status,
-      imageUrl: imageUrl || undefined,
+      imageUrl: images[0],
+      imageUrls: images,
       projectCode: trackingNumber || undefined,
     });
   };
@@ -769,56 +766,30 @@ export const AddProjectForm = () => {
           <section className={`${cardClass} lg:col-span-2`}>
             <SectionHeader icon={InfoIcon} title="Project Identity & Status" />
             <div className="space-y-4 p-5">
-              {/* Project image — full-width banner */}
+              {/* Project photos — banner plus three supporting shots */}
               <div>
-                <div
-                  onClick={() => imageInputRef.current?.click()}
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    const file = e.dataTransfer.files[0];
-                    if (file) void handleImageChange(file);
-                  }}
-                  className="group relative flex aspect-video w-full cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden rounded-sm border-2 border-dashed border-gray-200 bg-gray-50 transition hover:border-blue-300 hover:bg-blue-50"
-                >
-                  {imagePreview ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={imagePreview} alt="Project" className="h-full w-full object-cover" />
-                  ) : (
-                    <>
-                      <svg className="h-8 w-8 text-gray-300" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Z" />
-                      </svg>
-                      <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">No Image Uploaded</p>
-                      <span className="rounded-md bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-gray-600 shadow-sm ring-1 ring-gray-200 group-hover:ring-blue-300">
-                        ⬆ Upload Photo
+                <label className={fieldLabelClass}>
+                  Project Photos <span className="text-red-500">*</span>
+                  <span className="ml-1 font-normal text-gray-400">
+                    (all {PROJECT_IMAGE_SLOTS} required)
+                  </span>
+                </label>
+                <ProjectImageUploader
+                  slots={imageSlots}
+                  onChange={setImageSlot}
+                  onUploadingChange={setIsUploadingImage}
+                  badge={
+                    trackingNumber ? (
+                      <span className="absolute top-3 left-3 rounded-md bg-gray-900/90 px-3 py-1.5 text-[10px] font-bold tracking-wider text-white">
+                        #{trackingNumber}
                       </span>
-                    </>
-                  )}
-                  {trackingNumber && (
-                    <span className="absolute top-3 left-3 rounded-md bg-gray-900/90 px-3 py-1.5 text-[10px] font-bold tracking-wider text-white">
-                      #{trackingNumber}
-                    </span>
-                  )}
-                  <input
-                    ref={imageInputRef}
-                    type="file"
-                    accept="image/jpeg,image/png"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) void handleImageChange(file);
-                    }}
-                  />
-                </div>
-                {isUploadingImage && (
-                  <p className="mt-1.5 text-[10px] text-blue-500">Uploading...</p>
-                )}
-                {imageUploadError && (
-                  <p className="mt-1.5 text-[10px] text-red-500">{imageUploadError}</p>
-                )}
+                    ) : undefined
+                  }
+                />
                 {showErrors && fieldErrors.image && (
-                  <p className="mt-1.5 text-xs text-red-500">Project image is required</p>
+                  <p className="mt-1.5 text-xs text-red-500">
+                    All {PROJECT_IMAGE_SLOTS} project photos are required
+                  </p>
                 )}
               </div>
 

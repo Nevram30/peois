@@ -193,6 +193,7 @@ exports.Prisma.ProjectScalarFieldEnum = {
   slippageActual: 'slippageActual',
   slippageRevision: 'slippageRevision',
   imageUrl: 'imageUrl',
+  imageUrls: 'imageUrls',
   documentUrl: 'documentUrl',
   documentName: 'documentName',
   createdById: 'createdById',

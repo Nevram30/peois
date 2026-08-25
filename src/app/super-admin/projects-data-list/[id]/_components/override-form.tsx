@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "~/trpc/react";
+import { toImageSlots } from "~/lib/project-images";
+import { ProjectImageGallery } from "~/app/_components/project-image-gallery";
 import {
   SOURCE_OF_FUND_LABEL,
   SOURCE_OF_FUND_ORDER,
@@ -697,26 +699,19 @@ export function OverrideForm({ projectId }: { projectId: string }) {
             title="Project Identity & Status"
           >
             <div className="flex flex-col gap-4 sm:flex-row sm:items-stretch">
-              {/* Project Image with code overlay */}
-              <div className="relative h-56 w-full shrink-0 overflow-hidden rounded-lg border border-gray-200 sm:h-auto sm:w-72">
-                {project.imageUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={project.imageUrl}
-                    alt="Project"
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-full min-h-56 w-full items-center justify-center bg-gray-900 text-gray-600">
-                    <svg className="h-10 w-10" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                    </svg>
+              {/* Project photos with code overlay — read-only here; the
+                  override form does not persist images. */}
+              <ProjectImageGallery
+                slots={toImageSlots(project)}
+                alt={project.title}
+                twoUp
+                className="w-full shrink-0 sm:w-72"
+                badge={
+                  <div className="absolute inset-x-0 bottom-0 bg-black/60 py-2 text-center">
+                    <span className="font-mono text-xs font-medium text-gray-200"># {project.projectCode}</span>
                   </div>
-                )}
-                <div className="absolute inset-x-0 bottom-0 bg-black/60 py-2 text-center">
-                  <span className="font-mono text-xs font-medium text-gray-200"># {project.projectCode}</span>
-                </div>
-              </div>
+                }
+              />
 
               <div className="flex-1 space-y-3">
                 <div>

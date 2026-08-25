@@ -6255,6 +6255,7 @@ export namespace Prisma {
     slippageActual: number
     slippageRevision: number
     imageUrl: number
+    imageUrls: number
     documentUrl: number
     documentName: number
     createdById: number
@@ -6443,6 +6444,7 @@ export namespace Prisma {
     slippageActual?: true
     slippageRevision?: true
     imageUrl?: true
+    imageUrls?: true
     documentUrl?: true
     documentName?: true
     createdById?: true
@@ -6580,6 +6582,7 @@ export namespace Prisma {
     slippageActual: number | null
     slippageRevision: number
     imageUrl: string | null
+    imageUrls: string[]
     documentUrl: string | null
     documentName: string | null
     createdById: string
@@ -6649,6 +6652,7 @@ export namespace Prisma {
     slippageActual?: boolean
     slippageRevision?: boolean
     imageUrl?: boolean
+    imageUrls?: boolean
     documentUrl?: boolean
     documentName?: boolean
     createdById?: boolean
@@ -6710,6 +6714,7 @@ export namespace Prisma {
     slippageActual?: boolean
     slippageRevision?: boolean
     imageUrl?: boolean
+    imageUrls?: boolean
     documentUrl?: boolean
     documentName?: boolean
     createdById?: boolean
@@ -6761,6 +6766,7 @@ export namespace Prisma {
     slippageActual?: boolean
     slippageRevision?: boolean
     imageUrl?: boolean
+    imageUrls?: boolean
     documentUrl?: boolean
     documentName?: boolean
     createdById?: boolean
@@ -6812,6 +6818,7 @@ export namespace Prisma {
     slippageActual?: boolean
     slippageRevision?: boolean
     imageUrl?: boolean
+    imageUrls?: boolean
     documentUrl?: boolean
     documentName?: boolean
     createdById?: boolean
@@ -6819,7 +6826,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectCode" | "title" | "subType" | "program" | "projectAccount" | "modeOfImplementation" | "locationImplementation" | "sourceOfFund" | "projectCost" | "contractCost" | "contractorName" | "projectEngineer" | "budgetYear" | "landbankNumber" | "supplementalBudgetYear" | "supplementalBudgetNumber" | "dateStarted" | "targetCompletionDate" | "duration" | "revisedCompletionDate" | "dateCompleted" | "daysSuspended" | "daysExtended" | "numFemale" | "numMale" | "numPersons" | "numManDays" | "district" | "cityMunicipality" | "barangay" | "purok" | "sitio" | "latitude" | "longitude" | "description" | "status" | "completionPercentage" | "slippageTarget" | "slippageActual" | "slippageRevision" | "imageUrl" | "documentUrl" | "documentName" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
+  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectCode" | "title" | "subType" | "program" | "projectAccount" | "modeOfImplementation" | "locationImplementation" | "sourceOfFund" | "projectCost" | "contractCost" | "contractorName" | "projectEngineer" | "budgetYear" | "landbankNumber" | "supplementalBudgetYear" | "supplementalBudgetNumber" | "dateStarted" | "targetCompletionDate" | "duration" | "revisedCompletionDate" | "dateCompleted" | "daysSuspended" | "daysExtended" | "numFemale" | "numMale" | "numPersons" | "numManDays" | "district" | "cityMunicipality" | "barangay" | "purok" | "sitio" | "latitude" | "longitude" | "description" | "status" | "completionPercentage" | "slippageTarget" | "slippageActual" | "slippageRevision" | "imageUrl" | "imageUrls" | "documentUrl" | "documentName" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
   export type ProjectInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
     activities?: boolean | Project$activitiesArgs<ExtArgs>
@@ -6897,6 +6904,7 @@ export namespace Prisma {
       slippageActual: number | null
       slippageRevision: number
       imageUrl: string | null
+      imageUrls: string[]
       documentUrl: string | null
       documentName: string | null
       createdById: string
@@ -7377,6 +7385,7 @@ export namespace Prisma {
     readonly slippageActual: FieldRef<"Project", 'Float'>
     readonly slippageRevision: FieldRef<"Project", 'Int'>
     readonly imageUrl: FieldRef<"Project", 'String'>
+    readonly imageUrls: FieldRef<"Project", 'String[]'>
     readonly documentUrl: FieldRef<"Project", 'String'>
     readonly documentName: FieldRef<"Project", 'String'>
     readonly createdById: FieldRef<"Project", 'String'>
@@ -26223,6 +26232,7 @@ export namespace Prisma {
     slippageActual: 'slippageActual',
     slippageRevision: 'slippageRevision',
     imageUrl: 'imageUrl',
+    imageUrls: 'imageUrls',
     documentUrl: 'documentUrl',
     documentName: 'documentName',
     createdById: 'createdById',
@@ -27071,6 +27081,7 @@ export namespace Prisma {
     slippageActual?: FloatNullableFilter<"Project"> | number | null
     slippageRevision?: IntFilter<"Project"> | number
     imageUrl?: StringNullableFilter<"Project"> | string | null
+    imageUrls?: StringNullableListFilter<"Project">
     documentUrl?: StringNullableFilter<"Project"> | string | null
     documentName?: StringNullableFilter<"Project"> | string | null
     createdById?: StringFilter<"Project"> | string
@@ -27131,6 +27142,7 @@ export namespace Prisma {
     slippageActual?: SortOrderInput | SortOrder
     slippageRevision?: SortOrder
     imageUrl?: SortOrderInput | SortOrder
+    imageUrls?: SortOrder
     documentUrl?: SortOrderInput | SortOrder
     documentName?: SortOrderInput | SortOrder
     createdById?: SortOrder
@@ -27194,6 +27206,7 @@ export namespace Prisma {
     slippageActual?: FloatNullableFilter<"Project"> | number | null
     slippageRevision?: IntFilter<"Project"> | number
     imageUrl?: StringNullableFilter<"Project"> | string | null
+    imageUrls?: StringNullableListFilter<"Project">
     documentUrl?: StringNullableFilter<"Project"> | string | null
     documentName?: StringNullableFilter<"Project"> | string | null
     createdById?: StringFilter<"Project"> | string
@@ -27254,6 +27267,7 @@ export namespace Prisma {
     slippageActual?: SortOrderInput | SortOrder
     slippageRevision?: SortOrder
     imageUrl?: SortOrderInput | SortOrder
+    imageUrls?: SortOrder
     documentUrl?: SortOrderInput | SortOrder
     documentName?: SortOrderInput | SortOrder
     createdById?: SortOrder
@@ -27312,6 +27326,7 @@ export namespace Prisma {
     slippageActual?: FloatNullableWithAggregatesFilter<"Project"> | number | null
     slippageRevision?: IntWithAggregatesFilter<"Project"> | number
     imageUrl?: StringNullableWithAggregatesFilter<"Project"> | string | null
+    imageUrls?: StringNullableListFilter<"Project">
     documentUrl?: StringNullableWithAggregatesFilter<"Project"> | string | null
     documentName?: StringNullableWithAggregatesFilter<"Project"> | string | null
     createdById?: StringWithAggregatesFilter<"Project"> | string
@@ -28848,6 +28863,7 @@ export namespace Prisma {
     slippageActual?: number | null
     slippageRevision?: number
     imageUrl?: string | null
+    imageUrls?: ProjectCreateimageUrlsInput | string[]
     documentUrl?: string | null
     documentName?: string | null
     createdAt?: Date | string
@@ -28907,6 +28923,7 @@ export namespace Prisma {
     slippageActual?: number | null
     slippageRevision?: number
     imageUrl?: string | null
+    imageUrls?: ProjectCreateimageUrlsInput | string[]
     documentUrl?: string | null
     documentName?: string | null
     createdById: string
@@ -28966,6 +28983,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29025,6 +29043,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdById?: StringFieldUpdateOperationsInput | string
@@ -29084,6 +29103,7 @@ export namespace Prisma {
     slippageActual?: number | null
     slippageRevision?: number
     imageUrl?: string | null
+    imageUrls?: ProjectCreateimageUrlsInput | string[]
     documentUrl?: string | null
     documentName?: string | null
     createdById: string
@@ -29134,6 +29154,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29183,6 +29204,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdById?: StringFieldUpdateOperationsInput | string
@@ -30931,6 +30953,14 @@ export namespace Prisma {
     not?: NestedEnumProjectStatusFilter<$PrismaModel> | $Enums.ProjectStatus
   }
 
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
   export type ProjectCountOrderByAggregateInput = {
     id?: SortOrder
     projectCode?: SortOrder
@@ -30974,6 +31004,7 @@ export namespace Prisma {
     slippageActual?: SortOrder
     slippageRevision?: SortOrder
     imageUrl?: SortOrder
+    imageUrls?: SortOrder
     documentUrl?: SortOrder
     documentName?: SortOrder
     createdById?: SortOrder
@@ -32971,6 +33002,10 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSessionsInput, UserUpdateWithoutSessionsInput>, UserUncheckedUpdateWithoutSessionsInput>
   }
 
+  export type ProjectCreateimageUrlsInput = {
+    set: string[]
+  }
+
   export type UserCreateNestedOneWithoutProjectsInput = {
     create?: XOR<UserCreateWithoutProjectsInput, UserUncheckedCreateWithoutProjectsInput>
     connectOrCreate?: UserCreateOrConnectWithoutProjectsInput
@@ -33149,6 +33184,11 @@ export namespace Prisma {
 
   export type EnumProjectStatusFieldUpdateOperationsInput = {
     set?: $Enums.ProjectStatus
+  }
+
+  export type ProjectUpdateimageUrlsInput = {
+    set?: string[]
+    push?: string | string[]
   }
 
   export type UserUpdateOneRequiredWithoutProjectsNestedInput = {
@@ -34635,6 +34675,7 @@ export namespace Prisma {
     slippageActual?: number | null
     slippageRevision?: number
     imageUrl?: string | null
+    imageUrls?: ProjectCreateimageUrlsInput | string[]
     documentUrl?: string | null
     documentName?: string | null
     createdAt?: Date | string
@@ -34693,6 +34734,7 @@ export namespace Prisma {
     slippageActual?: number | null
     slippageRevision?: number
     imageUrl?: string | null
+    imageUrls?: ProjectCreateimageUrlsInput | string[]
     documentUrl?: string | null
     documentName?: string | null
     createdAt?: Date | string
@@ -35385,6 +35427,7 @@ export namespace Prisma {
     slippageActual?: FloatNullableFilter<"Project"> | number | null
     slippageRevision?: IntFilter<"Project"> | number
     imageUrl?: StringNullableFilter<"Project"> | string | null
+    imageUrls?: StringNullableListFilter<"Project">
     documentUrl?: StringNullableFilter<"Project"> | string | null
     documentName?: StringNullableFilter<"Project"> | string | null
     createdById?: StringFilter<"Project"> | string
@@ -36711,6 +36754,7 @@ export namespace Prisma {
     slippageActual?: number | null
     slippageRevision?: number
     imageUrl?: string | null
+    imageUrls?: ProjectCreateimageUrlsInput | string[]
     documentUrl?: string | null
     documentName?: string | null
     createdAt?: Date | string
@@ -36769,6 +36813,7 @@ export namespace Prisma {
     slippageActual?: number | null
     slippageRevision?: number
     imageUrl?: string | null
+    imageUrls?: ProjectCreateimageUrlsInput | string[]
     documentUrl?: string | null
     documentName?: string | null
     createdById: string
@@ -36924,6 +36969,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -36982,6 +37028,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdById?: StringFieldUpdateOperationsInput | string
@@ -37127,6 +37174,7 @@ export namespace Prisma {
     slippageActual?: number | null
     slippageRevision?: number
     imageUrl?: string | null
+    imageUrls?: ProjectCreateimageUrlsInput | string[]
     documentUrl?: string | null
     documentName?: string | null
     createdAt?: Date | string
@@ -37185,6 +37233,7 @@ export namespace Prisma {
     slippageActual?: number | null
     slippageRevision?: number
     imageUrl?: string | null
+    imageUrls?: ProjectCreateimageUrlsInput | string[]
     documentUrl?: string | null
     documentName?: string | null
     createdById: string
@@ -37340,6 +37389,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -37398,6 +37448,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdById?: StringFieldUpdateOperationsInput | string
@@ -37543,6 +37594,7 @@ export namespace Prisma {
     slippageActual?: number | null
     slippageRevision?: number
     imageUrl?: string | null
+    imageUrls?: ProjectCreateimageUrlsInput | string[]
     documentUrl?: string | null
     documentName?: string | null
     createdAt?: Date | string
@@ -37601,6 +37653,7 @@ export namespace Prisma {
     slippageActual?: number | null
     slippageRevision?: number
     imageUrl?: string | null
+    imageUrls?: ProjectCreateimageUrlsInput | string[]
     documentUrl?: string | null
     documentName?: string | null
     createdById: string
@@ -37756,6 +37809,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -37814,6 +37868,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdById?: StringFieldUpdateOperationsInput | string
@@ -37959,6 +38014,7 @@ export namespace Prisma {
     slippageActual?: number | null
     slippageRevision?: number
     imageUrl?: string | null
+    imageUrls?: ProjectCreateimageUrlsInput | string[]
     documentUrl?: string | null
     documentName?: string | null
     createdAt?: Date | string
@@ -38017,6 +38073,7 @@ export namespace Prisma {
     slippageActual?: number | null
     slippageRevision?: number
     imageUrl?: string | null
+    imageUrls?: ProjectCreateimageUrlsInput | string[]
     documentUrl?: string | null
     documentName?: string | null
     createdById: string
@@ -38172,6 +38229,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -38230,6 +38288,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdById?: StringFieldUpdateOperationsInput | string
@@ -38879,6 +38938,7 @@ export namespace Prisma {
     slippageActual?: number | null
     slippageRevision?: number
     imageUrl?: string | null
+    imageUrls?: ProjectCreateimageUrlsInput | string[]
     documentUrl?: string | null
     documentName?: string | null
     createdAt?: Date | string
@@ -38937,6 +38997,7 @@ export namespace Prisma {
     slippageActual?: number | null
     slippageRevision?: number
     imageUrl?: string | null
+    imageUrls?: ProjectCreateimageUrlsInput | string[]
     documentUrl?: string | null
     documentName?: string | null
     createdById: string
@@ -39092,6 +39153,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -39150,6 +39212,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdById?: StringFieldUpdateOperationsInput | string
@@ -39295,6 +39358,7 @@ export namespace Prisma {
     slippageActual?: number | null
     slippageRevision?: number
     imageUrl?: string | null
+    imageUrls?: ProjectCreateimageUrlsInput | string[]
     documentUrl?: string | null
     documentName?: string | null
     createdAt?: Date | string
@@ -39353,6 +39417,7 @@ export namespace Prisma {
     slippageActual?: number | null
     slippageRevision?: number
     imageUrl?: string | null
+    imageUrls?: ProjectCreateimageUrlsInput | string[]
     documentUrl?: string | null
     documentName?: string | null
     createdById: string
@@ -39508,6 +39573,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -39566,6 +39632,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdById?: StringFieldUpdateOperationsInput | string
@@ -39711,6 +39778,7 @@ export namespace Prisma {
     slippageActual?: number | null
     slippageRevision?: number
     imageUrl?: string | null
+    imageUrls?: ProjectCreateimageUrlsInput | string[]
     documentUrl?: string | null
     documentName?: string | null
     createdAt?: Date | string
@@ -39769,6 +39837,7 @@ export namespace Prisma {
     slippageActual?: number | null
     slippageRevision?: number
     imageUrl?: string | null
+    imageUrls?: ProjectCreateimageUrlsInput | string[]
     documentUrl?: string | null
     documentName?: string | null
     createdById: string
@@ -40033,6 +40102,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -40091,6 +40161,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdById?: StringFieldUpdateOperationsInput | string
@@ -40848,6 +40919,7 @@ export namespace Prisma {
     slippageActual?: number | null
     slippageRevision?: number
     imageUrl?: string | null
+    imageUrls?: ProjectCreateimageUrlsInput | string[]
     documentUrl?: string | null
     documentName?: string | null
     createdAt?: Date | string
@@ -40906,6 +40978,7 @@ export namespace Prisma {
     slippageActual?: number | null
     slippageRevision?: number
     imageUrl?: string | null
+    imageUrls?: ProjectCreateimageUrlsInput | string[]
     documentUrl?: string | null
     documentName?: string | null
     createdById: string
@@ -41099,6 +41172,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -41157,6 +41231,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdById?: StringFieldUpdateOperationsInput | string
@@ -41318,6 +41393,7 @@ export namespace Prisma {
     slippageActual?: number | null
     slippageRevision?: number
     imageUrl?: string | null
+    imageUrls?: ProjectCreateimageUrlsInput | string[]
     documentUrl?: string | null
     documentName?: string | null
     createdAt?: Date | string
@@ -41376,6 +41452,7 @@ export namespace Prisma {
     slippageActual?: number | null
     slippageRevision?: number
     imageUrl?: string | null
+    imageUrls?: ProjectCreateimageUrlsInput | string[]
     documentUrl?: string | null
     documentName?: string | null
     createdById: string
@@ -41722,6 +41799,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -41780,6 +41858,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdById?: StringFieldUpdateOperationsInput | string
@@ -42309,6 +42388,7 @@ export namespace Prisma {
     slippageActual?: number | null
     slippageRevision?: number
     imageUrl?: string | null
+    imageUrls?: ProjectCreateimageUrlsInput | string[]
     documentUrl?: string | null
     documentName?: string | null
     createdAt?: Date | string
@@ -42573,6 +42653,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -42631,6 +42712,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -42689,6 +42771,7 @@ export namespace Prisma {
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageRevision?: IntFieldUpdateOperationsInput | number
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrls?: ProjectUpdateimageUrlsInput | string[]
     documentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     documentName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

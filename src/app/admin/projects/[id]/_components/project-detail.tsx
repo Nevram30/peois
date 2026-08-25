@@ -3,6 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { api } from "~/trpc/react";
+import { toImageSlots } from "~/lib/project-images";
+import { ProjectImageGallery } from "~/app/_components/project-image-gallery";
 import {
   PROJECT_STATUS_LABEL,
   PROJECT_SUB_TYPE_LABEL,
@@ -357,39 +359,16 @@ export const ProjectDetail = ({ projectId }: Props) => {
             />
 
             <div className="space-y-4 p-5">
-              {/* Project image — full-width banner */}
-              <div className="relative aspect-video w-full overflow-hidden rounded-sm border border-gray-200 bg-gray-50">
-                {project.imageUrl ? (
-                  <Image
-                    src={project.imageUrl}
-                    alt={project.title}
-                    fill
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-gray-300">
-                    <svg
-                      className="h-8 w-8"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"
-                      />
-                    </svg>
-                    <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
-                      No Image Uploaded
-                    </p>
-                  </div>
-                )}
-                <span className="absolute top-3 left-3 rounded-md bg-gray-900/90 px-3 py-1.5 font-mono text-[10px] font-bold tracking-wider text-white">
-                  #{project.projectCode}
-                </span>
-              </div>
+              {/* Project photos — banner plus three supporting shots */}
+              <ProjectImageGallery
+                slots={toImageSlots(project)}
+                alt={project.title}
+                badge={
+                  <span className="absolute top-3 left-3 rounded-md bg-gray-900/90 px-3 py-1.5 font-mono text-[10px] font-bold tracking-wider text-white">
+                    #{project.projectCode}
+                  </span>
+                }
+              />
 
               <ViewField label="Project Title" value={project.title} />
 

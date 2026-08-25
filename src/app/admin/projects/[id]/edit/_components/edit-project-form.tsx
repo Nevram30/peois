@@ -52,6 +52,14 @@ import {
   inferDocType,
   type DocType,
 } from "~/lib/project-documents";
+import {
+  PROJECT_IMAGE_SLOTS,
+  filledImages,
+  sameImageSlots,
+  toImageSlots,
+  type ProjectImageSlots,
+} from "~/lib/project-images";
+import { ProjectImageUploader } from "~/app/_components/project-image-uploader";
 
 const STATUS_CONFIG: Record<string, { label: string; badge: string; dot: string }> = {
   NOT_YET_STARTED: { label: "Not Yet Started", badge: "bg-gray-100 text-gray-600 border-gray-200", dot: "bg-gray-400" },
@@ -182,7 +190,6 @@ const EditIcon = () => (
 // ─── Main Component ──────────────────────────────────────────────────────────
 export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   const utils = api.useUtils();
-  const mediaInputRef = useRef<HTMLInputElement>(null);
   const engineerRef = useRef<HTMLInputElement>(null);
 
   const { data: project, isLoading } = api.project.getById.useQuery({ id: projectId });
@@ -268,10 +275,15 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   const [editingEngineerValue, setEditingEngineerValue] = useState("");
   const [description, setDescription] = useState("");
 
-  // ─ Media / upload ──────────────────────────────────────────────────────
-  const [mediaUrl, setMediaUrl] = useState("");
-  const [mediaName, setMediaName] = useState("");
+  // ─ Project photos ──────────────────────────────────────────────────────
+  // Four photos per project, hydrated from the record below. Projects created
+  // before the gallery existed come back with only slot 1 filled.
+  const [imageSlots, setImageSlots] = useState<ProjectImageSlots>(
+    Array.from({ length: PROJECT_IMAGE_SLOTS }, () => null),
+  );
   const [isUploadingMedia, setIsUploadingMedia] = useState(false);
+
+  // ─ Document upload ─────────────────────────────────────────────────────
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [deleteNotice, setDeleteNotice] = useState<string | null>(null);
 
@@ -347,9 +359,15 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     setNumMale(project.numMale ?? 0);
     setEngineers(project.projectEngineer ? project.projectEngineer.split(",").map((s) => s.trim()).filter(Boolean) : []);
     setDescription(project.description ?? "");
-    setMediaUrl(project.imageUrl ?? "");
-    setMediaName(project.documentName ?? "");
+    setImageSlots(toImageSlots(project));
   }, [project]);
+
+  const setImageSlot = (index: number, url: string | null) =>
+    setImageSlots((prev) => prev.map((u, i) => (i === index ? url : u)));
+
+  // Older records only ever had a single cover photo, so the gallery is very
+  // often partly empty here. Surfaced as a notice, never as a blocked save.
+  const filledImageCount = filledImages(imageSlots).length;
 
   const totalWorkforce = numFemale + numMale;
 
@@ -554,31 +572,9 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   });
 
   // ─ Handlers ────────────────────────────────────────────────────────────
-  // The project cover image. Files picked here are not documentary
-  // requirements, so they are filed as "OTHER" and typed from the file name.
-  const handleDocUpload = async (file: File) => {
-    setIsUploadingMedia(true);
-    setUploadError(null);
-    try {
-      const result = await startUpload([file]);
-      if (!result?.[0]) { setUploadError("Upload failed. Please try again."); return; }
-      const uploaded = result[0];
-      setMediaUrl(uploaded.ufsUrl);
-      setMediaName(file.name);
-      createProjectFile.mutate({
-        projectId,
-        fileName: file.name,
-        fileUrl: uploaded.ufsUrl,
-        fileType: docFileType("OTHER", file.name),
-        docType: "OTHER",
-        fileSize: file.size,
-      });
-    } catch {
-      setUploadError("Upload failed. Please try again.");
-    } finally {
-      setIsUploadingMedia(false);
-    }
-  };
+  // The project photos go through ProjectImageUploader, which owns the upload
+  // itself. They are not documentary requirements, so no ProjectFile row is
+  // filed for them and they never touch documentUrl / documentName.
 
   const openDocModal = (files: File[] = []) => {
     setDocModalFiles(files);
@@ -699,11 +695,8 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
       sections.push(`Project In-Charge & Profile (${inChargeFields.join(", ")})`);
     }
 
-    if (
-      mediaUrl !== (project.imageUrl ?? "") ||
-      mediaName !== (project.documentName ?? "")
-    ) {
-      sections.push("Project Documentation");
+    if (!sameImageSlots(imageSlots, toImageSlots(project))) {
+      sections.push("Project Photos");
     }
 
     return sections;
@@ -712,6 +705,10 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   const handleSaveChanges = () => {
     if (!project) return;
     const changedSections = getChangedSections();
+    // `imageUrl` mirrors slot 1 so the readers that predate the gallery keep
+    // finding a cover photo. The document columns are left alone — they hold
+    // documentary requirements, not photos.
+    const images = filledImages(imageSlots);
     updateProject.mutate(
       {
         id: projectId,
@@ -750,9 +747,8 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
         description: description || undefined,
         status: status as ProjectStatusValue,
         completionPercentage: completion,
-        imageUrl: mediaUrl || undefined,
-        documentUrl: mediaUrl || undefined,
-        documentName: mediaName || undefined,
+        imageUrl: images[0] ?? null,
+        imageUrls: images,
       },
       {
         onSuccess: () => {
@@ -992,32 +988,24 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                 action={<button type="button" className="text-gray-400 hover:text-gray-600"><EditIcon /></button>}
               />
               <div className="flex flex-col sm:flex-row">
-                {/* Thumbnail — full height of the card body */}
-                <div
-                  onClick={() => mediaInputRef.current?.click()}
-                  className="group relative h-48 w-full shrink-0 cursor-pointer overflow-hidden bg-gray-100 sm:h-auto sm:w-64 sm:rounded-bl-xl"
-                >
-                  {project.imageUrl ? (
-                    <Image src={project.imageUrl} alt={project.title} fill className="object-cover" />
-                  ) : (
-                    <div className="flex h-full min-h-48 w-full items-center justify-center">
-                      <svg className="h-10 w-10 text-gray-300" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Z" />
-                      </svg>
-                    </div>
+                {/* Photo gallery — four slots down the side of the card body */}
+                <div className="w-full shrink-0 p-4 sm:w-72">
+                  <ProjectImageUploader
+                    slots={imageSlots}
+                    onChange={setImageSlot}
+                    onUploadingChange={setIsUploadingMedia}
+                    badge={
+                      <span className="absolute top-2 left-2 rounded-md bg-gray-900/90 px-2 py-1 font-mono text-[10px] font-bold tracking-wider text-white">
+                        #{project.projectCode}
+                      </span>
+                    }
+                  />
+                  {filledImageCount < PROJECT_IMAGE_SLOTS && (
+                    <p className="mt-2 rounded-sm border border-amber-200 bg-amber-50 px-2.5 py-1.5 text-[10px] text-amber-700">
+                      This project has {filledImageCount} of {PROJECT_IMAGE_SLOTS}{" "}
+                      photos. Upload the remaining slots when they are available.
+                    </p>
                   )}
-                  {isUploadingMedia ? (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-                    </div>
-                  ) : (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition group-hover:bg-black/30">
-                      <svg className="h-6 w-6 text-white opacity-0 transition group-hover:opacity-100" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" /><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
-                      </svg>
-                    </div>
-                  )}
-                  <input ref={mediaInputRef} type="file" accept="image/jpeg,image/png,application/pdf" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleDocUpload(f); }} />
                 </div>
 
                 {/* Fields */}
@@ -2473,7 +2461,9 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
           <button
             type="button"
             onClick={handleSaveChanges}
-            disabled={updateProject.isPending}
+            // Saving mid-upload would persist the gallery without the photo
+            // that is still in flight.
+            disabled={updateProject.isPending || isUploadingMedia}
             className="flex flex-1 items-center justify-center gap-2 rounded-sm bg-blue-600 px-3 py-2.5 text-xs font-bold uppercase tracking-wide text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-50 sm:flex-initial sm:px-6 sm:tracking-widest"
           >
             {updateProject.isPending ? (

@@ -1,9 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { api } from "~/trpc/react";
 import { DocumentAccessActions } from "~/app/_components/document-access-actions";
+import { toImageSlots } from "~/lib/project-images";
+import { ProjectImageGallery } from "~/app/_components/project-image-gallery";
 import {
   DISBURSEMENT_TYPE_LABEL,
   FUNDING_PROGRAM_LABEL,
@@ -263,36 +264,18 @@ export const UserProjectDetail = ({ projectId }: Props) => {
             </div>
 
             <div className="flex flex-col gap-5 sm:flex-row">
-              {/* Image */}
-              <div className="relative h-56 w-full shrink-0 overflow-hidden rounded-sm border border-gray-200 bg-linear-to-br from-slate-700 to-slate-900 sm:h-auto sm:w-2/5 sm:self-stretch">
-                {project.imageUrl ? (
-                  <Image
-                    src={project.imageUrl}
-                    alt={project.title}
-                    fill
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center text-gray-400">
-                    <svg
-                      className="h-14 w-14"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.2}
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"
-                      />
-                    </svg>
-                  </div>
-                )}
-                <span className="absolute bottom-2 left-2 rounded-md bg-black/60 px-2 py-0.5 text-[10px] font-mono font-semibold text-white">
-                  # {project.projectCode}
-                </span>
-              </div>
+              {/* Photos */}
+              <ProjectImageGallery
+                slots={toImageSlots(project)}
+                alt={project.title}
+                twoUp
+                className="w-full shrink-0 sm:w-2/5"
+                badge={
+                  <span className="absolute bottom-2 left-2 rounded-md bg-black/60 px-2 py-0.5 font-mono text-[10px] font-semibold text-white">
+                    # {project.projectCode}
+                  </span>
+                }
+              />
 
               {/* Right column - fields */}
               <div className="flex-1 space-y-3">

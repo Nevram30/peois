@@ -15,6 +15,7 @@ import {
   DISBURSEMENT_TYPE_VALUES,
   PROJECT_ACCOUNT_VALUES,
 } from "~/lib/fund-constants";
+import { PROJECT_IMAGE_SLOTS } from "~/lib/project-images";
 
 // Where-clause fragment limiting projects to the caller's district scope
 // (empty for unrestricted users), spread into each query's where.
@@ -92,6 +93,7 @@ export const projectRouter = createTRPCRouter({
         slippageActual: z.number().min(0).max(100).optional().nullable(),
         slippageRevision: z.number().int().min(0).default(0),
         imageUrl: z.string().optional(),
+        imageUrls: z.array(z.string()).max(PROJECT_IMAGE_SLOTS).optional(),
         documentUrl: z.string().optional(),
         documentName: z.string().optional(),
         projectCode: z.string().optional(),
@@ -152,6 +154,7 @@ export const projectRouter = createTRPCRouter({
           slippageActual: input.slippageActual,
           slippageRevision: input.slippageRevision,
           imageUrl: input.imageUrl,
+          imageUrls: input.imageUrls ?? [],
           documentUrl: input.documentUrl,
           documentName: input.documentName,
           createdById: ctx.session.user.id,
@@ -211,7 +214,11 @@ export const projectRouter = createTRPCRouter({
         completionPercentage: z.number().min(0).max(100).optional(),
         latitude: z.number().min(-90).max(90).optional().nullable(),
         longitude: z.number().min(-180).max(180).optional().nullable(),
-        imageUrl: z.string().optional(),
+        // Nullable, not just optional: clearing every photo has to be able to
+        // clear the mirrored cover too, or toImageSlots would fall back to the
+        // stale imageUrl and resurrect a photo the user just removed.
+        imageUrl: z.string().nullable().optional(),
+        imageUrls: z.array(z.string()).max(PROJECT_IMAGE_SLOTS).optional(),
         documentUrl: z.string().optional(),
         documentName: z.string().optional(),
       }),
