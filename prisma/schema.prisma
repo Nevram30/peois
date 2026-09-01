@@ -1,7 +1,10 @@
 generator client {
-  provider      = "prisma-client-js"
-  output        = "../generated/prisma"
-  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+  // `native` covers whichever machine runs `prisma generate`; `windows` is
+  // listed explicitly so the on-premise Windows Server deployment works even
+  // when the client is generated elsewhere.
+  binaryTargets = ["native", "windows", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
@@ -318,7 +321,7 @@ model Project {
   slippageActual           Float?
   slippageRevision         Int                  @default(0)
 
-  // Project photo gallery, up to 4 URLs (UploadThing). `imageUrl` is kept in
+  // Project photo gallery, up to 4 URLs. `imageUrl` is kept in
   // sync with imageUrls[0] so the single-image readers that predate the
   // gallery — the project list, updateProgress, the detail pages — keep working.
   imageUrl     String?

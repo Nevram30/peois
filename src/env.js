@@ -12,7 +12,19 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
-    UPLOADTHING_TOKEN: z.string(),
+    /**
+     * Where uploaded files are written. Keep this OUTSIDE the application
+     * folder (e.g. `D:\peois-data\uploads`) so redeploying — or re-cloning —
+     * can never delete the office's documents. Defaults to `<repo>/uploads`
+     * for local development.
+     */
+    UPLOAD_DIR: z.string().min(1).default("uploads"),
+    /**
+     * Optional. Only needed while legacy `*.ufs.sh` URLs are still being
+     * served; uploads themselves now go to UPLOAD_DIR. Once the migration
+     * script reports zero remaining cloud URLs this can be dropped entirely.
+     */
+    UPLOADTHING_TOKEN: z.string().optional(),
   },
 
   /**
@@ -32,6 +44,7 @@ export const env = createEnv({
     AUTH_SECRET: process.env.AUTH_SECRET,
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
+    UPLOAD_DIR: process.env.UPLOAD_DIR,
     UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN,
   },
   /**

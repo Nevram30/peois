@@ -174,7 +174,7 @@ export const fileIconColor = (fileType: ProjectFileType, fileName: string) => {
 };
 
 // ─── Upload constraints ───────────────────────────────────────────────────
-// Mirrors the `projectFileUploader` route in src/app/api/uploadthing/core.ts so
+// The ceilings in src/lib/upload-endpoints.ts are built from these, so
 // an oversized file is rejected here with a readable message instead of
 // failing mid-upload.
 export const DOC_ACCEPT =
