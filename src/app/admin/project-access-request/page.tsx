@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
+import { isLocalUpload } from "~/lib/upload-endpoints";
 import Link from "next/link";
 import { api } from "~/trpc/react";
 import { HardHat } from "lucide-react";
@@ -322,6 +323,7 @@ const ProjectAccessRequestPage = () => {
                                 src={r.requestedBy.image}
                                 alt={r.requestedBy.name ?? r.requestedBy.email ?? "User"}
                                 fill
+                                unoptimized={isLocalUpload(r.requestedBy.image)}
                                 sizes="28px"
                                 className="object-cover"
                               />

@@ -1,7 +1,9 @@
 generator client {
   provider      = "prisma-client-js"
   output        = "../generated/prisma"
-  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+  // "windows" is required by the on-prem Windows Server deployment; "native"
+  // covers developer machines and "rhel-openssl-3.0.x" the Linux/Vercel build.
+  binaryTargets = ["native", "windows", "rhel-openssl-3.0.x"]
 }
 
 datasource db {

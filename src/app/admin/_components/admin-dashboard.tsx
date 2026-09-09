@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { isLocalUpload } from "~/lib/upload-endpoints";
 import { useState } from "react";
 import { api } from "~/trpc/react";
 import { useRouter } from "next/navigation";
@@ -481,6 +482,7 @@ export const AdminDashboardContent = () => {
                                                                             <Image
                                                                                 src={u.image}
                                                                                 alt={u.name ?? u.email}
+                                                                                unoptimized={isLocalUpload(u.image)}
                                                                                 width={28}
                                                                                 height={28}
                                                                                 className="h-full w-full rounded-full object-cover"

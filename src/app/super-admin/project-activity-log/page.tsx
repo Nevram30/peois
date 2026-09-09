@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { isLocalUpload } from "~/lib/upload-endpoints";
 import { api } from "~/trpc/react";
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -367,6 +368,7 @@ const ProjectActivityLogPage = () => {
                                 src={a.createdBy.image}
                                 alt={a.createdBy.name ?? a.createdBy.email ?? "User"}
                                 fill
+                                unoptimized={isLocalUpload(a.createdBy.image)}
                                 sizes="28px"
                                 className="object-cover"
                               />

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { isLocalUpload } from "~/lib/upload-endpoints";
 import { api } from "~/trpc/react";
 import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
@@ -187,6 +188,7 @@ export function UserShell({
                       src={avatarImage}
                       alt={displayName ?? "User avatar"}
                       fill
+                      unoptimized={isLocalUpload(avatarImage)}
                       className="object-cover"
                     />
                   </div>

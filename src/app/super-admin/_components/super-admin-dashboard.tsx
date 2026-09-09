@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import { isLocalUpload } from "~/lib/upload-endpoints";
 import { api } from "~/trpc/react";
 import { useUploadThing } from "~/lib/uploadthing";
 import { DIVISIONS } from "~/lib/divisions";
@@ -345,6 +346,9 @@ const AddUserModal = ({
                     src={imageUrl || (imageFile ? URL.createObjectURL(imageFile) : "")}
                     alt="Profile preview"
                     fill
+                    // Local object URLs and cookie-gated /api/files paths both
+                    // have to bypass the image optimizer.
+                    unoptimized
                     className="rounded-full object-cover border-2 border-gray-200"
                   />
                 ) : (
@@ -1531,6 +1535,7 @@ export function UserManagementContent() {
                                 src={u.image}
                                 alt={u.name ?? "User avatar"}
                                 fill
+                                unoptimized={isLocalUpload(u.image)}
                                 className="object-cover"
                               />
                             </div>

@@ -148,8 +148,10 @@ export const SettingsForm = () => {
         <form onSubmit={handleSaveProfile} className="mt-5 space-y-5">
           <div className="flex items-center gap-4">
             <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full ring-2 ring-gray-200">
+              {/* previewSrc may be a blob: object URL or a cookie-gated
+                  /api/files path — neither survives the image optimizer. */}
               {previewSrc ? (
-                <Image src={previewSrc} alt="Profile" fill className="object-cover" />
+                <Image src={previewSrc} alt="Profile" fill unoptimized className="object-cover" />
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-gray-100 text-2xl font-semibold text-gray-700">
                   {initial}

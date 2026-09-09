@@ -1,7 +1,23 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
+
 import { auth } from "~/server/auth";
+import {
+  UPLOAD_ENDPOINTS,
+  isUploadEndpoint,
+} from "~/lib/upload-endpoints";
+import { UploadError, storeFile } from "~/server/upload-storage";
+
+/**
+ * Local replacement for the UploadThing upload flow.
+ *
+ * Takes `endpoint` plus one or more `file` entries as multipart form data and
+ * answers in the shape the client helpers in `~/lib/uploadthing` expect, so
+ * every existing upload call site keeps working unchanged.
+ */
+
+export const runtime = "nodejs";
+// Uploads must never be prerendered or cached.
+export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   const session = await auth();
@@ -9,50 +25,72 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const formData = await request.formData();
-  const file = formData.get("file") as File | null;
-
-  if (!file) {
-    return NextResponse.json({ error: "No file provided" }, { status: 400 });
-  }
-
-  const allowedTypes = [
-    "application/pdf",
-    "image/jpeg",
-    "image/png",
-    "image/webp",
-    "application/msword",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  ];
-  if (!allowedTypes.includes(file.type)) {
+  let formData: FormData;
+  try {
+    formData = await request.formData();
+  } catch {
     return NextResponse.json(
-      { error: "Invalid file type. Only PDF, JPEG, PNG, and WebP are allowed." },
+      { error: "Malformed upload request." },
       { status: 400 },
     );
   }
 
-  const maxSize = 10 * 1024 * 1024;
-  if (file.size > maxSize) {
+  const endpoint = formData.get("endpoint");
+  if (!isUploadEndpoint(endpoint)) {
     return NextResponse.json(
-      { error: "File too large. Maximum size is 10MB." },
+      { error: "Unknown upload endpoint." },
       { status: 400 },
     );
   }
 
-  const uploadDir = path.join(process.cwd(), "public", "uploads", "documents");
-  await mkdir(uploadDir, { recursive: true });
+  const config = UPLOAD_ENDPOINTS[endpoint];
+  const files = formData
+    .getAll("file")
+    .filter((entry): entry is File => entry instanceof File);
 
-  const timestamp = Date.now();
-  const sanitized = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-  const uniqueName = `${timestamp}-${sanitized}`;
-  const filePath = path.join(uploadDir, uniqueName);
+  if (files.length === 0) {
+    return NextResponse.json({ error: "No file provided." }, { status: 400 });
+  }
+  if (files.length > config.maxFileCount) {
+    return NextResponse.json(
+      {
+        error: `Too many files — ${endpoint} accepts at most ${config.maxFileCount}.`,
+      },
+      { status: 400 },
+    );
+  }
 
-  const bytes = await file.arrayBuffer();
-  await writeFile(filePath, Buffer.from(bytes));
+  try {
+    // Sequential rather than parallel: these are 8-16MB writes to one disk, and
+    // a failure part-way leaves fewer orphans to think about.
+    const stored = [];
+    for (const file of files) {
+      stored.push(await storeFile(file, config));
+    }
 
-  return NextResponse.json({
-    filePath: `/uploads/documents/${uniqueName}`,
-    fileName: file.name,
-    fileSize: file.size,
-  });
+    return NextResponse.json({
+      files: stored.map((file) => ({
+        // `url` and `ufsUrl` are the same value: consumers read one or the
+        // other depending on when they were written.
+        url: file.url,
+        ufsUrl: file.url,
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        key: file.key,
+      })),
+    });
+  } catch (error) {
+    if (error instanceof UploadError) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: error.status },
+      );
+    }
+    console.error("[api/upload] failed to store upload", error);
+    return NextResponse.json(
+      { error: "Upload failed. Please try again." },
+      { status: 500 },
+    );
+  }
 }

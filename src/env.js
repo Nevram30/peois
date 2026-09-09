@@ -12,7 +12,15 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
-    UPLOADTHING_TOKEN: z.string(),
+    // Optional since uploads moved to local disk. Kept so the legacy
+    // UploadThing route still works during the migration (see D5).
+    UPLOADTHING_TOKEN: z.string().optional(),
+    /**
+     * Where uploaded files are stored. Point this OUTSIDE the application
+     * folder on the server (e.g. D:\peois-data\uploads) so a redeploy cannot
+     * destroy office data. The default exists for developer machines only.
+     */
+    UPLOAD_DIR: z.string().min(1).default("./uploads"),
   },
 
   /**
@@ -33,6 +41,7 @@ export const env = createEnv({
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN,
+    UPLOAD_DIR: process.env.UPLOAD_DIR,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

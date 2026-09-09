@@ -45,8 +45,13 @@ yarn-error.log*
 # idea files
 .idea
 
+# prisma client (generated per-platform by `postinstall`; committing it lets a
+# `git pull` overwrite the server's Windows engine with another OS's binaries)
+/generated/
+
 # uploads
 /public/uploads/
+/uploads/
 
 # serwist service worker (generated at build time)
 /public/sw.js

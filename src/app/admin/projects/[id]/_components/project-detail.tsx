@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { isLocalUpload } from "~/lib/upload-endpoints";
 import Link from "next/link";
 import { api } from "~/trpc/react";
 import { toImageSlots } from "~/lib/project-images";
@@ -1265,6 +1266,7 @@ export const ProjectDetail = ({ projectId }: Props) => {
                                     src={a.createdBy.image}
                                     alt={a.createdBy.name ?? a.createdBy.email ?? "User"}
                                     fill
+                                    unoptimized={isLocalUpload(a.createdBy.image)}
                                     className="object-cover"
                                   />
                                 </div>

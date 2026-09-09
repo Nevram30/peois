@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { isLocalUpload } from "~/lib/upload-endpoints";
 import Link from "next/link";
 import { useRef, useState, useEffect, useMemo } from "react";
 import { api } from "~/trpc/react";
@@ -2406,7 +2407,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                             <div className="flex items-start gap-2.5">
                               {a.createdBy.image ? (
                                 <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-full">
-                                  <Image src={a.createdBy.image} alt={displayName} fill className="object-cover" />
+                                  <Image src={a.createdBy.image} alt={displayName} fill unoptimized={isLocalUpload(a.createdBy.image)} className="object-cover" />
                                 </div>
                               ) : (
                                 <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-600 text-[10px] font-bold text-white">{initial}</div>

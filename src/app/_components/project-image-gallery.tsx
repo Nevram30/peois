@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { isLocalUpload } from "~/lib/upload-endpoints";
 import { useState, type ReactNode } from "react";
 import { PROJECT_IMAGE_SLOTS, type ProjectImageSlots } from "~/lib/project-images";
 
@@ -46,6 +47,7 @@ const GalleryTile = ({ url, alt, index, compact, badge }: TileProps) => {
           src={url}
           alt={`${alt} — photo ${index + 1}`}
           fill
+          unoptimized={isLocalUpload(url)}
           className="object-cover"
           onError={() => setFailed(true)}
         />

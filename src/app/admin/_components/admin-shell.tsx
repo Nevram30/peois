@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { isLocalUpload } from "~/lib/upload-endpoints";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
@@ -240,6 +241,7 @@ export const AdminShell = ({
                       src={avatarImage}
                       alt={displayName ?? "User avatar"}
                       fill
+                      unoptimized={isLocalUpload(avatarImage)}
                       className="object-cover"
                     />
                   </div>

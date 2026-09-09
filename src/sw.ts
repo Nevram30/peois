@@ -21,11 +21,15 @@ const serwist = new Serwist({
   navigationPreload: true,
   runtimeCaching: [
     {
-      // Auth, live data, and uploads must never be served from cache
+      // Auth, live data, and uploads must never be served from cache — a
+      // cached /api/files response could also outlive the session that was
+      // allowed to read it.
       matcher: ({ url }) =>
         url.pathname.startsWith("/api/auth") ||
         url.pathname.startsWith("/api/trpc") ||
         url.pathname.startsWith("/api/uploadthing") ||
+        url.pathname.startsWith("/api/upload") ||
+        url.pathname.startsWith("/api/files") ||
         url.pathname.startsWith("/uploads"),
       handler: new NetworkOnly(),
     },
