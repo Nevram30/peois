@@ -196,6 +196,55 @@ const SectionHeader = ({
   );
 };
 
+// Column headers of a tracking table whose rows can only be recorded once the
+// project exists; the body carries the "available after initialization" note.
+const PendingTrackingTable = ({
+  title, columns, icon, message,
+}: {
+  title: string;
+  columns: string[];
+  icon: React.ReactNode;
+  message: string;
+}) => {
+  return (
+    <div className="space-y-4">
+      <span className="inline-flex rounded-md border border-gray-200 bg-slate-100 px-5 py-2.5 text-sm font-semibold text-blue-900">
+        {title}
+      </span>
+      <div className="overflow-x-auto rounded-md border border-gray-200">
+        <table className="w-full min-w-[720px] text-left">
+          <thead className="border-b border-gray-200">
+            <tr>
+              {columns.map((column) => (
+                <th
+                  key={column}
+                  scope="col"
+                  className="px-6 py-4 text-xs font-semibold tracking-widest text-gray-700 uppercase"
+                >
+                  {column}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colSpan={columns.length} className="px-6 py-10">
+                <div className="flex flex-col items-center text-center">
+                  <span className="text-gray-300">{icon}</span>
+                  <p className="mt-3 text-sm font-semibold text-gray-500">{message}</p>
+                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                    Awaiting system activation of financial module
+                  </p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
 // ─── Icons ────────────────────────────────────────────────────────────────
 const InfoIcon = (
   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
@@ -1315,50 +1364,59 @@ export const AddProjectForm = () => {
         </section>
 
         {/* ── Financial Summary ─────────────────────────────────────── */}
-        <section className={cardClass}>
-          <SectionHeader icon={WalletSmallIcon} title="Financial Summary" />
-          <div className="space-y-6 p-5">
-            {/* Balance tiles — no data until project initialization */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <div className="rounded-sm border border-gray-200 bg-gray-50/60 px-4 py-3.5">
-                <p className="text-sm font-bold text-blue-800">Total Remaining Balance</p>
-                <p className="mt-1 text-lg font-extrabold text-gray-300">—</p>
-              </div>
-              <div className="rounded-sm border border-gray-200 bg-gray-50/60 px-4 py-3.5">
-                <p className="text-sm font-bold text-blue-800">Primary Fund Balance</p>
-                <p className="mt-1 text-lg font-extrabold text-gray-300">—</p>
-              </div>
-              <div className="rounded-sm border border-gray-200 bg-gray-50/60 px-4 py-3.5">
-                <p className="text-sm font-bold text-blue-800">Variation Order Balance</p>
-                <p className="mt-1 text-lg font-extrabold text-gray-300">—</p>
-              </div>
+        <section className={elevatedCardClass}>
+          <SectionHeader icon={WalletSmallIcon} title="Financial Summary" variant="title" />
+          <div className="space-y-8 p-6">
+            {/* Balance tiles — nothing has been disbursed before the project exists */}
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+              {["Total Remaining Balance", "Primary Fund Balance", "Variation Order Balance"].map(
+                (label, i) => (
+                  <div
+                    key={label}
+                    className="rounded-md border border-gray-200 bg-white px-6 py-5 shadow-md"
+                  >
+                    <p className="text-xs font-semibold tracking-widest text-gray-700 uppercase">
+                      {label}
+                    </p>
+                    <p className={`mt-2 font-bold text-blue-950 ${i === 0 ? "text-3xl" : "text-2xl"}`}>
+                      ₱ 0.00
+                    </p>
+                  </div>
+                ),
+              )}
             </div>
 
-            {/* Tracking placeholders (available after project init) */}
-            <div>
-              <p className={labelClass}>Recent Disbursements</p>
-              <div className="flex flex-col items-center justify-center rounded-sm border border-dashed border-gray-200 bg-gray-50/60 px-6 py-10 text-center">
-                <span className="text-gray-300">{ClipboardClockIcon}</span>
-                <p className="mt-3 text-sm font-semibold text-gray-500">
-                  Disbursement tracking will be available after project initialization.
-                </p>
-                <p className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
-                  Awaiting system activation of financial module
-                </p>
-              </div>
-            </div>
-            <div>
-              <p className={labelClass}>Revised Contract Cost History</p>
-              <div className="flex flex-col items-center justify-center rounded-sm border border-dashed border-gray-200 bg-gray-50/60 px-6 py-10 text-center">
-                <span className="text-gray-300">{WalletIcon}</span>
-                <p className="mt-3 text-sm font-semibold text-gray-500">
-                  Revised Contract tracking will be available after project initialization.
-                </p>
-                <p className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
-                  Awaiting system activation of financial module
-                </p>
-              </div>
-            </div>
+            {/* Tracking tables — rows can only be recorded after project init */}
+            <PendingTrackingTable
+              title="Recent Disbursements"
+              columns={[
+                "Date",
+                "Disbursement Date",
+                "Reference #",
+                "Source of Fund",
+                "Type",
+                "Amount (₱)",
+                "Remarks",
+                "Actions",
+              ]}
+              icon={ClipboardClockIcon}
+              message="Disbursement tracking will be available after project initialization."
+            />
+            <PendingTrackingTable
+              title="Revised Contract Cost History"
+              columns={[
+                "Date",
+                "Original Cost",
+                "Source of Fund",
+                "Program",
+                "Project",
+                "Variation Order",
+                "Revised Total",
+                "Actions",
+              ]}
+              icon={WalletIcon}
+              message="Revised Contract tracking will be available after project initialization."
+            />
           </div>
         </section>
 
