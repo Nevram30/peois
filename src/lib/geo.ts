@@ -3,6 +3,15 @@
 // Nominatim endpoint — no API key and no extra dependency, in exchange for a
 // strict usage policy (hence the debounces at every call site).
 
+// ─── Location category ────────────────────────────────────────────────────
+// A building is captured as one point; a road as a start and an end point.
+export const LOCATION_TYPE_VALUES = ["BUILDING", "ROAD"] as const;
+export type LocationTypeValue = (typeof LOCATION_TYPE_VALUES)[number];
+export const LOCATION_TYPE_LABEL: Record<LocationTypeValue, string> = {
+  BUILDING: "Building",
+  ROAD: "Road",
+};
+
 export type GeoResult = {
   place_id: number;
   display_name: string;

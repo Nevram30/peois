@@ -27,10 +27,34 @@ const PlaceholderIcon = ({ className }: { className: string }) => (
   </svg>
 );
 
+const CameraPlusIcon = ({ className }: { className: string }) => (
+  <svg
+    className={className}
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={1.5}
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z"
+    />
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M15.75 13.5a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
+    />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 1.5v3.75m1.875-1.875h-3.75" />
+  </svg>
+);
+
 interface SlotProps {
   url: string | null;
   index: number;
   compact: boolean;
+  /** Square "Upload Project Image" tile, used by the `tiles` variant. */
+  tile?: boolean;
   disabled: boolean;
   badge?: ReactNode;
   onChange: (index: number, url: string | null) => void;
@@ -41,6 +65,7 @@ const UploadSlot = ({
   url,
   index,
   compact,
+  tile = false,
   disabled,
   badge,
   onChange,
@@ -95,6 +120,10 @@ const UploadSlot = ({
 
   const src = preview ?? url;
   const iconSize = compact ? "h-6 w-6" : "h-8 w-8";
+  const shapeClass = tile ? "aspect-square rounded-md" : "aspect-video rounded-sm";
+  const idleClass = tile
+    ? "border-gray-300 bg-white shadow-sm hover:border-blue-400 hover:bg-blue-50/40"
+    : "border-gray-200 bg-gray-50 hover:border-blue-300 hover:bg-blue-50";
 
   return (
     <div>
@@ -114,12 +143,12 @@ const UploadSlot = ({
           const file = e.dataTransfer.files[0];
           if (file) void handleFile(file);
         }}
-        className={`group relative flex aspect-video w-full cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden rounded-sm border-2 border-dashed transition ${
+        className={`group relative flex w-full cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden border-2 border-dashed transition ${shapeClass} ${
           isDragging
             ? "border-blue-500 bg-blue-50/70"
             : error
               ? "border-red-300 bg-red-50/40"
-              : "border-gray-200 bg-gray-50 hover:border-blue-300 hover:bg-blue-50"
+              : idleClass
         } ${disabled ? "cursor-not-allowed opacity-60" : ""}`}
       >
         {src ? (
@@ -131,6 +160,16 @@ const UploadSlot = ({
             alt={`Project photo ${index + 1}`}
             className="h-full w-full object-cover"
           />
+        ) : tile ? (
+          <>
+            <CameraPlusIcon className="h-10 w-10 text-slate-500 transition group-hover:text-blue-700" />
+            <p className="px-2 text-center text-sm font-medium text-blue-900">
+              Upload Project Image
+            </p>
+            <p className="px-2 text-center text-xs text-gray-600">
+              JPEG, PNG up to {formatBytes(MAX_IMAGE_BYTES)}
+            </p>
+          </>
         ) : (
           <>
             <PlaceholderIcon className={`${iconSize} text-gray-300`} />
@@ -194,6 +233,11 @@ interface Props {
   /** Rendered over slot 1 — the forms overlay their own tracking-number chip. */
   badge?: ReactNode;
   disabled?: boolean;
+  /**
+   * `banner` (default): a wide slot 1 above three compact slots.
+   * `tiles`: every slot as an equal square "Upload Project Image" tile.
+   */
+  variant?: "banner" | "tiles";
 }
 
 export const ProjectImageUploader = ({
@@ -202,6 +246,7 @@ export const ProjectImageUploader = ({
   onUploadingChange,
   badge,
   disabled = false,
+  variant = "banner",
 }: Props) => {
   // Which slots are mid-upload. A ref, not state: nothing here re-renders on
   // it, the parent is told via onUploadingChange.
@@ -217,6 +262,26 @@ export const ProjectImageUploader = ({
     { length: PROJECT_IMAGE_SLOTS },
     (_, i) => slots[i] ?? null,
   );
+
+  if (variant === "tiles") {
+    return (
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        {padded.map((url, i) => (
+          <UploadSlot
+            key={i}
+            url={url}
+            index={i}
+            compact={false}
+            tile
+            disabled={disabled}
+            badge={i === 0 ? badge : undefined}
+            onChange={onChange}
+            onBusyChange={handleBusyChange}
+          />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-2">

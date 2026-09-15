@@ -179,6 +179,14 @@ export const District: {
 export type District = (typeof District)[keyof typeof District]
 
 
+export const LocationType: {
+  BUILDING: 'BUILDING',
+  ROAD: 'ROAD'
+};
+
+export type LocationType = (typeof LocationType)[keyof typeof LocationType]
+
+
 export const ProjectSubType: {
   WATER_SYSTEMS: 'WATER_SYSTEMS',
   GOVERNMENT_BUILDINGS: 'GOVERNMENT_BUILDINGS',
@@ -395,6 +403,10 @@ export const SourceOfFund: typeof $Enums.SourceOfFund
 export type District = $Enums.District
 
 export const District: typeof $Enums.District
+
+export type LocationType = $Enums.LocationType
+
+export const LocationType: typeof $Enums.LocationType
 
 export type ProjectSubType = $Enums.ProjectSubType
 
@@ -6088,6 +6100,8 @@ export namespace Prisma {
     numManDays: number | null
     latitude: number | null
     longitude: number | null
+    endLatitude: number | null
+    endLongitude: number | null
     completionPercentage: number | null
     slippageTarget: number | null
     slippageActual: number | null
@@ -6106,6 +6120,8 @@ export namespace Prisma {
     numManDays: number | null
     latitude: number | null
     longitude: number | null
+    endLatitude: number | null
+    endLongitude: number | null
     completionPercentage: number | null
     slippageTarget: number | null
     slippageActual: number | null
@@ -6148,6 +6164,9 @@ export namespace Prisma {
     sitio: string | null
     latitude: number | null
     longitude: number | null
+    locationType: $Enums.LocationType | null
+    endLatitude: number | null
+    endLongitude: number | null
     description: string | null
     status: $Enums.ProjectStatus | null
     completionPercentage: number | null
@@ -6198,6 +6217,9 @@ export namespace Prisma {
     sitio: string | null
     latitude: number | null
     longitude: number | null
+    locationType: $Enums.LocationType | null
+    endLatitude: number | null
+    endLongitude: number | null
     description: string | null
     status: $Enums.ProjectStatus | null
     completionPercentage: number | null
@@ -6248,6 +6270,9 @@ export namespace Prisma {
     sitio: number
     latitude: number
     longitude: number
+    locationType: number
+    endLatitude: number
+    endLongitude: number
     description: number
     status: number
     completionPercentage: number
@@ -6277,6 +6302,8 @@ export namespace Prisma {
     numManDays?: true
     latitude?: true
     longitude?: true
+    endLatitude?: true
+    endLongitude?: true
     completionPercentage?: true
     slippageTarget?: true
     slippageActual?: true
@@ -6295,6 +6322,8 @@ export namespace Prisma {
     numManDays?: true
     latitude?: true
     longitude?: true
+    endLatitude?: true
+    endLongitude?: true
     completionPercentage?: true
     slippageTarget?: true
     slippageActual?: true
@@ -6337,6 +6366,9 @@ export namespace Prisma {
     sitio?: true
     latitude?: true
     longitude?: true
+    locationType?: true
+    endLatitude?: true
+    endLongitude?: true
     description?: true
     status?: true
     completionPercentage?: true
@@ -6387,6 +6419,9 @@ export namespace Prisma {
     sitio?: true
     latitude?: true
     longitude?: true
+    locationType?: true
+    endLatitude?: true
+    endLongitude?: true
     description?: true
     status?: true
     completionPercentage?: true
@@ -6437,6 +6472,9 @@ export namespace Prisma {
     sitio?: true
     latitude?: true
     longitude?: true
+    locationType?: true
+    endLatitude?: true
+    endLongitude?: true
     description?: true
     status?: true
     completionPercentage?: true
@@ -6575,6 +6613,9 @@ export namespace Prisma {
     sitio: string | null
     latitude: number | null
     longitude: number | null
+    locationType: $Enums.LocationType | null
+    endLatitude: number | null
+    endLongitude: number | null
     description: string | null
     status: $Enums.ProjectStatus
     completionPercentage: number
@@ -6645,6 +6686,9 @@ export namespace Prisma {
     sitio?: boolean
     latitude?: boolean
     longitude?: boolean
+    locationType?: boolean
+    endLatitude?: boolean
+    endLongitude?: boolean
     description?: boolean
     status?: boolean
     completionPercentage?: boolean
@@ -6707,6 +6751,9 @@ export namespace Prisma {
     sitio?: boolean
     latitude?: boolean
     longitude?: boolean
+    locationType?: boolean
+    endLatitude?: boolean
+    endLongitude?: boolean
     description?: boolean
     status?: boolean
     completionPercentage?: boolean
@@ -6759,6 +6806,9 @@ export namespace Prisma {
     sitio?: boolean
     latitude?: boolean
     longitude?: boolean
+    locationType?: boolean
+    endLatitude?: boolean
+    endLongitude?: boolean
     description?: boolean
     status?: boolean
     completionPercentage?: boolean
@@ -6811,6 +6861,9 @@ export namespace Prisma {
     sitio?: boolean
     latitude?: boolean
     longitude?: boolean
+    locationType?: boolean
+    endLatitude?: boolean
+    endLongitude?: boolean
     description?: boolean
     status?: boolean
     completionPercentage?: boolean
@@ -6826,7 +6879,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectCode" | "title" | "subType" | "program" | "projectAccount" | "modeOfImplementation" | "locationImplementation" | "sourceOfFund" | "projectCost" | "contractCost" | "contractorName" | "projectEngineer" | "budgetYear" | "landbankNumber" | "supplementalBudgetYear" | "supplementalBudgetNumber" | "dateStarted" | "targetCompletionDate" | "duration" | "revisedCompletionDate" | "dateCompleted" | "daysSuspended" | "daysExtended" | "numFemale" | "numMale" | "numPersons" | "numManDays" | "district" | "cityMunicipality" | "barangay" | "purok" | "sitio" | "latitude" | "longitude" | "description" | "status" | "completionPercentage" | "slippageTarget" | "slippageActual" | "slippageRevision" | "imageUrl" | "imageUrls" | "documentUrl" | "documentName" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
+  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectCode" | "title" | "subType" | "program" | "projectAccount" | "modeOfImplementation" | "locationImplementation" | "sourceOfFund" | "projectCost" | "contractCost" | "contractorName" | "projectEngineer" | "budgetYear" | "landbankNumber" | "supplementalBudgetYear" | "supplementalBudgetNumber" | "dateStarted" | "targetCompletionDate" | "duration" | "revisedCompletionDate" | "dateCompleted" | "daysSuspended" | "daysExtended" | "numFemale" | "numMale" | "numPersons" | "numManDays" | "district" | "cityMunicipality" | "barangay" | "purok" | "sitio" | "latitude" | "longitude" | "locationType" | "endLatitude" | "endLongitude" | "description" | "status" | "completionPercentage" | "slippageTarget" | "slippageActual" | "slippageRevision" | "imageUrl" | "imageUrls" | "documentUrl" | "documentName" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
   export type ProjectInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
     activities?: boolean | Project$activitiesArgs<ExtArgs>
@@ -6897,6 +6950,9 @@ export namespace Prisma {
       sitio: string | null
       latitude: number | null
       longitude: number | null
+      locationType: $Enums.LocationType | null
+      endLatitude: number | null
+      endLongitude: number | null
       description: string | null
       status: $Enums.ProjectStatus
       completionPercentage: number
@@ -7378,6 +7434,9 @@ export namespace Prisma {
     readonly sitio: FieldRef<"Project", 'String'>
     readonly latitude: FieldRef<"Project", 'Float'>
     readonly longitude: FieldRef<"Project", 'Float'>
+    readonly locationType: FieldRef<"Project", 'LocationType'>
+    readonly endLatitude: FieldRef<"Project", 'Float'>
+    readonly endLongitude: FieldRef<"Project", 'Float'>
     readonly description: FieldRef<"Project", 'String'>
     readonly status: FieldRef<"Project", 'ProjectStatus'>
     readonly completionPercentage: FieldRef<"Project", 'Float'>
@@ -26225,6 +26284,9 @@ export namespace Prisma {
     sitio: 'sitio',
     latitude: 'latitude',
     longitude: 'longitude',
+    locationType: 'locationType',
+    endLatitude: 'endLatitude',
+    endLongitude: 'endLongitude',
     description: 'description',
     status: 'status',
     completionPercentage: 'completionPercentage',
@@ -26654,6 +26716,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'LocationType'
+   */
+  export type EnumLocationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LocationType'>
+    
+
+
+  /**
+   * Reference to a field of type 'LocationType[]'
+   */
+  export type ListEnumLocationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LocationType[]'>
+    
+
+
+  /**
    * Reference to a field of type 'ProjectStatus'
    */
   export type EnumProjectStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProjectStatus'>
@@ -27074,6 +27150,9 @@ export namespace Prisma {
     sitio?: StringNullableFilter<"Project"> | string | null
     latitude?: FloatNullableFilter<"Project"> | number | null
     longitude?: FloatNullableFilter<"Project"> | number | null
+    locationType?: EnumLocationTypeNullableFilter<"Project"> | $Enums.LocationType | null
+    endLatitude?: FloatNullableFilter<"Project"> | number | null
+    endLongitude?: FloatNullableFilter<"Project"> | number | null
     description?: StringNullableFilter<"Project"> | string | null
     status?: EnumProjectStatusFilter<"Project"> | $Enums.ProjectStatus
     completionPercentage?: FloatFilter<"Project"> | number
@@ -27135,6 +27214,9 @@ export namespace Prisma {
     sitio?: SortOrderInput | SortOrder
     latitude?: SortOrderInput | SortOrder
     longitude?: SortOrderInput | SortOrder
+    locationType?: SortOrderInput | SortOrder
+    endLatitude?: SortOrderInput | SortOrder
+    endLongitude?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
     status?: SortOrder
     completionPercentage?: SortOrder
@@ -27199,6 +27281,9 @@ export namespace Prisma {
     sitio?: StringNullableFilter<"Project"> | string | null
     latitude?: FloatNullableFilter<"Project"> | number | null
     longitude?: FloatNullableFilter<"Project"> | number | null
+    locationType?: EnumLocationTypeNullableFilter<"Project"> | $Enums.LocationType | null
+    endLatitude?: FloatNullableFilter<"Project"> | number | null
+    endLongitude?: FloatNullableFilter<"Project"> | number | null
     description?: StringNullableFilter<"Project"> | string | null
     status?: EnumProjectStatusFilter<"Project"> | $Enums.ProjectStatus
     completionPercentage?: FloatFilter<"Project"> | number
@@ -27260,6 +27345,9 @@ export namespace Prisma {
     sitio?: SortOrderInput | SortOrder
     latitude?: SortOrderInput | SortOrder
     longitude?: SortOrderInput | SortOrder
+    locationType?: SortOrderInput | SortOrder
+    endLatitude?: SortOrderInput | SortOrder
+    endLongitude?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
     status?: SortOrder
     completionPercentage?: SortOrder
@@ -27319,6 +27407,9 @@ export namespace Prisma {
     sitio?: StringNullableWithAggregatesFilter<"Project"> | string | null
     latitude?: FloatNullableWithAggregatesFilter<"Project"> | number | null
     longitude?: FloatNullableWithAggregatesFilter<"Project"> | number | null
+    locationType?: EnumLocationTypeNullableWithAggregatesFilter<"Project"> | $Enums.LocationType | null
+    endLatitude?: FloatNullableWithAggregatesFilter<"Project"> | number | null
+    endLongitude?: FloatNullableWithAggregatesFilter<"Project"> | number | null
     description?: StringNullableWithAggregatesFilter<"Project"> | string | null
     status?: EnumProjectStatusWithAggregatesFilter<"Project"> | $Enums.ProjectStatus
     completionPercentage?: FloatWithAggregatesFilter<"Project"> | number
@@ -28856,6 +28947,9 @@ export namespace Prisma {
     sitio?: string | null
     latitude?: number | null
     longitude?: number | null
+    locationType?: $Enums.LocationType | null
+    endLatitude?: number | null
+    endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -28916,6 +29010,9 @@ export namespace Prisma {
     sitio?: string | null
     latitude?: number | null
     longitude?: number | null
+    locationType?: $Enums.LocationType | null
+    endLatitude?: number | null
+    endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -28976,6 +29073,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number
@@ -29036,6 +29136,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number
@@ -29096,6 +29199,9 @@ export namespace Prisma {
     sitio?: string | null
     latitude?: number | null
     longitude?: number | null
+    locationType?: $Enums.LocationType | null
+    endLatitude?: number | null
+    endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -29147,6 +29253,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number
@@ -29197,6 +29306,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number
@@ -30946,6 +31058,13 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
+  export type EnumLocationTypeNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.LocationType | EnumLocationTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.LocationType[] | ListEnumLocationTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.LocationType[] | ListEnumLocationTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumLocationTypeNullableFilter<$PrismaModel> | $Enums.LocationType | null
+  }
+
   export type EnumProjectStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.ProjectStatus | EnumProjectStatusFieldRefInput<$PrismaModel>
     in?: $Enums.ProjectStatus[] | ListEnumProjectStatusFieldRefInput<$PrismaModel>
@@ -30997,6 +31116,9 @@ export namespace Prisma {
     sitio?: SortOrder
     latitude?: SortOrder
     longitude?: SortOrder
+    locationType?: SortOrder
+    endLatitude?: SortOrder
+    endLongitude?: SortOrder
     description?: SortOrder
     status?: SortOrder
     completionPercentage?: SortOrder
@@ -31024,6 +31146,8 @@ export namespace Prisma {
     numManDays?: SortOrder
     latitude?: SortOrder
     longitude?: SortOrder
+    endLatitude?: SortOrder
+    endLongitude?: SortOrder
     completionPercentage?: SortOrder
     slippageTarget?: SortOrder
     slippageActual?: SortOrder
@@ -31066,6 +31190,9 @@ export namespace Prisma {
     sitio?: SortOrder
     latitude?: SortOrder
     longitude?: SortOrder
+    locationType?: SortOrder
+    endLatitude?: SortOrder
+    endLongitude?: SortOrder
     description?: SortOrder
     status?: SortOrder
     completionPercentage?: SortOrder
@@ -31116,6 +31243,9 @@ export namespace Prisma {
     sitio?: SortOrder
     latitude?: SortOrder
     longitude?: SortOrder
+    locationType?: SortOrder
+    endLatitude?: SortOrder
+    endLongitude?: SortOrder
     description?: SortOrder
     status?: SortOrder
     completionPercentage?: SortOrder
@@ -31142,6 +31272,8 @@ export namespace Prisma {
     numManDays?: SortOrder
     latitude?: SortOrder
     longitude?: SortOrder
+    endLatitude?: SortOrder
+    endLongitude?: SortOrder
     completionPercentage?: SortOrder
     slippageTarget?: SortOrder
     slippageActual?: SortOrder
@@ -31244,6 +31376,16 @@ export namespace Prisma {
     _sum?: NestedFloatNullableFilter<$PrismaModel>
     _min?: NestedFloatNullableFilter<$PrismaModel>
     _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type EnumLocationTypeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.LocationType | EnumLocationTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.LocationType[] | ListEnumLocationTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.LocationType[] | ListEnumLocationTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumLocationTypeNullableWithAggregatesFilter<$PrismaModel> | $Enums.LocationType | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumLocationTypeNullableFilter<$PrismaModel>
+    _max?: NestedEnumLocationTypeNullableFilter<$PrismaModel>
   }
 
   export type EnumProjectStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -33182,6 +33324,10 @@ export namespace Prisma {
     divide?: number
   }
 
+  export type NullableEnumLocationTypeFieldUpdateOperationsInput = {
+    set?: $Enums.LocationType | null
+  }
+
   export type EnumProjectStatusFieldUpdateOperationsInput = {
     set?: $Enums.ProjectStatus
   }
@@ -34295,6 +34441,13 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedEnumLocationTypeNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.LocationType | EnumLocationTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.LocationType[] | ListEnumLocationTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.LocationType[] | ListEnumLocationTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumLocationTypeNullableFilter<$PrismaModel> | $Enums.LocationType | null
+  }
+
   export type NestedEnumProjectStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.ProjectStatus | EnumProjectStatusFieldRefInput<$PrismaModel>
     in?: $Enums.ProjectStatus[] | ListEnumProjectStatusFieldRefInput<$PrismaModel>
@@ -34398,6 +34551,16 @@ export namespace Prisma {
     _sum?: NestedFloatNullableFilter<$PrismaModel>
     _min?: NestedFloatNullableFilter<$PrismaModel>
     _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumLocationTypeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.LocationType | EnumLocationTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.LocationType[] | ListEnumLocationTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.LocationType[] | ListEnumLocationTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumLocationTypeNullableWithAggregatesFilter<$PrismaModel> | $Enums.LocationType | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumLocationTypeNullableFilter<$PrismaModel>
+    _max?: NestedEnumLocationTypeNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumProjectStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -34668,6 +34831,9 @@ export namespace Prisma {
     sitio?: string | null
     latitude?: number | null
     longitude?: number | null
+    locationType?: $Enums.LocationType | null
+    endLatitude?: number | null
+    endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -34727,6 +34893,9 @@ export namespace Prisma {
     sitio?: string | null
     latitude?: number | null
     longitude?: number | null
+    locationType?: $Enums.LocationType | null
+    endLatitude?: number | null
+    endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -35420,6 +35589,9 @@ export namespace Prisma {
     sitio?: StringNullableFilter<"Project"> | string | null
     latitude?: FloatNullableFilter<"Project"> | number | null
     longitude?: FloatNullableFilter<"Project"> | number | null
+    locationType?: EnumLocationTypeNullableFilter<"Project"> | $Enums.LocationType | null
+    endLatitude?: FloatNullableFilter<"Project"> | number | null
+    endLongitude?: FloatNullableFilter<"Project"> | number | null
     description?: StringNullableFilter<"Project"> | string | null
     status?: EnumProjectStatusFilter<"Project"> | $Enums.ProjectStatus
     completionPercentage?: FloatFilter<"Project"> | number
@@ -36747,6 +36919,9 @@ export namespace Prisma {
     sitio?: string | null
     latitude?: number | null
     longitude?: number | null
+    locationType?: $Enums.LocationType | null
+    endLatitude?: number | null
+    endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -36806,6 +36981,9 @@ export namespace Prisma {
     sitio?: string | null
     latitude?: number | null
     longitude?: number | null
+    locationType?: $Enums.LocationType | null
+    endLatitude?: number | null
+    endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -36962,6 +37140,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number
@@ -37021,6 +37202,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number
@@ -37167,6 +37351,9 @@ export namespace Prisma {
     sitio?: string | null
     latitude?: number | null
     longitude?: number | null
+    locationType?: $Enums.LocationType | null
+    endLatitude?: number | null
+    endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -37226,6 +37413,9 @@ export namespace Prisma {
     sitio?: string | null
     latitude?: number | null
     longitude?: number | null
+    locationType?: $Enums.LocationType | null
+    endLatitude?: number | null
+    endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -37382,6 +37572,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number
@@ -37441,6 +37634,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number
@@ -37587,6 +37783,9 @@ export namespace Prisma {
     sitio?: string | null
     latitude?: number | null
     longitude?: number | null
+    locationType?: $Enums.LocationType | null
+    endLatitude?: number | null
+    endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -37646,6 +37845,9 @@ export namespace Prisma {
     sitio?: string | null
     latitude?: number | null
     longitude?: number | null
+    locationType?: $Enums.LocationType | null
+    endLatitude?: number | null
+    endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -37802,6 +38004,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number
@@ -37861,6 +38066,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number
@@ -38007,6 +38215,9 @@ export namespace Prisma {
     sitio?: string | null
     latitude?: number | null
     longitude?: number | null
+    locationType?: $Enums.LocationType | null
+    endLatitude?: number | null
+    endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -38066,6 +38277,9 @@ export namespace Prisma {
     sitio?: string | null
     latitude?: number | null
     longitude?: number | null
+    locationType?: $Enums.LocationType | null
+    endLatitude?: number | null
+    endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -38222,6 +38436,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number
@@ -38281,6 +38498,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number
@@ -38931,6 +39151,9 @@ export namespace Prisma {
     sitio?: string | null
     latitude?: number | null
     longitude?: number | null
+    locationType?: $Enums.LocationType | null
+    endLatitude?: number | null
+    endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -38990,6 +39213,9 @@ export namespace Prisma {
     sitio?: string | null
     latitude?: number | null
     longitude?: number | null
+    locationType?: $Enums.LocationType | null
+    endLatitude?: number | null
+    endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -39146,6 +39372,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number
@@ -39205,6 +39434,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number
@@ -39351,6 +39583,9 @@ export namespace Prisma {
     sitio?: string | null
     latitude?: number | null
     longitude?: number | null
+    locationType?: $Enums.LocationType | null
+    endLatitude?: number | null
+    endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -39410,6 +39645,9 @@ export namespace Prisma {
     sitio?: string | null
     latitude?: number | null
     longitude?: number | null
+    locationType?: $Enums.LocationType | null
+    endLatitude?: number | null
+    endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -39566,6 +39804,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number
@@ -39625,6 +39866,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number
@@ -39771,6 +40015,9 @@ export namespace Prisma {
     sitio?: string | null
     latitude?: number | null
     longitude?: number | null
+    locationType?: $Enums.LocationType | null
+    endLatitude?: number | null
+    endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -39830,6 +40077,9 @@ export namespace Prisma {
     sitio?: string | null
     latitude?: number | null
     longitude?: number | null
+    locationType?: $Enums.LocationType | null
+    endLatitude?: number | null
+    endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -40095,6 +40345,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number
@@ -40154,6 +40407,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number
@@ -40912,6 +41168,9 @@ export namespace Prisma {
     sitio?: string | null
     latitude?: number | null
     longitude?: number | null
+    locationType?: $Enums.LocationType | null
+    endLatitude?: number | null
+    endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -40971,6 +41230,9 @@ export namespace Prisma {
     sitio?: string | null
     latitude?: number | null
     longitude?: number | null
+    locationType?: $Enums.LocationType | null
+    endLatitude?: number | null
+    endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -41165,6 +41427,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number
@@ -41224,6 +41489,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number
@@ -41386,6 +41654,9 @@ export namespace Prisma {
     sitio?: string | null
     latitude?: number | null
     longitude?: number | null
+    locationType?: $Enums.LocationType | null
+    endLatitude?: number | null
+    endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -41445,6 +41716,9 @@ export namespace Prisma {
     sitio?: string | null
     latitude?: number | null
     longitude?: number | null
+    locationType?: $Enums.LocationType | null
+    endLatitude?: number | null
+    endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -41792,6 +42066,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number
@@ -41851,6 +42128,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number
@@ -42381,6 +42661,9 @@ export namespace Prisma {
     sitio?: string | null
     latitude?: number | null
     longitude?: number | null
+    locationType?: $Enums.LocationType | null
+    endLatitude?: number | null
+    endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
     completionPercentage?: number
@@ -42646,6 +42929,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number
@@ -42705,6 +42991,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number
@@ -42764,6 +43053,9 @@ export namespace Prisma {
     sitio?: NullableStringFieldUpdateOperationsInput | string | null
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationType?: NullableEnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType | null
+    endLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     completionPercentage?: FloatFieldUpdateOperationsInput | number

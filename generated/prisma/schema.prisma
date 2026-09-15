@@ -57,6 +57,13 @@ enum District {
   DISTRICT_II
 }
 
+// What a project's geospatial pin describes: a building is one point, a road
+// runs from a start point to an end point.
+enum LocationType {
+  BUILDING
+  ROAD
+}
+
 enum ProjectSubType {
   WATER_SYSTEMS
   GOVERNMENT_BUILDINGS
@@ -303,6 +310,12 @@ model Project {
   // older records and drafts may only have the administrative location above.
   latitude                 Float?
   longitude                Float?
+  // BUILDING: latitude/longitude is the building's location. ROAD: it is the
+  // road's start, and endLatitude/endLongitude its end. Null on records that
+  // predate the category; those read as a building.
+  locationType             LocationType?
+  endLatitude              Float?
+  endLongitude             Float?
   description              String?
   status                   ProjectStatus        @default(NOT_YET_STARTED)
   // Physical accomplishment, recorded to the decimal (e.g. 45.75%).

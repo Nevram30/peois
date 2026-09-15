@@ -49,7 +49,7 @@ import {
 import { UploadDocumentModal } from "~/app/_components/upload-document-modal";
 import { ProjectImageUploader } from "~/app/_components/project-image-uploader";
 import { GeospatialFields } from "~/app/_components/geospatial-fields";
-import { parseCoord } from "~/lib/geo";
+import { parseCoord, type LocationTypeValue } from "~/lib/geo";
 import { handleAmountChange, parseAmount, formatAmountValue } from "~/lib/currency";
 
 // ─── Shared styles ────────────────────────────────────────────────────────
@@ -57,11 +57,19 @@ const inputClass =
   "block w-full rounded-sm border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none";
 const labelClass =
   "mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-gray-500";
-// Identity & Status uses larger sentence-case labels (see the card's design).
+// Larger sentence-case labels used by the Slippage card.
 const fieldLabelClass = "mb-1.5 block text-sm font-bold text-gray-600";
 const cardClass = "rounded-sm border border-gray-200 bg-white shadow-sm";
 const errorRingClass =
   "border-red-400 focus:border-red-500 focus:ring-red-500/20";
+// Identity & Status and Project Location use a softer, elevated look: filled
+// inputs with an inset shadow, raised selects, and sentence-case labels.
+const elevatedCardClass = "rounded-lg border border-gray-100 bg-white shadow-md";
+const cardLabelClass = "mb-2 block text-sm font-medium text-gray-700";
+const filledInputClass =
+  "block w-full rounded-md border border-gray-100 bg-gray-100 px-4 py-3 text-sm text-gray-900 shadow-[inset_0_2px_4px_rgba(0,0,0,0.08)] transition placeholder:text-gray-400 focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:outline-none disabled:cursor-not-allowed disabled:text-gray-500";
+const selectClass =
+  "block w-full cursor-pointer appearance-none rounded-md border border-gray-100 bg-slate-50 px-4 py-3 pr-10 text-sm text-gray-900 shadow-md transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 disabled:shadow-none";
 
 function FieldError({
   show,
@@ -72,6 +80,31 @@ function FieldError({
 }) {
   if (!show) return null;
   return <p className="mt-1 text-xs text-red-500">{message}</p>;
+}
+
+// Native select with a single chevron marker, for the elevated cards.
+function SelectField({
+  className = "",
+  children,
+  ...props
+}: React.SelectHTMLAttributes<HTMLSelectElement>) {
+  return (
+    <div className="relative">
+      <select {...props} className={`${selectClass} ${className}`}>
+        {children}
+      </select>
+      <svg
+        className="pointer-events-none absolute top-1/2 right-3.5 h-4 w-4 -translate-y-1/2 text-slate-700"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={2}
+        stroke="currentColor"
+        aria-hidden
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+      </svg>
+    </div>
+  );
 }
 
 type PendingFile = {
@@ -133,12 +166,25 @@ type SlippageEntry = {
 
 // ─── Section wrappers ─────────────────────────────────────────────────────
 const SectionHeader = ({
-  icon, title, action,
+  icon, title, action, variant = "caps",
 }: {
   icon: React.ReactNode;
   title: string;
   action?: React.ReactNode;
+  /** `title`: larger sentence-case heading used by the elevated cards. */
+  variant?: "caps" | "title";
 }) => {
+  if (variant === "title") {
+    return (
+      <div className="mx-6 flex flex-wrap items-center justify-between gap-3 border-b border-gray-200 py-5">
+        <div className="flex min-w-0 items-center gap-2.5">
+          <span className="text-blue-900 [&>svg]:h-5 [&>svg]:w-5">{icon}</span>
+          <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
+        </div>
+        {action && <div className="shrink-0">{action}</div>}
+      </div>
+    );
+  }
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-5 py-3.5">
       <div className="flex min-w-0 items-center gap-2">
@@ -231,8 +277,7 @@ export const AddProjectForm = () => {
   // ── Project Identity & Status ────────────────────────────────────────
   const [title, setTitle] = useState("");
   const [projectCost, setProjectCost] = useState("");
-  // Contract Cost input is hidden from the UI; the value is still submitted.
-  const [contractCost] = useState("0.00");
+  const [contractCost, setContractCost] = useState("");
   const [trackingNumber, setTrackingNumber] = useState("");
   const [modeOfImplementation, setModeOfImplementation] = useState("");
   const [contractorName, setContractorName] = useState("");
@@ -252,6 +297,10 @@ export const AddProjectForm = () => {
   // map — belongs to <GeospatialFields>.
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
+  // Building = one point. Road = latitude/longitude as its start plus an end.
+  const [locationType, setLocationType] = useState<LocationTypeValue>("BUILDING");
+  const [endLatitude, setEndLatitude] = useState("");
+  const [endLongitude, setEndLongitude] = useState("");
 
   // ── Funding Information ──────────────────────────────────────────────
   const [sourceOfFund, setSourceOfFund] = useState<SourceOfFundValue | "">("");
@@ -412,6 +461,9 @@ export const AddProjectForm = () => {
   // ── Geospatial derived values ────────────────────────────────────────
   const parsedLat = useMemo(() => parseCoord(latitude, 90), [latitude]);
   const parsedLng = useMemo(() => parseCoord(longitude, 180), [longitude]);
+  const parsedEndLat = useMemo(() => parseCoord(endLatitude, 90), [endLatitude]);
+  const parsedEndLng = useMemo(() => parseCoord(endLongitude, 180), [endLongitude]);
+  const isRoad = locationType === "ROAD";
 
   // Programs / Projects / LBP-TL numbers registered by a super admin.
   const { data: customOptions } = api.fundingOption.getAll.useQuery();
@@ -612,6 +664,8 @@ export const AddProjectForm = () => {
       // The pin itself is optional, but a typed-in coordinate must be valid.
       latitude: latitude.trim() !== "" && parsedLat === null,
       longitude: longitude.trim() !== "" && parsedLng === null,
+      endLatitude: isRoad && endLatitude.trim() !== "" && parsedEndLat === null,
+      endLongitude: isRoad && endLongitude.trim() !== "" && parsedEndLng === null,
       sourceOfFund: !sourceOfFund,
       program: availablePrograms.length > 0 && !program,
       subType: availableSubTypes.length > 0 && !subType,
@@ -647,6 +701,11 @@ export const AddProjectForm = () => {
       parsedLat,
       longitude,
       parsedLng,
+      isRoad,
+      endLatitude,
+      parsedEndLat,
+      endLongitude,
+      parsedEndLng,
       sourceOfFund,
       program,
       availablePrograms,
@@ -717,6 +776,9 @@ export const AddProjectForm = () => {
       sitio: sitio || undefined,
       latitude: parsedLat,
       longitude: parsedLng,
+      locationType,
+      endLatitude: isRoad ? parsedEndLat : null,
+      endLongitude: isRoad ? parsedEndLng : null,
       description: description || undefined,
       // Sent whether or not the card was saved, so a filled-in assessment is
       // never dropped; the revision counter only moves on an explicit save.
@@ -763,18 +825,13 @@ export const AddProjectForm = () => {
         {/* ── Row 1: Identity & Status (2/3) + Location (1/3) ─────────── */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Project Identity & Status */}
-          <section className={`${cardClass} lg:col-span-2`}>
-            <SectionHeader icon={InfoIcon} title="Project Identity & Status" />
-            <div className="space-y-4 p-5">
-              {/* Project photos — banner plus three supporting shots */}
+          <section className={`${elevatedCardClass} lg:col-span-2`}>
+            <SectionHeader icon={InfoIcon} title="Project Identity & Status" variant="title" />
+            <div className="space-y-5 p-6">
+              {/* Project photos — every slot is required */}
               <div>
-                <label className={fieldLabelClass}>
-                  Project Photos <span className="text-red-500">*</span>
-                  <span className="ml-1 font-normal text-gray-400">
-                    (all {PROJECT_IMAGE_SLOTS} required)
-                  </span>
-                </label>
                 <ProjectImageUploader
+                  variant="tiles"
                   slots={imageSlots}
                   onChange={setImageSlot}
                   onUploadingChange={setIsUploadingImage}
@@ -793,23 +850,65 @@ export const AddProjectForm = () => {
                 )}
               </div>
 
+              {/* Physical Progress */}
+              <div className="rounded-md border border-gray-200 p-5">
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <span className="text-sm font-semibold text-gray-900">Physical Progress</span>
+                  <span className="text-base font-bold text-blue-800">{progressValue}%</span>
+                </div>
+                <div className="flex items-center gap-4 sm:gap-6">
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    // Steps in 0.25 so dragging can land on a decimal instead of
+                    // snapping a typed 45.75 back to a whole number.
+                    step={0.25}
+                    value={progressValue}
+                    onChange={(e) => setCompletionPercentage(e.target.value)}
+                    aria-label="Physical progress"
+                    style={{
+                      background: `linear-gradient(to right, var(--color-blue-600) ${progressValue}%, var(--color-blue-200) ${progressValue}%)`,
+                    }}
+                    className="h-2.5 min-w-0 flex-1 cursor-pointer appearance-none rounded-full [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:cursor-grab [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-blue-700 [&::-moz-range-thumb]:bg-white [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:cursor-grab [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-700 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-sm"
+                  />
+                  {/* Typeable percentage — the raw string is kept so the box can
+                      sit empty, or hold a half-written decimal like "45.", while
+                      it is being retyped instead of snapping back to a number. */}
+                  <div className="relative w-28 shrink-0 sm:w-36">
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      step={0.01}
+                      value={completionPercentage}
+                      onChange={(e) => setCompletionPercentage(e.target.value)}
+                      onBlur={() => setCompletionPercentage(String(progressValue))}
+                      aria-label="Physical progress percentage"
+                      className="block w-full rounded-md border border-gray-400 bg-white py-2.5 pr-9 pl-4 text-sm text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
+                    />
+                    <span className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-sm text-gray-700">%</span>
+                  </div>
+                </div>
+              </div>
+
               <div>
-                <label className={fieldLabelClass}>Project Title <span className="text-red-500">*</span></label>
+                <label className={cardLabelClass}>Project Title <span className="text-red-500">*</span></label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Enter project title"
-                  className={`${inputClass} ${showErrors && fieldErrors.title ? errorRingClass : ""}`}
+                  className={`${filledInputClass} ${showErrors && fieldErrors.title ? errorRingClass : ""}`}
                 />
                 <FieldError show={showErrors && fieldErrors.title} />
               </div>
 
-              <div className="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
                 <div>
-                  <label className={fieldLabelClass}>Project Cost <span className="text-red-500">*</span></label>
+                  <label className={cardLabelClass}>Project Cost <span className="text-red-500">*</span></label>
                   <div className="relative">
-                    <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm text-gray-500">₱</span>
+                    <span className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-sm text-gray-600">₱</span>
                     <input
                       type="text"
                       inputMode="decimal"
@@ -817,7 +916,7 @@ export const AddProjectForm = () => {
                       value={projectCost}
                       onChange={(e) => handleCostChange(setProjectCost, e.target)}
                       onBlur={() => handleCostBlur(projectCost, setProjectCost)}
-                      className={`${inputClass} pl-7 ${showErrors && fieldErrors.projectCost ? errorRingClass : ""}`}
+                      className={`${filledInputClass} pl-9 ${showErrors && fieldErrors.projectCost ? errorRingClass : ""}`}
                     />
                   </div>
                   <FieldError
@@ -825,52 +924,84 @@ export const AddProjectForm = () => {
                     message="Project cost must be greater than 0"
                   />
                 </div>
-                {/* Contract Cost field hidden from UI per request — kept in code for state/submission logic */}
-                {/* As Per Plan mirrors the Target Completion Date entered in the
-                    Project Timeline card; read-only so there is one source. */}
                 <div>
-                  <label className={fieldLabelClass}>As Per Plan</label>
-                  <div
-                    className={`${inputClass} truncate ${targetCompletionDate ? "text-gray-900" : "text-gray-400"}`}
-                  >
-                    {targetCompletionDate
-                      ? fmtInputDate(targetCompletionDate)
-                      : "Set in Project Timeline"}
+                  <label className={cardLabelClass}>Contract Cost</label>
+                  <div className="relative">
+                    <span className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-sm text-gray-600">₱</span>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      placeholder="0.00"
+                      value={contractCost}
+                      onChange={(e) => handleCostChange(setContractCost, e.target)}
+                      onBlur={() => handleCostBlur(contractCost, setContractCost)}
+                      className={`${filledInputClass} pl-9`}
+                    />
                   </div>
                 </div>
+                {/* Revised contract costs are recorded as variation orders once
+                    the project exists, so this is a read-only placeholder here. */}
                 <div>
-                  <label className={fieldLabelClass}>Current Status</label>
-                  <select
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value as ProjectStatusValue)}
-                    className={inputClass}
-                  >
-                    {PROJECT_STATUS_ORDER.filter((s) => s !== "NOT_YET_STARTED").map((s) => (
-                      <option key={s} value={s}>{PROJECT_STATUS_LABEL[s]}</option>
-                    ))}
-                  </select>
+                  <label className={cardLabelClass}>Revised Contract Cost</label>
+                  <div className="relative">
+                    <span className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-sm text-gray-400">₱</span>
+                    <input
+                      type="text"
+                      placeholder="0.00"
+                      disabled
+                      title="Revised contract cost can be recorded after the project is created."
+                      className={`${filledInputClass} pl-9`}
+                    />
+                  </div>
                 </div>
+
                 <div>
-                  <label className={fieldLabelClass}>Project I.D.</label>
+                  <label className={cardLabelClass}>Project I.D.</label>
                   <input
                     type="text"
                     value={trackingNumber}
                     onChange={(e) => setTrackingNumber(e.target.value)}
                     placeholder="PEO-2025-XXXXX"
-                    className={inputClass}
+                    className={filledInputClass}
                   />
                   {/* <FieldError show={showErrors && fieldErrors.trackingNumber} /> */}
                 </div>
+                {/* As Per Plan mirrors the Target Completion Date entered in the
+                    Project Timeline card; read-only so there is one source. */}
                 <div>
-                  <label className={fieldLabelClass}>Implementation Mode <span className="text-red-500">*</span></label>
-                  <select
+                  <label className={cardLabelClass}>As Per Plan</label>
+                  <div className={filledInputClass}>
+                    <span
+                      className={`block truncate ${targetCompletionDate ? "text-gray-900" : "text-gray-400"}`}
+                    >
+                      {targetCompletionDate
+                        ? fmtInputDate(targetCompletionDate)
+                        : "Set in Project Timeline"}
+                    </span>
+                  </div>
+                </div>
+                <div>
+                  <label className={cardLabelClass}>Current Status</label>
+                  <SelectField
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value as ProjectStatusValue)}
+                  >
+                    {PROJECT_STATUS_ORDER.filter((s) => s !== "NOT_YET_STARTED").map((s) => (
+                      <option key={s} value={s}>{PROJECT_STATUS_LABEL[s]}</option>
+                    ))}
+                  </SelectField>
+                </div>
+
+                <div>
+                  <label className={cardLabelClass}>Implementation Mode <span className="text-red-500">*</span></label>
+                  <SelectField
                     required
                     value={modeOfImplementation}
                     onChange={(e) => {
                       setModeOfImplementation(e.target.value);
                       if (e.target.value !== "BY_CONTRACT") setContractorName("");
                     }}
-                    className={`${inputClass} ${showErrors && fieldErrors.modeOfImplementation ? errorRingClass : ""}`}
+                    className={showErrors && fieldErrors.modeOfImplementation ? errorRingClass : ""}
                   >
                     <option value="">Select Mode</option>
                     <option value="BY_ADMINISTRATION">By Administration</option>
@@ -878,13 +1009,13 @@ export const AddProjectForm = () => {
                     <option value="UNASSIGNED_FOR_DETERMINATION">
                       Unassigned - For Determination
                     </option>
-                  </select>
+                  </SelectField>
                   <FieldError show={showErrors && fieldErrors.modeOfImplementation} />
                 </div>
                 {/* Contractor Name keeps its slot next to the mode and is only
                     enabled for By Contract projects. */}
-                <div>
-                  <label className={fieldLabelClass}>Contractor Name</label>
+                <div className="sm:col-span-2">
+                  <label className={cardLabelClass}>Contractor Name</label>
                   <input
                     type="text"
                     value={contractorName}
@@ -895,57 +1026,21 @@ export const AddProjectForm = () => {
                         ? "Enter contractor name"
                         : "For By Contract projects only"
                     }
-                    className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
+                    className={filledInputClass}
                   />
                   {/* <FieldError show={showErrors && fieldErrors.contractorName} /> */}
                 </div>
-              </div>
-
-              <div>
-                <div className="mb-2 flex items-center justify-between">
-                  <label className="text-sm font-bold text-gray-600">Physical Progress</label>
-                  {/* Typeable percentage — the raw string is kept so the box can
-                      sit empty, or hold a half-written decimal like "45.", while
-                      it is being retyped instead of snapping back to a number. */}
-                  <div className="relative w-24 shrink-0">
-                    <input
-                      type="number"
-                      min={0}
-                      max={100}
-                      step={0.01}
-                      value={completionPercentage}
-                      onChange={(e) => setCompletionPercentage(e.target.value)}
-                      onBlur={() => setCompletionPercentage(String(progressValue))}
-                      className="block w-full rounded-sm border border-gray-200 bg-white py-1.5 pl-2.5 pr-6 text-sm font-bold text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-sm font-bold text-blue-400">%</span>
-                  </div>
-                </div>
-                <input
-                  type="range"
-                  min={0}
-                  max={100}
-                  // Steps in 0.25 so dragging can land on a decimal instead of
-                  // snapping a typed 45.75 back to a whole number.
-                  step={0.25}
-                  value={progressValue}
-                  onChange={(e) => setCompletionPercentage(e.target.value)}
-                  style={{
-                    background: `linear-gradient(to right, var(--color-blue-700) ${progressValue}%, var(--color-gray-200) ${progressValue}%)`,
-                  }}
-                  className="h-2.5 w-full cursor-pointer appearance-none rounded-full [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:cursor-grab [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-blue-700 [&::-moz-range-thumb]:bg-white [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:cursor-grab [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-700 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-sm"
-                />
               </div>
             </div>
           </section>
 
           {/* Project Location */}
-          <section className={cardClass}>
-            <SectionHeader icon={PinIcon} title="Project Location" />
-            <div className="space-y-3 p-5">
+          <section className={elevatedCardClass}>
+            <SectionHeader icon={PinIcon} title="Project Location" variant="title" />
+            <div className="space-y-4 p-6">
               <div>
-                <label className={labelClass}>District <span className="text-red-500">*</span></label>
-                <select
+                <label className={cardLabelClass}>District <span className="text-red-500">*</span></label>
+                <SelectField
                   required
                   value={district}
                   onChange={(e) => {
@@ -955,92 +1050,111 @@ export const AddProjectForm = () => {
                     setPurok("");
                     setSitio("");
                   }}
-                  className={`${inputClass} ${showErrors && fieldErrors.district ? errorRingClass : ""}`}
+                  className={showErrors && fieldErrors.district ? errorRingClass : ""}
                 >
                   <option value="">Select District</option>
                   <option value="DISTRICT_I">District 1</option>
                   <option value="DISTRICT_II">District 2</option>
-                </select>
+                </SelectField>
                 <FieldError show={showErrors && fieldErrors.district} />
               </div>
-              <div>
-                <label className={labelClass}>Municipality / City <span className="text-red-500">*</span></label>
-                <select
-                  value={cityMunicipality}
-                  onChange={(e) => {
-                    setCityMunicipality(e.target.value);
-                    setBarangay("");
-                    setPurok("");
-                    setSitio("");
-                  }}
-                  disabled={!district}
-                  className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400 ${showErrors && fieldErrors.cityMunicipality ? errorRingClass : ""}`}
-                >
-                  <option value="">Select Municipality</option>
-                  {availableMunicipalities.map((m) => (
-                    <option key={m.name} value={m.name}>{m.name}</option>
-                  ))}
-                </select>
-                <FieldError show={showErrors && fieldErrors.cityMunicipality} />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="min-w-0">
+                  <label className={cardLabelClass}>City / Municipality <span className="text-red-500">*</span></label>
+                  <SelectField
+                    value={cityMunicipality}
+                    onChange={(e) => {
+                      setCityMunicipality(e.target.value);
+                      setBarangay("");
+                      setPurok("");
+                      setSitio("");
+                    }}
+                    disabled={!district}
+                    className={showErrors && fieldErrors.cityMunicipality ? errorRingClass : ""}
+                  >
+                    <option value="">Select City</option>
+                    {availableMunicipalities.map((m) => (
+                      <option key={m.name} value={m.name}>{m.name}</option>
+                    ))}
+                  </SelectField>
+                  <FieldError show={showErrors && fieldErrors.cityMunicipality} />
+                </div>
+                <div className="min-w-0">
+                  <label className={cardLabelClass}>Barangay <span className="text-red-500">*</span></label>
+                  <SelectField
+                    value={barangay}
+                    onChange={(e) => {
+                      setBarangay(e.target.value);
+                      setPurok("");
+                      setSitio("");
+                    }}
+                    disabled={!cityMunicipality}
+                    className={showErrors && fieldErrors.barangay ? errorRingClass : ""}
+                  >
+                    <option value="">
+                      {cityMunicipality ? "Select Barangay" : "Select City first"}
+                    </option>
+                    {availableBarangays.map((bg) => (
+                      <option key={bg.name} value={bg.name}>{bg.name}</option>
+                    ))}
+                  </SelectField>
+                  <FieldError show={showErrors && fieldErrors.barangay} />
+                </div>
               </div>
-              <div>
-                <label className={labelClass}>Barangay <span className="text-red-500">*</span></label>
-                <select
-                  value={barangay}
-                  onChange={(e) => {
-                    setBarangay(e.target.value);
-                    setPurok("");
-                    setSitio("");
-                  }}
-                  disabled={!cityMunicipality}
-                  className={`${inputClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400 ${showErrors && fieldErrors.barangay ? errorRingClass : ""}`}
-                >
-                  <option value="">
-                    {cityMunicipality ? "Select Barangay" : "Select Municipality first"}
-                  </option>
-                  {availableBarangays.map((bg) => (
-                    <option key={bg.name} value={bg.name}>{bg.name}</option>
-                  ))}
-                </select>
-                <FieldError show={showErrors && fieldErrors.barangay} />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className={labelClass}>Purok</label>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="min-w-0">
+                  <label className={cardLabelClass}>Purok</label>
                   <input
                     type="text"
                     value={purok}
                     onChange={(e) => setPurok(e.target.value)}
-                    placeholder="Enter Purok"
-                    className={inputClass}
+                    placeholder="e.g. 4"
+                    className={filledInputClass}
                   />
                   {/* <FieldError show={showErrors && fieldErrors.purok} /> */}
                 </div>
-                <div>
-                  <label className={labelClass}>Sitio</label>
+                <div className="min-w-0">
+                  <label className={cardLabelClass}>Sitio</label>
                   <input
                     type="text"
                     value={sitio}
                     onChange={(e) => setSitio(e.target.value)}
-                    placeholder="Enter Sitio"
-                    className={inputClass}
+                    placeholder="N/A"
+                    className={filledInputClass}
                   />
                   {/* <FieldError show={showErrors && fieldErrors.sitio} /> */}
                 </div>
               </div>
 
               {/* ── Geospatial Data ──────────────────────────────────── */}
-              <div className="border-t border-gray-100 pt-4">
+              <div className="border-t border-gray-200 pt-5">
                 <GeospatialFields
+                  variant="compact"
                   latitude={latitude}
                   longitude={longitude}
                   onLatitudeChange={setLatitude}
                   onLongitudeChange={setLongitude}
+                  locationType={locationType}
+                  onLocationTypeChange={(type) => {
+                    setLocationType(type);
+                    // A building has no end point; drop any the road had.
+                    if (type !== "ROAD") {
+                      setEndLatitude("");
+                      setEndLongitude("");
+                    }
+                  }}
+                  endLatitude={endLatitude}
+                  endLongitude={endLongitude}
+                  onEndLatitudeChange={setEndLatitude}
+                  onEndLongitudeChange={setEndLongitude}
+                  showEndLatitudeError={showErrors && fieldErrors.endLatitude}
+                  showEndLongitudeError={showErrors && fieldErrors.endLongitude}
                   showLatitudeError={showErrors && fieldErrors.latitude}
                   showLongitudeError={showErrors && fieldErrors.longitude}
-                  inputClassName={inputClass}
-                  labelClassName={labelClass}
+                  inputClassName={filledInputClass}
+                  labelClassName={cardLabelClass}
                   errorClassName={errorRingClass}
+                  mapClassName="h-60"
                 />
               </div>
             </div>

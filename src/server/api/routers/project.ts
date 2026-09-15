@@ -87,6 +87,10 @@ export const projectRouter = createTRPCRouter({
         sitio: z.string().optional(),
         latitude: z.number().min(-90).max(90).optional().nullable(),
         longitude: z.number().min(-180).max(180).optional().nullable(),
+        // ROAD projects also carry an end point; latitude/longitude is the start.
+        locationType: z.enum(["BUILDING", "ROAD"]).optional().nullable(),
+        endLatitude: z.number().min(-90).max(90).optional().nullable(),
+        endLongitude: z.number().min(-180).max(180).optional().nullable(),
         description: z.string().optional(),
         status: z.enum(PROJECT_STATUS_VALUES).optional(),
         slippageTarget: z.number().min(0).max(100).optional().nullable(),
@@ -148,6 +152,9 @@ export const projectRouter = createTRPCRouter({
           sitio: input.sitio,
           latitude: input.latitude,
           longitude: input.longitude,
+          locationType: input.locationType,
+          endLatitude: input.endLatitude,
+          endLongitude: input.endLongitude,
           description: input.description,
           status: input.status ?? "ON_GOING",
           slippageTarget: input.slippageTarget,
@@ -214,6 +221,9 @@ export const projectRouter = createTRPCRouter({
         completionPercentage: z.number().min(0).max(100).optional(),
         latitude: z.number().min(-90).max(90).optional().nullable(),
         longitude: z.number().min(-180).max(180).optional().nullable(),
+        locationType: z.enum(["BUILDING", "ROAD"]).optional().nullable(),
+        endLatitude: z.number().min(-90).max(90).optional().nullable(),
+        endLongitude: z.number().min(-180).max(180).optional().nullable(),
         // Nullable, not just optional: clearing every photo has to be able to
         // clear the mirrored cover too, or toImageSlots would fall back to the
         // stale imageUrl and resurrect a photo the user just removed.

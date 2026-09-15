@@ -186,6 +186,9 @@ exports.Prisma.ProjectScalarFieldEnum = {
   sitio: 'sitio',
   latitude: 'latitude',
   longitude: 'longitude',
+  locationType: 'locationType',
+  endLatitude: 'endLatitude',
+  endLongitude: 'endLongitude',
   description: 'description',
   status: 'status',
   completionPercentage: 'completionPercentage',
@@ -445,6 +448,11 @@ exports.SourceOfFund = exports.$Enums.SourceOfFund = {
   MIADP: 'MIADP',
   CONFIDENTIAL: 'CONFIDENTIAL',
   FIVE_PERCENT_CALAMITY_FUND: 'FIVE_PERCENT_CALAMITY_FUND'
+};
+
+exports.LocationType = exports.$Enums.LocationType = {
+  BUILDING: 'BUILDING',
+  ROAD: 'ROAD'
 };
 
 exports.ProjectStatus = exports.$Enums.ProjectStatus = {
