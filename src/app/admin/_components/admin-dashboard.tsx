@@ -9,6 +9,7 @@ import type { StatCard } from "~/app/super-admin/dashboardv2/super.admin.types";
 import { DISTRICT_LABELS, MODE_LABELS, SOURCE_LABELS, STATUS_CONFIG } from "./admin-constant/constant";
 import { AnnualAllocationCard, DistrictCard, SourceBreakdownCard, toCardData } from "./admin-cards/cards";
 import { DistrictCardsSkeleton, FinancialCardSkeleton, StatCardsSkeleton } from "./admin-cards/skeleton.cards";
+import { DistrictProgressSection } from "./admin-charts/district-progress-section";
 import { YearFilter } from "~/helper/year.filter";
 
 // ── Main Dashboard ─────────────────────────────────────────────
@@ -201,6 +202,12 @@ export const AdminDashboardContent = () => {
                     )}
                 </div>
             )}
+
+            {/* Project progress line chart(s). Office divisions
+                (SMAD/PDPM/EPM/QACD) get both districts with a combined/separate
+                toggle; engineering-district admins get their own district only.
+                Scoped by the same YEAR filter as the cards above. */}
+            <DistrictProgressSection budgetYear={dashboardYear} />
 
             {/* Financial Overview Header */}
             <div className="flex items-start justify-between mb-3">

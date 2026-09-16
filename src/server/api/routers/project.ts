@@ -860,6 +860,61 @@ export const projectRouter = createTRPCRouter({
       return data;
     }),
 
+  // Physical accomplishment of every project, one series per district, for the
+  // dashboard's progress line chart. District-scoped callers (1ST/2ND ENGR
+  // DIST) get only their own district's series; office divisions get both.
+  //
+  // Points come back ordered by progress, so the chart's x axis is each
+  // project's rank within its district and the line reads as that district's
+  // progress curve. Ordering by date instead was tried and abandoned: progress
+  // barely correlates with start date, so the line became noise, and a segment
+  // drawn between two unrelated projects implied a trend that isn't there.
+  getProgressByDistrict: districtScopedProcedure
+    .input(z.object({ budgetYear: z.string().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      const districts: readonly District[] = ctx.districtScope
+        ? [ctx.districtScope]
+        : (["DISTRICT_I", "DISTRICT_II"] as const);
+
+      const projects = await ctx.db.project.findMany({
+        where: {
+          locationImplementation: { in: [...districts] },
+          ...(input?.budgetYear ? { budgetYear: input.budgetYear } : {}),
+        },
+        select: {
+          id: true,
+          projectCode: true,
+          title: true,
+          status: true,
+          locationImplementation: true,
+          completionPercentage: true,
+          dateStarted: true,
+          createdAt: true,
+        },
+      });
+
+      return districts.map((district) => {
+        const points = projects
+          .filter((p) => p.locationImplementation === district)
+          .map((p) => ({
+            id: p.id,
+            projectCode: p.projectCode,
+            title: p.title,
+            status: p.status,
+            progress: p.completionPercentage ?? 0,
+            // Not an axis — the tooltip shows it so a point on the curve can
+            // still be placed in time.
+            date: p.dateStarted ?? p.createdAt,
+            // Distinguishes a real start date from the createdAt stand-in, so
+            // the chart can say "added" rather than "started" in its tooltip.
+            estimated: p.dateStarted === null,
+          }))
+          .sort((a, b) => a.progress - b.progress);
+
+        return { district, points };
+      });
+    }),
+
   getFinancialOverview: districtScopedProcedure
     .input(z.object({ budgetYear: z.string().optional() }).optional())
     .query(async ({ ctx, input }) => {

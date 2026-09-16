@@ -65,6 +65,25 @@ export const DistrictCardsSkeleton = ({ count = 2, onSide = false }: { count?: n
     );
 }
 
+// Progress line chart placeholder — title, legend row, plot area and the
+// footer strip, so the card keeps its height while the query is in flight.
+export const ProgressChartSkeleton = ({ height = 280 }: { height?: number }) => {
+    return (
+        <div className="bg-white rounded-sm overflow-hidden border border-slate-200">
+            <div className="p-4 animate-pulse">
+                <div className="h-3.5 w-64 rounded bg-slate-200 mb-2" />
+                <div className="h-2 w-72 rounded bg-slate-100 mb-3" />
+                <div className="flex gap-5 mb-3">
+                    <div className="h-2.5 w-36 rounded bg-slate-200" />
+                    <div className="h-2.5 w-36 rounded bg-slate-200" />
+                </div>
+                <div className="rounded-sm bg-slate-100" style={{ height }} />
+            </div>
+            <div className="h-9 bg-slate-200" />
+        </div>
+    );
+}
+
 export const FinancialCardSkeleton = () => {
     return (
         <div className="bg-white rounded-sm shadow-sm overflow-hidden border border-slate-200">
