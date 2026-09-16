@@ -196,7 +196,9 @@ enum TimelineAdjustmentType {
   SUSPENSION
   RESUMPTION
   REVISION
+  // Legacy value kept for existing records; not selectable in the UI.
   ON_SCHEDULE
+  NTP
 }
 
 enum DocumentStatus {

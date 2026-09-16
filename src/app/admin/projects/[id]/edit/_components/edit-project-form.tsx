@@ -71,11 +71,14 @@ const STATUS_CONFIG: Record<string, { label: string; badge: string; dot: string 
   OTHERS: { label: "Others", badge: "bg-slate-50 text-slate-700 border-slate-200", dot: "bg-slate-500" },
 };
 
-const TIMELINE_ADJ_TYPE_CONFIG: Record<string, { label: string; badge: string }> = {
+// `legacy` types are kept so existing records still show their badge, but are
+// not offered in the Type dropdowns.
+const TIMELINE_ADJ_TYPE_CONFIG: Record<string, { label: string; badge: string; legacy?: boolean }> = {
   EXTENSION: { label: "Extension", badge: "bg-blue-50 text-blue-700 border-blue-200" },
   SUSPENSION: { label: "Suspension", badge: "bg-red-50 text-red-700 border-red-200" },
   RESUMPTION: { label: "Resumption", badge: "bg-green-50 text-green-700 border-green-200" },
-  ON_SCHEDULE: { label: "On-Schedule", badge: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+  NTP: { label: "NTP", badge: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+  ON_SCHEDULE: { label: "On-Schedule", badge: "bg-emerald-50 text-emerald-700 border-emerald-200", legacy: true },
 };
 
 const fmt = (d: Date | string | null | undefined) => {
@@ -318,14 +321,14 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
 
   // ─ Timeline Adjustment ──────────────────────────────────────────────────
   const [adjDays, setAdjDays] = useState("");
-  const [adjType, setAdjType] = useState<"" | "EXTENSION" | "SUSPENSION" | "RESUMPTION" | "ON_SCHEDULE">("");
+  const [adjType, setAdjType] = useState<"" | "EXTENSION" | "SUSPENSION" | "RESUMPTION" | "NTP">("");
   // Inline editing of a recorded adjustment: the row being edited and its draft.
   const [editingAdjId, setEditingAdjId] = useState<string | null>(null);
   const [adjDraft, setAdjDraft] = useState({
     startDate: "",
     endDate: "",
     duration: "",
-    type: "" as "" | "EXTENSION" | "SUSPENSION" | "RESUMPTION" | "ON_SCHEDULE",
+    type: "" as "" | "EXTENSION" | "SUSPENSION" | "RESUMPTION" | "NTP" | "ON_SCHEDULE",
     justification: "",
   });
   const [adjRowError, setAdjRowError] = useState<string | null>(null);
@@ -613,7 +616,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
       startDate: toInputDate(adjustment.startDate),
       endDate: toInputDate(adjustment.endDate),
       duration: String(adjustment.duration),
-      type: adjustment.type as "EXTENSION" | "SUSPENSION" | "RESUMPTION" | "ON_SCHEDULE",
+      type: adjustment.type as "EXTENSION" | "SUSPENSION" | "RESUMPTION" | "NTP" | "ON_SCHEDULE",
       justification: adjustment.justification ?? "",
     });
   };
@@ -1873,9 +1876,12 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                                 className={`w-36 ${!adjDraft.type ? "border-red-300" : ""}`}
                               >
                                 <option value="">Type</option>
-                                {Object.entries(TIMELINE_ADJ_TYPE_CONFIG).map(([value, { label }]) => (
-                                  <option key={value} value={value}>{label}</option>
-                                ))}
+                                {/* A legacy type stays listed only on the row that already has it. */}
+                                {Object.entries(TIMELINE_ADJ_TYPE_CONFIG)
+                                  .filter(([value, { legacy }]) => !legacy || value === a.type)
+                                  .map(([value, { label }]) => (
+                                    <option key={value} value={value}>{label}</option>
+                                  ))}
                               </Select>
                             ) : (
                               <span className={`inline-flex rounded-sm border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${cfg.badge}`}>{cfg.label}</span>
@@ -1979,9 +1985,11 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                     className={adjError && !adjType ? "border-red-300" : ""}
                   >
                     <option value="">Type</option>
-                    {Object.entries(TIMELINE_ADJ_TYPE_CONFIG).map(([value, { label }]) => (
-                      <option key={value} value={value}>{label}</option>
-                    ))}
+                    {Object.entries(TIMELINE_ADJ_TYPE_CONFIG)
+                      .filter(([, { legacy }]) => !legacy)
+                      .map(([value, { label }]) => (
+                        <option key={value} value={value}>{label}</option>
+                      ))}
                   </Select>
                 </div>
                 <div className="min-w-full flex-1 sm:min-w-48">

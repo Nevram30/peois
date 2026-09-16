@@ -339,7 +339,8 @@ export const TimelineAdjustmentType: {
   SUSPENSION: 'SUSPENSION',
   RESUMPTION: 'RESUMPTION',
   REVISION: 'REVISION',
-  ON_SCHEDULE: 'ON_SCHEDULE'
+  ON_SCHEDULE: 'ON_SCHEDULE',
+  NTP: 'NTP'
 };
 
 export type TimelineAdjustmentType = (typeof TimelineAdjustmentType)[keyof typeof TimelineAdjustmentType]

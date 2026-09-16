@@ -57,6 +57,7 @@ const ADJUSTMENT_TYPE_PILL: Record<string, string> = {
   SUSPENSION: "bg-red-50 text-red-600 border border-red-200",
   RESUMPTION: "bg-green-50 text-green-600 border border-green-200",
   REVISION: "bg-amber-50 text-amber-600 border border-amber-200",
+  NTP: "bg-emerald-50 text-emerald-600 border border-emerald-200",
   ON_SCHEDULE: "bg-emerald-50 text-emerald-600 border border-emerald-200",
 };
 

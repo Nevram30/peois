@@ -610,7 +610,7 @@ export const projectRouter = createTRPCRouter({
         startDate: z.date(),
         endDate: z.date(),
         duration: z.number().int().min(0),
-        type: z.enum(["EXTENSION", "SUSPENSION", "RESUMPTION", "REVISION", "ON_SCHEDULE"]),
+        type: z.enum(["EXTENSION", "SUSPENSION", "RESUMPTION", "REVISION", "NTP"]),
         justification: z.string().optional(),
       }),
     )
@@ -636,7 +636,9 @@ export const projectRouter = createTRPCRouter({
         startDate: z.date(),
         endDate: z.date(),
         duration: z.number().int().min(0),
-        type: z.enum(["EXTENSION", "SUSPENSION", "RESUMPTION", "REVISION", "ON_SCHEDULE"]),
+        // ON_SCHEDULE is legacy: not offered for new records, but a row already
+        // recorded with it must still save when only its dates are corrected.
+        type: z.enum(["EXTENSION", "SUSPENSION", "RESUMPTION", "REVISION", "NTP", "ON_SCHEDULE"]),
         justification: z.string().optional().nullable(),
       }),
     )
