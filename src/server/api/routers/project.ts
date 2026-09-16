@@ -353,6 +353,30 @@ export const projectRouter = createTRPCRouter({
       });
     }),
 
+  // Correcting a filed row. The revision it was filed as never changes — only
+  // the figures, the date and the remarks the assessment recorded.
+  updateSlippageAssessment: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        date: z.date(),
+        target: z.number().min(0).max(100),
+        actual: z.number().min(0).max(100),
+        remarks: z.string().optional().nullable(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.slippageAssessment.update({
+        where: { id: input.id },
+        data: {
+          date: input.date,
+          target: input.target,
+          actual: input.actual,
+          remarks: input.remarks?.trim() ?? null,
+        },
+      });
+    }),
+
   deleteSlippageAssessment: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
@@ -600,6 +624,31 @@ export const projectRouter = createTRPCRouter({
           type: input.type,
           justification: input.justification,
           createdById: ctx.session.user.id,
+        },
+      });
+    }),
+
+  // Correcting a recorded adjustment: the dates, duration, type and basis.
+  updateTimelineAdjustment: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        startDate: z.date(),
+        endDate: z.date(),
+        duration: z.number().int().min(0),
+        type: z.enum(["EXTENSION", "SUSPENSION", "RESUMPTION", "REVISION"]),
+        justification: z.string().optional().nullable(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.timelineAdjustment.update({
+        where: { id: input.id },
+        data: {
+          startDate: input.startDate,
+          endDate: input.endDate,
+          duration: input.duration,
+          type: input.type,
+          justification: input.justification?.trim() ?? null,
         },
       });
     }),

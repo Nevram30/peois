@@ -248,6 +248,15 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   // The date may be back-dated, so it is not simply the time of filing.
   const [slippageDate, setSlippageDate] = useState(todayInputDate);
   const [slippageRemarks, setSlippageRemarks] = useState("");
+  // Inline editing of a filed history row: the row being edited and its draft.
+  const [editingSlippageId, setEditingSlippageId] = useState<string | null>(null);
+  const [slippageDraft, setSlippageDraft] = useState({
+    date: "",
+    target: "",
+    actual: "",
+    remarks: "",
+  });
+  const [slippageRowError, setSlippageRowError] = useState<string | null>(null);
 
   // ─ Funding ─────────────────────────────────────────────────────────────
   const [sourceOfFund, setSourceOfFund] = useState<SourceOfFundValue | "">("");
@@ -309,6 +318,16 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   // ─ Timeline Adjustment ──────────────────────────────────────────────────
   const [adjDays, setAdjDays] = useState("");
   const [adjType, setAdjType] = useState<"" | "EXTENSION" | "SUSPENSION" | "RESUMPTION">("");
+  // Inline editing of a recorded adjustment: the row being edited and its draft.
+  const [editingAdjId, setEditingAdjId] = useState<string | null>(null);
+  const [adjDraft, setAdjDraft] = useState({
+    startDate: "",
+    endDate: "",
+    duration: "",
+    type: "" as "" | "EXTENSION" | "SUSPENSION" | "RESUMPTION",
+    justification: "",
+  });
+  const [adjRowError, setAdjRowError] = useState<string | null>(null);
   const [adjJustification, setAdjJustification] = useState("");
   const [adjError, setAdjError] = useState<string | null>(null);
 
@@ -470,6 +489,49 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     });
   };
 
+  const updateSlippageAssessment = api.project.updateSlippageAssessment.useMutation({
+    onSuccess: () => {
+      setEditingSlippageId(null);
+      setSlippageRowError(null);
+      void refetchSlippageAssessments();
+    },
+    onError: (error) => setSlippageRowError(error.message),
+  });
+
+  const startEditSlippage = (
+    entry: NonNullable<typeof slippageAssessments>[number],
+  ) => {
+    setEditingSlippageId(entry.id);
+    setSlippageRowError(null);
+    setSlippageDraft({
+      date: toInputDate(entry.date),
+      target: entry.target.toFixed(2),
+      actual: entry.actual.toFixed(2),
+      remarks: entry.remarks ?? "",
+    });
+  };
+
+  const saveEditSlippage = (id: string) => {
+    const target = parsePercent(slippageDraft.target);
+    const actual = parsePercent(slippageDraft.actual);
+    if (!slippageDraft.date) {
+      setSlippageRowError("Enter the assessment date.");
+      return;
+    }
+    if (target === null || actual === null) {
+      setSlippageRowError("Target and actual must each be between 0 and 100.");
+      return;
+    }
+    setSlippageRowError(null);
+    updateSlippageAssessment.mutate({
+      id,
+      date: new Date(slippageDraft.date),
+      target,
+      actual,
+      remarks: slippageDraft.remarks.trim() || null,
+    });
+  };
+
   const deleteSlippageAssessment = api.project.deleteSlippageAssessment.useMutation({
     onSuccess: () => void refetchSlippageAssessments(),
     onError: (error) => setSlippageError(error.message),
@@ -526,6 +588,63 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
       });
     },
   });
+
+  const updateTimelineAdjustment = api.project.updateTimelineAdjustment.useMutation({
+    onSuccess: () => {
+      setEditingAdjId(null);
+      setAdjRowError(null);
+      void refetchTimelineAdjustments();
+    },
+    onError: (error) => setAdjRowError(error.message),
+  });
+
+  const deleteTimelineAdjustment = api.project.deleteTimelineAdjustment.useMutation({
+    onSuccess: () => void refetchTimelineAdjustments(),
+    onError: (error) => setAdjRowError(error.message),
+  });
+
+  const startEditAdjustment = (
+    adjustment: NonNullable<typeof timelineAdjustments>[number],
+  ) => {
+    setEditingAdjId(adjustment.id);
+    setAdjRowError(null);
+    setAdjDraft({
+      startDate: toInputDate(adjustment.startDate),
+      endDate: toInputDate(adjustment.endDate),
+      duration: String(adjustment.duration),
+      type: adjustment.type as "EXTENSION" | "SUSPENSION" | "RESUMPTION",
+      justification: adjustment.justification ?? "",
+    });
+  };
+
+  const saveEditAdjustment = (id: string) => {
+    if (!adjDraft.startDate || !adjDraft.endDate) {
+      setAdjRowError("Start and end dates are required.");
+      return;
+    }
+    if (new Date(adjDraft.endDate) < new Date(adjDraft.startDate)) {
+      setAdjRowError("The end date cannot come before the start date.");
+      return;
+    }
+    if (!adjDraft.type) {
+      setAdjRowError("Adjustment type is required.");
+      return;
+    }
+    const duration = Number(adjDraft.duration);
+    if (!Number.isInteger(duration) || duration < 0) {
+      setAdjRowError("Duration must be a whole number of days.");
+      return;
+    }
+    setAdjRowError(null);
+    updateTimelineAdjustment.mutate({
+      id,
+      startDate: new Date(adjDraft.startDate),
+      endDate: new Date(adjDraft.endDate),
+      duration,
+      type: adjDraft.type,
+      justification: adjDraft.justification.trim() || null,
+    });
+  };
 
   const recordTimelineAdjustment = api.project.createTimelineAdjustment.useMutation({
     onSuccess: (_data, variables) => {
@@ -1692,28 +1811,146 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                       <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Duration</th>
                       <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Adjustment Type</th>
                       <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Justification Record</th>
+                      <th className="px-3 py-2 text-right text-[10px] font-bold uppercase tracking-wider text-gray-400">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {timelineAdjustments && timelineAdjustments.length > 0 ? timelineAdjustments.map((a) => {
                       const cfg = TIMELINE_ADJ_TYPE_CONFIG[a.type] ?? { label: a.type, badge: "bg-gray-50 text-gray-600 border-gray-200" };
+                      const isEditing = editingAdjId === a.id;
+                      const isSaving = isEditing && updateTimelineAdjustment.isPending;
                       return (
-                        <tr key={a.id} className="hover:bg-gray-50/50">
-                          <td className="px-3 py-2.5 text-gray-600">{fmt(a.startDate)}</td>
-                          <td className="px-3 py-2.5 text-gray-600">{fmt(a.endDate)}</td>
-                          <td className="px-3 py-2.5 font-semibold text-gray-800">{a.duration} Days</td>
-                          <td className="px-3 py-2.5">
-                            <span className={`inline-flex rounded-sm border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${cfg.badge}`}>{cfg.label}</span>
+                        <tr key={a.id} className={isEditing ? "bg-blue-50/40" : "hover:bg-gray-50/50"}>
+                          <td className="px-3 py-2.5 text-gray-600">
+                            {isEditing ? (
+                              <Input
+                                type="date"
+                                value={adjDraft.startDate}
+                                onChange={(e) => setAdjDraft((d) => ({ ...d, startDate: e.target.value }))}
+                                className="w-36"
+                                error={!adjDraft.startDate}
+                              />
+                            ) : (
+                              fmt(a.startDate)
+                            )}
                           </td>
-                          <td className="px-3 py-2.5 italic text-gray-600">{a.justification ?? "—"}</td>
+                          <td className="px-3 py-2.5 text-gray-600">
+                            {isEditing ? (
+                              <Input
+                                type="date"
+                                value={adjDraft.endDate}
+                                onChange={(e) => setAdjDraft((d) => ({ ...d, endDate: e.target.value }))}
+                                className="w-36"
+                                error={!adjDraft.endDate}
+                              />
+                            ) : (
+                              fmt(a.endDate)
+                            )}
+                          </td>
+                          <td className="px-3 py-2.5 font-semibold text-gray-800">
+                            {isEditing ? (
+                              <Input
+                                type="number"
+                                min={0}
+                                value={adjDraft.duration}
+                                onChange={(e) => setAdjDraft((d) => ({ ...d, duration: e.target.value }))}
+                                placeholder="0"
+                                className="w-20"
+                                error={adjDraft.duration.trim() === ""}
+                              />
+                            ) : (
+                              `${a.duration} Days`
+                            )}
+                          </td>
+                          <td className="px-3 py-2.5">
+                            {isEditing ? (
+                              <Select
+                                value={adjDraft.type}
+                                onChange={(e) =>
+                                  setAdjDraft((d) => ({ ...d, type: e.target.value as typeof d.type }))
+                                }
+                                className={`w-36 ${!adjDraft.type ? "border-red-300" : ""}`}
+                              >
+                                <option value="">Type</option>
+                                {Object.entries(TIMELINE_ADJ_TYPE_CONFIG).map(([value, { label }]) => (
+                                  <option key={value} value={value}>{label}</option>
+                                ))}
+                              </Select>
+                            ) : (
+                              <span className={`inline-flex rounded-sm border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${cfg.badge}`}>{cfg.label}</span>
+                            )}
+                          </td>
+                          <td className="px-3 py-2.5 italic text-gray-600">
+                            {isEditing ? (
+                              <Input
+                                type="text"
+                                value={adjDraft.justification}
+                                onChange={(e) => setAdjDraft((d) => ({ ...d, justification: e.target.value }))}
+                                placeholder="Justification / Basis..."
+                              />
+                            ) : (
+                              a.justification ?? "—"
+                            )}
+                          </td>
+                          <td className="px-3 py-2.5">
+                            <div className="flex items-center justify-end gap-2">
+                              {isEditing ? (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={() => saveEditAdjustment(a.id)}
+                                    disabled={isSaving}
+                                    className="rounded-sm bg-blue-900 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
+                                  >
+                                    {isSaving ? "Saving..." : "Save"}
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setEditingAdjId(null);
+                                      setAdjRowError(null);
+                                    }}
+                                    disabled={isSaving}
+                                    className="rounded-sm border border-gray-200 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-gray-500 transition hover:bg-gray-50 disabled:opacity-50"
+                                  >
+                                    Cancel
+                                  </button>
+                                </>
+                              ) : (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={() => startEditAdjustment(a)}
+                                    disabled={editingAdjId !== null}
+                                    className="text-gray-300 transition hover:text-blue-600 disabled:opacity-50"
+                                    aria-label="Edit timeline adjustment"
+                                  >
+                                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Z" />
+                                    </svg>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => deleteTimelineAdjustment.mutate({ id: a.id })}
+                                    disabled={deleteTimelineAdjustment.isPending || editingAdjId !== null}
+                                    className="text-gray-300 transition hover:text-red-500 disabled:opacity-50"
+                                    aria-label="Remove timeline adjustment"
+                                  >
+                                    ×
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                          </td>
                         </tr>
                       );
                     }) : (
-                      <tr><td colSpan={5} className="px-3 py-6 text-center text-gray-400">No timeline adjustments recorded yet.</td></tr>
+                      <tr><td colSpan={6} className="px-3 py-6 text-center text-gray-400">No timeline adjustments recorded yet.</td></tr>
                     )}
                   </tbody>
                 </table>
               </div>
+              {adjRowError && <p className="mt-2 text-xs text-red-500">{adjRowError}</p>}
 
               {/* Record form — with labels */}
               <div className="mt-3 flex flex-wrap items-end gap-2">
@@ -1890,32 +2127,128 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                         <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Actual %</th>
                         <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Slippage (%)</th>
                         <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Remarks</th>
-                        <th className="px-3 py-2" />
+                        <th className="px-3 py-2 text-right text-[10px] font-bold uppercase tracking-wider text-gray-400">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                       {slippageAssessments && slippageAssessments.length > 0 ? slippageAssessments.map((entry) => {
-                        const value = computeSlippage(entry.target, entry.actual);
-                        const cfg = getSlippageStageConfig(value);
+                        const isEditing = editingSlippageId === entry.id;
+                        // An edited row previews its own draft figures.
+                        const target = isEditing ? parsePercent(slippageDraft.target) : entry.target;
+                        const actual = isEditing ? parsePercent(slippageDraft.actual) : entry.actual;
+                        const value =
+                          target !== null && actual !== null ? computeSlippage(target, actual) : null;
+                        const cfg = value !== null ? getSlippageStageConfig(value) : null;
+                        const isSaving = isEditing && updateSlippageAssessment.isPending;
                         return (
-                          <tr key={entry.id} className="hover:bg-gray-50/50">
-                            <td className="px-3 py-2.5 text-gray-600">{fmt(entry.date)}</td>
-                            <td className="px-3 py-2.5 text-gray-600">{entry.target.toFixed(2)}%</td>
-                            <td className="px-3 py-2.5 text-gray-600">{entry.actual.toFixed(2)}%</td>
-                            <td className={`px-3 py-2.5 font-bold ${cfg.text}`}>
-                              {formatSlippage(value)}%
+                          <tr key={entry.id} className={isEditing ? "bg-blue-50/40" : "hover:bg-gray-50/50"}>
+                            <td className="px-3 py-2.5 text-gray-600">
+                              {isEditing ? (
+                                <Input
+                                  type="date"
+                                  value={slippageDraft.date}
+                                  onChange={(e) => setSlippageDraft((d) => ({ ...d, date: e.target.value }))}
+                                  className="w-36"
+                                  error={!slippageDraft.date}
+                                />
+                              ) : (
+                                fmt(entry.date)
+                              )}
                             </td>
-                            <td className="px-3 py-2.5 text-gray-600">{entry.remarks ?? "—"}</td>
-                            <td className="px-3 py-2.5 text-right">
-                              <button
-                                type="button"
-                                onClick={() => deleteSlippageAssessment.mutate({ id: entry.id })}
-                                disabled={deleteSlippageAssessment.isPending}
-                                className="text-gray-300 transition hover:text-red-500 disabled:opacity-50"
-                                aria-label="Remove slippage assessment"
-                              >
-                                ×
-                              </button>
+                            <td className="px-3 py-2.5 text-gray-600">
+                              {isEditing ? (
+                                <Input
+                                  type="text"
+                                  inputMode="decimal"
+                                  value={slippageDraft.target}
+                                  onChange={(e) => setSlippageDraft((d) => ({ ...d, target: e.target.value }))}
+                                  placeholder="0.00"
+                                  className="w-20"
+                                  error={target === null}
+                                />
+                              ) : (
+                                `${entry.target.toFixed(2)}%`
+                              )}
+                            </td>
+                            <td className="px-3 py-2.5 text-gray-600">
+                              {isEditing ? (
+                                <Input
+                                  type="text"
+                                  inputMode="decimal"
+                                  value={slippageDraft.actual}
+                                  onChange={(e) => setSlippageDraft((d) => ({ ...d, actual: e.target.value }))}
+                                  placeholder="0.00"
+                                  className="w-20"
+                                  error={actual === null}
+                                />
+                              ) : (
+                                `${entry.actual.toFixed(2)}%`
+                              )}
+                            </td>
+                            <td className={`px-3 py-2.5 font-bold ${cfg ? cfg.text : "text-gray-300"}`}>
+                              {value !== null ? `${formatSlippage(value)}%` : "—"}
+                            </td>
+                            <td className="px-3 py-2.5 text-gray-600">
+                              {isEditing ? (
+                                <Input
+                                  type="text"
+                                  value={slippageDraft.remarks}
+                                  onChange={(e) => setSlippageDraft((d) => ({ ...d, remarks: e.target.value }))}
+                                  placeholder="Remarks / basis of assessment..."
+                                />
+                              ) : (
+                                entry.remarks ?? "—"
+                              )}
+                            </td>
+                            <td className="px-3 py-2.5">
+                              <div className="flex items-center justify-end gap-2">
+                                {isEditing ? (
+                                  <>
+                                    <button
+                                      type="button"
+                                      onClick={() => saveEditSlippage(entry.id)}
+                                      disabled={isSaving}
+                                      className="rounded-sm bg-blue-900 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
+                                    >
+                                      {isSaving ? "Saving..." : "Save"}
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setEditingSlippageId(null);
+                                        setSlippageRowError(null);
+                                      }}
+                                      disabled={isSaving}
+                                      className="rounded-sm border border-gray-200 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-gray-500 transition hover:bg-gray-50 disabled:opacity-50"
+                                    >
+                                      Cancel
+                                    </button>
+                                  </>
+                                ) : (
+                                  <>
+                                    <button
+                                      type="button"
+                                      onClick={() => startEditSlippage(entry)}
+                                      disabled={editingSlippageId !== null}
+                                      className="text-gray-300 transition hover:text-blue-600 disabled:opacity-50"
+                                      aria-label="Edit slippage assessment"
+                                    >
+                                      <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Z" />
+                                      </svg>
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => deleteSlippageAssessment.mutate({ id: entry.id })}
+                                      disabled={deleteSlippageAssessment.isPending || editingSlippageId !== null}
+                                      className="text-gray-300 transition hover:text-red-500 disabled:opacity-50"
+                                      aria-label="Remove slippage assessment"
+                                    >
+                                      ×
+                                    </button>
+                                  </>
+                                )}
+                              </div>
                             </td>
                           </tr>
                         );
@@ -1925,6 +2258,9 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                     </tbody>
                   </table>
                 </div>
+                {slippageRowError && (
+                  <p className="mt-2 text-xs text-red-500">{slippageRowError}</p>
+                )}
               </div>
 
               {/* Stage legend */}
