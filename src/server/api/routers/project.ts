@@ -610,7 +610,7 @@ export const projectRouter = createTRPCRouter({
         startDate: z.date(),
         endDate: z.date(),
         duration: z.number().int().min(0),
-        type: z.enum(["EXTENSION", "SUSPENSION", "RESUMPTION", "REVISION"]),
+        type: z.enum(["EXTENSION", "SUSPENSION", "RESUMPTION", "REVISION", "ON_SCHEDULE"]),
         justification: z.string().optional(),
       }),
     )
@@ -636,7 +636,7 @@ export const projectRouter = createTRPCRouter({
         startDate: z.date(),
         endDate: z.date(),
         duration: z.number().int().min(0),
-        type: z.enum(["EXTENSION", "SUSPENSION", "RESUMPTION", "REVISION"]),
+        type: z.enum(["EXTENSION", "SUSPENSION", "RESUMPTION", "REVISION", "ON_SCHEDULE"]),
         justification: z.string().optional().nullable(),
       }),
     )

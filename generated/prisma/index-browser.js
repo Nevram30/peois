@@ -489,7 +489,8 @@ exports.TimelineAdjustmentType = exports.$Enums.TimelineAdjustmentType = {
   EXTENSION: 'EXTENSION',
   SUSPENSION: 'SUSPENSION',
   RESUMPTION: 'RESUMPTION',
-  REVISION: 'REVISION'
+  REVISION: 'REVISION',
+  ON_SCHEDULE: 'ON_SCHEDULE'
 };
 
 exports.NotificationPriority = exports.$Enums.NotificationPriority = {

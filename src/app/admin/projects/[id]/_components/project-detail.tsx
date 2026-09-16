@@ -57,6 +57,7 @@ const ADJUSTMENT_TYPE_PILL: Record<string, string> = {
   SUSPENSION: "bg-red-50 text-red-600 border border-red-200",
   RESUMPTION: "bg-green-50 text-green-600 border border-green-200",
   REVISION: "bg-amber-50 text-amber-600 border border-amber-200",
+  ON_SCHEDULE: "bg-emerald-50 text-emerald-600 border border-emerald-200",
 };
 
 const fmt = (d: Date | string | null | undefined) => {
@@ -735,7 +736,7 @@ export const ProjectDetail = ({ projectId }: Props) => {
                             <span
                               className={`inline-flex rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${ADJUSTMENT_TYPE_PILL[t.type] ?? "bg-gray-50 text-gray-600 border border-gray-200"}`}
                             >
-                              {t.type}
+                              {t.type.replace(/_/g, "-")}
                             </span>
                           </td>
                           <td className="px-4 py-3 italic text-gray-600">

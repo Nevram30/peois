@@ -196,6 +196,7 @@ enum TimelineAdjustmentType {
   SUSPENSION
   RESUMPTION
   REVISION
+  ON_SCHEDULE
 }
 
 enum DocumentStatus {

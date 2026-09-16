@@ -75,6 +75,7 @@ const TIMELINE_ADJ_TYPE_CONFIG: Record<string, { label: string; badge: string }>
   EXTENSION: { label: "Extension", badge: "bg-blue-50 text-blue-700 border-blue-200" },
   SUSPENSION: { label: "Suspension", badge: "bg-red-50 text-red-700 border-red-200" },
   RESUMPTION: { label: "Resumption", badge: "bg-green-50 text-green-700 border-green-200" },
+  ON_SCHEDULE: { label: "On-Schedule", badge: "bg-emerald-50 text-emerald-700 border-emerald-200" },
 };
 
 const fmt = (d: Date | string | null | undefined) => {
@@ -317,14 +318,14 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
 
   // ─ Timeline Adjustment ──────────────────────────────────────────────────
   const [adjDays, setAdjDays] = useState("");
-  const [adjType, setAdjType] = useState<"" | "EXTENSION" | "SUSPENSION" | "RESUMPTION">("");
+  const [adjType, setAdjType] = useState<"" | "EXTENSION" | "SUSPENSION" | "RESUMPTION" | "ON_SCHEDULE">("");
   // Inline editing of a recorded adjustment: the row being edited and its draft.
   const [editingAdjId, setEditingAdjId] = useState<string | null>(null);
   const [adjDraft, setAdjDraft] = useState({
     startDate: "",
     endDate: "",
     duration: "",
-    type: "" as "" | "EXTENSION" | "SUSPENSION" | "RESUMPTION",
+    type: "" as "" | "EXTENSION" | "SUSPENSION" | "RESUMPTION" | "ON_SCHEDULE",
     justification: "",
   });
   const [adjRowError, setAdjRowError] = useState<string | null>(null);
@@ -612,7 +613,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
       startDate: toInputDate(adjustment.startDate),
       endDate: toInputDate(adjustment.endDate),
       duration: String(adjustment.duration),
-      type: adjustment.type as "EXTENSION" | "SUSPENSION" | "RESUMPTION",
+      type: adjustment.type as "EXTENSION" | "SUSPENSION" | "RESUMPTION" | "ON_SCHEDULE",
       justification: adjustment.justification ?? "",
     });
   };
