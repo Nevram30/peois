@@ -698,8 +698,8 @@ export const AddProjectForm = () => {
   const fieldErrors = useMemo(
     () => ({
       title: !title.trim(),
-      // All four photo slots must be filled for a full submission.
-      image: imageSlots.some((url) => !url),
+      // Project photos are optional: a full submission goes through with any
+      // number of the four slots filled, including none.
       projectCost: !(parseAmount(projectCost) > 0),
       // trackingNumber: !trackingNumber.trim(),
       modeOfImplementation: !modeOfImplementation,
@@ -732,11 +732,9 @@ export const AddProjectForm = () => {
       slippageTarget: slippageTargetInput.trim() !== "" && slippageTarget === null,
       slippageActual: slippageActualInput.trim() !== "" && slippageActual === null,
       engineers: engineers.length === 0,
-      description: !description.trim(),
     }),
     [
       title,
-      imageSlots,
       projectCost,
       // trackingNumber,
       modeOfImplementation,
@@ -770,7 +768,6 @@ export const AddProjectForm = () => {
       slippageActualInput,
       slippageActual,
       engineers,
-      description,
     ],
   );
 
@@ -877,7 +874,7 @@ export const AddProjectForm = () => {
           <section className={`${elevatedCardClass} lg:col-span-2`}>
             <SectionHeader icon={InfoIcon} title="Project Identity & Status" variant="title" />
             <div className="space-y-5 p-6">
-              {/* Project photos — every slot is required */}
+              {/* Project photos — optional, any number of the four slots */}
               <div>
                 <ProjectImageUploader
                   variant="tiles"
@@ -892,11 +889,6 @@ export const AddProjectForm = () => {
                     ) : undefined
                   }
                 />
-                {showErrors && fieldErrors.image && (
-                  <p className="mt-1.5 text-xs text-red-500">
-                    All {PROJECT_IMAGE_SLOTS} project photos are required
-                  </p>
-                )}
               </div>
 
               {/* Physical Progress */}
@@ -1836,17 +1828,16 @@ export const AddProjectForm = () => {
                   message="At least one engineer is required"
                 />
               </div>
-              {/* Project Profile */}
+              {/* Project Profile — optional */}
               <div>
-                <label className={labelClass}>Project Profile <span className="text-red-500">*</span></label>
+                <label className={labelClass}>Project Profile</label>
                 <textarea
                   rows={5}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Describe the scope of work, deliverables, and methodology..."
-                  className={`${inputClass} resize-none ${showErrors && fieldErrors.description ? errorRingClass : ""}`}
+                  className={`${inputClass} resize-none`}
                 />
-                <FieldError show={showErrors && fieldErrors.description} />
               </div>
             </div>
           </section>
