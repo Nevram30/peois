@@ -51,12 +51,25 @@ const ChartCard = ({
     return (
         <div className="bg-white rounded-sm overflow-hidden border border-slate-200">
             <div className="p-4">
-                <p className="text-[15px] font-extrabold text-[#1e3a8a] tracking-widest uppercase mb-1">
-                    {title}
-                </p>
-                <p className="text-[10px] text-slate-500 mb-3">
-                    Physical accomplishment per project, ranked from least to most advanced
-                </p>
+                <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="min-w-0">
+                        <p className="text-[15px] font-extrabold text-[#1e3a8a] tracking-widest uppercase mb-1">
+                            {title}
+                        </p>
+                        <p className="text-[10px] text-slate-500">
+                            Physical accomplishment per project, ranked from least to most advanced
+                        </p>
+                    </div>
+                    {/* Headline figure for the card, top right where it is read first */}
+                    <div className="shrink-0 text-right">
+                        <p className="text-3xl font-extrabold leading-none text-slate-900">
+                            {formatPct(average(allPoints.map((p) => p.progress)))}
+                        </p>
+                        <p className="mt-1 text-[11px] font-bold tracking-widest text-slate-500 uppercase">
+                            AVG PROGRESS
+                        </p>
+                    </div>
+                </div>
                 {/* A legend for two series; a single series is named by the title above it. */}
                 {series.length > 1 && (
                     <div className="mb-2">
@@ -66,8 +79,8 @@ const ChartCard = ({
                 <ProgressLineChart series={series} maxRank={maxRank} height={height} />
             </div>
             <div className="bg-white text-black border-t border-slate-300 px-4 py-[9px] flex justify-between items-center text-[11px] font-bold tracking-widest uppercase">
-                <span>{allPoints.length} PROJECTS PLOTTED</span>
-                <span>{formatPct(average(allPoints.map((p) => p.progress)))} AVG PROGRESS</span>
+                <span>PROJECTS PLOTTED</span>
+                <span>{allPoints.length}</span>
             </div>
         </div>
     );
