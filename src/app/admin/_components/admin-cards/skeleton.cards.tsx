@@ -1,14 +1,14 @@
 // ── Skeletons ──────────────────────────────────────────────────
 
 // Single stat tile placeholder — matches the real tile's
-// "label on top, icon left / value right below" layout.
+// "label left / icon top right, value below on the left" layout.
 const StatTileSkeleton = () => (
     <div className="bg-white rounded-sm shadow-sm p-3 flex flex-col gap-2 animate-pulse">
-        <div className="h-2.5 w-16 rounded bg-slate-200" />
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-start justify-between gap-2">
+            <div className="h-2.5 w-16 rounded bg-slate-200" />
             <div className="w-6 h-6 rounded-md bg-slate-200" />
-            <div className="h-6 w-8 rounded bg-slate-200" />
         </div>
+        <div className="h-6 w-8 rounded bg-slate-200" />
     </div>
 );
 

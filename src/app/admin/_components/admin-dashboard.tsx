@@ -12,6 +12,30 @@ import { DistrictCardsSkeleton, FinancialCardSkeleton, StatCardsSkeleton } from 
 import { DistrictProgressSection } from "./admin-charts/district-progress-section";
 import { YearFilter } from "~/helper/year.filter";
 
+// ── Stat Tile ──────────────────────────────────────────────────
+// Status name with its icon at the top right, the count below on the left.
+// Shared by both stat-card layouts (office divisions and district admins).
+// justify-between pins the count to the bottom, so counts stay level across a
+// row even when one status name wraps to two lines and its neighbour doesn't.
+const StatTile = ({ card }: { card: StatCard }) => (
+    <div className="bg-white rounded-sm shadow-sm p-3 flex flex-col justify-between gap-2">
+        <div className="flex items-start justify-between gap-2">
+            {/* min-w-0 lets the name wrap beside the icon instead of pushing it past
+                the tile edge. break-words splits a word only when it can't fit on a
+                line by itself — which happens to "IMPLEMENTATION" on the narrow
+                1024–1279px district tiles — and hyphens-auto lets browsers with
+                hyphenation dictionaries mark that split with a hyphen. (Soft hyphens
+                were tried and dropped: browsers use them even where the whole word
+                fits on the next line, e.g. "COMPLETED PRO-JECTS" at 1280px.) */}
+            <p className="min-w-0 break-words hyphens-auto text-[11px] font-bold text-slate-500 leading-tight tracking-wide">{card.label}</p>
+            <div className={`w-6 h-6 shrink-0 rounded-sm ${card.iconBg} ${card.iconColor} flex items-center justify-center text-xs`}>
+                {card.icon}
+            </div>
+        </div>
+        <p className="text-2xl font-extrabold text-slate-900 leading-none">{card.value}</p>
+    </div>
+);
+
 // ── Main Dashboard ─────────────────────────────────────────────
 export const AdminDashboardContent = () => {
     const router = useRouter();
@@ -160,29 +184,13 @@ export const AdminDashboardContent = () => {
                                 <p className="text-3xl font-extrabold text-slate-900 leading-none">{dashboardYear || "All"}</p>
                             </div>
                             {statusTiles.map((c) => (
-                                <div key={c.label} className="bg-white rounded-sm shadow-sm p-3 flex flex-col gap-2">
-                                    <p className="text-[11px] font-bold text-slate-500 leading-tight tracking-wide">{c.label}</p>
-                                    <div className="flex items-center justify-between gap-2">
-                                        <div className={`w-6 h-6 rounded-sm ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs`}>
-                                            {c.icon}
-                                        </div>
-                                        <p className="text-2xl font-extrabold text-slate-900 leading-none">{c.value}</p>
-                                    </div>
-                                </div>
+                                <StatTile key={c.label} card={c} />
                             ))}
                         </div>
                     ) : (
                         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
                             {statCards.map((c) => (
-                                <div key={c.label} className="bg-white rounded-sm shadow-sm p-3 flex flex-col gap-2">
-                                    <p className="text-[11px] font-bold text-slate-500 leading-tight tracking-wide">{c.label}</p>
-                                    <div className="flex items-center justify-between gap-2">
-                                        <div className={`w-6 h-6 rounded-sm ${c.iconBg} ${c.iconColor} flex items-center justify-center text-xs`}>
-                                            {c.icon}
-                                        </div>
-                                        <p className="text-2xl font-extrabold text-slate-900 leading-none">{c.value}</p>
-                                    </div>
-                                </div>
+                                <StatTile key={c.label} card={c} />
                             ))}
                         </div>
                     )}

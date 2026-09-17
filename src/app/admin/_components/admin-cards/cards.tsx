@@ -85,17 +85,24 @@ export const DistrictCard = ({ title, data }: DistrictCardProps) => {
                         size={100}
                         thickness={50}
                     />
-                    <div className="grid grid-cols-2 gap-x-3 gap-y-[3px] flex-1">
+                    {/* One column on the smallest phones: two columns beside the pie
+                        leave "FOR IMPLEMENTATION" too little room for its count. */}
+                    <div className="grid grid-cols-1 min-[480px]:grid-cols-2 gap-x-3 gap-y-[3px] flex-1 min-w-0">
                         {data.map((d) => (
-                            <div key={d.label} className="flex items-center justify-between gap-1">
-                                <div className="flex items-center gap-1">
-                                    <span
-                                        className="w-2 h-2 rounded-full flex-shrink-0"
-                                        style={{ background: d.color }}
-                                    />
-                                    <span className="text-[10.5px] text-slate-500">{d.label}</span>
-                                </div>
-                                <span className="text-[10.5px] font-bold text-slate-800">{d.value}</span>
+                            // Count sits right after its status name rather than pushed to
+                            // the column's far edge, so the pair reads as one item. It is
+                            // inline with the label so a wrapped name ("FOR
+                            // IMPLEMENTATION" on narrow screens) keeps its count beside it.
+                            <div key={d.label} className="flex items-baseline gap-1">
+                                <span
+                                    className="w-2 h-2 rounded-full flex-shrink-0 translate-y-px"
+                                    style={{ background: d.color }}
+                                />
+                                <span className="text-xs text-slate-500">
+                                    {/* Non-breaking space: the count never drops to a line of its own */}
+                                    {d.label}{" "}
+                                    <span className="ml-1.5 font-bold text-slate-800">{d.value}</span>
+                                </span>
                             </div>
                         ))}
                     </div>
