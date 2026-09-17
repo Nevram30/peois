@@ -10,6 +10,7 @@ import { DISTRICT_LABELS, MODE_LABELS, SOURCE_LABELS, STATUS_CONFIG } from "./ad
 import { AnnualAllocationCard, DistrictCard, SourceBreakdownCard, toCardData } from "./admin-cards/cards";
 import { DistrictCardsSkeleton, FinancialCardSkeleton, StatCardsSkeleton } from "./admin-cards/skeleton.cards";
 import { DistrictProgressSection } from "./admin-charts/district-progress-section";
+import { LocationBreakdownSection } from "./admin-charts/location-breakdown-section";
 import { YearFilter } from "~/helper/year.filter";
 
 // ── Stat Tile ──────────────────────────────────────────────────
@@ -36,9 +37,19 @@ const StatTile = ({ card }: { card: StatCard }) => (
     </div>
 );
 
+// ── Dashboard tabs ─────────────────────────────────────────────
+const DASHBOARD_TABS = [
+    { id: "status", label: "PROJECT STATUS OVERVIEW" },
+    { id: "financial", label: "FINANCIAL ALLOCATION OVERVIEW" },
+    { id: "location", label: "PROGRESS & STATUS PER LOCATION OVERVIEW" },
+] as const;
+
+type DashboardTab = (typeof DASHBOARD_TABS)[number]["id"];
+
 // ── Main Dashboard ─────────────────────────────────────────────
 export const AdminDashboardContent = () => {
     const router = useRouter();
+    const [activeTab, setActiveTab] = useState<DashboardTab>("status");
 
     // Fiscal year filter shared by the dashboard cards (driven by the header YEAR buttons).
     const [dashboardYear, setDashboardYear] = useState("");
@@ -154,124 +165,191 @@ export const AdminDashboardContent = () => {
 
     return (
         <div className="bg-slate-100 min-h-screen p-4 font-sans text-slate-800">
-            {/* Project Status Overview Header */}
-            <div className="flex items-start justify-between mb-3">
-                <div>
-                    <p className="text-[15px] font-extrabold text-blue-900 tracking-wide">PROJECT STATUS OVERVIEW</p>
-                    <p className="text-[10px] text-slate-500 mt-0.5">Project Status Information</p>
+            {/* Section tabs. The YEAR filter sits in the tab bar because both sections
+                share the one year setting — it used to be repeated in each header. */}
+            {/* On phones the filter goes above the tabs (flex-col-reverse), so the
+                active tab's underline still sits on the bar's bottom border. */}
+            <div className="flex flex-col-reverse sm:flex-row sm:items-end justify-between gap-x-4 gap-y-2 border-b border-slate-300 mb-3">
+                <div
+                    role="tablist"
+                    aria-label="Dashboard sections"
+                    className="flex min-w-0"
+                    onKeyDown={(e) => {
+                        // Arrow keys / Home / End move between tabs, per the WAI-ARIA tabs pattern.
+                        const ids = DASHBOARD_TABS.map((t) => t.id);
+                        const current = ids.indexOf(activeTab);
+                        const next =
+                            e.key === "ArrowRight" ? ids[(current + 1) % ids.length]
+                                : e.key === "ArrowLeft" ? ids[(current - 1 + ids.length) % ids.length]
+                                    : e.key === "Home" ? ids[0]
+                                        : e.key === "End" ? ids[ids.length - 1]
+                                            : undefined;
+                        if (!next) return;
+                        e.preventDefault();
+                        setActiveTab(next);
+                        document.getElementById(`dashboard-tab-${next}`)?.focus();
+                    }}
+                >
+                    {DASHBOARD_TABS.map((t) => {
+                        const selected = activeTab === t.id;
+                        return (
+                            <button
+                                key={t.id}
+                                id={`dashboard-tab-${t.id}`}
+                                type="button"
+                                role="tab"
+                                aria-selected={selected}
+                                aria-controls={`dashboard-panel-${t.id}`}
+                                tabIndex={selected ? 0 : -1}
+                                onClick={() => setActiveTab(t.id)}
+                                className={`-mb-px border-b-[3px] px-3 py-2 text-left text-[12px] sm:text-[15px] font-extrabold leading-tight tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 ${selected
+                                    ? "border-blue-900 text-blue-900"
+                                    : "border-transparent text-slate-400 hover:text-slate-600"
+                                    }`}
+                            >
+                                {t.label}
+                            </button>
+                        );
+                    })}
                 </div>
-                <YearFilter value={dashboardYear} onChange={setDashboardYear} years={budgetYears ?? []} />
+                <div className="self-end sm:mb-2">
+                    <YearFilter value={dashboardYear} onChange={setDashboardYear} years={budgetYears ?? []} />
+                </div>
             </div>
 
-            {/* Stat cards + district project status (beside for ENGR DIST divisions, below otherwise).
-                While the scope query is in flight we can't yet know which layout
-                applies, so show a neutral full-width skeleton to avoid a layout jump. */}
-            {scopeLoading ? (
-                <div className="grid grid-cols-1 gap-4 pb-5">
-                    <StatCardsSkeleton />
-                    <DistrictCardsSkeleton />
-                </div>
-            ) : (
-                <div className={`grid grid-cols-1 ${districtOnSide ? "lg:grid-cols-2" : ""} gap-4 pb-5`}>
-                    {statsLoading ? (
-                        <StatCardsSkeleton districtOnSide={districtOnSide} />
-                    ) : districtOnSide ? (
-                        // District admins: big Budget Year card spanning both rows,
-                        // six status tiles (incl. OTHERS) in a 3×2 grid beside it.
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                            <div className="col-span-2 sm:col-span-1 sm:row-span-2 bg-white rounded-sm shadow-sm flex flex-col items-center justify-center gap-1 p-3 text-center">
-                                <p className="text-sm font-bold text-slate-700 leading-tight">Budget Year</p>
-                                <p className="text-3xl font-extrabold text-slate-900 leading-none">{dashboardYear || "All"}</p>
-                            </div>
-                            {statusTiles.map((c) => (
-                                <StatTile key={c.label} card={c} />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
-                            {statCards.map((c) => (
-                                <StatTile key={c.label} card={c} />
-                            ))}
-                        </div>
-                    )}
+            {/* Both panels stay mounted and are only hidden: switching back is
+                instant (no skeleton flash) and the progress chart keeps its
+                combined/separate choice. */}
+            <div
+                role="tabpanel"
+                id="dashboard-panel-status"
+                aria-labelledby="dashboard-tab-status"
+                hidden={activeTab !== "status"}
+            >
+                <p className="text-[10px] text-slate-500 mb-3">Project Status Information</p>
 
-                    {districtLoading ? (
-                        <DistrictCardsSkeleton onSide={districtOnSide} count={districtOnSide ? 1 : 2} />
-                    ) : (
-                        <div className={districtOnSide ? "flex flex-col gap-4" : "grid grid-cols-1 lg:grid-cols-2 gap-4 items-start"}>
-                            {districtData?.map((d) => (
-                                <DistrictCard
-                                    key={d.district}
-                                    title={`${d.district.replace('_', ' ')} PROJECT STATUS`}
-                                    data={toCardData(d.counts)}
-                                />
-                            ))}
-                        </div>
-                    )}
-                </div>
-            )}
-
-            {/* Project progress line chart(s). Office divisions
-                (SMAD/PDPM/EPM/QACD) get both districts with a combined/separate
-                toggle; engineering-district admins get their own district only.
-                Scoped by the same YEAR filter as the cards above. */}
-            <DistrictProgressSection budgetYear={dashboardYear} />
-
-            {/* Financial Overview Header */}
-            <div className="flex items-start justify-between mb-3">
-                <div>
-                    <p className="text-[15px] font-extrabold text-blue-900 tracking-wide">FINANCIAL ALLOCATION OVERVIEW</p>
-                    <p className="text-[10px] text-slate-500 mt-0.5">Aggregated project funding sources and allocations</p>
-                </div>
-                <YearFilter value={dashboardYear} onChange={setDashboardYear} years={budgetYears ?? []} />
-            </div>
-
-            {/* Annual Allocation & Source Breakdown */}
-            {allocationLoading ? (
-                <div className="mb-3">
-                    <FinancialCardSkeleton />
-                </div>
-            ) : (
-                <AnnualAllocationCard
-                    bySource={projectAllocationData?.bySource ?? {}}
-                    bySubType={projectAllocationData?.bySubType ?? {}}
-                    variationBySource={projectAllocationData?.variationBySource ?? {}}
-                    variationProjectsBySource={projectAllocationData?.variationProjectsBySource ?? {}}
-                    total={TotalAllocation}
-                    budgetYear={projectAllocationData?.budgetYear ?? "2024"}
-                />
-            )}
-
-            {/* Remaining Balance & Disbursement Summary */}
-            <div className="grid grid-cols-1 gap-3">
-                {remainingLoading ? (
-                    <>
-                        <FinancialCardSkeleton />
-                        <FinancialCardSkeleton />
-                    </>
+                {/* Stat cards + district project status (beside for ENGR DIST divisions, below otherwise).
+                    While the scope query is in flight we can't yet know which layout
+                    applies, so show a neutral full-width skeleton to avoid a layout jump. */}
+                {scopeLoading ? (
+                    <div className="grid grid-cols-1 gap-4 pb-5">
+                        <StatCardsSkeleton />
+                        <DistrictCardsSkeleton />
+                    </div>
                 ) : (
-                    <>
-                        <SourceBreakdownCard
-                            title="Remaining Balance from Annual Allocation"
-                            footerLabel="Grand Total Balance"
-                            bySource={remainingBalanceData?.remaining.bySource ?? {}}
-                            bySubType={remainingBalanceData?.remaining.bySubType ?? {}}
-                            variationProjectsBySource={remainingBalanceData?.remaining.variationProjectsBySource ?? {}}
-                            total={remainingBalanceData?.remaining.total ?? 0}
-                        />
-                        <SourceBreakdownCard
-                            title="Disbursement Summary"
-                            footerLabel="Total Disbursement"
-                            bySource={remainingBalanceData?.disbursed.bySource ?? {}}
-                            bySubType={remainingBalanceData?.disbursed.bySubType ?? {}}
-                            variationProjectsBySource={remainingBalanceData?.disbursed.variationProjectsBySource ?? {}}
-                            total={remainingBalanceData?.disbursed.total ?? 0}
-                        />
-                    </>
+                    <div className={`grid grid-cols-1 ${districtOnSide ? "lg:grid-cols-2" : ""} gap-4 pb-5`}>
+                        {statsLoading ? (
+                            <StatCardsSkeleton districtOnSide={districtOnSide} />
+                        ) : districtOnSide ? (
+                            // District admins: big Budget Year card spanning both rows,
+                            // six status tiles (incl. OTHERS) in a 3×2 grid beside it.
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                <div className="col-span-2 sm:col-span-1 sm:row-span-2 bg-white rounded-sm shadow-sm flex flex-col items-center justify-center gap-1 p-3 text-center">
+                                    <p className="text-sm font-bold text-slate-700 leading-tight">Budget Year</p>
+                                    <p className="text-3xl font-extrabold text-slate-900 leading-none">{dashboardYear || "All"}</p>
+                                </div>
+                                {statusTiles.map((c) => (
+                                    <StatTile key={c.label} card={c} />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+                                {statCards.map((c) => (
+                                    <StatTile key={c.label} card={c} />
+                                ))}
+                            </div>
+                        )}
+
+                        {districtLoading ? (
+                            <DistrictCardsSkeleton onSide={districtOnSide} count={districtOnSide ? 1 : 2} />
+                        ) : (
+                            <div className={districtOnSide ? "flex flex-col gap-4" : "grid grid-cols-1 lg:grid-cols-2 gap-4 items-start"}>
+                                {districtData?.map((d) => (
+                                    <DistrictCard
+                                        key={d.district}
+                                        title={`${d.district.replace('_', ' ')} PROJECT STATUS`}
+                                        data={toCardData(d.counts)}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 )}
+
+                {/* Project progress line chart(s). Office divisions
+                    (SMAD/PDPM/EPM/QACD) get both districts with a combined/separate
+                    toggle; engineering-district admins get their own district only.
+                    Scoped by the same YEAR filter as the cards above. */}
+                <DistrictProgressSection budgetYear={dashboardYear} />
             </div>
 
-            {/* Recent Project Updates */}
+            <div
+                role="tabpanel"
+                id="dashboard-panel-financial"
+                aria-labelledby="dashboard-tab-financial"
+                hidden={activeTab !== "financial"}
+            >
+                <p className="text-[10px] text-slate-500 mb-3">Aggregated project funding sources and allocations</p>
+
+                {/* Annual Allocation & Source Breakdown */}
+                {allocationLoading ? (
+                    <div className="mb-3">
+                        <FinancialCardSkeleton />
+                    </div>
+                ) : (
+                    <AnnualAllocationCard
+                        bySource={projectAllocationData?.bySource ?? {}}
+                        bySubType={projectAllocationData?.bySubType ?? {}}
+                        variationBySource={projectAllocationData?.variationBySource ?? {}}
+                        variationProjectsBySource={projectAllocationData?.variationProjectsBySource ?? {}}
+                        total={TotalAllocation}
+                        budgetYear={projectAllocationData?.budgetYear ?? "2024"}
+                    />
+                )}
+
+                {/* Remaining Balance & Disbursement Summary */}
+                <div className="grid grid-cols-1 gap-3">
+                    {remainingLoading ? (
+                        <>
+                            <FinancialCardSkeleton />
+                            <FinancialCardSkeleton />
+                        </>
+                    ) : (
+                        <>
+                            <SourceBreakdownCard
+                                title="Remaining Balance from Annual Allocation"
+                                footerLabel="Grand Total Balance"
+                                bySource={remainingBalanceData?.remaining.bySource ?? {}}
+                                bySubType={remainingBalanceData?.remaining.bySubType ?? {}}
+                                variationProjectsBySource={remainingBalanceData?.remaining.variationProjectsBySource ?? {}}
+                                total={remainingBalanceData?.remaining.total ?? 0}
+                            />
+                            <SourceBreakdownCard
+                                title="Disbursement Summary"
+                                footerLabel="Total Disbursement"
+                                bySource={remainingBalanceData?.disbursed.bySource ?? {}}
+                                bySubType={remainingBalanceData?.disbursed.bySubType ?? {}}
+                                variationProjectsBySource={remainingBalanceData?.disbursed.variationProjectsBySource ?? {}}
+                                total={remainingBalanceData?.disbursed.total ?? 0}
+                            />
+                        </>
+                    )}
+                </div>
+            </div>
+
+            <div
+                role="tabpanel"
+                id="dashboard-panel-location"
+                aria-labelledby="dashboard-tab-location"
+                hidden={activeTab !== "location"}
+            >
+                <p className="text-[10px] text-slate-500 mb-3">Progress percentage and project status per city / municipality</p>
+                {/* Office divisions (SMAD/PDPM/EPM/QACD) get a card per district;
+                    engineering-district admins get their own district only. */}
+                <LocationBreakdownSection budgetYear={dashboardYear} />
+            </div>
+
+            {/* Recent Project Updates — outside the tabs, shown under every tab */}
             <div className="mt-5 rounded-sm border border-gray-100 bg-white shadow-sm">
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-4 py-4 sm:px-6 sm:py-5">
                     <h2 className="text-md font-semibold text-gray-900">

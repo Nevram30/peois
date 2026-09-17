@@ -7,6 +7,7 @@ import {
   protectedProcedure,
 } from "~/server/api/trpc";
 import { isReachableFromDistrict } from "~/lib/divisions";
+import { getMunicipalitiesByDistrict } from "~/lib/davao-del-norte-locations";
 import { type District } from "../../../../generated/prisma";
 import { notificationEmitter } from "~/server/api/events";
 import {
@@ -914,6 +915,80 @@ export const projectRouter = createTRPCRouter({
           .sort((a, b) => a.progress - b.progress);
 
         return { district, points };
+      });
+    }),
+
+  // Per-location breakdown for the dashboard's location tab: for each
+  // city/municipality, how many projects it has, their average physical
+  // accomplishment, and how they split by status. One entry per district, with
+  // the same scoping as getProgressByDistrict — district-scoped callers
+  // (1ST/2ND ENGR DIST) get only their own district.
+  //
+  // Every municipality the static location list assigns to the district is
+  // returned even with zero projects, so a gap in coverage is visible rather
+  // than silently missing. Names found on projects but not in that list
+  // (legacy free text) are kept as their own rows, and projects with no
+  // municipality recorded are grouped under `null`.
+  getLocationBreakdown: districtScopedProcedure
+    .input(z.object({ budgetYear: z.string().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      const districts: readonly District[] = ctx.districtScope
+        ? [ctx.districtScope]
+        : (["DISTRICT_I", "DISTRICT_II"] as const);
+
+      const projects = await ctx.db.project.findMany({
+        where: {
+          locationImplementation: { in: [...districts] },
+          ...(input?.budgetYear ? { budgetYear: input.budgetYear } : {}),
+        },
+        select: {
+          locationImplementation: true,
+          cityMunicipality: true,
+          status: true,
+          completionPercentage: true,
+        },
+      });
+
+      return districts.map((district) => {
+        type Bucket = { name: string | null; known: boolean; total: number; progressSum: number; counts: Record<string, number> };
+        const buckets = new Map<string, Bucket>();
+        const bucketFor = (name: string | null, known = false) => {
+          const key = name ?? "";
+          let bucket = buckets.get(key);
+          if (!bucket) {
+            bucket = { name, known, total: 0, progressSum: 0, counts: {} };
+            buckets.set(key, bucket);
+          }
+          return bucket;
+        };
+
+        for (const m of getMunicipalitiesByDistrict(district)) bucketFor(m.name, true);
+
+        for (const p of projects) {
+          if (p.locationImplementation !== district) continue;
+          // Blank or whitespace-only names count as "no municipality recorded".
+          const municipality = p.cityMunicipality?.trim() ?? "";
+          const bucket = bucketFor(municipality.length > 0 ? municipality : null);
+          bucket.total += 1;
+          bucket.progressSum += p.completionPercentage ?? 0;
+          bucket.counts[p.status] = (bucket.counts[p.status] ?? 0) + 1;
+        }
+
+        const locations = [...buckets.values()]
+          // The unassigned bucket only exists if a project landed in it.
+          .filter((b) => b.name !== null || b.total > 0)
+          .map((b) => ({
+            name: b.name,
+            // True for the district's official municipalities; false for legacy
+            // free-text names and the unassigned bucket, so coverage counts
+            // ("5 of 6 locations") only count real municipalities.
+            known: b.known,
+            total: b.total,
+            avgProgress: b.total ? b.progressSum / b.total : 0,
+            counts: b.counts,
+          }));
+
+        return { district, locations };
       });
     }),
 
