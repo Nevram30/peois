@@ -2,15 +2,30 @@
 
 import { useMemo, useState } from "react";
 import { api } from "~/trpc/react";
-import { ProgressLineChart, type ProgressSeries } from "./progress-line-chart";
+import {
+    LineKey,
+    ProgressLineChart,
+    type ProgressSeries,
+    statusColor,
+    statusLabel,
+} from "./progress-line-chart";
+import { STATUS_LABELS } from "~/app/super-admin/dashboardv2/super.adminv2.types";
 import { ProgressChartSkeleton } from "../admin-cards/skeleton.cards";
 
-// Categorical slots 1 and 2 — validated for colour-vision deficiency against a
-// white surface (worst-pair ΔE 24.7) — plus the reader-facing district names.
-const DISTRICT_META: Record<string, { label: string; short: string; color: string }> = {
-    DISTRICT_I: { label: "1ST ENGINEERING DISTRICT", short: "District I", color: "#2a78d6" },
-    DISTRICT_II: { label: "2ND ENGINEERING DISTRICT", short: "District II", color: "#eb6834" },
+// The dots carry status colour, so the lines stay neutral: a blue District I
+// line measured ΔE 5.6 against the ON-GOING dot and an orange District II line
+// ΔE 6.9 against SUSPENDED — those dots would vanish into their own line.
+// Slate-300 clears every status colour (lowest ΔE 15.9, against OTHERS), and
+// the districts are told apart by dash, legend and end-of-line label instead.
+const LINE_COLOR = "#cbd5e1";
+
+const DISTRICT_META: Record<string, { label: string; short: string; dash?: string }> = {
+    DISTRICT_I: { label: "1ST ENGINEERING DISTRICT", short: "District I" },
+    DISTRICT_II: { label: "2ND ENGINEERING DISTRICT", short: "District II", dash: "5 5" },
 };
+
+// Status legend order — the same order as the District Project Status cards.
+const STATUS_ORDER = Object.keys(STATUS_LABELS);
 
 const average = (values: number[]) =>
     values.length ? values.reduce((sum, v) => sum + v, 0) / values.length : 0;
@@ -24,7 +39,7 @@ const Legend = ({ series }: { series: ProgressSeries[] }) => (
     <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5">
         {series.map((s) => (
             <div key={s.key} className="flex items-center gap-1.5">
-                <span className="h-[2px] w-4 rounded-full" style={{ background: s.color }} />
+                <LineKey color="#64748b" dash={s.dash} width={20} />
                 <span className="text-[10.5px] font-semibold text-slate-700">{s.shortLabel}</span>
                 <span className="text-[10.5px] text-slate-500">
                     {s.points.length} project{s.points.length === 1 ? "" : "s"} ·{" "}
@@ -34,6 +49,36 @@ const Legend = ({ series }: { series: ProgressSeries[] }) => (
         ))}
     </div>
 );
+
+// ── Status legend ──────────────────────────────────────────────
+// What the dot colours mean. Lists only the statuses this card actually
+// plots; each status keeps its fixed colour, so filtering never repaints one.
+const StatusLegend = ({ series }: { series: ProgressSeries[] }) => {
+    const counts = new Map<string, number>();
+    for (const p of series.flatMap((s) => s.points)) {
+        counts.set(p.status, (counts.get(p.status) ?? 0) + 1);
+    }
+    const present = [...counts.keys()].sort((a, b) => {
+        const rank = (s: string) => (STATUS_ORDER.includes(s) ? STATUS_ORDER.indexOf(s) : STATUS_ORDER.length);
+        return rank(a) - rank(b);
+    });
+    return (
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+            {present.map((status) => (
+                <div key={status} className="flex items-center gap-1.5">
+                    <span
+                        className="h-2.5 w-2.5 shrink-0 rounded-full"
+                        style={{ background: statusColor(status) }}
+                    />
+                    <span className="text-[10.5px] text-slate-500">
+                        {statusLabel(status)}{" "}
+                        <span className="font-bold text-slate-700">{counts.get(status)}</span>
+                    </span>
+                </div>
+            ))}
+        </div>
+    );
+};
 
 // ── Chart card ─────────────────────────────────────────────────
 const ChartCard = ({
@@ -70,12 +115,12 @@ const ChartCard = ({
                         </p>
                     </div>
                 </div>
-                {/* A legend for two series; a single series is named by the title above it. */}
-                {series.length > 1 && (
-                    <div className="mb-2">
-                        <Legend series={series} />
-                    </div>
-                )}
+                {/* District legend for two series (a single series is named by the
+                    title above it); the status legend always, since every card has dots. */}
+                <div className="mb-2 flex flex-col gap-1.5">
+                    {series.length > 1 && <Legend series={series} />}
+                    <StatusLegend series={series} />
+                </div>
                 <ProgressLineChart series={series} maxRank={maxRank} height={height} />
             </div>
             <div className="bg-white text-black border-t border-slate-300 px-4 py-[9px] flex justify-between items-center text-[11px] font-bold tracking-widest uppercase">
@@ -204,13 +249,13 @@ export const DistrictProgressSection = ({ budgetYear }: { budgetYear: string }) 
                 const meta = DISTRICT_META[d.district] ?? {
                     label: d.district.replace("_", " "),
                     short: d.district.replace("_", " "),
-                    color: "#64748b",
                 };
                 return {
                     key: d.district,
                     label: meta.label,
                     shortLabel: meta.short,
-                    color: meta.color,
+                    color: LINE_COLOR,
+                    dash: meta.dash,
                     points: d.points.map((p) => ({ ...p, date: new Date(p.date) })),
                 };
             }),

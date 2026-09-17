@@ -1,6 +1,30 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import {
+    type ProjectStatus,
+    STATUS_COLORS,
+    STATUS_LABELS,
+} from "~/app/super-admin/dashboardv2/super.adminv2.types";
+
+// ── Status colours ─────────────────────────────────────────────
+// Dots take the same status palette as the District Project Status cards
+// above the chart, so a colour means one status everywhere on the dashboard.
+// An unrecognised status reads as OTHERS rather than going uncoloured.
+export const statusColor = (status: string) =>
+    STATUS_COLORS[status as ProjectStatus] ?? STATUS_COLORS.OTHERS;
+
+export const statusLabel = (status: string) =>
+    STATUS_LABELS[status as ProjectStatus] ?? status.replace(/_/g, " ");
+
+// ── Line key ───────────────────────────────────────────────────
+// A short stroke drawn with the series' own colour and dash, so the legend and
+// tooltip keys match the line exactly (a CSS bar can't show a dash pattern).
+export const LineKey = ({ color, dash, width = 16 }: { color: string; dash?: string; width?: number }) => (
+    <svg width={width} height={4} className="shrink-0" aria-hidden>
+        <line x1={1} x2={width - 1} y1={2} y2={2} stroke={color} strokeWidth={2} strokeDasharray={dash} strokeLinecap="round" />
+    </svg>
+);
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -23,7 +47,12 @@ export type ProgressSeries = {
     // Short form used for the direct label at the end of the line, where the
     // full district name would collide with the plot.
     shortLabel: string;
+    // Line colour. Kept neutral: the dots carry status colour, and two of the
+    // status colours sit too close to a blue or orange line to be seen on it.
     color: string;
+    // SVG dash pattern — with the line colour shared, this is what tells the
+    // districts apart. Undefined draws a solid line.
+    dash?: string;
     // Expected in ascending progress order (the server sorts them); the chart
     // re-sorts defensively so a caller can't hand it a scribble.
     points: ProgressPoint[];
@@ -98,6 +127,18 @@ export const ProgressLineChart = ({ series, maxRank, height = 260 }: ProgressLin
     // x is the project's rank within its district, on a shared 1..axisMax axis:
     // a district with fewer projects simply has a shorter line, which reads as
     // the smaller portfolio it is.
+    // Dot size is decided once for the whole chart from the on-screen gap
+    // between neighbouring ranks, never per series: a per-series cutoff once
+    // left a 60+ project district dotless beside a smaller one with dots.
+    // Dense charts shrink the dots instead of dropping them, so every line
+    // keeps its points. The white ring never goes below 1px: neighbouring dots
+    // are different statuses now, and without it their colours run together.
+    const rankGap = axisMax > 1 ? plotW / (axisMax - 1) : plotW;
+    const marker = {
+        r: Math.min(4, Math.max(2, rankGap / 2.5)),
+        ring: rankGap >= 8 ? 2 : 1,
+    };
+
     const xOfRank = (rank: number) =>
         axisMax <= 1 ? PAD.left + plotW / 2 : PAD.left + ((rank - 1) / (axisMax - 1)) * plotW;
 
@@ -271,7 +312,6 @@ export const ProgressLineChart = ({ series, maxRank, height = 260 }: ProgressLin
 
                     {/* Series */}
                     {laidOut.map((s) => {
-                        const showMarkers = s.coords.length <= 60;
                         const last = s.coords[s.coords.length - 1];
                         return (
                             <g key={s.key}>
@@ -281,21 +321,20 @@ export const ProgressLineChart = ({ series, maxRank, height = 260 }: ProgressLin
                                         fill="none"
                                         stroke={s.color}
                                         strokeWidth={2}
+                                        strokeDasharray={s.dash}
                                         strokeLinejoin="round"
                                         strokeLinecap="round"
                                     />
                                 )}
-                                {/* Markers thin out on dense portfolios, where they would
-                                    fuse into a band; the crosshair still reaches every point. */}
-                                {(showMarkers ? s.coords : s.coords.length === 1 ? s.coords : []).map((c) => (
+                                {s.coords.map((c) => (
                                     <circle
                                         key={c.point.id}
                                         cx={c.x}
                                         cy={c.y}
-                                        r={4}
-                                        fill={s.color}
+                                        r={marker.r}
+                                        fill={statusColor(c.point.status)}
                                         stroke="#ffffff"
-                                        strokeWidth={2}
+                                        strokeWidth={marker.ring}
                                     />
                                 ))}
                                 {/* Direct label at the end of the line: identity is never
@@ -323,7 +362,7 @@ export const ProgressLineChart = ({ series, maxRank, height = 260 }: ProgressLin
                             cx={row.coord.x}
                             cy={row.coord.y}
                             r={5}
-                            fill={row.series.color}
+                            fill={statusColor(row.coord.point.status)}
                             stroke="#ffffff"
                             strokeWidth={2}
                         />
@@ -359,10 +398,9 @@ export const ProgressLineChart = ({ series, maxRank, height = 260 }: ProgressLin
                         <div key={row.series.key} className="mb-2 last:mb-0">
                             <div className="flex items-baseline justify-between gap-2">
                                 <div className="flex min-w-0 items-center gap-1.5">
-                                    <span
-                                        className="h-[2px] w-3 shrink-0 rounded-full"
-                                        style={{ background: row.series.color }}
-                                    />
+                                    {/* Darker than the plotted line so the dash reads at key size,
+                                        matching the card's district legend */}
+                                    <LineKey color="#64748b" dash={row.series.dash} />
                                     <span className="truncate text-[10px] text-slate-500">
                                         {row.series.shortLabel} · #{row.coord.rank}
                                     </span>
@@ -375,6 +413,14 @@ export const ProgressLineChart = ({ series, maxRank, height = 260 }: ProgressLin
                                 {row.coord.point.projectCode}
                             </p>
                             <p className="truncate text-[10px] text-slate-500">{row.coord.point.title}</p>
+                            {/* Status in words beside its dot — colour alone never carries it */}
+                            <p className="mt-0.5 flex items-center gap-1 text-[9px] font-bold tracking-wide text-slate-600">
+                                <span
+                                    className="h-2 w-2 shrink-0 rounded-full"
+                                    style={{ background: statusColor(row.coord.point.status) }}
+                                />
+                                {statusLabel(row.coord.point.status)}
+                            </p>
                             <p className="text-[9px] text-slate-400">
                                 {row.coord.point.estimated ? "Added " : "Started "}
                                 {fullDate.format(row.coord.point.date)}
