@@ -11,6 +11,7 @@ import { AnnualAllocationCard, DistrictCard, SourceBreakdownCard, toCardData } f
 import { DistrictCardsSkeleton, FinancialCardSkeleton, StatCardsSkeleton } from "./admin-cards/skeleton.cards";
 import { DistrictProgressSection } from "./admin-charts/district-progress-section";
 import { LocationBreakdownSection } from "./admin-charts/location-breakdown-section";
+import { SlippageHistorySection } from "./admin-charts/slippage-history-section";
 import { YearFilter } from "~/helper/year.filter";
 
 // ── Stat Tile ──────────────────────────────────────────────────
@@ -42,6 +43,7 @@ const DASHBOARD_TABS = [
     { id: "status", label: "PROJECT STATUS OVERVIEW" },
     { id: "financial", label: "FINANCIAL ALLOCATION OVERVIEW" },
     { id: "location", label: "PROGRESS & STATUS PER LOCATION OVERVIEW" },
+    { id: "slippage", label: "SLIPPAGE HISTORY OVERVIEW" },
 ] as const;
 
 type DashboardTab = (typeof DASHBOARD_TABS)[number]["id"];
@@ -349,8 +351,22 @@ export const AdminDashboardContent = () => {
                 <LocationBreakdownSection budgetYear={dashboardYear} />
             </div>
 
-            {/* Recent Project Updates — outside the tabs, shown under every tab */}
-            <div className="mt-5 rounded-sm border border-gray-100 bg-white shadow-sm">
+            <div
+                role="tabpanel"
+                id="dashboard-panel-slippage"
+                aria-labelledby="dashboard-tab-slippage"
+                hidden={activeTab !== "slippage"}
+            >
+                {/* One slippage timeline per project. */}
+                <SlippageHistorySection budgetYear={dashboardYear} />
+            </div>
+
+            {/* Recent Project Updates — outside the tabs, shown under the status
+                and financial tabs only */}
+            <div
+                hidden={activeTab === "location" || activeTab === "slippage"}
+                className="mt-5 rounded-sm border border-gray-100 bg-white shadow-sm"
+            >
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-4 py-4 sm:px-6 sm:py-5">
                     <h2 className="text-md font-semibold text-gray-900">
                         Recent Project Updates

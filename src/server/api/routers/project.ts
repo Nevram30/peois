@@ -992,6 +992,33 @@ export const projectRouter = createTRPCRouter({
       });
     }),
 
+  // Every project that has at least one filed slippage assessment, with its
+  // history oldest first — the order a timeline reads in. Projects never
+  // assessed are left out; there is nothing to plot for them.
+  getSlippageHistory: districtScopedProcedure
+    .input(z.object({ budgetYear: z.string().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      return ctx.db.project.findMany({
+        where: {
+          ...districtWhere(ctx.districtScope),
+          ...(input?.budgetYear ? { budgetYear: input.budgetYear } : {}),
+          slippageAssessments: { some: {} },
+        },
+        select: {
+          id: true,
+          projectCode: true,
+          title: true,
+          cityMunicipality: true,
+          locationImplementation: true,
+          slippageAssessments: {
+            select: { id: true, date: true, target: true, actual: true, revision: true },
+            orderBy: [{ date: "asc" }, { createdAt: "asc" }],
+          },
+        },
+        orderBy: { projectCode: "asc" },
+      });
+    }),
+
   getFinancialOverview: districtScopedProcedure
     .input(z.object({ budgetYear: z.string().optional() }).optional())
     .query(async ({ ctx, input }) => {

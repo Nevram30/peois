@@ -120,7 +120,7 @@ const LocationRowView = ({ row, maxTotal }: { row: LocationRow; maxTotal: number
             </div>
 
             {/* Breakdown on hover / focus — every figure here is also in the
-                row's accessible label and in Recent Project Updates. */}
+                row's accessible label. */}
             {open && row.total > 0 && (
                 <div className="pointer-events-none absolute right-2 top-full z-10 mt-1 w-56 rounded-sm border border-slate-200 bg-white p-2.5 shadow-lg">
                     <div className="mb-1.5 flex items-baseline justify-between gap-2">
