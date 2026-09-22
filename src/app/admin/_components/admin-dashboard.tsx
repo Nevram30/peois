@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 import type { StatCard } from "~/app/super-admin/dashboardv2/super.admin.types";
 import { DISTRICT_LABELS, MODE_LABELS, SOURCE_LABELS, STATUS_CONFIG } from "./admin-constant/constant";
-import { AnnualAllocationCard, DistrictCard, SourceBreakdownCard, toCardData } from "./admin-cards/cards";
+import { AllocationRatioCard, AllocationTotalCard, AnnualAllocationCard, DistrictCard, SourceBreakdownCard, toCardData } from "./admin-cards/cards";
 import { DistrictCardsSkeleton, FinancialCardSkeleton, StatCardsSkeleton } from "./admin-cards/skeleton.cards";
 import { DistrictProgressSection } from "./admin-charts/district-progress-section";
 import { LocationBreakdownSection } from "./admin-charts/location-breakdown-section";
@@ -204,7 +204,7 @@ export const AdminDashboardContent = () => {
                                 aria-controls={`dashboard-panel-${t.id}`}
                                 tabIndex={selected ? 0 : -1}
                                 onClick={() => setActiveTab(t.id)}
-                                className={`-mb-px border-b-[3px] px-3 py-2 text-left text-[10px] sm:text-[13px] font-extrabold leading-tight tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 ${selected
+                                className={`-mb-px border-b-[3px] px-3 py-2 text-left text-[9px] sm:text-[11px] font-extrabold leading-tight tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 ${selected
                                     ? "border-blue-900 text-blue-900"
                                     : "border-transparent text-slate-400 hover:text-slate-600"
                                     }`}
@@ -292,6 +292,55 @@ export const AdminDashboardContent = () => {
                 hidden={activeTab !== "financial"}
             >
                 <p className="text-[10px] text-slate-500 mb-3">Aggregated project funding sources and allocations</p>
+
+                {/* Utilisation of the annual allocation: what is left and what
+                    has gone out, each as a share of the same total. Above the
+                    allocation card, as the headline reading of this tab. */}
+                <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {remainingLoading || allocationLoading ? (
+                        <>
+                            <FinancialCardSkeleton />
+                            <FinancialCardSkeleton />
+                        </>
+                    ) : (
+                        <>
+                            <AllocationRatioCard
+                                label="Remaining Balance Percentage"
+                                amount={remainingBalanceData?.remaining.total ?? 0}
+                                total={TotalAllocation}
+                            />
+                            <AllocationRatioCard
+                                label="Disbursement Percentage"
+                                amount={remainingBalanceData?.disbursed.total ?? 0}
+                                total={TotalAllocation}
+                            />
+                        </>
+                    )}
+                </div>
+
+                {/* The same three figures as amounts: the allocation the two
+                    percentages are measured against, and each of its parts. */}
+                <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                    {remainingLoading || allocationLoading ? (
+                        <>
+                            <FinancialCardSkeleton />
+                            <FinancialCardSkeleton />
+                            <FinancialCardSkeleton />
+                        </>
+                    ) : (
+                        <>
+                            <AllocationTotalCard label="Total Combined Allocation" amount={TotalAllocation} />
+                            <AllocationTotalCard
+                                label="Total Amount of Disbursement"
+                                amount={remainingBalanceData?.disbursed.total ?? 0}
+                            />
+                            <AllocationTotalCard
+                                label="Total Amount of Remaining Balance"
+                                amount={remainingBalanceData?.remaining.total ?? 0}
+                            />
+                        </>
+                    )}
+                </div>
 
                 {/* Annual Allocation & Source Breakdown */}
                 {allocationLoading ? (

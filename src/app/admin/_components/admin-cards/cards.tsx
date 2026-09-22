@@ -224,6 +224,56 @@ export const AnnualAllocationCard = ({ bySource, bySubType, variationBySource, v
     );
 }
 
+// ── AllocationRatioCard ─────────────────────────────────────────────────
+// One share of the annual allocation as a headline percentage — remaining
+// balance or disbursement over the total — with both peso figures spelled out
+// underneath, so the percentage is never the only reading. The
+// two cards are separate tiles rather than one two-series chart: they are two
+// slices of the same total and each is read on its own.
+export const AllocationRatioCard = ({
+    label,
+    amount,
+    total,
+}: {
+    label: string;
+    amount: number;
+    total: number;
+}) => {
+    // An allocation of zero has no share to state — "—" rather than a 0% that
+    // reads as "nothing left".
+    const pct = total > 0 ? (amount / total) * 100 : null;
+
+    return (
+        <div className="bg-white rounded-sm border border-slate-200 p-4">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500">{label}</p>
+            <div className="mt-2 flex items-baseline gap-2">
+                <p className="text-3xl font-extrabold leading-none text-slate-900" style={{ fontVariantNumeric: "tabular-nums" }}>
+                    {pct === null ? "—" : `${Number(pct.toFixed(2)).toLocaleString("en-PH")}%`}
+                </p>
+                <p className="text-[11px] text-slate-500">of annual allocation</p>
+            </div>
+            <div className="mt-3 flex items-baseline justify-between gap-2 border-t border-slate-100 pt-2 text-[11px]">
+                <span className="font-bold text-slate-700 tabular-nums">{formatPeso(amount)}</span>
+                <span className="text-slate-500 tabular-nums">of {formatPeso(total)}</span>
+            </div>
+        </div>
+    );
+};
+
+// ── AllocationTotalCard ─────────────────────────────────────────────────
+// A single peso total. Sits beside the ratio cards, which state the same
+// figures as shares; here the amount itself is the headline.
+export const AllocationTotalCard = ({ label, amount }: { label: string; amount: number }) => (
+    <div className="bg-white rounded-sm border border-slate-200 p-4">
+        <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500">{label}</p>
+        {/* Sized to fit a ten-digit peso figure on a third-width card without
+            wrapping mid-number; tabular figures keep the three cards aligned. */}
+        <p className="mt-2 text-xl font-extrabold leading-none text-slate-900 tabular-nums">
+            {formatPeso(amount)}
+        </p>
+    </div>
+);
+
 // ── SourceBreakdownCard ─────────────────────────────────────────────────
 export const SourceBreakdownCard = ({ title, footerLabel, bySource, bySubType, variationProjectsBySource, total }: SourceBreakdownCardProps) => {
     const ordered = [...SOURCE_OF_FUND_ORDER, "CONFIDENTIAL", ...Object.keys(bySource)].filter(
