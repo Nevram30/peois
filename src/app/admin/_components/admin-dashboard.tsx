@@ -43,7 +43,7 @@ const DASHBOARD_TABS = [
     { id: "status", label: "PROJECT STATUS OVERVIEW" },
     { id: "financial", label: "FINANCIAL ALLOCATION OVERVIEW" },
     { id: "location", label: "PROGRESS & STATUS PER LOCATION OVERVIEW" },
-    { id: "slippage", label: "SLIPPAGE HISTORY OVERVIEW" },
+    { id: "slippage", label: "PROJECTS SLIPPAGE HISTORY OVERVIEW" },
 ] as const;
 
 type DashboardTab = (typeof DASHBOARD_TABS)[number]["id"];
@@ -204,7 +204,7 @@ export const AdminDashboardContent = () => {
                                 aria-controls={`dashboard-panel-${t.id}`}
                                 tabIndex={selected ? 0 : -1}
                                 onClick={() => setActiveTab(t.id)}
-                                className={`-mb-px border-b-[3px] px-3 py-2 text-left text-[12px] sm:text-[15px] font-extrabold leading-tight tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 ${selected
+                                className={`-mb-px border-b-[3px] px-3 py-2 text-left text-[10px] sm:text-[13px] font-extrabold leading-tight tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 ${selected
                                     ? "border-blue-900 text-blue-900"
                                     : "border-transparent text-slate-400 hover:text-slate-600"
                                     }`}
@@ -361,10 +361,10 @@ export const AdminDashboardContent = () => {
                 <SlippageHistorySection budgetYear={dashboardYear} />
             </div>
 
-            {/* Recent Project Updates — outside the tabs, shown under the status
-                and financial tabs only */}
+            {/* Recent Project Updates — outside the tabs, shown under the
+                status tab only; the other tabs carry their own detail */}
             <div
-                hidden={activeTab === "location" || activeTab === "slippage"}
+                hidden={activeTab !== "status"}
                 className="mt-5 rounded-sm border border-gray-100 bg-white shadow-sm"
             >
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-4 py-4 sm:px-6 sm:py-5">

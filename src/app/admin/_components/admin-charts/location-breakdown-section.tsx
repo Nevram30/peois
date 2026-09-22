@@ -69,7 +69,7 @@ const LocationRowView = ({ row, maxTotal }: { row: LocationRow; maxTotal: number
             onPointerLeave={() => setOpen(false)}
             onFocus={() => setOpen(true)}
             onBlur={() => setOpen(false)}
-            className="relative grid grid-cols-1 gap-1.5 rounded-sm px-2 py-2 outline-none hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-500/40 sm:grid-cols-[minmax(7rem,9rem)_minmax(0,1fr)_minmax(0,1.4fr)] sm:items-center sm:gap-4"
+            className="relative grid grid-cols-1 gap-2 rounded-sm px-2 py-3.5 outline-none hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-500/40 sm:grid-cols-[minmax(7rem,9rem)_minmax(0,1fr)_minmax(0,1.4fr)] sm:items-center sm:gap-4"
         >
             {/* Location */}
             <div className="flex items-baseline justify-between gap-2 sm:block">
@@ -82,7 +82,7 @@ const LocationRowView = ({ row, maxTotal }: { row: LocationRow; maxTotal: number
             {/* Average progress */}
             <div className="flex items-center gap-2">
                 <span className="w-16 shrink-0 text-[9.5px] font-bold tracking-wide text-slate-400 sm:hidden">PROGRESS</span>
-                <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-200">
+                <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-slate-200">
                     {row.total > 0 && (
                         <div
                             className="h-full rounded-full"
@@ -98,7 +98,7 @@ const LocationRowView = ({ row, maxTotal }: { row: LocationRow; maxTotal: number
             {/* Status mix */}
             <div className="flex items-center gap-2">
                 <span className="w-16 shrink-0 text-[9.5px] font-bold tracking-wide text-slate-400 sm:hidden">STATUS</span>
-                <div className="flex h-3 flex-1 items-center">
+                <div className="flex h-4 flex-1 items-center">
                     {row.total ? (
                         <div
                             // 2px surface gap between segments instead of borders.
@@ -171,8 +171,11 @@ const DistrictLocationCard = ({ data }: { data: DistrictLocations }) => {
         .sort(([a], [b]) => statusRank(a) - statusRank(b));
 
     return (
-        <div className="bg-white rounded-sm overflow-hidden border border-slate-200">
-            <div className="p-4">
+        // h-full + column flex: side by side, the district with fewer
+        // municipalities still fills the row's height, and its footer bar stays
+        // pinned to the bottom rather than floating mid-card.
+        <div className="flex h-full flex-col bg-white rounded-sm overflow-hidden border border-slate-200">
+            <div className="flex-1 p-4">
                 <div className="mb-3 flex items-start justify-between gap-3">
                     <div className="min-w-0">
                         <p className="mb-1 text-[15px] font-extrabold uppercase tracking-widest text-[#1e3a8a]">
@@ -253,7 +256,8 @@ export const LocationBreakdownPanel = ({
     }
 
     return (
-        <div className={`grid grid-cols-1 items-start gap-4 ${districts.length > 1 ? "xl:grid-cols-2" : ""}`}>
+        // No items-start: the cards stretch to the tallest in the row.
+        <div className={`grid grid-cols-1 gap-4 ${districts.length > 1 ? "xl:grid-cols-2" : ""}`}>
             {districts.map((d) => (
                 <DistrictLocationCard key={d.district} data={d} />
             ))}
