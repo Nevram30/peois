@@ -53,8 +53,16 @@ export const AdminDashboardContent = () => {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState<DashboardTab>("status");
 
-    // Fiscal year filter shared by the dashboard cards (driven by the header YEAR buttons).
-    const [dashboardYear, setDashboardYear] = useState("");
+    // Fiscal year filter shared by the dashboard cards (driven by the header
+    // YEAR button). The years come back newest first, and the newest is the
+    // default: the dashboard opens on the year being worked on, and follows the
+    // data by itself once 2027 rows exist. null means "not chosen yet", which is
+    // distinct from the empty string the ALL YEARS option sets — resolving it at
+    // read time rather than in an effect means the cards never load the
+    // all-years figures first and then swap.
+    const { data: budgetYears } = api.project.getBudgetYears.useQuery();
+    const [yearChoice, setYearChoice] = useState<string | null>(null);
+    const dashboardYear = yearChoice ?? budgetYears?.[0] ?? "";
     const yearInput = dashboardYear ? { budgetYear: dashboardYear } : undefined;
 
     const { data: statsData, isLoading: statsLoading } = api.project.getStats.useQuery(yearInput);
@@ -94,7 +102,6 @@ export const AdminDashboardContent = () => {
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(20);
     const { data: projects, isLoading } = api.project.getAll.useQuery();
-    const { data: budgetYears } = api.project.getBudgetYears.useQuery();
 
     const filteredProjects = projects?.filter((p) => {
         if (fiscalYear && p.budgetYear !== fiscalYear) return false;
@@ -215,7 +222,7 @@ export const AdminDashboardContent = () => {
                     })}
                 </div>
                 <div className="self-end sm:mb-2">
-                    <YearFilter value={dashboardYear} onChange={setDashboardYear} years={budgetYears ?? []} />
+                    <YearFilter value={dashboardYear} onChange={setYearChoice} years={budgetYears ?? []} />
                 </div>
             </div>
 
