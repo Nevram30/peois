@@ -9,8 +9,14 @@ import {
     statusColor,
     statusLabel,
 } from "./progress-line-chart";
+import { ProgressBarChart } from "./progress-bar-chart";
 import { STATUS_LABELS } from "~/app/super-admin/dashboardv2/super.adminv2.types";
 import { ProgressChartSkeleton } from "../admin-cards/skeleton.cards";
+import { FyBadge } from "../admin-cards/cards";
+
+// Line reads the progress curve (how much of the portfolio is past halfway);
+// bars read each project's progress on its own. Same data, same order.
+type ChartType = "line" | "bar";
 
 // The dots carry status colour, so the lines stay neutral: a blue District I
 // line measured ΔE 5.6 against the ON-GOING dot and an orange District II line
@@ -35,11 +41,19 @@ const formatPct = (value: number) => `${Number(value.toFixed(2)).toLocaleString(
 // ── Legend ─────────────────────────────────────────────────────
 // Always present once two series share a plot, and it carries each district's
 // headline figures so the summary doesn't depend on reading the line.
-const Legend = ({ series }: { series: ProgressSeries[] }) => (
+// On the bar view the dash key means nothing, so each district is named by its
+// position in the rank slot instead ("left bar" / "right bar").
+const SLOT_POSITION = ["left bar", "right bar", "3rd bar", "4th bar"];
+
+const Legend = ({ series, chartType }: { series: ProgressSeries[]; chartType: ChartType }) => (
     <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5">
-        {series.map((s) => (
+        {series.map((s, i) => (
             <div key={s.key} className="flex items-center gap-1.5">
-                <LineKey color="#64748b" dash={s.dash} width={20} />
+                {chartType === "line" ? (
+                    <LineKey color="#64748b" dash={s.dash} width={20} />
+                ) : (
+                    <span className="text-[10px] text-slate-500">{SLOT_POSITION[i] ?? `bar ${i + 1}`}:</span>
+                )}
                 <span className="text-[10.5px] font-semibold text-slate-700">{s.shortLabel}</span>
                 <span className="text-[10.5px] text-slate-500">
                     {s.points.length} project{s.points.length === 1 ? "" : "s"} ·{" "}
@@ -86,11 +100,15 @@ const ChartCard = ({
     series,
     maxRank,
     height,
+    chartType,
+    budgetYear,
 }: {
     title: string;
     series: ProgressSeries[];
     maxRank?: number | null;
     height?: number;
+    chartType: ChartType;
+    budgetYear?: string;
 }) => {
     const allPoints = series.flatMap((s) => s.points);
     return (
@@ -105,8 +123,12 @@ const ChartCard = ({
                             Physical accomplishment per project, ranked from least to most advanced
                         </p>
                     </div>
-                    {/* Headline figure for the card, top right where it is read first */}
+                    {/* Headline figure for the card, top right where it is read
+                        first, with the card's fiscal year above it */}
                     <div className="shrink-0 text-right">
+                        <div className="mb-1 flex justify-end">
+                            <FyBadge year={budgetYear} />
+                        </div>
                         <p className="text-3xl font-extrabold leading-none text-slate-900">
                             {formatPct(average(allPoints.map((p) => p.progress)))}
                         </p>
@@ -116,12 +138,17 @@ const ChartCard = ({
                     </div>
                 </div>
                 {/* District legend for two series (a single series is named by the
-                    title above it); the status legend always, since every card has dots. */}
+                    title above it); the status legend always, since every card
+                    colours its marks by status. */}
                 <div className="mb-2 flex flex-col gap-1.5">
-                    {series.length > 1 && <Legend series={series} />}
+                    {series.length > 1 && <Legend series={series} chartType={chartType} />}
                     <StatusLegend series={series} />
                 </div>
-                <ProgressLineChart series={series} maxRank={maxRank} height={height} />
+                {chartType === "line" ? (
+                    <ProgressLineChart series={series} maxRank={maxRank} height={height} />
+                ) : (
+                    <ProgressBarChart series={series} maxRank={maxRank} height={height} />
+                )}
             </div>
             <div className="bg-white text-black border-t border-slate-300 px-4 py-[9px] flex justify-between items-center text-[11px] font-bold tracking-widest uppercase">
                 <span>PROJECTS PLOTTED</span>
@@ -138,13 +165,18 @@ const ChartCard = ({
 export const DistrictProgressPanel = ({
     series,
     isLoading = false,
+    budgetYear,
 }: {
     series: ProgressSeries[];
     isLoading?: boolean;
+    budgetYear?: string;
 }) => {
     // Combined overlays both districts on one axis; separate splits them into
     // small multiples that share an x axis so they stay comparable.
     const [mode, setMode] = useState<"combined" | "separate">("combined");
+    // Line by default: the curve is what this card was built to show, and the
+    // bars are the per-project reading of the same ranked data.
+    const [chartType, setChartType] = useState<ChartType>("line");
 
     // Shared across the small multiples: without it each district's axis would
     // fit its own project count, and a 12-project district would draw the same
@@ -172,28 +204,53 @@ export const DistrictProgressPanel = ({
                     </p>
                 </div>
 
-                {canToggle && (
+                {/* Chart type always; the layout toggle only where there are two
+                    districts to lay out. Both are the same pill control. */}
+                <div className="flex shrink-0 items-center gap-2">
                     <div
                         role="group"
-                        aria-label="Chart layout"
-                        className="inline-flex shrink-0 rounded-md bg-slate-200 p-0.5"
+                        aria-label="Chart type"
+                        className="inline-flex rounded-md bg-slate-200 p-0.5"
                     >
-                        {(["combined", "separate"] as const).map((option) => (
+                        {(["line", "bar"] as const).map((option) => (
                             <button
                                 key={option}
                                 type="button"
-                                onClick={() => setMode(option)}
-                                aria-pressed={mode === option}
-                                className={`rounded-[5px] px-3 py-1 text-[11px] font-bold tracking-wide transition-colors ${mode === option
+                                onClick={() => setChartType(option)}
+                                aria-pressed={chartType === option}
+                                className={`rounded-[5px] px-3 py-1 text-[11px] font-bold tracking-wide transition-colors ${chartType === option
                                     ? "bg-[#1e3a8a] text-white"
                                     : "text-slate-600 hover:text-slate-900"
                                     }`}
                             >
-                                {option === "combined" ? "COMBINED" : "SEPARATE"}
+                                {option === "line" ? "LINE" : "BAR"}
                             </button>
                         ))}
                     </div>
-                )}
+
+                    {canToggle && (
+                        <div
+                            role="group"
+                            aria-label="Chart layout"
+                            className="inline-flex rounded-md bg-slate-200 p-0.5"
+                        >
+                            {(["combined", "separate"] as const).map((option) => (
+                                <button
+                                    key={option}
+                                    type="button"
+                                    onClick={() => setMode(option)}
+                                    aria-pressed={mode === option}
+                                    className={`rounded-[5px] px-3 py-1 text-[11px] font-bold tracking-wide transition-colors ${mode === option
+                                        ? "bg-[#1e3a8a] text-white"
+                                        : "text-slate-600 hover:text-slate-900"
+                                        }`}
+                                >
+                                    {option === "combined" ? "COMBINED" : "SEPARATE"}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
             </div>
 
             {isLoading ? (
@@ -211,6 +268,8 @@ export const DistrictProgressPanel = ({
                             series={[s]}
                             maxRank={maxRank}
                             height={240}
+                            chartType={chartType}
+                            budgetYear={budgetYear}
                         />
                     ))}
                 </div>
@@ -224,6 +283,8 @@ export const DistrictProgressPanel = ({
                     series={series}
                     maxRank={maxRank}
                     height={280}
+                    chartType={chartType}
+                    budgetYear={budgetYear}
                 />
             )}
 
@@ -262,5 +323,5 @@ export const DistrictProgressSection = ({ budgetYear }: { budgetYear: string }) 
         [data],
     );
 
-    return <DistrictProgressPanel series={series} isLoading={isLoading} />;
+    return <DistrictProgressPanel series={series} isLoading={isLoading} budgetYear={budgetYear} />;
 }

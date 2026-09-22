@@ -4,6 +4,18 @@ import { PROJECT_SUB_TYPE_LABEL, type ProjectSubTypeValue, SOURCE_OF_FUND_ORDER 
 import { REM_SOURCE_LABEL, SOURCE_COLORS, SOURCE_SHORT_LABEL } from "../admin-constant/constant";
 import { formatPeso } from "~/helper/formatter";
 
+// ── Fiscal year badge ──────────────────────────────────────────
+// Every card on the dashboard shows one budget year's figures, so each states
+// which — a card read on its own, printed or screenshotted, still says what
+// period it covers. Nothing is drawn while the year is unknown, rather than an
+// empty pill.
+export const FyBadge = ({ year }: { year?: string }) =>
+    year ? (
+        <span className="shrink-0 rounded-sm bg-blue-50 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-widest text-[#1e3a8a]">
+            FY {year}
+        </span>
+    ) : null;
+
 // ── DonutChart ─────────────────────────────────────────────────
 export const DonutChart = ({ segments, size = 120, thickness = 28, centerLabel }: DonutChartProps) => {
     const r = (size - thickness) / 2;
@@ -70,14 +82,17 @@ export const toCardData = (counts: StatusCounts): DistrictCardItem[] => {
 }
 
 // ── DistrictCard ─────────────────────────────────────────────────
-export const DistrictCard = ({ title, data }: DistrictCardProps) => {
+export const DistrictCard = ({ title, data, budgetYear }: DistrictCardProps & { budgetYear?: string }) => {
     const total = data.reduce((s, d) => s + d.value, 0);
     return (
         <div className="bg-white rounded-sm overflow-hidden border border-slate-200">
             <div className="p-4">
-                <p className="text-[15px] font-extrabold text-[#1e3a8a] tracking-widest uppercase mb-3">
-                    {title}
-                </p>
+                <div className="mb-3 flex items-start justify-between gap-2">
+                    <p className="text-[15px] font-extrabold text-[#1e3a8a] tracking-widest uppercase">
+                        {title}
+                    </p>
+                    <FyBadge year={budgetYear} />
+                </div>
                 <div className="flex items-center gap-4">
                     {/* thickness = size/2 fills the ring to the center, rendering a solid pie */}
                     <DonutChart
@@ -117,7 +132,7 @@ export const DistrictCard = ({ title, data }: DistrictCardProps) => {
 }
 
 // ── AnnualAllocationCard ─────────────────────────────────────────────────
-export const AnnualAllocationCard = ({ bySource, bySubType, variationBySource, variationProjectsBySource, total }: AnnualAllocationCardProps) => {
+export const AnnualAllocationCard = ({ bySource, bySubType, variationBySource, variationProjectsBySource, total, budgetYear }: AnnualAllocationCardProps) => {
     // Order known sources first, then append any unmapped sources that have allocations.
     const ordered = [...SOURCE_OF_FUND_ORDER, "CONFIDENTIAL", ...Object.keys(bySource)].filter(
         (src, i, arr) => arr.indexOf(src) === i && (bySource[src] ?? 0) > 0,
@@ -159,6 +174,7 @@ export const AnnualAllocationCard = ({ bySource, bySubType, variationBySource, v
                     <p className="text-[12px] font-extrabold text-slate-800 tracking-widest uppercase">
                         Annual Allocation &amp; Source Breakdown
                     </p>
+                    <FyBadge year={budgetYear} />
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-8">
@@ -234,10 +250,12 @@ export const AllocationRatioCard = ({
     label,
     amount,
     total,
+    budgetYear,
 }: {
     label: string;
     amount: number;
     total: number;
+    budgetYear?: string;
 }) => {
     // An allocation of zero has no share to state — "—" rather than a 0% that
     // reads as "nothing left".
@@ -245,7 +263,10 @@ export const AllocationRatioCard = ({
 
     return (
         <div className="bg-white rounded-sm border border-slate-200 p-4">
-            <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500">{label}</p>
+            <div className="flex items-start justify-between gap-2">
+                <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500">{label}</p>
+                <FyBadge year={budgetYear} />
+            </div>
             <div className="mt-2 flex items-baseline gap-2">
                 <p className="text-3xl font-extrabold leading-none text-slate-900" style={{ fontVariantNumeric: "tabular-nums" }}>
                     {pct === null ? "—" : `${Number(pct.toFixed(2)).toLocaleString("en-PH")}%`}
@@ -263,9 +284,12 @@ export const AllocationRatioCard = ({
 // ── AllocationTotalCard ─────────────────────────────────────────────────
 // A single peso total. Sits beside the ratio cards, which state the same
 // figures as shares; here the amount itself is the headline.
-export const AllocationTotalCard = ({ label, amount }: { label: string; amount: number }) => (
+export const AllocationTotalCard = ({ label, amount, budgetYear }: { label: string; amount: number; budgetYear?: string }) => (
     <div className="bg-white rounded-sm border border-slate-200 p-4">
-        <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500">{label}</p>
+        <div className="flex items-start justify-between gap-2">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500">{label}</p>
+            <FyBadge year={budgetYear} />
+        </div>
         {/* Sized to fit a ten-digit peso figure on a third-width card without
             wrapping mid-number; tabular figures keep the three cards aligned. */}
         <p className="mt-2 text-xl font-extrabold leading-none text-slate-900 tabular-nums">
@@ -275,7 +299,7 @@ export const AllocationTotalCard = ({ label, amount }: { label: string; amount: 
 );
 
 // ── SourceBreakdownCard ─────────────────────────────────────────────────
-export const SourceBreakdownCard = ({ title, footerLabel, bySource, bySubType, variationProjectsBySource, total }: SourceBreakdownCardProps) => {
+export const SourceBreakdownCard = ({ title, footerLabel, bySource, bySubType, variationProjectsBySource, total, budgetYear }: SourceBreakdownCardProps & { budgetYear?: string }) => {
     const ordered = [...SOURCE_OF_FUND_ORDER, "CONFIDENTIAL", ...Object.keys(bySource)].filter(
         (src, i, arr) => arr.indexOf(src) === i && (bySource[src] ?? undefined) !== undefined,
     );
@@ -310,9 +334,12 @@ export const SourceBreakdownCard = ({ title, footerLabel, bySource, bySubType, v
     return (
         <div className="bg-white rounded-sm shadow-sm overflow-hidden border border-slate-200">
             <div className="p-4 sm:p-5">
-                <p className="text-[12px] font-extrabold text-slate-800 tracking-widest uppercase mb-4">
-                    {title}
-                </p>
+                <div className="mb-4 flex items-start justify-between gap-2">
+                    <p className="text-[12px] font-extrabold text-slate-800 tracking-widest uppercase">
+                        {title}
+                    </p>
+                    <FyBadge year={budgetYear} />
+                </div>
 
                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5">
                     <div className="shrink-0 pt-1">

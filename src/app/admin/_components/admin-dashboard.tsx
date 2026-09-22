@@ -38,6 +38,20 @@ const StatTile = ({ card }: { card: StatCard }) => (
     </div>
 );
 
+// ── Panel heading ──────────────────────────────────────────────
+// Every tab's content is scoped to the header's fiscal year, so each panel
+// states that year beside its subtitle: the figures below are never left to be
+// read as "all projects", and the badge stays in view when the header filter
+// has scrolled away.
+const PanelHeading = ({ subtitle, year }: { subtitle: string; year: string }) => (
+    <div className="mb-3 flex flex-wrap items-center gap-2">
+        <span className="rounded-sm bg-blue-50 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-widest text-[#1e3a8a]">
+            {year ? `FY ${year}` : "NO FISCAL YEAR"}
+        </span>
+        <p className="text-[10px] text-slate-500">{subtitle}</p>
+    </div>
+);
+
 // ── Dashboard tabs ─────────────────────────────────────────────
 const DASHBOARD_TABS = [
     { id: "status", label: "PROJECT STATUS OVERVIEW" },
@@ -235,7 +249,7 @@ export const AdminDashboardContent = () => {
                 aria-labelledby="dashboard-tab-status"
                 hidden={activeTab !== "status"}
             >
-                <p className="text-[10px] text-slate-500 mb-3">Project Status Information</p>
+                <PanelHeading subtitle="Project Status Information" year={dashboardYear} />
 
                 {/* Stat cards + district project status (beside for ENGR DIST divisions, below otherwise).
                     While the scope query is in flight we can't yet know which layout
@@ -276,6 +290,7 @@ export const AdminDashboardContent = () => {
                                 {districtData?.map((d) => (
                                     <DistrictCard
                                         key={d.district}
+                                        budgetYear={dashboardYear}
                                         title={`${d.district.replace('_', ' ')} PROJECT STATUS`}
                                         data={toCardData(d.counts)}
                                     />
@@ -298,7 +313,7 @@ export const AdminDashboardContent = () => {
                 aria-labelledby="dashboard-tab-financial"
                 hidden={activeTab !== "financial"}
             >
-                <p className="text-[10px] text-slate-500 mb-3">Aggregated project funding sources and allocations</p>
+                <PanelHeading subtitle="Aggregated project funding sources and allocations" year={dashboardYear} />
 
                 {/* Utilisation of the annual allocation: what is left and what
                     has gone out, each as a share of the same total. Above the
@@ -312,11 +327,13 @@ export const AdminDashboardContent = () => {
                     ) : (
                         <>
                             <AllocationRatioCard
+                                budgetYear={dashboardYear}
                                 label="Remaining Balance Percentage"
                                 amount={remainingBalanceData?.remaining.total ?? 0}
                                 total={TotalAllocation}
                             />
                             <AllocationRatioCard
+                                budgetYear={dashboardYear}
                                 label="Disbursement Percentage"
                                 amount={remainingBalanceData?.disbursed.total ?? 0}
                                 total={TotalAllocation}
@@ -336,12 +353,14 @@ export const AdminDashboardContent = () => {
                         </>
                     ) : (
                         <>
-                            <AllocationTotalCard label="Total Combined Allocation" amount={TotalAllocation} />
+                            <AllocationTotalCard label="Total Combined Allocation" amount={TotalAllocation} budgetYear={dashboardYear} />
                             <AllocationTotalCard
+                                budgetYear={dashboardYear}
                                 label="Total Amount of Disbursement"
                                 amount={remainingBalanceData?.disbursed.total ?? 0}
                             />
                             <AllocationTotalCard
+                                budgetYear={dashboardYear}
                                 label="Total Amount of Remaining Balance"
                                 amount={remainingBalanceData?.remaining.total ?? 0}
                             />
@@ -361,7 +380,7 @@ export const AdminDashboardContent = () => {
                         variationBySource={projectAllocationData?.variationBySource ?? {}}
                         variationProjectsBySource={projectAllocationData?.variationProjectsBySource ?? {}}
                         total={TotalAllocation}
-                        budgetYear={projectAllocationData?.budgetYear ?? "2024"}
+                        budgetYear={dashboardYear}
                     />
                 )}
 
@@ -375,6 +394,7 @@ export const AdminDashboardContent = () => {
                     ) : (
                         <>
                             <SourceBreakdownCard
+                                budgetYear={dashboardYear}
                                 title="Remaining Balance from Annual Allocation"
                                 footerLabel="Grand Total Balance"
                                 bySource={remainingBalanceData?.remaining.bySource ?? {}}
@@ -383,6 +403,7 @@ export const AdminDashboardContent = () => {
                                 total={remainingBalanceData?.remaining.total ?? 0}
                             />
                             <SourceBreakdownCard
+                                budgetYear={dashboardYear}
                                 title="Disbursement Summary"
                                 footerLabel="Total Disbursement"
                                 bySource={remainingBalanceData?.disbursed.bySource ?? {}}
@@ -401,7 +422,7 @@ export const AdminDashboardContent = () => {
                 aria-labelledby="dashboard-tab-location"
                 hidden={activeTab !== "location"}
             >
-                <p className="text-[10px] text-slate-500 mb-3">Progress percentage and project status per city / municipality</p>
+                <PanelHeading subtitle="Progress percentage and project status per city / municipality" year={dashboardYear} />
                 {/* Office divisions (SMAD/PDPM/EPM/QACD) get a card per district;
                     engineering-district admins get their own district only. */}
                 <LocationBreakdownSection budgetYear={dashboardYear} />
@@ -413,6 +434,10 @@ export const AdminDashboardContent = () => {
                 aria-labelledby="dashboard-tab-slippage"
                 hidden={activeTab !== "slippage"}
             >
+                <PanelHeading
+                    subtitle="Filed slippage assessments per project"
+                    year={dashboardYear}
+                />
                 {/* One slippage timeline per project. */}
                 <SlippageHistorySection budgetYear={dashboardYear} />
             </div>

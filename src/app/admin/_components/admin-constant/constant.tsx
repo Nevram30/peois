@@ -1,6 +1,9 @@
 // ── Annual Allocation & Source Breakdown ───────────────────────
 export const SOURCE_COLORS: Record<string, string> = {
     TWENTY_PERCENT_DEV_FUND: "#1e3a8a",
+    // Without an entry here a source falls back to #94a3b8 — which is PPOC's
+    // own colour, so the two would be indistinguishable in the donut.
+    FIVE_PERCENT_CALAMITY_FUND: "#b45309",
     FIVE_PERCENT_CONFIDENTIAL_FUND: "#dc2626",
     CONFIDENTIAL: "#dc2626",
     GENERAL_FUND: "#2563eb",
@@ -19,6 +22,7 @@ export const SOURCE_COLORS: Record<string, string> = {
 
 export const SOURCE_SHORT_LABEL: Record<string, string> = {
     TWENTY_PERCENT_DEV_FUND: "20% DEVELOPMENT FUND",
+    FIVE_PERCENT_CALAMITY_FUND: "5% CALAMITY FUND",
     FIVE_PERCENT_CONFIDENTIAL_FUND: "5% CONFIDENTIAL FUND",
     CONFIDENTIAL: "5% CONFIDENTIAL FUND",
     GENERAL_FUND: "GENERAL FUND",
@@ -40,6 +44,7 @@ export const SOURCE_SHORT_LABEL: Record<string, string> = {
 // fund shows its remaining balance with a breakdown of its sub-types beneath.
 export const REM_SOURCE_LABEL: Record<string, string> = {
     TWENTY_PERCENT_DEV_FUND: "20% Dev. Fund",
+    FIVE_PERCENT_CALAMITY_FUND: "5% Calamity Fund",
     FIVE_PERCENT_CONFIDENTIAL_FUND: "5% Conf. Fund",
     CONFIDENTIAL: "5% Conf. Fund",
     GENERAL_FUND: "General Fund",

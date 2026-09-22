@@ -11,6 +11,7 @@ import {
     getSlippageStage,
 } from "~/lib/slippage";
 import { ProgressChartSkeleton } from "../admin-cards/skeleton.cards";
+import { FyBadge } from "../admin-cards/cards";
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -342,7 +343,7 @@ const domainFor = (points: SlippagePoint[]): [number, number] => {
 };
 
 // ── Project card ───────────────────────────────────────────────
-const SlippageProjectCard = ({ project }: { project: SlippageProject }) => {
+const SlippageProjectCard = ({ project, budgetYear }: { project: SlippageProject; budgetYear?: string }) => {
     const points = project.slippageAssessments;
     const domain = useMemo(() => domainFor(points), [points]);
     const latest = points[points.length - 1]!;
@@ -360,6 +361,9 @@ const SlippageProjectCard = ({ project }: { project: SlippageProject }) => {
                     </p>
                 </div>
                 <div className="shrink-0 text-right">
+                    <div className="mb-1 flex justify-end">
+                        <FyBadge year={budgetYear} />
+                    </div>
                     <p className={`text-lg font-extrabold leading-none ${stage.text}`} style={{ fontVariantNumeric: "tabular-nums" }}>
                         {formatSlippage(latestSlippage)}%
                     </p>
@@ -449,7 +453,7 @@ export const SlippageHistorySection = ({ budgetYear }: { budgetYear: string }) =
                 <>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
                         {projects.slice(0, shown).map((p) => (
-                            <SlippageProjectCard key={p.id} project={p} />
+                            <SlippageProjectCard key={p.id} project={p} budgetYear={budgetYear} />
                         ))}
                     </div>
                     {projects.length > shown && (

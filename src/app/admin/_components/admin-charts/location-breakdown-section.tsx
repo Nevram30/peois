@@ -5,6 +5,7 @@ import { api } from "~/trpc/react";
 import { STATUS_LABELS } from "~/app/super-admin/dashboardv2/super.adminv2.types";
 import { statusColor, statusLabel } from "./progress-line-chart";
 import { ProgressChartSkeleton } from "../admin-cards/skeleton.cards";
+import { FyBadge } from "../admin-cards/cards";
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -143,7 +144,7 @@ const LocationRowView = ({ row, maxTotal }: { row: LocationRow; maxTotal: number
 };
 
 // ── District card ──────────────────────────────────────────────
-const DistrictLocationCard = ({ data }: { data: DistrictLocations }) => {
+const DistrictLocationCard = ({ data, budgetYear }: { data: DistrictLocations; budgetYear?: string }) => {
     const rows = useMemo(
         () =>
             [...data.locations].sort((a, b) => {
@@ -186,6 +187,9 @@ const DistrictLocationCard = ({ data }: { data: DistrictLocations }) => {
                         </p>
                     </div>
                     <div className="shrink-0 text-right">
+                        <div className="mb-1 flex justify-end">
+                            <FyBadge year={budgetYear} />
+                        </div>
                         <p className="text-3xl font-extrabold leading-none text-slate-900">
                             {total ? formatPct(progressSum / total) : "—"}
                         </p>
@@ -234,9 +238,11 @@ const DistrictLocationCard = ({ data }: { data: DistrictLocations }) => {
 export const LocationBreakdownPanel = ({
     districts,
     isLoading = false,
+    budgetYear,
 }: {
     districts: DistrictLocations[];
     isLoading?: boolean;
+    budgetYear?: string;
 }) => {
     if (isLoading) {
         return (
@@ -259,7 +265,7 @@ export const LocationBreakdownPanel = ({
         // No items-start: the cards stretch to the tallest in the row.
         <div className={`grid grid-cols-1 gap-4 ${districts.length > 1 ? "xl:grid-cols-2" : ""}`}>
             {districts.map((d) => (
-                <DistrictLocationCard key={d.district} data={d} />
+                <DistrictLocationCard key={d.district} data={d} budgetYear={budgetYear} />
             ))}
         </div>
     );
@@ -271,5 +277,5 @@ export const LocationBreakdownSection = ({ budgetYear }: { budgetYear: string })
     const { data, isLoading } = api.project.getLocationBreakdown.useQuery(
         budgetYear ? { budgetYear } : undefined,
     );
-    return <LocationBreakdownPanel districts={data ?? []} isLoading={isLoading} />;
+    return <LocationBreakdownPanel districts={data ?? []} isLoading={isLoading} budgetYear={budgetYear} />;
 };
