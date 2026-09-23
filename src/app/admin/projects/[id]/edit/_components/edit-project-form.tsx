@@ -1174,7 +1174,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                           // drop a selection that is no longer valid.
                           const types =
                             MODE_TO_DISBURSEMENT_TYPES[
-                              e.target.value as keyof typeof MODE_TO_DISBURSEMENT_TYPES
+                            e.target.value as keyof typeof MODE_TO_DISBURSEMENT_TYPES
                             ] ?? [];
                           if (disbType && !types.includes(disbType)) setDisbType("");
                         }}
@@ -1528,7 +1528,9 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
 
               {/* Recent Disbursements */}
               <div className="mt-6">
-                <FieldLabel>Recent Disbursements</FieldLabel>
+                <div className="mt-4 flex items-center gap-2">
+                  <FieldLabel>Recent Disbursements History Table</FieldLabel>
+                </div>
                 <div
                   className="overflow-auto rounded-sm border border-gray-200"
                   style={{ maxHeight: "268px" }}
@@ -1565,8 +1567,11 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                   </table>
                 </div>
 
+                <div className="mt-4 flex items-center gap-2">
+                  <FieldLabel>Add Record Disbursements</FieldLabel>
+                </div>
                 {/* Record form */}
-                <div className="mt-3 flex flex-wrap gap-2 rounded-sm border border-gray-200 p-3">
+                <div className="mt-0 flex flex-wrap gap-2 rounded-sm border border-gray-200 p-3">
                   <div className="relative w-full shrink-0 sm:w-36">
                     <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">₱</span>
                     <Input
@@ -1605,7 +1610,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                       <option value="">Select Type</option>
                       {(
                         MODE_TO_DISBURSEMENT_TYPES[
-                          modeOfImplementation as keyof typeof MODE_TO_DISBURSEMENT_TYPES
+                        modeOfImplementation as keyof typeof MODE_TO_DISBURSEMENT_TYPES
                         ] ?? []
                       ).map((t) => (
                         <option key={t} value={t}>{DISBURSEMENT_TYPE_LABEL[t]}</option>
@@ -1632,7 +1637,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
 
               {/* Revised Contract Cost History */}
               <div className="mt-6">
-                <FieldLabel>Revised Contract Cost History</FieldLabel>
+                <FieldLabel>Revised Contract Cost History Table</FieldLabel>
                 <div
                   className="overflow-auto rounded-sm border border-gray-200"
                   style={{ maxHeight: "268px" }}
@@ -1698,7 +1703,10 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                 </div>
 
                 {/* Record / edit form */}
-                <div className="mt-3 flex flex-wrap gap-2 rounded-sm border border-gray-200 p-3">
+                <div className="mt-3 flex items-center gap-2">
+                  <FieldLabel>Add New Variation</FieldLabel>
+                </div>
+                <div className="flex flex-wrap gap-2 rounded-sm border border-gray-200 p-3">
                   <div className="relative w-full shrink-0 sm:w-36">
                     <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">₱</span>
                     <Input
