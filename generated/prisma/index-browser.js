@@ -191,6 +191,7 @@ exports.Prisma.ProjectScalarFieldEnum = {
   endLongitude: 'endLongitude',
   description: 'description',
   status: 'status',
+  preparationStage: 'preparationStage',
   completionPercentage: 'completionPercentage',
   slippageTarget: 'slippageTarget',
   slippageActual: 'slippageActual',
@@ -463,6 +464,12 @@ exports.ProjectStatus = exports.$Enums.ProjectStatus = {
   FOR_IMPLEMENTATION: 'FOR_IMPLEMENTATION',
   RE_ALIGNMENT: 'RE_ALIGNMENT',
   OTHERS: 'OTHERS'
+};
+
+exports.PreparationStage = exports.$Enums.PreparationStage = {
+  FOR_SURVEY: 'FOR_SURVEY',
+  FOR_PLANS: 'FOR_PLANS',
+  FOR_POW: 'FOR_POW'
 };
 
 exports.BoxLabel = exports.$Enums.BoxLabel = {

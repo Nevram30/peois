@@ -17,6 +17,12 @@ import {
   PROJECT_ACCOUNT_VALUES,
 } from "~/lib/fund-constants";
 import { PROJECT_IMAGE_SLOTS } from "~/lib/project-images";
+import {
+  PREPARATION_STAGE_LABEL,
+  PREPARATION_STAGE_VALUES,
+  advancePreparationStage,
+  type PreparationStageValue,
+} from "~/lib/preparation-stage";
 
 // Where-clause fragment limiting projects to the caller's district scope
 // (empty for unrestricted users), spread into each query's where.
@@ -158,6 +164,8 @@ export const projectRouter = createTRPCRouter({
           endLongitude: input.endLongitude,
           description: input.description,
           status: input.status ?? "ON_GOING",
+          // Every new project starts its preparation at Surveying.
+          preparationStage: "FOR_SURVEY",
           slippageTarget: input.slippageTarget,
           slippageActual: input.slippageActual,
           slippageRevision: input.slippageRevision,
@@ -513,17 +521,42 @@ export const projectRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.disbursement.create({
-        data: {
-          projectId: input.projectId,
-          amount: input.amount,
-          referenceNumber: input.referenceNumber,
-          type: input.type,
-          percentage: input.percentage,
-          remarks: input.remarks,
-          date: input.date ?? new Date(),
-          createdById: ctx.session.user.id,
-        },
+      return ctx.db.$transaction(async (tx) => {
+        const disbursement = await tx.disbursement.create({
+          data: {
+            projectId: input.projectId,
+            amount: input.amount,
+            referenceNumber: input.referenceNumber,
+            type: input.type,
+            percentage: input.percentage,
+            remarks: input.remarks,
+            date: input.date ?? new Date(),
+            createdById: ctx.session.user.id,
+          },
+        });
+
+        // Recording the financials moves the project into POW Preparation.
+        // Only the preparation stage changes; the project status is left alone.
+        const project = await tx.project.findUnique({
+          where: { id: input.projectId },
+          select: { preparationStage: true },
+        });
+        const next = project && advancePreparationStage(project.preparationStage, "FOR_POW");
+        if (next) {
+          await tx.project.update({
+            where: { id: input.projectId },
+            data: { preparationStage: next },
+          });
+          await tx.projectActivity.create({
+            data: {
+              projectId: input.projectId,
+              description: `Preparation stage moved to ${PREPARATION_STAGE_LABEL[next]} after recording a disbursement.`,
+              createdById: ctx.session.user.id,
+            },
+          });
+        }
+
+        return disbursement;
       });
     }),
 
@@ -861,6 +894,50 @@ export const projectRouter = createTRPCRouter({
       );
 
       return data;
+    }),
+
+  // How many projects sit at each preparation stage (For Survey / For Plans /
+  // For POW), per district and overall, for the admin dashboard. Scoped like
+  // getDistrictData; projects with no stage (created before stages existed)
+  // are left out of the counts.
+  getPreparationStageStats: districtScopedProcedure
+    .input(z.object({ budgetYear: z.string().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      const districts: readonly District[] = ctx.districtScope
+        ? [ctx.districtScope]
+        : (["DISTRICT_I", "DISTRICT_II"] as const);
+
+      const emptyCounts = (): Record<PreparationStageValue, number> =>
+        Object.fromEntries(PREPARATION_STAGE_VALUES.map((s) => [s, 0])) as Record<
+          PreparationStageValue,
+          number
+        >;
+
+      const byDistrict = await Promise.all(
+        districts.map(async (district) => {
+          const rows = await ctx.db.project.groupBy({
+            by: ["preparationStage"],
+            where: {
+              locationImplementation: district,
+              preparationStage: { not: null },
+              ...(input?.budgetYear ? { budgetYear: input.budgetYear } : {}),
+            },
+            _count: { _all: true },
+          });
+          const counts = emptyCounts();
+          for (const row of rows) {
+            if (row.preparationStage) counts[row.preparationStage] = row._count._all;
+          }
+          return { district, counts };
+        }),
+      );
+
+      const totals = emptyCounts();
+      for (const { counts } of byDistrict) {
+        for (const stage of PREPARATION_STAGE_VALUES) totals[stage] += counts[stage];
+      }
+
+      return { totals, byDistrict };
     }),
 
   // Physical accomplishment of every project, one series per district, for the

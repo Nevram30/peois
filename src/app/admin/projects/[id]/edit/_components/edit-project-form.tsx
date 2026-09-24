@@ -60,6 +60,7 @@ import {
   type ProjectImageSlots,
 } from "~/lib/project-images";
 import { ProjectImageUploader } from "~/app/_components/project-image-uploader";
+import { PreparationStageBadge } from "~/app/_components/preparation-stage-badge";
 
 const STATUS_CONFIG: Record<string, { label: string; badge: string; dot: string }> = {
   NOT_YET_STARTED: { label: "Not Yet Started", badge: "bg-gray-100 text-gray-600 border-gray-200", dot: "bg-gray-400" },
@@ -345,6 +346,8 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
 
   // ─ UI ──────────────────────────────────────────────────────────────────
   const [showSuccess, setShowSuccess] = useState(false);
+  // Read-only: advanced on the server by file uploads and disbursements.
+  const [preparationStage, setPreparationStage] = useState<string | null>(null);
 
   // populate state from project
   useEffect(() => {
@@ -352,6 +355,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     setCompletion(project.completionPercentage);
     setCompletionText(String(project.completionPercentage));
     setStatus(project.status);
+    setPreparationStage(project.preparationStage);
     setContractorName(project.contractorName ?? "");
     setModeOfImplementation(project.modeOfImplementation);
     setLocDistrict(project.district ?? project.locationImplementation ?? "");
@@ -663,8 +667,10 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   });
 
   const createProjectFile = api.projectFile.create.useMutation({
-    onSuccess: (_data, variables) => {
+    onSuccess: (data, variables) => {
       void refetchFiles();
+      // The upload may have moved the project into Preparation of Plans.
+      if (data.advancedTo) setPreparationStage(data.advancedTo);
       addActivity.mutate({
         projectId: variables.projectId,
         description: `Uploaded ${(variables.fileType ?? "OTHER").toLowerCase()} document "${variables.fileName}".`,
@@ -1161,6 +1167,15 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                           ))}
                       </Select>
                     </div>
+                  </div>
+
+                  <div>
+                    <FieldLabel>Preparation Stage</FieldLabel>
+                    {preparationStage ? (
+                      <PreparationStageBadge stage={preparationStage} />
+                    ) : (
+                      <p className="text-sm text-gray-400">—</p>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">

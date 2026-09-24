@@ -18,6 +18,7 @@ import {
   type FundingProgramValue,
 } from "~/lib/fund-constants";
 import { projectLabel } from "~/lib/funding-options";
+import { PreparationStageBadge } from "~/app/_components/preparation-stage-badge";
 
 const STATUS_BADGES: Record<string, { label: string; className: string }> = {
   NOT_YET_STARTED: {
@@ -724,7 +725,10 @@ export const UserProjectsList = () => {
                           {formatPeso(p.projectCost)}
                         </p>
                       </div>
-                      <StatusBadge status={p.status} />
+                      <div className="flex shrink-0 flex-col items-end gap-1">
+                        <StatusBadge status={p.status} />
+                        <PreparationStageBadge stage={p.preparationStage} />
+                      </div>
                     </div>
                     <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-3">
                       <div>
@@ -892,7 +896,10 @@ export const UserProjectsList = () => {
                           )}
                         </td>
                         <td className="px-4 py-4">
-                          <StatusBadge status={p.status} />
+                          <div className="flex flex-col gap-1">
+                            <StatusBadge status={p.status} />
+                            <PreparationStageBadge stage={p.preparationStage} />
+                          </div>
                         </td>
                         <td className="px-4 py-4 text-gray-600">
                           {p.budgetYear ?? "—"}
