@@ -16,14 +16,14 @@ import { FyBadge } from "../admin-cards/cards";
 
 // Line reads the progress curve (how much of the portfolio is past halfway);
 // bars read each project's progress on its own. Same data, same order.
-type ChartType = "line" | "bar";
+export type ChartType = "line" | "bar";
 
 // The dots carry status colour, so the lines stay neutral: a blue District I
 // line measured ΔE 5.6 against the ON-GOING dot and an orange District II line
 // ΔE 6.9 against SUSPENDED — those dots would vanish into their own line.
 // Slate-300 clears every status colour (lowest ΔE 15.9, against OTHERS), and
 // the districts are told apart by dash, legend and end-of-line label instead.
-const LINE_COLOR = "#cbd5e1";
+export const LINE_COLOR = "#cbd5e1";
 
 const DISTRICT_META: Record<string, { label: string; short: string; dash?: string }> = {
     DISTRICT_I: { label: "1ST ENGINEERING DISTRICT", short: "District I" },
@@ -95,8 +95,11 @@ const StatusLegend = ({ series }: { series: ProgressSeries[] }) => {
 };
 
 // ── Chart card ─────────────────────────────────────────────────
-const ChartCard = ({
+// Also used by the source / sub-type progress chart, which passes its own
+// subtitle.
+export const ChartCard = ({
     title,
+    subtitle = "Physical accomplishment per project, ranked from least to most advanced",
     series,
     maxRank,
     height,
@@ -104,6 +107,7 @@ const ChartCard = ({
     budgetYear,
 }: {
     title: string;
+    subtitle?: string;
     series: ProgressSeries[];
     maxRank?: number | null;
     height?: number;
@@ -119,12 +123,10 @@ const ChartCard = ({
                         <p className="text-[15px] font-extrabold text-[#1e3a8a] tracking-widest uppercase mb-1">
                             {title}
                         </p>
-                        <p className="text-[10px] text-slate-500">
-                            Physical accomplishment per project, ranked from least to most advanced
-                        </p>
+                        <p className="text-[10px] text-slate-500">{subtitle}</p>
                     </div>
                     {/* Headline figure for the card, top right where it is read
-                        first, with the card's fiscal year above it */}
+                        first, with the card's calendar year above it */}
                     <div className="shrink-0 text-right">
                         <div className="mb-1 flex justify-end">
                             <FyBadge year={budgetYear} />
@@ -287,10 +289,6 @@ export const DistrictProgressPanel = ({
                     budgetYear={budgetYear}
                 />
             )}
-
-            <p className="mt-2 text-[10px] text-slate-400">
-                Every plotted figure is also listed per project in Recent Project Updates below.
-            </p>
         </div>
     );
 }

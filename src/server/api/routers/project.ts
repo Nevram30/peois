@@ -1096,6 +1096,46 @@ export const projectRouter = createTRPCRouter({
       });
     }),
 
+  // Per-project progress points tagged with source of fund and sub-type, for
+  // the admin dashboard's "Overall Percentage per Source / Sub" line chart.
+  // Same point shape as getProgressByDistrict, so the same chart plots it; the
+  // client groups by source / sub-type and averages from these points.
+  getProgressBySource: districtScopedProcedure
+    .input(z.object({ budgetYear: z.string().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      const projects = await ctx.db.project.findMany({
+        where: {
+          ...districtWhere(ctx.districtScope),
+          ...(input?.budgetYear ? { budgetYear: input.budgetYear } : {}),
+        },
+        select: {
+          id: true,
+          projectCode: true,
+          title: true,
+          status: true,
+          sourceOfFund: true,
+          subType: true,
+          completionPercentage: true,
+          dateStarted: true,
+          createdAt: true,
+        },
+      });
+
+      return projects
+        .map((p) => ({
+          id: p.id,
+          projectCode: p.projectCode,
+          title: p.title,
+          status: p.status,
+          sourceOfFund: p.sourceOfFund as string,
+          subType: p.subType,
+          progress: p.completionPercentage ?? 0,
+          date: p.dateStarted ?? p.createdAt,
+          estimated: p.dateStarted === null,
+        }))
+        .sort((a, b) => a.progress - b.progress);
+    }),
+
   // Every project that has at least one filed slippage assessment, with its
   // history oldest first — the order a timeline reads in. Projects never
   // assessed are left out; there is nothing to plot for them.

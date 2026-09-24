@@ -61,20 +61,10 @@ export const REM_SOURCE_LABEL: Record<string, string> = {
     OTHERS: "Others",
 };
 
-// ── Recent Project Updates table helpers ───────────────────────
+// ── Project table helpers ──────────────────────────────────────
 export const DISTRICT_LABELS: Record<string, string> = {
     DISTRICT_I: "1st District",
     DISTRICT_II: "2nd District",
-};
-
-export const SOURCE_LABELS: Record<string, string> = {
-    GENERAL_FUND: "General Fund",
-    SEF: "SEF",
-    TRUST_FUND: "Trust Fund",
-    TWENTY_PERCENT_DEV_FUND: "20% Dev Fund",
-    AID: "AID",
-    LOAN: "Loan",
-    OTHERS: "Others",
 };
 
 export const MODE_LABELS: Record<string, string> = {

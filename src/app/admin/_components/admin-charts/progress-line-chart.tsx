@@ -225,7 +225,7 @@ export const ProgressLineChart = ({ series, maxRank, height = 260 }: ProgressLin
                     tabIndex={0}
                     aria-label={`Progress curve of ${totalPoints} project${totalPoints === 1 ? "" : "s"}, each district's projects ranked from least to most advanced. ${series
                         .map((s) => `${s.label}: ${s.points.length} projects`)
-                        .join("; ")}. Per-project figures are listed in the Recent Project Updates table.`}
+                        .join("; ")}.`}
                     className="touch-none outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
                     onPointerMove={(e) => {
                         if (!merged.length) return;
@@ -380,8 +380,7 @@ export const ProgressLineChart = ({ series, maxRank, height = 260 }: ProgressLin
                 </svg>
             )}
 
-            {/* Tooltip — enhances the plot; every figure it shows is also in the
-                Recent Project Updates table below the chart. */}
+            {/* Tooltip — per-project figures for the hovered point. */}
             {active && activeRows.length > 0 && (
                 <div
                     className="pointer-events-none absolute z-10 w-56 rounded-sm border border-slate-200 bg-white p-2.5 shadow-lg"

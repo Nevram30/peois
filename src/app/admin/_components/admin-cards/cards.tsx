@@ -4,7 +4,7 @@ import { PROJECT_SUB_TYPE_LABEL, type ProjectSubTypeValue, SOURCE_OF_FUND_ORDER 
 import { REM_SOURCE_LABEL, SOURCE_COLORS, SOURCE_SHORT_LABEL } from "../admin-constant/constant";
 import { formatPeso } from "~/helper/formatter";
 
-// ── Fiscal year badge ──────────────────────────────────────────
+// ── Calendar year badge ────────────────────────────────────────
 // Every card on the dashboard shows one budget year's figures, so each states
 // which — a card read on its own, printed or screenshotted, still says what
 // period it covers. Nothing is drawn while the year is unknown, rather than an
@@ -12,7 +12,7 @@ import { formatPeso } from "~/helper/formatter";
 export const FyBadge = ({ year }: { year?: string }) =>
     year ? (
         <span className="shrink-0 rounded-sm bg-blue-50 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-widest text-[#1e3a8a]">
-            FY {year}
+            CY {year}
         </span>
     ) : null;
 

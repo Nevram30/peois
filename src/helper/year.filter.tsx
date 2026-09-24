@@ -1,6 +1,6 @@
 // ── Year Filter (header button) ────────────────────────────────
 // Styled to match the dashboard's dark "YEAR" header button, but acts as a
-// fiscal-year selector that drives the year-aware cards.
+// calendar-year selector that drives the year-aware cards.
 export const YearFilter = ({
     value,
     onChange,
@@ -17,14 +17,14 @@ export const YearFilter = ({
                 onChange={(e) => onChange(e.target.value)}
                 className="appearance-none cursor-pointer bg-[#1e3a8a] text-white text-[11px] font-bold rounded-md pl-5 pr-8 py-1.5 hover:bg-blue-900 transition-colors focus:outline-none"
             >
-                {/* One fiscal year at a time — the dashboard's figures are all
+                {/* One calendar year at a time — the dashboard's figures are all
                     per-year, and it opens on the newest year in the data. The
                     placeholder only shows before the years load, or when no
                     project carries a budget year at all. */}
-                {years.length === 0 && <option value="">NO FISCAL YEAR</option>}
+                {years.length === 0 && <option value="">NO CALENDAR YEAR</option>}
                 {years.map((y) => (
                     <option key={y} value={y}>
-                        FY {y}
+                        CY {y}
                     </option>
                 ))}
             </select>

@@ -17,7 +17,7 @@ const PAGE_SIZE = 10;
 
 // ── Projects per preparation stage ──────────────────────────────
 // The projects behind the counts above: only those that have a stage, scoped
-// to the dashboard's fiscal year. Kept to a few columns, with the stage last.
+// to the dashboard's calendar year. Kept to a few columns, with the stage last.
 export const PreparationStageTable = ({
     projects,
     isLoading,
@@ -104,7 +104,7 @@ export const PreparationStageTable = ({
                             <tr>
                                 <td colSpan={4} className="px-4 py-8 text-center text-sm text-gray-400">
                                     No projects {stage ? `at ${PREPARATION_STAGE_LABEL[stage]}` : "with a preparation stage"}
-                                    {budgetYear ? ` for FY ${budgetYear}` : ""}.
+                                    {budgetYear ? ` for CY ${budgetYear}` : ""}.
                                 </td>
                             </tr>
                         ) : (

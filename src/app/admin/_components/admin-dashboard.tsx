@@ -1,21 +1,18 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 import { api } from "~/trpc/react";
-import { useRouter } from "next/navigation";
 
 import type { StatCard } from "~/app/super-admin/dashboardv2/super.admin.types";
-import { DISTRICT_LABELS, MODE_LABELS, SOURCE_LABELS, STATUS_CONFIG } from "./admin-constant/constant";
 import { AllocationRatioCard, AllocationTotalCard, AnnualAllocationCard, DistrictCard, SourceBreakdownCard, toCardData } from "./admin-cards/cards";
 import { DistrictCardsSkeleton, FinancialCardSkeleton, StatCardsSkeleton } from "./admin-cards/skeleton.cards";
 import { DistrictProgressSection } from "./admin-charts/district-progress-section";
 import { LocationBreakdownSection } from "./admin-charts/location-breakdown-section";
 import { SlippageHistorySection } from "./admin-charts/slippage-history-section";
+import { SourceProgressSection } from "./admin-charts/source-progress-section";
 import { YearFilter } from "~/helper/year.filter";
 import { PreparationStageSection } from "./admin-cards/preparation-stage-section";
 import { PreparationStageTable } from "./admin-cards/preparation-stage-table";
-import { PreparationStageBadge } from "~/app/_components/preparation-stage-badge";
 
 // ── Stat Tile ──────────────────────────────────────────────────
 // Status name with its icon at the top right, the count below on the left.
@@ -42,16 +39,24 @@ const StatTile = ({ card }: { card: StatCard }) => (
 );
 
 // ── Panel heading ──────────────────────────────────────────────
-// Every tab's content is scoped to the header's fiscal year, so each panel
-// states that year beside its subtitle: the figures below are never left to be
+// Every tab's content is scoped to the header's calendar year, so each panel
+// states that year above its subtitle: the figures below are never left to be
 // read as "all projects", and the badge stays in view when the header filter
-// has scrolled away.
-const PanelHeading = ({ subtitle, year }: { subtitle: string; year: string }) => (
-    <div className="mb-3 flex flex-wrap items-center gap-2">
-        <span className="rounded-sm bg-blue-50 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-widest text-[#1e3a8a]">
-            {year ? `FY ${year}` : "NO FISCAL YEAR"}
-        </span>
-        <p className="text-[10px] text-slate-500">{subtitle}</p>
+// has scrolled away. The year and subtitle stack on the right, level with the
+// panel's optional section label on the left.
+const PanelHeading = ({ subtitle, year, label }: { subtitle: string; year: string; label?: string }) => (
+    <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        {label ? (
+            <h2 className="text-[11px] font-extrabold uppercase tracking-widest text-[#1e3a8a]">{label}</h2>
+        ) : (
+            <span />
+        )}
+        <div className="flex flex-col items-end gap-1 text-right">
+            <span className="rounded-sm bg-blue-50 px-2.5 py-1 text-sm font-extrabold uppercase tracking-widest text-[#1e3a8a]">
+                {year ? `CY ${year}` : "NO CALENDAR YEAR"}
+            </span>
+            <p className="text-[11px] font-semibold text-slate-500">{subtitle}</p>
+        </div>
     </div>
 );
 
@@ -68,10 +73,9 @@ type DashboardTab = (typeof DASHBOARD_TABS)[number]["id"];
 
 // ── Main Dashboard ─────────────────────────────────────────────
 export const AdminDashboardContent = () => {
-    const router = useRouter();
     const [activeTab, setActiveTab] = useState<DashboardTab>("status");
 
-    // Fiscal year filter shared by the dashboard cards (driven by the header
+    // Calendar year filter shared by the dashboard cards (driven by the header
     // YEAR button). The years come back newest first, and the newest is the
     // default: the dashboard opens on the year being worked on, and follows the
     // data by itself once 2027 rows exist. null means "not chosen yet", which is
@@ -115,81 +119,8 @@ export const AdminDashboardContent = () => {
     // tile + six status tiles (incl. OTHERS).
     const statCards: StatCard[] = [budgetYearTile, ...statusTiles];
 
-    // ── Recent Project Updates table state ──────────────────────
-    const [search, setSearch] = useState("");
-    const [fiscalYear, setFiscalYear] = useState("");
-    const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(20);
+    // All projects, listed in the Preparation Stage tab's table.
     const { data: projects, isLoading } = api.project.getAll.useQuery();
-
-    const filteredProjects = projects?.filter((p) => {
-        if (fiscalYear && p.budgetYear !== fiscalYear) return false;
-        if (!search) return true;
-        const q = search.toLowerCase();
-        return (
-            p.title.toLowerCase().includes(q) ||
-            p.projectCode.toLowerCase().includes(q) ||
-            (p.barangay ?? "").toLowerCase().includes(q) ||
-            (p.cityMunicipality ?? "").toLowerCase().includes(q)
-        );
-    });
-
-    const totalFiltered = filteredProjects?.length ?? 0;
-    const totalPages = Math.max(1, Math.ceil(totalFiltered / pageSize));
-    const paginatedProjects = filteredProjects?.slice(
-        (page - 1) * pageSize,
-        page * pageSize,
-    );
-
-    // Rendered above and below the table so long pages can be paged without
-    // scrolling to the bottom; only the divider side differs.
-    const renderPagination = (position: "top" | "bottom") => (
-        <div className={`flex flex-wrap items-center justify-between gap-3 ${position === "top" ? "border-b" : "border-t"} border-gray-100 px-4 py-4 sm:px-6`}>
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-                <span>Rows per page:</span>
-                <select
-                    value={pageSize}
-                    onChange={(e) => {
-                        setPageSize(Number(e.target.value));
-                        setPage(1);
-                    }}
-                    className="rounded-sm border border-gray-200 bg-white px-2 py-1 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e3a4f]/20"
-                >
-                    {[10, 20, 50, 100].map((s) => (
-                        <option key={s} value={s}>{s}</option>
-                    ))}
-                </select>
-            </div>
-            <div className="flex flex-wrap items-center gap-1">
-                <button
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={page === 1}
-                    className="flex h-8 w-8 items-center justify-center rounded-sm border border-gray-200 text-gray-500 transition hover:bg-gray-50 disabled:opacity-40"
-                >
-                    &lsaquo;
-                </button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                    <button
-                        key={p}
-                        onClick={() => setPage(p)}
-                        className={`flex h-8 w-8 items-center justify-center rounded-sm border text-sm font-medium transition ${p === page
-                            ? "border-blue-500 bg-white text-blue-600 ring-1 ring-blue-500"
-                            : "border-gray-200 text-gray-600 hover:bg-gray-50"
-                            }`}
-                    >
-                        {p}
-                    </button>
-                ))}
-                <button
-                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={page === totalPages}
-                    className="flex h-8 w-8 items-center justify-center rounded-sm border border-gray-200 text-gray-500 transition hover:bg-gray-50 disabled:opacity-40"
-                >
-                    &rsaquo;
-                </button>
-            </div>
-        </div>
-    );
 
     return (
         <div className="bg-slate-100 min-h-screen p-4 font-sans text-slate-800">
@@ -254,13 +185,9 @@ export const AdminDashboardContent = () => {
                 aria-labelledby="dashboard-tab-status"
                 hidden={activeTab !== "status"}
             >
-                <PanelHeading subtitle="Project Status Information" year={dashboardYear} />
-
-                {/* Section label, paired with the "Preparation Stage" one below so
-                    the two blocks read as separate groups. */}
-                <h2 className="mb-2 text-[11px] font-extrabold uppercase tracking-widest text-[#1e3a8a]">
-                    Project Status
-                </h2>
+                {/* "Project Status" section label on the left, the year and
+                    subtitle level with it on the right. */}
+                <PanelHeading label="Project Status" subtitle="Project Status Information" year={dashboardYear} />
 
                 {/* Stat cards + district project status (beside for ENGR DIST divisions, below otherwise).
                     While the scope query is in flight we can't yet know which layout
@@ -316,6 +243,10 @@ export const AdminDashboardContent = () => {
                     toggle; engineering-district admins get their own district only.
                     Scoped by the same YEAR filter as the cards above. */}
                 <DistrictProgressSection budgetYear={dashboardYear} />
+
+                {/* The same progress line chart, cut by source of fund and
+                    sub-type. Same YEAR filter and district scope. */}
+                <SourceProgressSection budgetYear={dashboardYear} />
             </div>
 
             {/* Preparation stage (For Survey / For Plans / For POW) has its own
@@ -472,311 +403,6 @@ export const AdminDashboardContent = () => {
                 />
                 {/* One slippage timeline per project. */}
                 <SlippageHistorySection budgetYear={dashboardYear} />
-            </div>
-
-            {/* Recent Project Updates — outside the tabs, shown under the
-                status tab only; the other tabs carry their own detail */}
-            <div
-                hidden={activeTab !== "status"}
-                className="mt-5 rounded-sm border border-gray-100 bg-white shadow-sm"
-            >
-                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-4 py-4 sm:px-6 sm:py-5">
-                    <h2 className="text-md font-semibold text-gray-900">
-                        Recent Project Updates
-                    </h2>
-
-                    {/* Search + Fiscal Year Filter */}
-                    <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
-                        <div className="relative w-full sm:w-72">
-                            <svg
-                                className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={1.5}
-                                stroke="currentColor"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-                                />
-                            </svg>
-                            <input
-                                type="text"
-                                placeholder="Search projects, documents, or data..."
-                                value={search}
-                                onChange={(e) => {
-                                    setSearch(e.target.value);
-                                    setPage(1);
-                                }}
-                                className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-700 shadow-sm placeholder:text-gray-400 focus:border-[#1e3a4f] focus:outline-none focus:ring-2 focus:ring-[#1e3a4f]/20"
-                            />
-                        </div>
-                        <div className="relative w-full sm:w-auto">
-                            <svg
-                                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={1.5}
-                                stroke="currentColor"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"
-                                />
-                            </svg>
-                            <select
-                                value={fiscalYear}
-                                onChange={(e) => {
-                                    setFiscalYear(e.target.value);
-                                    setPage(1);
-                                }}
-                                className="w-full appearance-none rounded-sm border border-gray-200 bg-white py-2.5 pl-9 pr-9 text-sm text-gray-700 shadow-sm focus:border-[#1e3a4f] focus:outline-none focus:ring-2 focus:ring-[#1e3a4f]/20"
-                            >
-                                <option value="">All Fiscal Years</option>
-                                {budgetYears?.map((y) => (
-                                    <option key={y} value={y}>
-                                        FY {y}
-                                    </option>
-                                ))}
-                            </select>
-                            <svg
-                                className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={2}
-                                stroke="currentColor"
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Pagination Header */}
-                {!isLoading && totalFiltered > 0 && renderPagination("top")}
-
-                {/* Table */}
-                <div className="overflow-x-auto">
-                    {isLoading ? (
-                        <div className="p-10 text-center text-sm text-gray-400">
-                            Loading projects...
-                        </div>
-                    ) : !paginatedProjects?.length ? (
-                        <div className="p-10 text-center text-sm text-gray-400">
-                            {search
-                                ? "No projects match your search."
-                                : 'No projects yet. Click "Add Project" to create one.'}
-                        </div>
-                    ) : (
-                        <table className="w-full text-left text-sm">
-                            <thead>
-                                <tr className="border-b border-gray-100 bg-gray-50">
-                                    <th className="px-6 py-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
-                                        Project Name
-                                    </th>
-                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
-                                        Location
-                                    </th>
-                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
-                                        Implementation
-                                    </th>
-                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
-                                        District
-                                    </th>
-                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
-                                        Source of Fund
-                                    </th>
-                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
-                                        Status
-                                    </th>
-                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
-                                        Preparation Stage
-                                    </th>
-                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
-                                        Progress
-                                    </th>
-                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
-                                        Involved Users
-                                    </th>
-                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
-                                        Actions
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-50">
-                                {paginatedProjects.map((p) => {
-                                    const statusCfg = STATUS_CONFIG[p.status] ?? {
-                                        label: p.status,
-                                        dot: "bg-gray-400",
-                                        text: "text-gray-600",
-                                        badge: "bg-gray-100 text-gray-600",
-                                    };
-                                    const location = [p.barangay, p.cityMunicipality]
-                                        .filter(Boolean)
-                                        .join(", ");
-
-                                    return (
-                                        <tr
-                                            key={p.id}
-                                            className="hover:bg-gray-50/60 transition-colors"
-                                        >
-                                            <td className="px-6 py-4">
-                                                <p className="font-semibold text-gray-900">
-                                                    {p.title}
-                                                </p>
-                                                <p className="text-xs text-blue-500">
-                                                    {p.projectCode}
-                                                </p>
-                                            </td>
-                                            <td className="px-4 py-4 text-gray-600">
-                                                {location || "—"}
-                                            </td>
-                                            <td className="px-4 py-4 text-gray-600">
-                                                {MODE_LABELS[p.modeOfImplementation] ?? p.modeOfImplementation}
-                                            </td>
-                                            <td className="px-4 py-4">
-                                                <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-semibold text-gray-700">
-                                                    {DISTRICT_LABELS[p.locationImplementation] ?? p.locationImplementation}
-                                                </span>
-                                            </td>
-                                            <td className="px-4 py-4 text-gray-600">
-                                                {SOURCE_LABELS[p.sourceOfFund] ?? p.sourceOfFund}
-                                            </td>
-                                            <td className="px-4 py-4">
-                                                <span
-                                                    className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${statusCfg.badge}`}
-                                                >
-                                                    <span
-                                                        className={`h-1.5 w-1.5 rounded-full ${statusCfg.dot}`}
-                                                    />
-                                                    {statusCfg.label}
-                                                </span>
-                                            </td>
-                                            <td className="px-4 py-4">
-                                                {p.preparationStage ? (
-                                                    <PreparationStageBadge stage={p.preparationStage} />
-                                                ) : (
-                                                    <span className="text-gray-400">—</span>
-                                                )}
-                                            </td>
-                                            <td className="px-4 py-4">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
-                                                        <div
-                                                            className={`h-full rounded-full ${p.status === "SUSPENDED" ? "bg-red-500" : (p.completionPercentage ?? 0) >= 100 ? "bg-green-500" : "bg-orange-500"}`}
-                                                            style={{ width: `${p.completionPercentage ?? 0}%` }}
-                                                        />
-                                                    </div>
-                                                    <span className="text-xs text-gray-600">
-                                                        {p.completionPercentage ?? 0}%
-                                                    </span>
-                                                </div>
-                                            </td>
-                                            <td className="px-4 py-4">
-                                                {(() => {
-                                                    const seen = new Set<string>();
-                                                    const contributors: { id: string; name: string | null; email: string; image: string | null }[] = [];
-                                                    const allUsers = [p.createdBy, ...p.activities.map((a) => a.createdBy)];
-                                                    for (const u of allUsers) {
-                                                        if (!seen.has(u.id)) {
-                                                            seen.add(u.id);
-                                                            contributors.push(u);
-                                                        }
-                                                    }
-                                                    const MAX_SHOW = 4;
-                                                    const visible = contributors.slice(0, MAX_SHOW);
-                                                    const extra = contributors.length - MAX_SHOW;
-                                                    return (
-                                                        <div className="flex items-center">
-                                                            {visible.map((u, i) => {
-                                                                const initials = (u.name ?? u.email)
-                                                                    .split(" ")
-                                                                    .map((w) => w[0])
-                                                                    .join("")
-                                                                    .slice(0, 2)
-                                                                    .toUpperCase();
-                                                                const colors = [
-                                                                    "bg-blue-500",
-                                                                    "bg-emerald-500",
-                                                                    "bg-violet-500",
-                                                                    "bg-orange-500",
-                                                                ];
-                                                                return (
-                                                                    <div
-                                                                        key={u.id}
-                                                                        style={{ zIndex: visible.length - i, marginLeft: i === 0 ? 0 : "-8px" }}
-                                                                        className={`group relative flex h-7 w-7 items-center justify-center rounded-full ring-2 ring-white text-white text-[10px] font-bold cursor-default ${colors[i % colors.length]}`}
-                                                                    >
-                                                                        {u.image ? (
-                                                                            <Image
-                                                                                src={u.image}
-                                                                                alt={u.name ?? u.email}
-                                                                                width={28}
-                                                                                height={28}
-                                                                                className="h-full w-full rounded-full object-cover"
-                                                                            />
-                                                                        ) : (
-                                                                            initials
-                                                                        )}
-                                                                        <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-[11px] text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
-                                                                            {u.name ?? u.email}
-                                                                        </span>
-                                                                    </div>
-                                                                );
-                                                            })}
-                                                            {extra > 0 && (
-                                                                <div
-                                                                    style={{ zIndex: 0, marginLeft: "-8px" }}
-                                                                    className="relative flex h-7 w-7 items-center justify-center rounded-full ring-2 ring-white bg-gray-200 text-gray-600 text-[10px] font-bold"
-                                                                >
-                                                                    +{extra}
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    );
-                                                })()}
-                                            </td>
-                                            <td className="px-4 py-4">
-                                                <button
-                                                    onClick={() =>
-                                                        router.push(`/admin/projects/${p.id}/view`)
-                                                    }
-                                                    className="inline-flex items-center gap-1.5 rounded-sm bg-green-500 px-3 py-1.5 text-white transition hover:bg-green-600"
-                                                    title="View project"
-                                                >
-                                                    <svg
-                                                        className="h-4 w-4"
-                                                        fill="none"
-                                                        viewBox="0 0 24 24"
-                                                        strokeWidth={1.5}
-                                                        stroke="currentColor"
-                                                    >
-                                                        <path
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178Z"
-                                                        />
-                                                        <path
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                                                        />
-                                                    </svg>
-                                                    <span className="text-xs font-medium">View</span>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    )}
-                </div>
-
-                {/* Pagination Footer */}
-                {!isLoading && totalFiltered > 0 && renderPagination("bottom")}
             </div>
         </div>
     );
