@@ -24,9 +24,10 @@ import {
   formatSlippage,
   getSlippageStageConfig,
 } from "~/lib/slippage";
-import { GeospatialSummary } from "~/app/_components/geospatial-summary";
+import { GeospatialMap, GeospatialSummary } from "~/app/_components/geospatial-summary";
 import { MODE_LABELS } from "~/app/admin/_components/admin-constant/constant";
 import { DOC_CHECKLIST, inferDocType, type DocType } from "~/lib/project-documents";
+import { preparationStageLabel } from "~/lib/preparation-stage";
 import { TaskNotificationPanel } from "./task-notification-panel";
 
 const FILE_TYPE_PILL: Record<string, string> = {
@@ -110,6 +111,9 @@ const cardShell = "rounded-sm border border-gray-200 bg-white shadow-sm";
 const boxLabel = "mb-1.5 block text-sm font-bold text-gray-600";
 const box =
   "block w-full truncate rounded-sm border border-gray-200 bg-white px-3.5 py-2.5 text-sm shadow-sm";
+// Borderless variant for the Project Identity & Status card: plain values
+// under their labels, no input look.
+const plainBox = "block w-full truncate py-1 text-sm";
 
 const InfoIcon = (
   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
@@ -170,26 +174,31 @@ const CardHeader = ({
 
 // `chevron` matches the dropdowns of the form this card mirrors; it is a marker
 // of where a value is chosen from a list, not a control — nothing opens here.
+// `plain` drops the input-like box (and with it the chevron).
 const ViewField = ({
   label,
   value,
   chevron = false,
   muted = false,
+  plain = false,
 }: {
   label: string;
   value: string;
   chevron?: boolean;
   muted?: boolean;
+  plain?: boolean;
 }) => (
   <div className="min-w-0">
-    <label className={boxLabel}>{label}</label>
+    <label className={plain ? "mb-0.5 block text-sm font-bold text-gray-600" : boxLabel}>
+      {label}
+    </label>
     <div className="relative">
       <div
-        className={`${box} ${muted ? "text-gray-400" : "text-gray-900"} ${chevron ? "pr-9" : ""}`}
+        className={`${plain ? plainBox : box} ${muted ? "text-gray-400" : "text-gray-900"} ${chevron && !plain ? "pr-9" : ""}`}
       >
         {value}
       </div>
-      {chevron && (
+      {chevron && !plain && (
         <svg
           className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400"
           fill="none"
@@ -360,11 +369,13 @@ export const ProjectDetail = ({ projectId }: Props) => {
               editHref={editHref}
             />
 
-            <div className="space-y-4 p-5">
-              {/* Project photos — banner plus three supporting shots */}
+            <div className="flex flex-col gap-5 p-5 lg:flex-row">
+              {/* Project photos — left column, four equal tiles */}
               <ProjectImageGallery
+                grid
                 slots={toImageSlots(project)}
                 alt={project.title}
+                className="w-full shrink-0 lg:w-2/5"
                 badge={
                   <span className="absolute top-3 left-3 rounded-md bg-gray-900/90 px-3 py-1.5 font-mono text-[10px] font-bold tracking-wider text-white">
                     #{project.projectCode}
@@ -372,48 +383,59 @@ export const ProjectDetail = ({ projectId }: Props) => {
                 }
               />
 
-              <ViewField label="Project Title" value={project.title} />
+              {/* Right column — fields and progress */}
+              <div className="min-w-0 flex-1 space-y-4">
+                <ViewField label="Project Title" value={project.title} plain />
 
-              <div className="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2">
-                <ViewField label="Project Cost" value={peso(project.projectCost)} />
-                {/* As Per Plan mirrors the Target Completion Date on file. */}
-                <ViewField
-                  label="As Per Plan"
-                  value={fmt(project.targetCompletionDate)}
-                  muted={!project.targetCompletionDate}
-                />
-                <ViewField label="Current Status" value={statusLabel} chevron />
-                <ViewField label="Project I.D." value={project.projectCode} />
-                <ViewField
-                  label="Implementation Mode"
-                  value={
-                    MODE_LABELS[project.modeOfImplementation] ??
-                    project.modeOfImplementation
-                  }
-                  chevron
-                />
-                <ViewField
-                  label="Contractor Name"
-                  value={project.contractorName ?? "—"}
-                  muted={!project.contractorName}
-                />
-              </div>
-
-              {/* Progress */}
-              <div>
-                <div className="mb-2 flex items-center justify-between gap-3">
-                  <span className="text-sm font-bold text-gray-600">
-                    Physical Progress
-                  </span>
-                  <span className="text-xs font-bold text-blue-600">
-                    {project.completionPercentage}%
-                  </span>
-                </div>
-                <div className="h-2.5 w-full overflow-hidden rounded-full bg-gray-100">
-                  <div
-                    className="h-full rounded-full bg-blue-700 transition-all"
-                    style={{ width: `${project.completionPercentage}%` }}
+                <div className="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2">
+                  <ViewField label="Project Cost" value={peso(project.projectCost)} plain />
+                  {/* As Per Plan mirrors the Target Completion Date on file. */}
+                  <ViewField
+                    plain
+                    label="As Per Plan"
+                    value={fmt(project.targetCompletionDate)}
+                    muted={!project.targetCompletionDate}
                   />
+                  <ViewField label="Current Status" value={statusLabel} plain />
+                  <ViewField
+                    plain
+                    label="Preparation Stage"
+                    value={preparationStageLabel(project.preparationStage) ?? "—"}
+                    muted={!project.preparationStage}
+                  />
+                  <ViewField label="Project I.D." value={project.projectCode} plain />
+                  <ViewField
+                    plain
+                    label="Implementation Mode"
+                    value={
+                      MODE_LABELS[project.modeOfImplementation] ??
+                      project.modeOfImplementation
+                    }
+                  />
+                  <ViewField
+                    plain
+                    label="Contractor Name"
+                    value={project.contractorName ?? "—"}
+                    muted={!project.contractorName}
+                  />
+                </div>
+
+                {/* Progress */}
+                <div>
+                  <div className="mb-2 flex items-center justify-between gap-3">
+                    <span className="text-sm font-bold text-gray-600">
+                      Physical Progress
+                    </span>
+                    <span className="text-xs font-bold text-blue-600">
+                      {project.completionPercentage}%
+                    </span>
+                  </div>
+                  <div className="h-2.5 w-full overflow-hidden rounded-full bg-gray-100">
+                    <div
+                      className="h-full rounded-full bg-blue-700 transition-all"
+                      style={{ width: `${project.completionPercentage}%` }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -423,45 +445,54 @@ export const ProjectDetail = ({ projectId }: Props) => {
           <section className={cardShell}>
             <CardHeader icon={PinIcon} title="Project Location" editHref={editHref} />
 
-            <div className="space-y-4 p-5">
-              {/* Full-width card, so the administrative levels sit side by
-                  side instead of stacking */}
-              <div className="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
-                <ViewField label="District" value={districtLabel} chevron />
-                <ViewField
-                  label="City / Municipality"
-                  value={project.cityMunicipality ?? "—"}
-                  muted={!project.cityMunicipality}
-                  chevron
-                />
-                <ViewField
-                  label="Barangay"
-                  value={project.barangay ?? "—"}
-                  muted={!project.barangay}
-                  chevron
-                />
-                <ViewField
-                  label="Purok"
-                  value={project.purok ?? "—"}
-                  muted={!project.purok}
-                  chevron
-                />
-                <ViewField
-                  label="Sitio"
-                  value={project.sitio ?? "N/A"}
-                  muted={!project.sitio}
-                />
-              </div>
+            <div className="flex flex-col gap-5 p-5 lg:flex-row">
+              {/* Left column — map */}
+              <GeospatialMap
+                latitude={project.latitude}
+                longitude={project.longitude}
+                className="h-80 w-full shrink-0 lg:h-auto lg:min-h-80 lg:w-1/2"
+              />
 
-              {/* ── Geospatial Data ── */}
-              <div className="border-t border-gray-100 pt-4">
-                <GeospatialSummary
-                  latitude={project.latitude}
-                  longitude={project.longitude}
-                  labelClassName={boxLabel}
-                  valueClassName={`${box} text-gray-900`}
-                  mapClassName="h-150"
-                />
+              {/* Right column — administrative location and coordinates */}
+              <div className="min-w-0 flex-1 space-y-4">
+                <div className="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2">
+                  <ViewField label="District" value={districtLabel} plain />
+                  <ViewField
+                    plain
+                    label="City / Municipality"
+                    value={project.cityMunicipality ?? "—"}
+                    muted={!project.cityMunicipality}
+                  />
+                  <ViewField
+                    plain
+                    label="Barangay"
+                    value={project.barangay ?? "—"}
+                    muted={!project.barangay}
+                  />
+                  <ViewField
+                    plain
+                    label="Purok"
+                    value={project.purok ?? "—"}
+                    muted={!project.purok}
+                  />
+                  <ViewField
+                    plain
+                    label="Sitio"
+                    value={project.sitio ?? "N/A"}
+                    muted={!project.sitio}
+                  />
+                </div>
+
+                {/* ── Geospatial Data ── */}
+                <div className="border-t border-gray-100 pt-4">
+                  <GeospatialSummary
+                    latitude={project.latitude}
+                    longitude={project.longitude}
+                    labelClassName="mb-0.5 block text-sm font-bold text-gray-600"
+                    valueClassName={`${plainBox} text-gray-900`}
+                    showMap={false}
+                  />
+                </div>
               </div>
             </div>
           </section>
@@ -487,56 +518,55 @@ export const ProjectDetail = ({ projectId }: Props) => {
               </h2>
             </div>
 
-            {/* Every field here is a dropdown on the form, so they all carry the
-                chevron marker. */}
+            {/* Plain, borderless readouts, matching the Identity and Location cards. */}
             <div className="grid grid-cols-1 gap-x-6 gap-y-4 lg:grid-cols-2">
               <ViewField
+                plain
                 label="Budget Year"
                 value={project.budgetYear ?? "\u2014"}
                 muted={!project.budgetYear}
-                chevron
               />
               <ViewField
+                plain
                 label="Program"
                 value={programLabel}
                 muted={!project.program}
-                chevron
               />
               <ViewField
+                plain
                 label="Source of Fund"
                 value={sourceLabel}
                 muted={!project.sourceOfFund}
-                chevron
               />
               <ViewField
+                plain
                 label="Project"
                 value={subTypeLabel}
                 muted={!project.subType}
-                chevron
               />
               <ViewField
+                plain
                 label="Supplemental Budget Year"
                 value={project.supplementalBudgetYear ?? "\u2014"}
                 muted={!project.supplementalBudgetYear}
-                chevron
               />
               <ViewField
+                plain
                 label="Project Account"
                 value={projectAccountLabel}
                 muted={!project.projectAccount}
-                chevron
               />
               <ViewField
+                plain
                 label="Supplemental Budget Number"
                 value={project.supplementalBudgetNumber ?? "\u2014"}
                 muted={!project.supplementalBudgetNumber}
-                chevron
               />
               <ViewField
+                plain
                 label="* LANDBANK [LBP-TL#]"
                 value={project.landbankNumber ?? "\u2014"}
                 muted={!project.landbankNumber}
-                chevron
               />
             </div>
           </section>

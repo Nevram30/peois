@@ -33,14 +33,18 @@ interface TileProps {
   index: number;
   compact: boolean;
   badge?: ReactNode;
+  /** On large screens, drop the 16:9 ratio and fill the grid cell instead. */
+  fill?: boolean;
 }
 
-const GalleryTile = ({ url, alt, index, compact, badge }: TileProps) => {
+const GalleryTile = ({ url, alt, index, compact, badge, fill = false }: TileProps) => {
   const [failed, setFailed] = useState(false);
   const showImage = !!url && !failed;
 
   return (
-    <div className="relative aspect-video w-full overflow-hidden rounded-sm border border-gray-200 bg-gray-50">
+    <div
+      className={`relative aspect-video w-full overflow-hidden rounded-sm border border-gray-200 bg-gray-50 ${fill ? "lg:aspect-auto lg:h-full lg:min-h-28" : ""}`}
+    >
       {showImage ? (
         <Image
           src={url}
@@ -71,6 +75,9 @@ interface Props {
   badge?: ReactNode;
   /** Lay slots 2-4 out in two columns, for narrow side-by-side layouts. */
   twoUp?: boolean;
+  /** All four slots as equal tiles in a 2×2 grid, no banner — for a photo column.
+   *  On large screens the tiles stretch to fill the grid's height. */
+  grid?: boolean;
   className?: string;
 }
 
@@ -79,6 +86,7 @@ export const ProjectImageGallery = ({
   alt,
   badge,
   twoUp = false,
+  grid = false,
   className = "",
 }: Props) => {
   const padded: ProjectImageSlots = Array.from(
@@ -86,6 +94,24 @@ export const ProjectImageGallery = ({
     (_, i) => slots[i] ?? null,
   );
   const [cover, ...rest] = padded;
+
+  if (grid) {
+    return (
+      <div className={`grid grid-cols-2 gap-2 lg:grid-rows-2 ${className}`}>
+        {padded.map((url, i) => (
+          <GalleryTile
+            key={i}
+            url={url}
+            alt={alt}
+            index={i}
+            compact
+            fill
+            badge={i === 0 ? badge : undefined}
+          />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className={`space-y-2 ${className}`}>

@@ -296,6 +296,15 @@ export const ProjectStatus: {
 export type ProjectStatus = (typeof ProjectStatus)[keyof typeof ProjectStatus]
 
 
+export const PreparationStage: {
+  FOR_SURVEY: 'FOR_SURVEY',
+  FOR_PLANS: 'FOR_PLANS',
+  FOR_POW: 'FOR_POW'
+};
+
+export type PreparationStage = (typeof PreparationStage)[keyof typeof PreparationStage]
+
+
 export const DocumentType: {
   POW: 'POW',
   PURCHASE_REQUEST: 'PURCHASE_REQUEST'
@@ -429,6 +438,10 @@ export const NotificationPriority: typeof $Enums.NotificationPriority
 export type ProjectStatus = $Enums.ProjectStatus
 
 export const ProjectStatus: typeof $Enums.ProjectStatus
+
+export type PreparationStage = $Enums.PreparationStage
+
+export const PreparationStage: typeof $Enums.PreparationStage
 
 export type DocumentType = $Enums.DocumentType
 
@@ -6171,6 +6184,7 @@ export namespace Prisma {
     endLongitude: number | null
     description: string | null
     status: $Enums.ProjectStatus | null
+    preparationStage: $Enums.PreparationStage | null
     completionPercentage: number | null
     slippageTarget: number | null
     slippageActual: number | null
@@ -6224,6 +6238,7 @@ export namespace Prisma {
     endLongitude: number | null
     description: string | null
     status: $Enums.ProjectStatus | null
+    preparationStage: $Enums.PreparationStage | null
     completionPercentage: number | null
     slippageTarget: number | null
     slippageActual: number | null
@@ -6277,6 +6292,7 @@ export namespace Prisma {
     endLongitude: number
     description: number
     status: number
+    preparationStage: number
     completionPercentage: number
     slippageTarget: number
     slippageActual: number
@@ -6373,6 +6389,7 @@ export namespace Prisma {
     endLongitude?: true
     description?: true
     status?: true
+    preparationStage?: true
     completionPercentage?: true
     slippageTarget?: true
     slippageActual?: true
@@ -6426,6 +6443,7 @@ export namespace Prisma {
     endLongitude?: true
     description?: true
     status?: true
+    preparationStage?: true
     completionPercentage?: true
     slippageTarget?: true
     slippageActual?: true
@@ -6479,6 +6497,7 @@ export namespace Prisma {
     endLongitude?: true
     description?: true
     status?: true
+    preparationStage?: true
     completionPercentage?: true
     slippageTarget?: true
     slippageActual?: true
@@ -6620,6 +6639,7 @@ export namespace Prisma {
     endLongitude: number | null
     description: string | null
     status: $Enums.ProjectStatus
+    preparationStage: $Enums.PreparationStage | null
     completionPercentage: number
     slippageTarget: number | null
     slippageActual: number | null
@@ -6693,6 +6713,7 @@ export namespace Prisma {
     endLongitude?: boolean
     description?: boolean
     status?: boolean
+    preparationStage?: boolean
     completionPercentage?: boolean
     slippageTarget?: boolean
     slippageActual?: boolean
@@ -6758,6 +6779,7 @@ export namespace Prisma {
     endLongitude?: boolean
     description?: boolean
     status?: boolean
+    preparationStage?: boolean
     completionPercentage?: boolean
     slippageTarget?: boolean
     slippageActual?: boolean
@@ -6813,6 +6835,7 @@ export namespace Prisma {
     endLongitude?: boolean
     description?: boolean
     status?: boolean
+    preparationStage?: boolean
     completionPercentage?: boolean
     slippageTarget?: boolean
     slippageActual?: boolean
@@ -6868,6 +6891,7 @@ export namespace Prisma {
     endLongitude?: boolean
     description?: boolean
     status?: boolean
+    preparationStage?: boolean
     completionPercentage?: boolean
     slippageTarget?: boolean
     slippageActual?: boolean
@@ -6881,7 +6905,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectCode" | "title" | "subType" | "program" | "projectAccount" | "modeOfImplementation" | "locationImplementation" | "sourceOfFund" | "projectCost" | "contractCost" | "contractorName" | "projectEngineer" | "budgetYear" | "landbankNumber" | "supplementalBudgetYear" | "supplementalBudgetNumber" | "dateStarted" | "targetCompletionDate" | "duration" | "revisedCompletionDate" | "dateCompleted" | "daysSuspended" | "daysExtended" | "numFemale" | "numMale" | "numPersons" | "numManDays" | "district" | "cityMunicipality" | "barangay" | "purok" | "sitio" | "latitude" | "longitude" | "locationType" | "endLatitude" | "endLongitude" | "description" | "status" | "completionPercentage" | "slippageTarget" | "slippageActual" | "slippageRevision" | "imageUrl" | "imageUrls" | "documentUrl" | "documentName" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
+  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectCode" | "title" | "subType" | "program" | "projectAccount" | "modeOfImplementation" | "locationImplementation" | "sourceOfFund" | "projectCost" | "contractCost" | "contractorName" | "projectEngineer" | "budgetYear" | "landbankNumber" | "supplementalBudgetYear" | "supplementalBudgetNumber" | "dateStarted" | "targetCompletionDate" | "duration" | "revisedCompletionDate" | "dateCompleted" | "daysSuspended" | "daysExtended" | "numFemale" | "numMale" | "numPersons" | "numManDays" | "district" | "cityMunicipality" | "barangay" | "purok" | "sitio" | "latitude" | "longitude" | "locationType" | "endLatitude" | "endLongitude" | "description" | "status" | "preparationStage" | "completionPercentage" | "slippageTarget" | "slippageActual" | "slippageRevision" | "imageUrl" | "imageUrls" | "documentUrl" | "documentName" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
   export type ProjectInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
     activities?: boolean | Project$activitiesArgs<ExtArgs>
@@ -6957,6 +6981,7 @@ export namespace Prisma {
       endLongitude: number | null
       description: string | null
       status: $Enums.ProjectStatus
+      preparationStage: $Enums.PreparationStage | null
       completionPercentage: number
       slippageTarget: number | null
       slippageActual: number | null
@@ -7441,6 +7466,7 @@ export namespace Prisma {
     readonly endLongitude: FieldRef<"Project", 'Float'>
     readonly description: FieldRef<"Project", 'String'>
     readonly status: FieldRef<"Project", 'ProjectStatus'>
+    readonly preparationStage: FieldRef<"Project", 'PreparationStage'>
     readonly completionPercentage: FieldRef<"Project", 'Float'>
     readonly slippageTarget: FieldRef<"Project", 'Float'>
     readonly slippageActual: FieldRef<"Project", 'Float'>
@@ -26291,6 +26317,7 @@ export namespace Prisma {
     endLongitude: 'endLongitude',
     description: 'description',
     status: 'status',
+    preparationStage: 'preparationStage',
     completionPercentage: 'completionPercentage',
     slippageTarget: 'slippageTarget',
     slippageActual: 'slippageActual',
@@ -26746,6 +26773,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'PreparationStage'
+   */
+  export type EnumPreparationStageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PreparationStage'>
+    
+
+
+  /**
+   * Reference to a field of type 'PreparationStage[]'
+   */
+  export type ListEnumPreparationStageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PreparationStage[]'>
+    
+
+
+  /**
    * Reference to a field of type 'BoxLabel'
    */
   export type EnumBoxLabelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BoxLabel'>
@@ -27157,6 +27198,7 @@ export namespace Prisma {
     endLongitude?: FloatNullableFilter<"Project"> | number | null
     description?: StringNullableFilter<"Project"> | string | null
     status?: EnumProjectStatusFilter<"Project"> | $Enums.ProjectStatus
+    preparationStage?: EnumPreparationStageNullableFilter<"Project"> | $Enums.PreparationStage | null
     completionPercentage?: FloatFilter<"Project"> | number
     slippageTarget?: FloatNullableFilter<"Project"> | number | null
     slippageActual?: FloatNullableFilter<"Project"> | number | null
@@ -27221,6 +27263,7 @@ export namespace Prisma {
     endLongitude?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
     status?: SortOrder
+    preparationStage?: SortOrderInput | SortOrder
     completionPercentage?: SortOrder
     slippageTarget?: SortOrderInput | SortOrder
     slippageActual?: SortOrderInput | SortOrder
@@ -27288,6 +27331,7 @@ export namespace Prisma {
     endLongitude?: FloatNullableFilter<"Project"> | number | null
     description?: StringNullableFilter<"Project"> | string | null
     status?: EnumProjectStatusFilter<"Project"> | $Enums.ProjectStatus
+    preparationStage?: EnumPreparationStageNullableFilter<"Project"> | $Enums.PreparationStage | null
     completionPercentage?: FloatFilter<"Project"> | number
     slippageTarget?: FloatNullableFilter<"Project"> | number | null
     slippageActual?: FloatNullableFilter<"Project"> | number | null
@@ -27352,6 +27396,7 @@ export namespace Prisma {
     endLongitude?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
     status?: SortOrder
+    preparationStage?: SortOrderInput | SortOrder
     completionPercentage?: SortOrder
     slippageTarget?: SortOrderInput | SortOrder
     slippageActual?: SortOrderInput | SortOrder
@@ -27414,6 +27459,7 @@ export namespace Prisma {
     endLongitude?: FloatNullableWithAggregatesFilter<"Project"> | number | null
     description?: StringNullableWithAggregatesFilter<"Project"> | string | null
     status?: EnumProjectStatusWithAggregatesFilter<"Project"> | $Enums.ProjectStatus
+    preparationStage?: EnumPreparationStageNullableWithAggregatesFilter<"Project"> | $Enums.PreparationStage | null
     completionPercentage?: FloatWithAggregatesFilter<"Project"> | number
     slippageTarget?: FloatNullableWithAggregatesFilter<"Project"> | number | null
     slippageActual?: FloatNullableWithAggregatesFilter<"Project"> | number | null
@@ -28954,6 +29000,7 @@ export namespace Prisma {
     endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
+    preparationStage?: $Enums.PreparationStage | null
     completionPercentage?: number
     slippageTarget?: number | null
     slippageActual?: number | null
@@ -29017,6 +29064,7 @@ export namespace Prisma {
     endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
+    preparationStage?: $Enums.PreparationStage | null
     completionPercentage?: number
     slippageTarget?: number | null
     slippageActual?: number | null
@@ -29080,6 +29128,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -29143,6 +29192,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -29206,6 +29256,7 @@ export namespace Prisma {
     endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
+    preparationStage?: $Enums.PreparationStage | null
     completionPercentage?: number
     slippageTarget?: number | null
     slippageActual?: number | null
@@ -29260,6 +29311,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -29313,6 +29365,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -31074,6 +31127,13 @@ export namespace Prisma {
     not?: NestedEnumProjectStatusFilter<$PrismaModel> | $Enums.ProjectStatus
   }
 
+  export type EnumPreparationStageNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.PreparationStage | EnumPreparationStageFieldRefInput<$PrismaModel> | null
+    in?: $Enums.PreparationStage[] | ListEnumPreparationStageFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.PreparationStage[] | ListEnumPreparationStageFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumPreparationStageNullableFilter<$PrismaModel> | $Enums.PreparationStage | null
+  }
+
   export type StringNullableListFilter<$PrismaModel = never> = {
     equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     has?: string | StringFieldRefInput<$PrismaModel> | null
@@ -31123,6 +31183,7 @@ export namespace Prisma {
     endLongitude?: SortOrder
     description?: SortOrder
     status?: SortOrder
+    preparationStage?: SortOrder
     completionPercentage?: SortOrder
     slippageTarget?: SortOrder
     slippageActual?: SortOrder
@@ -31197,6 +31258,7 @@ export namespace Prisma {
     endLongitude?: SortOrder
     description?: SortOrder
     status?: SortOrder
+    preparationStage?: SortOrder
     completionPercentage?: SortOrder
     slippageTarget?: SortOrder
     slippageActual?: SortOrder
@@ -31250,6 +31312,7 @@ export namespace Prisma {
     endLongitude?: SortOrder
     description?: SortOrder
     status?: SortOrder
+    preparationStage?: SortOrder
     completionPercentage?: SortOrder
     slippageTarget?: SortOrder
     slippageActual?: SortOrder
@@ -31398,6 +31461,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumProjectStatusFilter<$PrismaModel>
     _max?: NestedEnumProjectStatusFilter<$PrismaModel>
+  }
+
+  export type EnumPreparationStageNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PreparationStage | EnumPreparationStageFieldRefInput<$PrismaModel> | null
+    in?: $Enums.PreparationStage[] | ListEnumPreparationStageFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.PreparationStage[] | ListEnumPreparationStageFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumPreparationStageNullableWithAggregatesFilter<$PrismaModel> | $Enums.PreparationStage | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumPreparationStageNullableFilter<$PrismaModel>
+    _max?: NestedEnumPreparationStageNullableFilter<$PrismaModel>
   }
 
   export type EnumBoxLabelFilter<$PrismaModel = never> = {
@@ -33334,6 +33407,10 @@ export namespace Prisma {
     set?: $Enums.ProjectStatus
   }
 
+  export type NullableEnumPreparationStageFieldUpdateOperationsInput = {
+    set?: $Enums.PreparationStage | null
+  }
+
   export type ProjectUpdateimageUrlsInput = {
     set?: string[]
     push?: string | string[]
@@ -34457,6 +34534,13 @@ export namespace Prisma {
     not?: NestedEnumProjectStatusFilter<$PrismaModel> | $Enums.ProjectStatus
   }
 
+  export type NestedEnumPreparationStageNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.PreparationStage | EnumPreparationStageFieldRefInput<$PrismaModel> | null
+    in?: $Enums.PreparationStage[] | ListEnumPreparationStageFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.PreparationStage[] | ListEnumPreparationStageFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumPreparationStageNullableFilter<$PrismaModel> | $Enums.PreparationStage | null
+  }
+
   export type NestedEnumProjectAccountNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.ProjectAccount | EnumProjectAccountFieldRefInput<$PrismaModel> | null
     in?: $Enums.ProjectAccount[] | ListEnumProjectAccountFieldRefInput<$PrismaModel> | null
@@ -34573,6 +34657,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumProjectStatusFilter<$PrismaModel>
     _max?: NestedEnumProjectStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumPreparationStageNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PreparationStage | EnumPreparationStageFieldRefInput<$PrismaModel> | null
+    in?: $Enums.PreparationStage[] | ListEnumPreparationStageFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.PreparationStage[] | ListEnumPreparationStageFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumPreparationStageNullableWithAggregatesFilter<$PrismaModel> | $Enums.PreparationStage | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumPreparationStageNullableFilter<$PrismaModel>
+    _max?: NestedEnumPreparationStageNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumBoxLabelFilter<$PrismaModel = never> = {
@@ -34838,6 +34932,7 @@ export namespace Prisma {
     endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
+    preparationStage?: $Enums.PreparationStage | null
     completionPercentage?: number
     slippageTarget?: number | null
     slippageActual?: number | null
@@ -34900,6 +34995,7 @@ export namespace Prisma {
     endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
+    preparationStage?: $Enums.PreparationStage | null
     completionPercentage?: number
     slippageTarget?: number | null
     slippageActual?: number | null
@@ -35596,6 +35692,7 @@ export namespace Prisma {
     endLongitude?: FloatNullableFilter<"Project"> | number | null
     description?: StringNullableFilter<"Project"> | string | null
     status?: EnumProjectStatusFilter<"Project"> | $Enums.ProjectStatus
+    preparationStage?: EnumPreparationStageNullableFilter<"Project"> | $Enums.PreparationStage | null
     completionPercentage?: FloatFilter<"Project"> | number
     slippageTarget?: FloatNullableFilter<"Project"> | number | null
     slippageActual?: FloatNullableFilter<"Project"> | number | null
@@ -36926,6 +37023,7 @@ export namespace Prisma {
     endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
+    preparationStage?: $Enums.PreparationStage | null
     completionPercentage?: number
     slippageTarget?: number | null
     slippageActual?: number | null
@@ -36988,6 +37086,7 @@ export namespace Prisma {
     endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
+    preparationStage?: $Enums.PreparationStage | null
     completionPercentage?: number
     slippageTarget?: number | null
     slippageActual?: number | null
@@ -37147,6 +37246,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -37209,6 +37309,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -37358,6 +37459,7 @@ export namespace Prisma {
     endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
+    preparationStage?: $Enums.PreparationStage | null
     completionPercentage?: number
     slippageTarget?: number | null
     slippageActual?: number | null
@@ -37420,6 +37522,7 @@ export namespace Prisma {
     endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
+    preparationStage?: $Enums.PreparationStage | null
     completionPercentage?: number
     slippageTarget?: number | null
     slippageActual?: number | null
@@ -37579,6 +37682,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -37641,6 +37745,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -37790,6 +37895,7 @@ export namespace Prisma {
     endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
+    preparationStage?: $Enums.PreparationStage | null
     completionPercentage?: number
     slippageTarget?: number | null
     slippageActual?: number | null
@@ -37852,6 +37958,7 @@ export namespace Prisma {
     endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
+    preparationStage?: $Enums.PreparationStage | null
     completionPercentage?: number
     slippageTarget?: number | null
     slippageActual?: number | null
@@ -38011,6 +38118,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -38073,6 +38181,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -38222,6 +38331,7 @@ export namespace Prisma {
     endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
+    preparationStage?: $Enums.PreparationStage | null
     completionPercentage?: number
     slippageTarget?: number | null
     slippageActual?: number | null
@@ -38284,6 +38394,7 @@ export namespace Prisma {
     endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
+    preparationStage?: $Enums.PreparationStage | null
     completionPercentage?: number
     slippageTarget?: number | null
     slippageActual?: number | null
@@ -38443,6 +38554,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -38505,6 +38617,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -39158,6 +39271,7 @@ export namespace Prisma {
     endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
+    preparationStage?: $Enums.PreparationStage | null
     completionPercentage?: number
     slippageTarget?: number | null
     slippageActual?: number | null
@@ -39220,6 +39334,7 @@ export namespace Prisma {
     endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
+    preparationStage?: $Enums.PreparationStage | null
     completionPercentage?: number
     slippageTarget?: number | null
     slippageActual?: number | null
@@ -39379,6 +39494,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -39441,6 +39557,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -39590,6 +39707,7 @@ export namespace Prisma {
     endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
+    preparationStage?: $Enums.PreparationStage | null
     completionPercentage?: number
     slippageTarget?: number | null
     slippageActual?: number | null
@@ -39652,6 +39770,7 @@ export namespace Prisma {
     endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
+    preparationStage?: $Enums.PreparationStage | null
     completionPercentage?: number
     slippageTarget?: number | null
     slippageActual?: number | null
@@ -39811,6 +39930,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -39873,6 +39993,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -40022,6 +40143,7 @@ export namespace Prisma {
     endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
+    preparationStage?: $Enums.PreparationStage | null
     completionPercentage?: number
     slippageTarget?: number | null
     slippageActual?: number | null
@@ -40084,6 +40206,7 @@ export namespace Prisma {
     endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
+    preparationStage?: $Enums.PreparationStage | null
     completionPercentage?: number
     slippageTarget?: number | null
     slippageActual?: number | null
@@ -40352,6 +40475,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -40414,6 +40538,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -41175,6 +41300,7 @@ export namespace Prisma {
     endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
+    preparationStage?: $Enums.PreparationStage | null
     completionPercentage?: number
     slippageTarget?: number | null
     slippageActual?: number | null
@@ -41237,6 +41363,7 @@ export namespace Prisma {
     endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
+    preparationStage?: $Enums.PreparationStage | null
     completionPercentage?: number
     slippageTarget?: number | null
     slippageActual?: number | null
@@ -41434,6 +41561,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -41496,6 +41624,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -41661,6 +41790,7 @@ export namespace Prisma {
     endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
+    preparationStage?: $Enums.PreparationStage | null
     completionPercentage?: number
     slippageTarget?: number | null
     slippageActual?: number | null
@@ -41723,6 +41853,7 @@ export namespace Prisma {
     endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
+    preparationStage?: $Enums.PreparationStage | null
     completionPercentage?: number
     slippageTarget?: number | null
     slippageActual?: number | null
@@ -42073,6 +42204,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -42135,6 +42267,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -42668,6 +42801,7 @@ export namespace Prisma {
     endLongitude?: number | null
     description?: string | null
     status?: $Enums.ProjectStatus
+    preparationStage?: $Enums.PreparationStage | null
     completionPercentage?: number
     slippageTarget?: number | null
     slippageActual?: number | null
@@ -42936,6 +43070,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -42998,6 +43133,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -43060,6 +43196,7 @@ export namespace Prisma {
     endLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    preparationStage?: NullableEnumPreparationStageFieldUpdateOperationsInput | $Enums.PreparationStage | null
     completionPercentage?: FloatFieldUpdateOperationsInput | number
     slippageTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     slippageActual?: NullableFloatFieldUpdateOperationsInput | number | null

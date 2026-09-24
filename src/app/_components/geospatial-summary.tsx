@@ -31,6 +31,8 @@ type Props = {
   labelClassName?: string;
   valueClassName?: string;
   mapClassName?: string;
+  /** False when the host page places <GeospatialMap> itself (e.g. beside the fields). */
+  showMap?: boolean;
 };
 
 export function GeospatialSummary({
@@ -39,9 +41,8 @@ export function GeospatialSummary({
   labelClassName = "text-[11px] font-semibold uppercase tracking-wider text-gray-400",
   valueClassName = "mt-1 w-full text-sm font-medium text-gray-800",
   mapClassName = "h-52",
+  showMap = true,
 }: Props) {
-  const hasPin = latitude !== null && longitude !== null;
-
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
@@ -66,39 +67,59 @@ export function GeospatialSummary({
         </div>
       </div>
 
-      <div
-        className={`relative overflow-hidden rounded-sm border border-gray-200 bg-gray-50 ${mapClassName}`}
-      >
-        {hasPin ? (
-          <>
-            <iframe
-              src={osmEmbedSrc(latitude, longitude)}
-              title="Project location map"
-              loading="lazy"
-              className="h-full w-full border-0"
-            />
-            <a
-              href={osmFullMapHref(latitude, longitude)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="absolute right-3 bottom-3 flex items-center gap-1.5 rounded-sm bg-white/95 px-3 py-2 text-[11px] font-bold uppercase tracking-widest text-gray-700 shadow-md transition hover:bg-white hover:text-blue-600"
-            >
-              <span className="text-blue-500">{ExternalLinkIcon}</span>
-              Full View
-            </a>
-          </>
-        ) : (
-          <div className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center text-gray-400">
-            {MapPlaceholderIcon}
-            <p className="text-[11px] font-semibold uppercase tracking-widest">
-              No Pin Recorded
-            </p>
-            <p className="text-xs">
-              Coordinates have not been set for this project.
-            </p>
-          </div>
-        )}
-      </div>
+      {showMap && (
+        <GeospatialMap latitude={latitude} longitude={longitude} className={mapClassName} />
+      )}
+    </div>
+  );
+}
+
+// The static map on its own, for pages that lay it out separately from the
+// coordinate readouts.
+export function GeospatialMap({
+  latitude,
+  longitude,
+  className = "h-52",
+}: {
+  latitude: number | null;
+  longitude: number | null;
+  className?: string;
+}) {
+  const hasPin = latitude !== null && longitude !== null;
+
+  return (
+    <div
+      className={`relative overflow-hidden rounded-sm border border-gray-200 bg-gray-50 ${className}`}
+    >
+      {hasPin ? (
+        <>
+          <iframe
+            src={osmEmbedSrc(latitude, longitude)}
+            title="Project location map"
+            loading="lazy"
+            className="h-full w-full border-0"
+          />
+          <a
+            href={osmFullMapHref(latitude, longitude)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="absolute right-3 bottom-3 flex items-center gap-1.5 rounded-sm bg-white/95 px-3 py-2 text-[11px] font-bold uppercase tracking-widest text-gray-700 shadow-md transition hover:bg-white hover:text-blue-600"
+          >
+            <span className="text-blue-500">{ExternalLinkIcon}</span>
+            Full View
+          </a>
+        </>
+      ) : (
+        <div className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center text-gray-400">
+          {MapPlaceholderIcon}
+          <p className="text-[11px] font-semibold uppercase tracking-widest">
+            No Pin Recorded
+          </p>
+          <p className="text-xs">
+            Coordinates have not been set for this project.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

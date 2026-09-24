@@ -22,6 +22,8 @@ import {
 import { projectLabel } from "~/lib/funding-options";
 import { MODE_LABELS } from "~/app/admin/_components/admin-constant/constant";
 import { HardHat } from "lucide-react";
+import { PreparationStageBadge } from "~/app/_components/preparation-stage-badge";
+import { preparationStageLabel } from "~/lib/preparation-stage";
 
 const STATUS_LABELS: Record<string, { label: string; className: string }> = {
   NOT_YET_STARTED: {
@@ -228,6 +230,8 @@ const ProjectActions = ({
 const ProjectsList = () => {
   const searchParams = useSearchParams();
   const statusFilter = searchParams.get("status");
+  // Set by the dashboard's Preparation Stage tiles (?stage=FOR_SURVEY etc.).
+  const stageFilter = searchParams.get("stage");
   const filterToday = searchParams.get("filter") === "today";
 
   const [search, setSearch] = useState("");
@@ -284,6 +288,7 @@ const ProjectsList = () => {
         return false;
     }
     if (statusFilter && p.status !== statusFilter) return false;
+    if (stageFilter && p.preparationStage !== stageFilter) return false;
     if (statusLocal && p.status !== statusLocal) return false;
     if (modeFilter && p.modeOfImplementation !== modeFilter) return false;
     if (districtFilter && p.locationImplementation !== districtFilter)
@@ -376,7 +381,9 @@ const ProjectsList = () => {
       ? STATUS_TITLES.today
       : statusFilter
         ? (STATUS_TITLES[statusFilter] ?? "Projects")
-        : "All Projects";
+        : stageFilter
+          ? `Projects ${preparationStageLabel(stageFilter) ?? ""}`.trim()
+          : "All Projects";
 
   const selectClass =
     "w-full rounded-sms border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20";
@@ -446,7 +453,7 @@ const ProjectsList = () => {
                 className="w-full rounded-sm border border-gray-300 bg-gray-50 py-2.5 pl-9 pr-3 text-sm text-gray-800 shadow-sm placeholder:text-gray-500 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
-            {(statusFilter ?? filterToday) && (
+            {(statusFilter ?? stageFilter ?? filterToday) && (
               <Link
                 href="/admin/projects"
                 className="grow rounded-sm border border-gray-200 px-4 py-2.5 text-center text-sm font-medium text-gray-600 transition hover:bg-gray-50 sm:grow-0"
@@ -722,7 +729,10 @@ const ProjectsList = () => {
                           {formatPeso(p.projectCost)}
                         </p>
                       </div>
-                      <StatusBadge status={p.status} />
+                      <div className="flex shrink-0 flex-col items-end gap-1">
+                        <StatusBadge status={p.status} />
+                        <PreparationStageBadge stage={p.preparationStage} />
+                      </div>
                     </div>
                     <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-3">
                       <div>
@@ -798,6 +808,7 @@ const ProjectsList = () => {
                       <th className="px-4 py-3 font-medium">Location</th>
                       <th className="px-4 py-3 font-medium">Budget Year</th>
                       <th className="px-4 py-3 font-medium">Status</th>
+                      <th className="px-4 py-3 font-medium">Preparation Stage</th>
                       <th className="px-4 py-3 font-medium">Involved Users</th>
                       <th className="px-4 py-3 font-medium">Progress</th>
                       <th className="px-4 py-3 font-medium">Actions</th>
@@ -844,6 +855,13 @@ const ProjectsList = () => {
                         </td>
                         <td className="px-4 py-3">
                           <StatusBadge status={p.status} />
+                        </td>
+                        <td className="px-4 py-3">
+                          {p.preparationStage ? (
+                            <PreparationStageBadge stage={p.preparationStage} />
+                          ) : (
+                            <span className="text-gray-400">—</span>
+                          )}
                         </td>
                         <td className="px-4 py-3">
                           <ContributorAvatars project={p} />

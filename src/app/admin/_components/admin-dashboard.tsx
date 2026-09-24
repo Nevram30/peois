@@ -13,6 +13,9 @@ import { DistrictProgressSection } from "./admin-charts/district-progress-sectio
 import { LocationBreakdownSection } from "./admin-charts/location-breakdown-section";
 import { SlippageHistorySection } from "./admin-charts/slippage-history-section";
 import { YearFilter } from "~/helper/year.filter";
+import { PreparationStageSection } from "./admin-cards/preparation-stage-section";
+import { PreparationStageTable } from "./admin-cards/preparation-stage-table";
+import { PreparationStageBadge } from "~/app/_components/preparation-stage-badge";
 
 // ── Stat Tile ──────────────────────────────────────────────────
 // Status name with its icon at the top right, the count below on the left.
@@ -55,6 +58,7 @@ const PanelHeading = ({ subtitle, year }: { subtitle: string; year: string }) =>
 // ── Dashboard tabs ─────────────────────────────────────────────
 const DASHBOARD_TABS = [
     { id: "status", label: "PROJECT STATUS OVERVIEW" },
+    { id: "stage", label: "PREPARATION STAGE OVERVIEW" },
     { id: "financial", label: "FINANCIAL ALLOCATION OVERVIEW" },
     { id: "location", label: "PROGRESS & STATUS PER LOCATION OVERVIEW" },
     { id: "slippage", label: "PROJECTS SLIPPAGE HISTORY OVERVIEW" },
@@ -90,6 +94,7 @@ export const AdminDashboardContent = () => {
     const { data: projectAllocationData, isLoading: allocationLoading } = api.project.getFinancialOverview.useQuery(yearInput);
     const { data: districtData, isLoading: districtLoading } = api.project.getDistrictData.useQuery(yearInput);
     const { data: remainingBalanceData, isLoading: remainingLoading } = api.project.getRemainingBalance.useQuery(yearInput);
+    const { data: stageData, isLoading: stageLoading } = api.project.getPreparationStageStats.useQuery(yearInput);
 
     const TotalAllocation = projectAllocationData
         ? Object.values(projectAllocationData.bySource).reduce((s, v) => s + v, 0)
@@ -251,6 +256,12 @@ export const AdminDashboardContent = () => {
             >
                 <PanelHeading subtitle="Project Status Information" year={dashboardYear} />
 
+                {/* Section label, paired with the "Preparation Stage" one below so
+                    the two blocks read as separate groups. */}
+                <h2 className="mb-2 text-[11px] font-extrabold uppercase tracking-widest text-[#1e3a8a]">
+                    Project Status
+                </h2>
+
                 {/* Stat cards + district project status (beside for ENGR DIST divisions, below otherwise).
                     While the scope query is in flight we can't yet know which layout
                     applies, so show a neutral full-width skeleton to avoid a layout jump. */}
@@ -305,6 +316,27 @@ export const AdminDashboardContent = () => {
                     toggle; engineering-district admins get their own district only.
                     Scoped by the same YEAR filter as the cards above. */}
                 <DistrictProgressSection budgetYear={dashboardYear} />
+            </div>
+
+            {/* Preparation stage (For Survey / For Plans / For POW) has its own
+                tab: it is tracked apart from status. Same YEAR filter and
+                district layout as the status tab. */}
+            <div
+                role="tabpanel"
+                id="dashboard-panel-stage"
+                aria-labelledby="dashboard-tab-stage"
+                hidden={activeTab !== "stage"}
+            >
+                <PanelHeading subtitle="Surveying, preparation of plans, and POW preparation" year={dashboardYear} />
+                {!scopeLoading && (
+                    <PreparationStageSection
+                        data={stageData}
+                        isLoading={stageLoading}
+                        budgetYear={dashboardYear}
+                        districtOnSide={districtOnSide}
+                    />
+                )}
+                <PreparationStageTable projects={projects} isLoading={isLoading} budgetYear={dashboardYear} />
             </div>
 
             <div
@@ -560,6 +592,9 @@ export const AdminDashboardContent = () => {
                                         Status
                                     </th>
                                     <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
+                                        Preparation Stage
+                                    </th>
+                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
                                         Progress
                                     </th>
                                     <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
@@ -618,6 +653,13 @@ export const AdminDashboardContent = () => {
                                                     />
                                                     {statusCfg.label}
                                                 </span>
+                                            </td>
+                                            <td className="px-4 py-4">
+                                                {p.preparationStage ? (
+                                                    <PreparationStageBadge stage={p.preparationStage} />
+                                                ) : (
+                                                    <span className="text-gray-400">—</span>
+                                                )}
                                             </td>
                                             <td className="px-4 py-4">
                                                 <div className="flex items-center gap-2">

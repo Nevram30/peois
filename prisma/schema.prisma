@@ -159,6 +159,15 @@ enum ProjectStatus {
   OTHERS
 }
 
+// Where a project is in its preparation work. Independent of ProjectStatus and
+// set by the system: a new project starts at FOR_SURVEY, uploading a project
+// file moves it to FOR_PLANS, and recording a disbursement moves it to FOR_POW.
+enum PreparationStage {
+  FOR_SURVEY // Surveying: fieldwork, layout, and data collection
+  FOR_PLANS // Preparation of Plans: drafting architectural/structural blueprints
+  FOR_POW // POW Preparation: cost estimation, materials breakdown, and budgeting
+}
+
 enum DocumentType {
   POW
   PURCHASE_REQUEST
@@ -321,6 +330,8 @@ model Project {
   endLongitude             Float?
   description              String?
   status                   ProjectStatus        @default(NOT_YET_STARTED)
+  // Null on projects that predate preparation stages; new ones start at FOR_SURVEY.
+  preparationStage         PreparationStage?
   // Physical accomplishment, recorded to the decimal (e.g. 45.75%).
   completionPercentage     Float                @default(0)
   // Slippage tracking: the planned vs. actual physical accomplishment at the

@@ -51,6 +51,7 @@ import { ProjectImageUploader } from "~/app/_components/project-image-uploader";
 import { GeospatialFields } from "~/app/_components/geospatial-fields";
 import { parseCoord, type LocationTypeValue } from "~/lib/geo";
 import { handleAmountChange, parseAmount, formatAmountValue } from "~/lib/currency";
+import { PREPARATION_STAGE_DESCRIPTION, PREPARATION_STAGE_LABEL } from "~/lib/preparation-stage";
 
 // ─── Shared styles ────────────────────────────────────────────────────────
 const inputClass =
@@ -1031,6 +1032,17 @@ export const AddProjectForm = () => {
                       <option key={s} value={s}>{PROJECT_STATUS_LABEL[s]}</option>
                     ))}
                   </SelectField>
+                </div>
+                {/* Set by the system, not picked: every new project starts in
+                    Surveying; uploading documents and recording a disbursement
+                    advance it later. */}
+                <div>
+                  <label className={cardLabelClass}>Preparation Stage</label>
+                  <div className={filledInputClass} title={PREPARATION_STAGE_DESCRIPTION.FOR_SURVEY}>
+                    <span className="block truncate text-gray-900">
+                      {PREPARATION_STAGE_LABEL.FOR_SURVEY}
+                    </span>
+                  </div>
                 </div>
 
                 <div>
