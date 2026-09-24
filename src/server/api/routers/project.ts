@@ -240,6 +240,9 @@ export const projectRouter = createTRPCRouter({
         imageUrls: z.array(z.string()).max(PROJECT_IMAGE_SLOTS).optional(),
         documentUrl: z.string().optional(),
         documentName: z.string().optional(),
+        // Manual override from the edit form; sent only when the admin changed
+        // it. Not nullable: a stage, once set, can be changed but not cleared.
+        preparationStage: z.enum(PREPARATION_STAGE_VALUES).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -254,13 +257,37 @@ export const projectRouter = createTRPCRouter({
           : 0;
       const numPersons = data.numFemale + data.numMale;
 
-      return ctx.db.project.update({
-        where: { id },
-        data: {
-          ...data,
-          duration,
-          numPersons,
-        },
+      return ctx.db.$transaction(async (tx) => {
+        const before = data.preparationStage
+          ? await tx.project.findUnique({ where: { id }, select: { preparationStage: true } })
+          : null;
+
+        const project = await tx.project.update({
+          where: { id },
+          data: {
+            ...data,
+            duration,
+            numPersons,
+          },
+        });
+
+        // A manual stage change is logged like the automatic ones. The
+        // automatic rules read the stored stage when they fire, so they carry
+        // on from whatever was set here.
+        if (data.preparationStage && before && before.preparationStage !== data.preparationStage) {
+          const was = before.preparationStage
+            ? PREPARATION_STAGE_LABEL[before.preparationStage]
+            : "not set";
+          await tx.projectActivity.create({
+            data: {
+              projectId: id,
+              description: `Preparation stage manually set to ${PREPARATION_STAGE_LABEL[data.preparationStage]} (was ${was}).`,
+              createdById: ctx.session.user.id,
+            },
+          });
+        }
+
+        return project;
       });
     }),
 
