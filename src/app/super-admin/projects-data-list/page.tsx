@@ -112,6 +112,7 @@ const SUB_TYPE_COLORS: Record<ProjectSubTypeValue, string> = {
   CONSTRUCTION_SCHOOL_BUILDINGS_FACILITIES: "#F43F5E",
   REPAIR_MAINT_BUILDINGS_STRUCTURES: "#84CC16",
   OTHER_MAINT_OPERATING_EXPENSES: "#64748B",
+  LOAN: "#06B6D4",
 };
 
 function formatPeso(value: number): string {

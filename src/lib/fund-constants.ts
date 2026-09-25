@@ -65,6 +65,7 @@ export const PROJECT_SUB_TYPE_VALUES = [
   "CONSTRUCTION_SCHOOL_BUILDINGS_FACILITIES",
   "REPAIR_MAINT_BUILDINGS_STRUCTURES",
   "OTHER_MAINT_OPERATING_EXPENSES",
+  "LOAN",
 ] as const;
 
 export type ProjectSubTypeValue = (typeof PROJECT_SUB_TYPE_VALUES)[number];
@@ -137,6 +138,7 @@ export const PROJECT_SUB_TYPE_LABEL: Record<ProjectSubTypeValue, string> = {
   GOVERNMENT_BUILDINGS: "Government Buildings",
   ELECTRIFICATION: "Electrification",
   RESPONSE_CAMP_MGMT: "Response Camp Management",
+  LOAN: "Loan",
 };
 
 export const SOURCE_TO_SUB_TYPES: Record<SourceOfFundValue, ProjectSubTypeValue[]> = {
@@ -407,6 +409,7 @@ const DEV_AND_GENERAL_FUND_PROJECTS: ProjectSubTypeValue[] = [
   "STIMULUS_BARANGAYS_DISTRICT_II",
   "CONFLICT_INSURGENCY_ANTI_TERRORISM",
   "ANTI_CRIMINALITY_LAWLESSNESS",
+  "LOAN",
 ];
 
 const CALAMITY_FUND_PROJECTS: ProjectSubTypeValue[] = [
@@ -415,6 +418,7 @@ const CALAMITY_FUND_PROJECTS: ProjectSubTypeValue[] = [
   "DRR_CCA_PROMOTION_AWARENESS_ADVOCACY",
   "BUILDING_BACK_BETTER",
   "QUICK_RESPONSE_FUND",
+  "LOAN",
 ];
 
 const SEF_PROJECTS: ProjectSubTypeValue[] = [
@@ -422,11 +426,13 @@ const SEF_PROJECTS: ProjectSubTypeValue[] = [
   "CONST_IMPVT_COMPL_SCHOOL_BLDGS",
   "CONSTRUCTION_SCHOOL_BUILDINGS",
   "CONSTRUCTION_SCHOOL_BUILDINGS_FACILITIES",
+  "LOAN",
 ];
 
 const MOOE_PROJECTS: ProjectSubTypeValue[] = [
   "REPAIR_MAINT_BUILDINGS_STRUCTURES",
   "OTHER_MAINT_OPERATING_EXPENSES",
+  "LOAN",
 ];
 
 export const PROGRAM_TO_PROJECTS: Record<FundingProgramValue, ProjectSubTypeValue[]> = {
