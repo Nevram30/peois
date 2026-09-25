@@ -138,7 +138,7 @@ export const PROJECT_SUB_TYPE_LABEL: Record<ProjectSubTypeValue, string> = {
   GOVERNMENT_BUILDINGS: "Government Buildings",
   ELECTRIFICATION: "Electrification",
   RESPONSE_CAMP_MGMT: "Response Camp Management",
-  LOAN: "Loan",
+  LOAN: "SB#3 2026 Loan",
 };
 
 export const SOURCE_TO_SUB_TYPES: Record<SourceOfFundValue, ProjectSubTypeValue[]> = {
