@@ -14,7 +14,7 @@ import {
   SOURCE_TO_SUB_TYPES,
   FUNDING_PROGRAM_LABEL,
   SOURCE_TO_PROGRAMS,
-  PROGRAM_TO_PROJECTS,
+  builtInProjectsFor,
   type SourceOfFundValue,
   type ProjectSubTypeValue,
   type ProjectStatusValue,
@@ -210,7 +210,7 @@ export const GenerateReportModal = ({
     : [];
 
   const availableSubTypes = filterProgram
-    ? PROGRAM_TO_PROJECTS[filterProgram as FundingProgramValue] ?? []
+    ? builtInProjectsFor(filterProgram, filterSource)
     : filterSource
       ? SOURCE_TO_SUB_TYPES[filterSource as SourceOfFundValue] ?? []
       : [];

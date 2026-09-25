@@ -1,6 +1,6 @@
 import {
+  builtInProjectsFor,
   FUNDING_PROGRAM_LABEL,
-  PROGRAM_TO_PROJECTS,
   PROJECT_SUB_TYPE_LABEL,
   SOURCE_TO_PROGRAMS,
   type FundingProgramValue,
@@ -47,21 +47,30 @@ export function programOptions(
 
 /**
  * Projects for a Program. `program` is a built-in key or a custom program name;
- * either way custom projects are matched on that same string.
+ * either way custom projects are matched on that same string. N/A instead
+ * offers every Project of the Source of Fund's other Programs.
  */
 export function projectOptions(
   program: string,
   custom: CustomFundingOptions | undefined,
+  sourceOfFund = "",
 ): SelectOption[] {
   if (!program) return [];
-  const builtIn = (PROGRAM_TO_PROJECTS[program as FundingProgramValue] ?? []).map((k) => ({
+  const builtIn = builtInProjectsFor(program, sourceOfFund).map((k) => ({
     value: k,
     label: PROJECT_SUB_TYPE_LABEL[k],
     custom: false,
   }));
-  const added = (custom ?? EMPTY).projects
-    .filter((p) => p.program === program)
-    .map((p) => ({ value: p.name, label: p.name, custom: true }));
+  const programs = new Set([program]);
+  if (program === "NOT_APPLICABLE" && sourceOfFund) {
+    for (const p of programOptions(sourceOfFund as SourceOfFundValue, custom)) {
+      programs.add(p.value);
+    }
+  }
+  const addedNames = new Set(
+    (custom ?? EMPTY).projects.filter((p) => programs.has(p.program)).map((p) => p.name),
+  );
+  const added = [...addedNames].map((name) => ({ value: name, label: name, custom: true }));
   return [...builtIn, ...added];
 }
 

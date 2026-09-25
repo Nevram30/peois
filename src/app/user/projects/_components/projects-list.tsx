@@ -13,9 +13,8 @@ import {
   SOURCE_TO_SUB_TYPES,
   FUNDING_PROGRAM_LABEL,
   SOURCE_TO_PROGRAMS,
-  PROGRAM_TO_PROJECTS,
+  builtInProjectsFor,
   type SourceOfFundValue,
-  type FundingProgramValue,
 } from "~/lib/fund-constants";
 import { projectLabel } from "~/lib/funding-options";
 import { PreparationStageBadge } from "~/app/_components/preparation-stage-badge";
@@ -315,7 +314,7 @@ export const UserProjectsList = () => {
     : [];
 
   const availableSubTypes = programFilter
-    ? PROGRAM_TO_PROJECTS[programFilter as FundingProgramValue] ?? []
+    ? builtInProjectsFor(programFilter, sourceOfFundFilter)
     : sourceOfFundFilter
       ? SOURCE_TO_SUB_TYPES[sourceOfFundFilter as SourceOfFundValue] ?? []
       : [];

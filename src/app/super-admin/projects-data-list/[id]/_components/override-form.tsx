@@ -560,7 +560,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
     programLabel,
   );
   const availableProjects = withSelected(
-    projectOptions(form.program, customOptions),
+    projectOptions(form.program, customOptions, form.sourceOfFund),
     form.subType,
     projectLabel,
   );
@@ -571,7 +571,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
 
   // Same cascade for the Revised Contract Cost record row.
   const voPrograms = programOptions(newVoSource as SourceOfFundValue | "", customOptions);
-  const voProjects = projectOptions(newVoProgram, customOptions);
+  const voProjects = projectOptions(newVoProgram, customOptions, newVoSource);
 
   const isAddingOption =
     addProgram.isPending || addProjectOption.isPending || addLandbankNumber.isPending;
@@ -938,7 +938,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                     const next = e.target.value;
                     set("program", next);
                     // Drop a Project that this Program does not offer.
-                    const allowed = projectOptions(next, customOptions);
+                    const allowed = projectOptions(next, customOptions, form.sourceOfFund);
                     if (!allowed.some((o) => o.value === form.subType)) set("subType", "");
                   }}
                   disabled={availablePrograms.length === 0}

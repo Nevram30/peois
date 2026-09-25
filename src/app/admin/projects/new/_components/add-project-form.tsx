@@ -524,8 +524,8 @@ export const AddProjectForm = () => {
     [sourceOfFund, customOptions],
   );
   const availableSubTypes = useMemo(
-    () => projectOptions(program, customOptions),
-    [program, customOptions],
+    () => projectOptions(program, customOptions, sourceOfFund),
+    [program, customOptions, sourceOfFund],
   );
   const availableLandbankNumbers = useMemo(
     () => landbankOptions(customOptions),
@@ -1263,7 +1263,7 @@ export const AddProjectForm = () => {
                 onChange={(e) => {
                   const next = e.target.value;
                   setProgram(next);
-                  const allowed = projectOptions(next, customOptions);
+                  const allowed = projectOptions(next, customOptions, sourceOfFund);
                   if (!allowed.some((o) => o.value === subType)) setSubType("");
                 }}
                 disabled={!sourceOfFund || availablePrograms.length === 0}

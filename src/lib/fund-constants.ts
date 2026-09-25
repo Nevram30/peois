@@ -326,6 +326,8 @@ export const FUNDING_PROGRAM_VALUES = [
   "PRDP",
   "MIADP",
   "LDRRM",
+  // Any source — the project has no specific program.
+  "NOT_APPLICABLE",
 ] as const;
 
 export type FundingProgramValue = (typeof FUNDING_PROGRAM_VALUES)[number];
@@ -352,6 +354,7 @@ export const FUNDING_PROGRAM_LABEL: Record<FundingProgramValue, string> = {
   PRDP: "(PRDP) Philippine Rural Development Project",
   MIADP: "(MIADP) Mindanao Inclusive Agriculture Development Project",
   LDRRM: "(LDRRM) Local Disaster Risk Reduction and Management",
+  NOT_APPLICABLE: "N/A",
 };
 
 export const SOURCE_TO_PROGRAMS: Record<SourceOfFundValue, FundingProgramValue[]> = {
@@ -361,31 +364,34 @@ export const SOURCE_TO_PROGRAMS: Record<SourceOfFundValue, FundingProgramValue[]
     "INFRA_DEV_PROGRAM_8918",
     "PEACE_ORDER_PROGRAM_8918",
     "HEALTH_DEV_PROGRAM_4918",
+    "NOT_APPLICABLE",
   ],
   GENERAL_FUND: [
     "INFRA_DEV_PROGRAM_1999",
     "PEACE_ORDER_PROGRAM_1999",
     "INFRA_DEV_PROGRAM_4918",
+    "NOT_APPLICABLE",
   ],
   FIVE_PERCENT_CALAMITY_FUND: [
     "DISASTER_PREVENTION_MITIGATION_9943",
     "DISASTER_PREVENTION_MITIGATION_9942",
     "DISASTER_PREPAREDNESS_9942",
     "DISASTER_REHAB_RECOVERY_9941",
+    "NOT_APPLICABLE",
   ],
-  SEF: ["ELEM_SECONDARY_EDUCATION_3311"],
-  MOOE: ["ALL_OFFICES"],
-  TRUST_FUND: ["PAMANA", "DOH", "NCDC", "LGSF", "PRDP", "MIADP", "LDRRM"],
-  NCDC: [],
-  PRDP: [],
-  MIADP: [],
-  FIVE_PERCENT_CONFIDENTIAL_FUND: [],
-  PPOC: [],
-  LDRRM: [],
-  AID: [],
-  LOAN: [],
-  OTHERS: [],
-  CONFIDENTIAL: [],
+  SEF: ["ELEM_SECONDARY_EDUCATION_3311", "NOT_APPLICABLE"],
+  MOOE: ["ALL_OFFICES", "NOT_APPLICABLE"],
+  TRUST_FUND: ["PAMANA", "DOH", "NCDC", "LGSF", "PRDP", "MIADP", "LDRRM", "NOT_APPLICABLE"],
+  NCDC: ["NOT_APPLICABLE"],
+  PRDP: ["NOT_APPLICABLE"],
+  MIADP: ["NOT_APPLICABLE"],
+  FIVE_PERCENT_CONFIDENTIAL_FUND: ["NOT_APPLICABLE"],
+  PPOC: ["NOT_APPLICABLE"],
+  LDRRM: ["NOT_APPLICABLE"],
+  AID: ["NOT_APPLICABLE"],
+  LOAN: ["NOT_APPLICABLE"],
+  OTHERS: ["NOT_APPLICABLE"],
+  CONFIDENTIAL: ["NOT_APPLICABLE"],
 };
 
 // Shared between the 20% Development Fund and General Fund programs —
@@ -457,7 +463,23 @@ export const PROGRAM_TO_PROJECTS: Record<FundingProgramValue, ProjectSubTypeValu
   PRDP: [],
   MIADP: [],
   LDRRM: [],
+  NOT_APPLICABLE: [],
 };
+
+/**
+ * Built-in Projects for a Program. N/A is shared by every Source of Fund, so it
+ * offers every Project of that source's other Programs.
+ */
+export function builtInProjectsFor(
+  program: string,
+  sourceOfFund: string,
+): ProjectSubTypeValue[] {
+  if (program !== "NOT_APPLICABLE") {
+    return PROGRAM_TO_PROJECTS[program as FundingProgramValue] ?? [];
+  }
+  const programs = SOURCE_TO_PROGRAMS[sourceOfFund as SourceOfFundValue] ?? [];
+  return Array.from(new Set(programs.flatMap((p) => PROGRAM_TO_PROJECTS[p])));
+}
 
 // ─── Project Account ──────────────────────────────────────────────────────
 export const PROJECT_ACCOUNT_VALUES = ["MOOE", "PPE"] as const;

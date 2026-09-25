@@ -1059,7 +1059,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     programLabel,
   );
   const fundingProjects = withSelected(
-    projectOptions(program, customOptions),
+    projectOptions(program, customOptions, sourceOfFund),
     subType,
     projectLabel,
   );
@@ -1068,7 +1068,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     : landbankOptions(customOptions);
   // Same cascade for the variation-order record form
   const voPrograms = programOptions(revisedSourceOfFund, customOptions);
-  const voProjects = projectOptions(revisedProgram, customOptions);
+  const voProjects = projectOptions(revisedProgram, customOptions, revisedSourceOfFund);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -1420,7 +1420,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                   onChange={(e) => {
                     const next = e.target.value;
                     setProgram(next);
-                    const allowed = projectOptions(next, customOptions);
+                    const allowed = projectOptions(next, customOptions, sourceOfFund);
                     if (!allowed.some((o) => o.value === subType)) setSubType("");
                   }}
                   disabled={!sourceOfFund || fundingPrograms.length === 0}
