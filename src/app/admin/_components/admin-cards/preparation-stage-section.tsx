@@ -113,17 +113,17 @@ export const PreparationStageSection = ({ data, isLoading, budgetYear, districtO
 
         {isLoading || !data ? (
             <div className="grid grid-cols-1 gap-4">
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-                    <TileSkeleton />
-                    <TileSkeleton />
-                    <TileSkeleton />
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-4">
+                    {PREPARATION_STAGE_VALUES.map((stage) => (
+                        <TileSkeleton key={stage} />
+                    ))}
                 </div>
                 <DistrictCardsSkeleton onSide={districtOnSide} count={districtOnSide ? 1 : 2} />
             </div>
         ) : (
             <div className="grid grid-cols-1 gap-4">
                 <div className="space-y-2">
-                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-4">
                         {PREPARATION_STAGE_VALUES.map((stage) => (
                             <StageTile key={stage} stage={stage} count={data.totals[stage]} />
                         ))}
