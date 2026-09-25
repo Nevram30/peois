@@ -1334,6 +1334,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                       <option value="">
                         {locDistrict ? "Select municipality..." : "Select district first"}
                       </option>
+                      <option value="N/A">N/A</option>
                       {availableMunicipalities.map((m) => (
                         <option key={m.name} value={m.name}>{m.name}</option>
                       ))}
@@ -1353,6 +1354,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                       <option value="">
                         {cityMunicipality ? "Select barangay..." : "Select municipality first"}
                       </option>
+                      <option value="N/A">N/A</option>
                       {availableBarangays.map((bg) => (
                         <option key={bg.name} value={bg.name}>{bg.name}</option>
                       ))}

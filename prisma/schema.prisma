@@ -166,6 +166,7 @@ enum PreparationStage {
   FOR_SURVEY // Surveying: fieldwork, layout, and data collection
   FOR_PLANS // Preparation of Plans: drafting architectural/structural blueprints
   FOR_POW // POW Preparation: cost estimation, materials breakdown, and budgeting
+  NOT_APPLICABLE // N/A: set manually; never advanced automatically
 }
 
 enum DocumentType {

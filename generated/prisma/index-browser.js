@@ -469,7 +469,8 @@ exports.ProjectStatus = exports.$Enums.ProjectStatus = {
 exports.PreparationStage = exports.$Enums.PreparationStage = {
   FOR_SURVEY: 'FOR_SURVEY',
   FOR_PLANS: 'FOR_PLANS',
-  FOR_POW: 'FOR_POW'
+  FOR_POW: 'FOR_POW',
+  NOT_APPLICABLE: 'NOT_APPLICABLE'
 };
 
 exports.BoxLabel = exports.$Enums.BoxLabel = {

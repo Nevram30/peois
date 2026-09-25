@@ -1126,6 +1126,7 @@ export const AddProjectForm = () => {
                     className={showErrors && fieldErrors.cityMunicipality ? errorRingClass : ""}
                   >
                     <option value="">Select City</option>
+                    <option value="N/A">N/A</option>
                     {availableMunicipalities.map((m) => (
                       <option key={m.name} value={m.name}>{m.name}</option>
                     ))}
@@ -1147,6 +1148,7 @@ export const AddProjectForm = () => {
                     <option value="">
                       {cityMunicipality ? "Select Barangay" : "Select City first"}
                     </option>
+                    <option value="N/A">N/A</option>
                     {availableBarangays.map((bg) => (
                       <option key={bg.name} value={bg.name}>{bg.name}</option>
                     ))}

@@ -299,7 +299,8 @@ export type ProjectStatus = (typeof ProjectStatus)[keyof typeof ProjectStatus]
 export const PreparationStage: {
   FOR_SURVEY: 'FOR_SURVEY',
   FOR_PLANS: 'FOR_PLANS',
-  FOR_POW: 'FOR_POW'
+  FOR_POW: 'FOR_POW',
+  NOT_APPLICABLE: 'NOT_APPLICABLE'
 };
 
 export type PreparationStage = (typeof PreparationStage)[keyof typeof PreparationStage]
