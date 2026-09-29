@@ -944,7 +944,16 @@ function EditUserModal({
             </div>
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">Designation</label>
-              <input type="text" value={designation} onChange={(e) => setDesignation(e.target.value)} className="block w-full rounded-sm border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none" placeholder="e.g. Provincial Engineer" />
+              <select value={designation} onChange={(e) => setDesignation(e.target.value)} className="block w-full rounded-sm border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
+                <option value="">Select Designation</option>
+                {/* Keep a legacy free-text value selectable so it isn't silently blanked */}
+                {designation && !DESIGNATIONS.includes(designation) && (
+                  <option value={designation}>{designation}</option>
+                )}
+                {DESIGNATIONS.map((d) => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">Division</label>
