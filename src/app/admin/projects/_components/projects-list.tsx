@@ -23,6 +23,7 @@ import { MODE_LABELS } from "~/app/admin/_components/admin-constant/constant";
 import { HardHat } from "lucide-react";
 import { PreparationStageBadge } from "~/app/_components/preparation-stage-badge";
 import { preparationStageLabel } from "~/lib/preparation-stage";
+import { isEngineerInCharge } from "~/lib/names";
 
 const STATUS_LABELS: Record<string, { label: string; className: string }> = {
   NOT_YET_STARTED: {
@@ -232,6 +233,8 @@ const ProjectsList = () => {
   // Set by the dashboard's Preparation Stage tiles (?stage=FOR_SURVEY etc.).
   const stageFilter = searchParams.get("stage");
   const filterToday = searchParams.get("filter") === "today";
+  // Set by the sidebar's "My Projects" link (District I / II admins).
+  const mineFilter = searchParams.get("mine") === "1";
 
   const [search, setSearch] = useState("");
   const [modeFilter, setModeFilter] = useState("");
@@ -261,6 +264,15 @@ const ProjectsList = () => {
   const { data: projects, isLoading } = api.project.getAll.useQuery();
   const { data: budgetYears } = api.project.getBudgetYears.useQuery();
   const { data: districtScope } = api.project.getMyDistrictScope.useQuery();
+  const { data: me } = api.user.me.useQuery();
+
+  // All Projects and My Projects share this page, so switching between them
+  // keeps the component mounted; start the new list from its first page.
+  const [prevMineFilter, setPrevMineFilter] = useState(mineFilter);
+  if (prevMineFilter !== mineFilter) {
+    setPrevMineFilter(mineFilter);
+    setPage(1);
+  }
 
   // Distinct city / barangay options derived from the loaded projects.
   const cityOptions = Array.from(
@@ -286,6 +298,7 @@ const ProjectsList = () => {
       )
         return false;
     }
+    if (mineFilter && !isEngineerInCharge(p.projectEngineer, me?.name)) return false;
     if (statusFilter && p.status !== statusFilter) return false;
     if (stageFilter && p.preparationStage !== stageFilter) return false;
     if (statusLocal && p.status !== statusLocal) return false;
@@ -382,7 +395,9 @@ const ProjectsList = () => {
         ? (STATUS_TITLES[statusFilter] ?? "Projects")
         : stageFilter
           ? `Projects ${preparationStageLabel(stageFilter) ?? ""}`.trim()
-          : "All Projects";
+          : mineFilter
+            ? "My Projects"
+            : "All Projects";
 
   const selectClass =
     "w-full rounded-sms border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20";

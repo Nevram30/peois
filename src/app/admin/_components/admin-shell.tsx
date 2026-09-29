@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { api } from "~/trpc/react";
@@ -187,6 +187,18 @@ export const AdminShell = ({
     if (href === "/admin/dashboard") return pathname === "/admin/dashboard";
     return pathname.startsWith(href);
   };
+
+  // District I / II admins get Projects split into All Projects and My
+  // Projects (the ones listing them under Engineers In-Charge).
+  const searchParams = useSearchParams();
+  const { data: districtScope } = api.project.getMyDistrictScope.useQuery();
+  const onMyProjects = pathname === "/admin/projects" && searchParams.get("mine") === "1";
+  const projectLinks = districtScope
+    ? [
+      { label: "All Projects", href: "/admin/projects", active: isActive("/admin/projects") && !onMyProjects },
+      { label: "My Projects", href: "/admin/projects?mine=1", active: onMyProjects },
+    ]
+    : undefined;
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -395,14 +407,18 @@ export const AdminShell = ({
 
         {/* Navigation Tabs — mobile/tablet only; desktop uses the left sidebar */}
         <nav className="flex items-center gap-2 overflow-x-auto bg-white px-4 border-b border-gray-200 mt-3 sm:px-6 lg:hidden">
-          {navItems.map((item) => {
+          {navItems.flatMap((item) =>
+            item.href === "/admin/projects" && projectLinks
+              ? projectLinks.map((link) => ({ ...item, ...link }))
+              : [{ ...item, active: isActive(item.href) }],
+          ).map((item) => {
             const badgeCount =
               item.href === "/admin/project-access-request" ? (pendingAccessCount ?? 0) : 0;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`-mb-px flex shrink-0 items-center gap-2 whitespace-nowrap border-b-[3px] px-4 py-2.5 text-sm transition ${isActive(item.href)
+                className={`-mb-px flex shrink-0 items-center gap-2 whitespace-nowrap border-b-[3px] px-4 py-2.5 text-sm transition ${item.active
                   ? "border-amber-500 font-medium text-amber-600"
                   : "border-transparent font-normal text-gray-600 hover:border-gray-300 hover:text-gray-900"
                   }`}
@@ -433,6 +449,7 @@ export const AdminShell = ({
               item.href === "/admin/project-access-request"
                 ? (pendingAccessCount ?? 0)
                 : 0,
+            children: item.href === "/admin/projects" ? projectLinks : undefined,
           }))}
           helpHref="/admin/it-help-desk"
         />

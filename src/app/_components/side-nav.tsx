@@ -9,7 +9,76 @@ export interface SideNavItem {
   icon: React.ReactNode;
   active: boolean;
   badge?: number;
+  /** When set, the item becomes a dropdown of these links. */
+  children?: { label: string; href: string; active: boolean }[];
 }
+
+const Chevron = ({ open }: { open: boolean }) => (
+  <svg
+    className={`ml-auto h-4 w-4 shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={1.5}
+    stroke="currentColor"
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+  </svg>
+);
+
+// A top-level item with sub-links. Starts expanded when one of its links is
+// the current page; collapsed-sidebar mode links straight to the first child.
+const SideNavGroup = ({ item, open }: { item: SideNavItem; open: boolean }) => {
+  const [expanded, setExpanded] = useState(item.active);
+
+  useEffect(() => {
+    if (item.active) setExpanded(true);
+  }, [item.active]);
+
+  const itemClass = `relative flex w-full items-center rounded-lg text-sm transition ${open ? "gap-3 px-3 py-2.5" : "justify-center py-2.5"
+    } ${item.active
+      ? "bg-amber-50 font-medium text-amber-600"
+      : "font-normal text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+    }`;
+
+  if (!open) {
+    return (
+      <Link href={item.children![0]!.href} title={item.label} className={itemClass}>
+        <span className="shrink-0">{item.icon}</span>
+      </Link>
+    );
+  }
+
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => setExpanded((v) => !v)}
+        aria-expanded={expanded}
+        className={itemClass}
+      >
+        <span className="shrink-0">{item.icon}</span>
+        <span className="truncate">{item.label}</span>
+        <Chevron open={expanded} />
+      </button>
+      {expanded && (
+        <div className="ml-5 mt-1 space-y-1 border-l border-gray-100 pl-3">
+          {item.children!.map((child) => (
+            <Link
+              key={child.href}
+              href={child.href}
+              className={`block rounded-lg px-3 py-2 text-sm transition ${child.active
+                ? "font-medium text-amber-600"
+                : "font-normal text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                }`}
+            >
+              {child.label}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 /**
  * Desktop/laptop-only left sidebar navigation (hidden below `lg`).
@@ -78,7 +147,9 @@ export const SideNav = ({
       </div>
 
       <nav className={`flex-1 space-y-1 overflow-y-auto ${open ? "p-3" : "p-2"}`}>
-        {items.map((item) => (
+        {items.map((item) => item.children?.length ? (
+          <SideNavGroup key={item.href} item={item} open={open} />
+        ) : (
           <Link
             key={item.href}
             href={item.href}

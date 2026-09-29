@@ -4,12 +4,9 @@ import {
   createTRPCRouter,
   protectedProcedure,
 } from "~/server/api/trpc";
+import { normalizeName } from "~/lib/names";
 
 const actionEnum = z.enum(["VIEW", "DOWNLOAD"]);
-
-/** Normalises a person's name so free-text engineers match user accounts. */
-const normalizeName = (value: string) =>
-  value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 
 export const projectAccessRequestRouter = createTRPCRouter({
   /**
