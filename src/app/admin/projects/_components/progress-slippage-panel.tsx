@@ -130,6 +130,7 @@ const readDraft = (draft: Draft): ProgressEntryInput | string => {
 // the form that records the next one. Storage is the parent's: the edit page
 // files straight to the server, the Add form queues rows until the project
 // is created. Each handler may return a promise; a rejection is shown here.
+// `readOnly` (the view page) drops the Actions column and the record form.
 export const ProgressSlippagePanel = ({
     entries,
     dateStarted,
@@ -138,14 +139,16 @@ export const ProgressSlippagePanel = ({
     onRecord,
     onUpdate,
     onDelete,
+    readOnly = false,
 }: {
     entries: ProgressEntry[];
     dateStarted: DateLike;
     targetCompletionDate: DateLike;
     revisedCompletionDate: DateLike;
-    onRecord: (input: ProgressEntryInput) => unknown;
-    onUpdate: (id: string, input: ProgressEntryInput) => unknown;
-    onDelete: (id: string) => unknown;
+    onRecord?: (input: ProgressEntryInput) => unknown;
+    onUpdate?: (id: string, input: ProgressEntryInput) => unknown;
+    onDelete?: (id: string) => unknown;
+    readOnly?: boolean;
 }) => {
     const [draft, setDraft] = useState<Draft>(emptyDraft);
     const [formError, setFormError] = useState<string | null>(null);
@@ -199,7 +202,7 @@ export const ProgressSlippagePanel = ({
         setFormError(null);
         setRecording(true);
         try {
-            await onRecord(input);
+            await onRecord?.(input);
             // The date stays, so a run of back-dated entries is quick to file.
             setDraft((d) => ({ ...emptyDraft(), date: d.date }));
         } catch (e) {
@@ -230,7 +233,7 @@ export const ProgressSlippagePanel = ({
         setRowError(null);
         setBusyRowId(id);
         try {
-            await onUpdate(id, input);
+            await onUpdate?.(id, input);
             setEditingId(null);
         } catch (e) {
             setRowError(errorMessage(e));
@@ -244,7 +247,7 @@ export const ProgressSlippagePanel = ({
         setRowError(null);
         setBusyRowId(entry.id);
         try {
-            await onDelete(entry.id);
+            await onDelete?.(entry.id);
         } catch (e) {
             setRowError(errorMessage(e));
         } finally {
@@ -283,13 +286,13 @@ export const ProgressSlippagePanel = ({
                             <th className={`${th} text-right`}>Actual %</th>
                             <th className={`${th} text-right`}>Slippage (%)</th>
                             <th className={`${th} text-left`}>Remarks / Scope Completed</th>
-                            <th className={`${th} text-right`}>Actions</th>
+                            {!readOnly && <th className={`${th} text-right`}>Actions</th>}
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-200">
                         {rows.length === 0 ? (
                             <tr>
-                                <td colSpan={7} className="px-4 py-8 text-center text-slate-400">
+                                <td colSpan={readOnly ? 6 : 7} className="px-4 py-8 text-center text-slate-400">
                                     No progress has been recorded yet.
                                 </td>
                             </tr>
@@ -375,28 +378,30 @@ export const ProgressSlippagePanel = ({
                                             </span>
                                         </td>
                                         <td className="px-4 py-4 text-slate-700">{entry.remarks?.trim() ? entry.remarks : <span className="text-slate-400">—</span>}</td>
-                                        <td className="px-4 py-4">
-                                            <div className="flex justify-end gap-4">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => startEdit(entry)}
-                                                    disabled={editingId !== null || busy}
-                                                    aria-label="Edit progress entry"
-                                                    className="text-[#1e3a8a] hover:text-blue-700 disabled:opacity-40"
-                                                >
-                                                    <Pencil className="h-4.5 w-4.5" />
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => void remove(entry)}
-                                                    disabled={editingId !== null || busy}
-                                                    aria-label="Delete progress entry"
-                                                    className="text-red-600 hover:text-red-700 disabled:opacity-40"
-                                                >
-                                                    <Trash2 className="h-4.5 w-4.5" />
-                                                </button>
-                                            </div>
-                                        </td>
+                                        {!readOnly && (
+                                            <td className="px-4 py-4">
+                                                <div className="flex justify-end gap-4">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => startEdit(entry)}
+                                                        disabled={editingId !== null || busy}
+                                                        aria-label="Edit progress entry"
+                                                        className="text-[#1e3a8a] hover:text-blue-700 disabled:opacity-40"
+                                                    >
+                                                        <Pencil className="h-4.5 w-4.5" />
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => void remove(entry)}
+                                                        disabled={editingId !== null || busy}
+                                                        aria-label="Delete progress entry"
+                                                        className="text-red-600 hover:text-red-700 disabled:opacity-40"
+                                                    >
+                                                        <Trash2 className="h-4.5 w-4.5" />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        )}
                                     </tr>
                                 );
                             })
@@ -407,90 +412,92 @@ export const ProgressSlippagePanel = ({
             {rowError && <p className="mt-2 text-xs text-red-500">{rowError}</p>}
 
             {/* ── Record form ── */}
-            <div className="mt-6 rounded-sm border border-slate-200 p-4 sm:p-6">
-                <h3 className="mb-4 text-[16px] font-bold text-slate-800">Record Progress &amp; Slippage</h3>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6 lg:items-end">
-                    <div>
-                        <label className={fieldLabel} htmlFor="progress-date">Date Recorded</label>
-                        <input
-                            id="progress-date"
-                            type="date"
-                            value={draft.date}
-                            onChange={(e) => {
-                                setDraft((d) => ({ ...d, date: e.target.value }));
-                                setFormError(null);
-                            }}
-                            className={`${filledInput} bg-white shadow-sm`}
-                        />
+            {!readOnly && (
+                <div className="mt-6 rounded-sm border border-slate-200 p-4 sm:p-6">
+                    <h3 className="mb-4 text-[16px] font-bold text-slate-800">Record Progress &amp; Slippage</h3>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6 lg:items-end">
+                        <div>
+                            <label className={fieldLabel} htmlFor="progress-date">Date Recorded</label>
+                            <input
+                                id="progress-date"
+                                type="date"
+                                value={draft.date}
+                                onChange={(e) => {
+                                    setDraft((d) => ({ ...d, date: e.target.value }));
+                                    setFormError(null);
+                                }}
+                                className={`${filledInput} bg-white shadow-sm`}
+                            />
+                        </div>
+                        <div>
+                            <span className={fieldLabel}>Target %</span>
+                            <PercentInput
+                                label="Target %"
+                                value={draft.target}
+                                invalid={draft.target.trim() !== "" && previewTarget === null}
+                                onChange={(v) => {
+                                    setDraft((d) => ({ ...d, target: v }));
+                                    setFormError(null);
+                                }}
+                            />
+                        </div>
+                        <div>
+                            <span className={fieldLabel}>Revised Target %</span>
+                            <PercentInput
+                                label="Revised target %"
+                                placeholder="Optional"
+                                value={draft.revised}
+                                invalid={draft.revised.trim() !== "" && parsePercent(draft.revised) === null}
+                                onChange={(v) => {
+                                    setDraft((d) => ({ ...d, revised: v }));
+                                    setFormError(null);
+                                }}
+                            />
+                        </div>
+                        <div>
+                            <span className={fieldLabel}>Actual %</span>
+                            <PercentInput
+                                label="Actual %"
+                                value={draft.actual}
+                                invalid={draft.actual.trim() !== "" && previewActual === null}
+                                onChange={(v) => {
+                                    setDraft((d) => ({ ...d, actual: v }));
+                                    setFormError(null);
+                                }}
+                            />
+                        </div>
+                        <div>
+                            <label className={fieldLabel} htmlFor="progress-remarks">Remarks / Milestone</label>
+                            <input
+                                id="progress-remarks"
+                                type="text"
+                                value={draft.remarks}
+                                onChange={(e) => setDraft((d) => ({ ...d, remarks: e.target.value }))}
+                                placeholder="Enter remarks..."
+                                className={filledInput}
+                            />
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => void handleRecord()}
+                            disabled={recording}
+                            className="flex h-11 items-center justify-center gap-2 rounded-md bg-[#0b1f6b] px-6 text-[15px] font-bold text-white shadow-md transition hover:bg-[#1e3a8a] disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            <CircleCheck className="h-5 w-5" />
+                            {recording ? "Recording..." : "Record"}
+                        </button>
                     </div>
-                    <div>
-                        <span className={fieldLabel}>Target %</span>
-                        <PercentInput
-                            label="Target %"
-                            value={draft.target}
-                            invalid={draft.target.trim() !== "" && previewTarget === null}
-                            onChange={(v) => {
-                                setDraft((d) => ({ ...d, target: v }));
-                                setFormError(null);
-                            }}
-                        />
-                    </div>
-                    <div>
-                        <span className={fieldLabel}>Revised Target %</span>
-                        <PercentInput
-                            label="Revised target %"
-                            placeholder="Optional"
-                            value={draft.revised}
-                            invalid={draft.revised.trim() !== "" && parsePercent(draft.revised) === null}
-                            onChange={(v) => {
-                                setDraft((d) => ({ ...d, revised: v }));
-                                setFormError(null);
-                            }}
-                        />
-                    </div>
-                    <div>
-                        <span className={fieldLabel}>Actual %</span>
-                        <PercentInput
-                            label="Actual %"
-                            value={draft.actual}
-                            invalid={draft.actual.trim() !== "" && previewActual === null}
-                            onChange={(v) => {
-                                setDraft((d) => ({ ...d, actual: v }));
-                                setFormError(null);
-                            }}
-                        />
-                    </div>
-                    <div>
-                        <label className={fieldLabel} htmlFor="progress-remarks">Remarks / Milestone</label>
-                        <input
-                            id="progress-remarks"
-                            type="text"
-                            value={draft.remarks}
-                            onChange={(e) => setDraft((d) => ({ ...d, remarks: e.target.value }))}
-                            placeholder="Enter remarks..."
-                            className={filledInput}
-                        />
-                    </div>
-                    <button
-                        type="button"
-                        onClick={() => void handleRecord()}
-                        disabled={recording}
-                        className="flex h-11 items-center justify-center gap-2 rounded-md bg-[#0b1f6b] px-6 text-[15px] font-bold text-white shadow-md transition hover:bg-[#1e3a8a] disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                        <CircleCheck className="h-5 w-5" />
-                        {recording ? "Recording..." : "Record"}
-                    </button>
+                    {formError ? (
+                        <p className="mt-3 text-xs text-red-500">{formError}</p>
+                    ) : previewStage && preview !== null ? (
+                        <p className="mt-3 text-xs text-slate-500">
+                            Slippage <span className={`font-bold ${previewStage.text}`}>{formatSlippage(preview)}%</span>
+                            {" · "}
+                            <span className="font-semibold text-slate-700">{previewStage.label}:</span> {previewStage.action}
+                        </p>
+                    ) : null}
                 </div>
-                {formError ? (
-                    <p className="mt-3 text-xs text-red-500">{formError}</p>
-                ) : previewStage && preview !== null ? (
-                    <p className="mt-3 text-xs text-slate-500">
-                        Slippage <span className={`font-bold ${previewStage.text}`}>{formatSlippage(preview)}%</span>
-                        {" · "}
-                        <span className="font-semibold text-slate-700">{previewStage.label}:</span> {previewStage.action}
-                    </p>
-                ) : null}
-            </div>
+            )}
         </section>
     );
 };

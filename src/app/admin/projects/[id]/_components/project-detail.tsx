@@ -17,13 +17,7 @@ import {
   type SourceOfFundValue,
   type FundingProgramValue,
 } from "~/lib/fund-constants";
-import {
-  SLIPPAGE_STAGE_VALUES,
-  SLIPPAGE_STAGE_CONFIG,
-  computeSlippage,
-  formatSlippage,
-  getSlippageStageConfig,
-} from "~/lib/slippage";
+import { ProgressSlippagePanel } from "~/app/admin/projects/_components/progress-slippage-panel";
 import { GeospatialMap, GeospatialSummary } from "~/app/_components/geospatial-summary";
 import { MODE_LABELS } from "~/app/admin/_components/admin-constant/constant";
 import { DOC_CHECKLIST, inferDocType, type DocType } from "~/lib/project-documents";
@@ -224,6 +218,7 @@ export const ProjectDetail = ({ projectId }: Props) => {
   const { data: variationOrders } = api.project.getVariationOrders.useQuery({ projectId });
   const { data: timelineAdjustments } = api.project.getTimelineAdjustments.useQuery({ projectId });
   const { data: files } = api.projectFile.getByProjectId.useQuery({ projectId });
+  const { data: slippageAssessments } = api.project.getSlippageAssessments.useQuery({ projectId });
 
   // Which documentary requirements are on file. Mirrors the edit form: files
   // saved before docType existed fall back to a guess from the file name, so
@@ -290,13 +285,6 @@ export const ProjectDetail = ({ projectId }: Props) => {
   const variationOrderBalance = Math.max(0, totalVariationOrder - overflow);
   const totalRemainingBalance = primaryFundBalance + variationOrderBalance;
 
-  // Slippage is always derived from the two figures on file, never stored.
-  const slippage =
-    project.slippageTarget !== null && project.slippageActual !== null
-      ? computeSlippage(project.slippageTarget, project.slippageActual)
-      : null;
-  const slippageStage =
-    slippage !== null ? getSlippageStageConfig(slippage) : null;
 
   const engineers = (project.projectEngineer ?? "")
     .split(/[,;]/)
@@ -791,111 +779,14 @@ export const ProjectDetail = ({ projectId }: Props) => {
             </div>
           </section>
 
-          {/* ── Slippage ── */}
-          <section className={card}>
-            <div className={sectionTitle}>
-              <svg
-                className="h-5 w-5 text-blue-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M2.25 6 9 12.75l4.286-4.286a11.948 11.948 0 0 1 4.306 6.43l.776 2.898m0 0 3.182-5.511m-3.182 5.51-5.511-3.181"
-                />
-              </svg>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-gray-700">
-                Slippage
-              </h2>
-            </div>
-
-            <div className="flex flex-wrap items-stretch gap-4">
-              {/* Readout — actual minus target, with its stage */}
-              <div
-                className={`flex min-w-70 flex-1 items-center justify-between gap-4 rounded-sm border px-4 py-3 ${slippageStage ? slippageStage.tile : "border-gray-200 bg-gray-50"
-                  }`}
-              >
-                <div>
-                  <p
-                    className={`text-[10px] font-bold uppercase tracking-widest ${slippageStage ? slippageStage.text : "text-gray-400"
-                      }`}
-                  >
-                    Slippage
-                  </p>
-                  <p
-                    className={`mt-0.5 text-3xl font-extrabold ${slippageStage ? slippageStage.text : "text-gray-300"
-                      }`}
-                  >
-                    {slippage !== null ? formatSlippage(slippage) : "—"}
-                    <span className="ml-0.5 text-base font-bold">%</span>
-                  </p>
-                </div>
-                {slippageStage && (
-                  <span
-                    className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest ${slippageStage.badge}`}
-                  >
-                    {slippageStage.label}
-                  </span>
-                )}
-              </div>
-
-              <div className="w-full shrink-0 sm:w-40">
-                <label className={fieldLabel}>Target %</label>
-                <div className={fieldText}>
-                  {project.slippageTarget !== null
-                    ? `${project.slippageTarget.toFixed(2)}%`
-                    : "—"}
-                </div>
-              </div>
-              <div className="w-full shrink-0 sm:w-40">
-                <label className={fieldLabel}>Actual %</label>
-                <div className={fieldText}>
-                  {project.slippageActual !== null
-                    ? `${project.slippageActual.toFixed(2)}%`
-                    : "—"}
-                </div>
-              </div>
-              <div className="w-full shrink-0 sm:w-32">
-                <label className={fieldLabel}>Revision</label>
-                <div className={fieldText}>Rev. {project.slippageRevision}</div>
-              </div>
-            </div>
-
-            {/* Prescribed action for the stage on file */}
-            {slippageStage ? (
-              <p className="mt-3 text-xs text-gray-500">
-                <span className="font-semibold text-gray-700">
-                  {slippageStage.label}:
-                </span>{" "}
-                {slippageStage.action}
-                <span className="ml-1 text-gray-400">
-                  — filed as Rev. {project.slippageRevision}.
-                </span>
-              </p>
-            ) : (
-              <p className="mt-3 text-xs text-gray-400">
-                No slippage assessment has been filed for this project yet.
-              </p>
-            )}
-
-            {/* Stage legend */}
-            <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-gray-100 pt-4">
-              {SLIPPAGE_STAGE_VALUES.map((stage) => {
-                const cfg = SLIPPAGE_STAGE_CONFIG[stage];
-                return (
-                  <span key={stage} className="flex items-center gap-2">
-                    <span className={`h-2 w-2 rounded-full ${cfg.dot}`} />
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
-                      {cfg.range}: {cfg.label}
-                    </span>
-                  </span>
-                );
-              })}
-            </div>
-          </section>
+          {/* ── Physical Progress & Slippage (read-only; recorded on the edit page) ── */}
+          <ProgressSlippagePanel
+            entries={slippageAssessments ?? []}
+            dateStarted={project.dateStarted}
+            targetCompletionDate={project.targetCompletionDate}
+            revisedCompletionDate={project.revisedCompletionDate}
+            readOnly
+          />
 
           {/* ── Workforce Distribution + Project In-Charge & Profile ── */}
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
