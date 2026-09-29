@@ -35,7 +35,7 @@ export type SlippageProject = {
 // ── Stage colours ──────────────────────────────────────────────
 // Hex twins of the Tailwind classes in SLIPPAGE_STAGE_CONFIG (emerald, blue,
 // amber, orange, red 500), since SVG fills can't take a class.
-const STAGE_HEX: Record<SlippageStage, string> = {
+export const STAGE_HEX: Record<SlippageStage, string> = {
     ON_TRACK: "#10b981",
     EARLY_WARNING: "#3b82f6",
     WARNING: "#f59e0b",

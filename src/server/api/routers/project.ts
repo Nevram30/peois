@@ -1158,6 +1158,11 @@ export const projectRouter = createTRPCRouter({
           title: true,
           cityMunicipality: true,
           locationImplementation: true,
+          // Ends of the S-curve on the Physical Progress tab: the 0% baseline
+          // and the 100% planned / revised completion points.
+          dateStarted: true,
+          targetCompletionDate: true,
+          revisedCompletionDate: true,
           slippageAssessments: {
             select: { id: true, date: true, target: true, actual: true, revision: true },
             orderBy: [{ date: "asc" }, { createdAt: "asc" }],

@@ -14,6 +14,7 @@ import { YearFilter } from "~/helper/year.filter";
 import { PreparationStageSection } from "./admin-cards/preparation-stage-section";
 import { PreparationStageTable } from "./admin-cards/preparation-stage-table";
 import { StatusProgressModal } from "./admin-charts/status-progress-modal";
+import { PhysicalProgressSection } from "./admin-charts/physical-progress-section";
 
 // ── Stat Tile ──────────────────────────────────────────────────
 // Status name with its icon at the top right, the count below on the left.
@@ -85,6 +86,7 @@ const DASHBOARD_TABS = [
     { id: "financial", label: "FINANCIAL ALLOCATION OVERVIEW" },
     { id: "location", label: "PROGRESS & STATUS PER LOCATION OVERVIEW" },
     { id: "slippage", label: "PROJECTS SLIPPAGE HISTORY OVERVIEW" },
+    { id: "physical", label: "PHYSICAL PROGRESS & SLIPPAGE OVERVIEW" },
 ] as const;
 
 type DashboardTab = (typeof DASHBOARD_TABS)[number]["id"];
@@ -423,6 +425,20 @@ export const AdminDashboardContent = () => {
                 />
                 {/* One slippage timeline per project. */}
                 <SlippageHistorySection budgetYear={dashboardYear} />
+            </div>
+
+            <div
+                role="tabpanel"
+                id="dashboard-panel-physical"
+                aria-labelledby="dashboard-tab-physical"
+                hidden={activeTab !== "physical"}
+            >
+                <PanelHeading
+                    subtitle="Planned vs. actual physical accomplishment per project"
+                    year={dashboardYear}
+                />
+                {/* One project's S-curve at a time, picked from the list. */}
+                <PhysicalProgressSection budgetYear={dashboardYear} />
             </div>
 
             {viewTile && (
