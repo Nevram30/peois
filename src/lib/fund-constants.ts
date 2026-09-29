@@ -240,6 +240,7 @@ export const PROJECT_STATUS_VALUES = [
   "FOR_IMPLEMENTATION",
   "RE_ALIGNMENT",
   "OTHERS",
+  "IN_PROCUREMENT",
 ] as const;
 
 export type ProjectStatusValue = (typeof PROJECT_STATUS_VALUES)[number];
@@ -248,6 +249,7 @@ export const PROJECT_STATUS_LABEL: Record<ProjectStatusValue, string> = {
   COMPLETED: "Completed",
   SUSPENDED: "Suspended",
   FOR_IMPLEMENTATION: "For Implementation",
+  IN_PROCUREMENT: "In Procurement",
   ON_GOING: "On-going",
   RE_ALIGNMENT: "Re-alignment",
   OTHERS: "Others",
@@ -257,6 +259,7 @@ export const PROJECT_STATUS_LABEL: Record<ProjectStatusValue, string> = {
 export const PROJECT_STATUS_ORDER: ProjectStatusValue[] = [
   "COMPLETED",
   "SUSPENDED",
+  "IN_PROCUREMENT",
   "FOR_IMPLEMENTATION",
   "ON_GOING",
   "RE_ALIGNMENT",

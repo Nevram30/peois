@@ -40,6 +40,10 @@ const STATUS_LABELS: Record<string, { label: string; className: string }> = {
     label: "For Implementation",
     className: "bg-amber-100 text-amber-700",
   },
+  IN_PROCUREMENT: {
+    label: "In Procurement",
+    className: "bg-teal-100 text-teal-700",
+  },
   RE_ALIGNMENT: {
     label: "Re-alignment",
     className: "bg-purple-100 text-purple-700",
@@ -55,6 +59,7 @@ const STATUS_LABELS: Record<string, { label: string; className: string }> = {
 // unchanged so it keeps matching stored projects.
 const FILTER_STATUS_ORDER: ProjectStatusValue[] = [
   "NOT_YET_STARTED",
+  "IN_PROCUREMENT",
   "FOR_IMPLEMENTATION",
   "ON_GOING",
   "RE_ALIGNMENT",
@@ -71,6 +76,7 @@ const FILTER_STATUS_LABEL: Record<ProjectStatusValue, string> = {
 const STATUS_TITLES: Record<string, string> = {
   COMPLETED: "Completed Projects",
   SUSPENDED: "Suspended Projects",
+  IN_PROCUREMENT: "Projects In Procurement",
   FOR_IMPLEMENTATION: "Projects For Implementation",
   ON_GOING: "On-Going Projects",
   RE_ALIGNMENT: "Projects For Re-alignment",

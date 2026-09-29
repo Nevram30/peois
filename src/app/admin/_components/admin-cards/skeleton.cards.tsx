@@ -13,26 +13,26 @@ const StatTileSkeleton = () => (
 );
 
 // The stat card region has two shapes:
-//  • Office divisions (SMAD/PDPM/EPM/QACD): seven tiles in a single row.
+//  • Office divisions (SMAD/PDPM/EPM/QACD): eight tiles in a single row.
 //  • Engineering-district admins (1ST/2ND ENGR DIST): a tall Budget Year
-//    card + six status tiles in a 3×2 grid beside it.
+//    card + seven status tiles in a 4×2 grid beside it.
 export const StatCardsSkeleton = ({ districtOnSide = false }: { districtOnSide?: boolean }) => {
     if (districtOnSide) {
         return (
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                 <div className="col-span-2 sm:col-span-1 sm:row-span-2 bg-white rounded-sm shadow-sm flex flex-col items-center justify-center gap-2 p-3 animate-pulse">
                     <div className="h-3 w-20 rounded bg-slate-200" />
                     <div className="h-8 w-14 rounded bg-slate-200" />
                 </div>
-                {Array.from({ length: 6 }).map((_, i) => (
+                {Array.from({ length: 7 }).map((_, i) => (
                     <StatTileSkeleton key={i} />
                 ))}
             </div>
         );
     }
     return (
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
-            {Array.from({ length: 7 }).map((_, i) => (
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
+            {Array.from({ length: 8 }).map((_, i) => (
                 <StatTileSkeleton key={i} />
             ))}
         </div>

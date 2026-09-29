@@ -290,7 +290,8 @@ export const ProjectStatus: {
   SUSPENDED: 'SUSPENDED',
   FOR_IMPLEMENTATION: 'FOR_IMPLEMENTATION',
   RE_ALIGNMENT: 'RE_ALIGNMENT',
-  OTHERS: 'OTHERS'
+  OTHERS: 'OTHERS',
+  IN_PROCUREMENT: 'IN_PROCUREMENT'
 };
 
 export type ProjectStatus = (typeof ProjectStatus)[keyof typeof ProjectStatus]

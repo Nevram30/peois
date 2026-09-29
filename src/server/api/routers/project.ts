@@ -813,6 +813,7 @@ export const projectRouter = createTRPCRouter({
         suspended,
         notYetStarted,
         forImplementation,
+        inProcurement,
         reAlignment,
         others,
         todayCount,
@@ -824,6 +825,7 @@ export const projectRouter = createTRPCRouter({
         ctx.db.project.count({ where: { ...where, status: "SUSPENDED" } }),
         ctx.db.project.count({ where: { ...where, status: "NOT_YET_STARTED" } }),
         ctx.db.project.count({ where: { ...where, status: "FOR_IMPLEMENTATION" } }),
+        ctx.db.project.count({ where: { ...where, status: "IN_PROCUREMENT" } }),
         ctx.db.project.count({ where: { ...where, status: "RE_ALIGNMENT" } }),
         ctx.db.project.count({ where: { ...where, status: "OTHERS" } }),
         ctx.db.project.count({ where: { ...where, createdAt: { gte: today } } }),
@@ -836,6 +838,7 @@ export const projectRouter = createTRPCRouter({
         suspended,
         notYetStarted,
         forImplementation,
+        inProcurement,
         reAlignment,
         others,
         todayCount,
@@ -851,7 +854,7 @@ export const projectRouter = createTRPCRouter({
         ...(input?.budgetYear ? { budgetYear: input.budgetYear } : {}),
       };
 
-      const [completed, ongoing, forImplementation, suspended, realigned, notYetStarted, others] =
+      const [completed, ongoing, forImplementation, suspended, realigned, notYetStarted, others, inProcurement] =
         await Promise.all([
           ctx.db.project.count({ where: { ...where, status: "COMPLETED" } }),
           ctx.db.project.count({ where: { ...where, status: "ON_GOING" } }),
@@ -860,8 +863,9 @@ export const projectRouter = createTRPCRouter({
           ctx.db.project.count({ where: { ...where, status: "RE_ALIGNMENT" } }),
           ctx.db.project.count({ where: { ...where, status: "NOT_YET_STARTED" } }),
           ctx.db.project.count({ where: { ...where, status: "OTHERS" } }),
+          ctx.db.project.count({ where: { ...where, status: "IN_PROCUREMENT" } }),
         ]);
-      return { completed, ongoing, forImplementation, suspended, realigned, notYetStarted, others };
+      return { completed, ongoing, forImplementation, suspended, realigned, notYetStarted, others, inProcurement };
     }),
 
   getBudgetYears: districtScopedProcedure.query(async ({ ctx }) => {

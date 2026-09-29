@@ -463,7 +463,8 @@ exports.ProjectStatus = exports.$Enums.ProjectStatus = {
   SUSPENDED: 'SUSPENDED',
   FOR_IMPLEMENTATION: 'FOR_IMPLEMENTATION',
   RE_ALIGNMENT: 'RE_ALIGNMENT',
-  OTHERS: 'OTHERS'
+  OTHERS: 'OTHERS',
+  IN_PROCUREMENT: 'IN_PROCUREMENT'
 };
 
 exports.PreparationStage = exports.$Enums.PreparationStage = {

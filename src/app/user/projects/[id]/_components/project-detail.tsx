@@ -26,6 +26,7 @@ const STATUS_DOT: Record<string, string> = {
   COMPLETED: "bg-green-500",
   SUSPENDED: "bg-red-500",
   FOR_IMPLEMENTATION: "bg-blue-500",
+  IN_PROCUREMENT: "bg-teal-500",
   RE_ALIGNMENT: "bg-amber-400",
   OTHERS: "bg-gray-400",
 };

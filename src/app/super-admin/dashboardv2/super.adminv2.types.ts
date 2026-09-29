@@ -4,6 +4,7 @@
 export type ProjectStatus =
   | 'COMPLETED'
   | 'FOR_IMPLEMENTATION'
+  | 'IN_PROCUREMENT'
   | 'RE_ALIGNMENT'
   | 'ON_GOING'
   | 'NOT_YET_STARTED'
@@ -31,6 +32,7 @@ export type DistrictCardProps = {
 export const STATUS_COLORS: Record<ProjectStatus, string> = {
   COMPLETED: '#22c55e',
   FOR_IMPLEMENTATION: '#f59e0b',
+  IN_PROCUREMENT: '#14b8a6',
   RE_ALIGNMENT: '#8b5cf6',
   ON_GOING: '#3b82f6',
   NOT_YET_STARTED: '#0ea5e9',
@@ -41,6 +43,7 @@ export const STATUS_COLORS: Record<ProjectStatus, string> = {
 export const STATUS_LABELS: Record<ProjectStatus, string> = {
   COMPLETED: 'COMPLETED',
   FOR_IMPLEMENTATION: 'FOR IMPLEMENTATION',
+  IN_PROCUREMENT: 'IN PROCUREMENT',
   RE_ALIGNMENT: 'RE-ALIGNED',
   ON_GOING: 'ON-GOING',
   NOT_YET_STARTED: 'NOT STARTED',

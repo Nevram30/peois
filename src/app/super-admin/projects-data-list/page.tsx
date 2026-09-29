@@ -22,6 +22,7 @@ const STATUS_STYLES: Record<ProjectStatusValue, { bg: string; dot: string; text:
   COMPLETED: { bg: "bg-green-100", dot: "bg-green-500", text: "text-green-700" },
   SUSPENDED: { bg: "bg-red-100", dot: "bg-red-500", text: "text-red-700" },
   FOR_IMPLEMENTATION: { bg: "bg-amber-100", dot: "bg-amber-500", text: "text-amber-700" },
+  IN_PROCUREMENT: { bg: "bg-teal-100", dot: "bg-teal-500", text: "text-teal-700" },
   ON_GOING: { bg: "bg-orange-100", dot: "bg-orange-500", text: "text-orange-700" },
   RE_ALIGNMENT: { bg: "bg-purple-100", dot: "bg-purple-500", text: "text-purple-700" },
   OTHERS: { bg: "bg-slate-100", dot: "bg-slate-500", text: "text-slate-700" },

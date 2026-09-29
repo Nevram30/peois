@@ -107,6 +107,12 @@ export const STATUS_CONFIG: Record<
         text: "text-amber-700",
         badge: "bg-amber-50 text-amber-700",
     },
+    IN_PROCUREMENT: {
+        label: "In Procurement",
+        dot: "bg-teal-500",
+        text: "text-teal-700",
+        badge: "bg-teal-50 text-teal-700",
+    },
     RE_ALIGNMENT: {
         label: "Re-alignment",
         dot: "bg-purple-500",

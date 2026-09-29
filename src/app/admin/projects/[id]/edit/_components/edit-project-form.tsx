@@ -72,6 +72,7 @@ const STATUS_CONFIG: Record<string, { label: string; badge: string; dot: string 
   COMPLETED: { label: "Completed", badge: "bg-green-50  text-green-700 border-green-200", dot: "bg-green-500" },
   SUSPENDED: { label: "Suspended", badge: "bg-red-50    text-red-700   border-red-200", dot: "bg-red-500" },
   FOR_IMPLEMENTATION: { label: "For Implementation", badge: "bg-blue-50 text-blue-700 border-blue-200", dot: "bg-blue-500" },
+  IN_PROCUREMENT: { label: "In Procurement", badge: "bg-teal-50 text-teal-700 border-teal-200", dot: "bg-teal-500" },
   RE_ALIGNMENT: { label: "Re-alignment", badge: "bg-purple-50 text-purple-700 border-purple-200", dot: "bg-purple-500" },
   OTHERS: { label: "Others", badge: "bg-slate-50 text-slate-700 border-slate-200", dot: "bg-slate-500" },
 };

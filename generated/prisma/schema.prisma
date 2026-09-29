@@ -157,6 +157,7 @@ enum ProjectStatus {
   FOR_IMPLEMENTATION
   RE_ALIGNMENT
   OTHERS
+  IN_PROCUREMENT
 }
 
 // Where a project is in its preparation work. Independent of ProjectStatus and

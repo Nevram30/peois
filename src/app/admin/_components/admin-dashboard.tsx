@@ -107,6 +107,7 @@ export const AdminDashboardContent = () => {
     const statusTiles: StatCard[] = [
         { label: "COMPLETED PROJECTS", value: statsData?.completed ?? "0", borderColor: "border-green-600", iconBg: "bg-green-100", iconColor: "text-green-600", icon: "✅" },
         { label: "ON-GOING PROJECTS", value: statsData?.ongoing ?? "0", borderColor: "border-blue-500", iconBg: "bg-blue-100", iconColor: "text-blue-500", icon: "▷" },
+        { label: "IN PROCUREMENT", value: statsData?.inProcurement ?? "0", borderColor: "border-teal-500", iconBg: "bg-teal-100", iconColor: "text-teal-600", icon: "🛒" },
         { label: "FOR IMPLEMENTATION", value: statsData?.forImplementation ?? "0", borderColor: "border-amber-500", iconBg: "bg-amber-100", iconColor: "text-amber-500", icon: "⚠" },
         { label: "SUSPENDED PROJECTS", value: statsData?.suspended ?? "0", borderColor: "border-red-600", iconBg: "bg-red-100", iconColor: "text-red-600", icon: "⊗" },
         { label: "RE-ALIGNED PROJECTS", value: statsData?.reAlignment ?? "0", borderColor: "border-red-500", iconBg: "bg-red-100", iconColor: "text-red-500", icon: "↔" },
@@ -116,7 +117,7 @@ export const AdminDashboardContent = () => {
     const budgetYearTile: StatCard = { label: "BUDGET YEAR", value: dashboardYear || "All", borderColor: "border-transparent", iconBg: "bg-blue-100", iconColor: "text-blue-600", icon: "📅" };
 
     // Office divisions keep the original single-row layout: small Budget Year
-    // tile + six status tiles (incl. OTHERS).
+    // tile + seven status tiles (incl. OTHERS).
     const statCards: StatCard[] = [budgetYearTile, ...statusTiles];
 
     // All projects, listed in the Preparation Stage tab's table.
@@ -203,8 +204,8 @@ export const AdminDashboardContent = () => {
                             <StatCardsSkeleton districtOnSide={districtOnSide} />
                         ) : districtOnSide ? (
                             // District admins: big Budget Year card spanning both rows,
-                            // six status tiles (incl. OTHERS) in a 3×2 grid beside it.
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                            // seven status tiles (incl. OTHERS) in a 4×2 grid beside it.
+                            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                                 <div className="col-span-2 sm:col-span-1 sm:row-span-2 bg-white rounded-sm shadow-sm flex flex-col items-center justify-center gap-1 p-3 text-center">
                                     <p className="text-sm font-bold text-slate-700 leading-tight">Budget Year</p>
                                     <p className="text-3xl font-extrabold text-slate-900 leading-none">{dashboardYear || "All"}</p>
@@ -214,7 +215,7 @@ export const AdminDashboardContent = () => {
                                 ))}
                             </div>
                         ) : (
-                            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+                            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
                                 {statCards.map((c) => (
                                     <StatTile key={c.label} card={c} />
                                 ))}

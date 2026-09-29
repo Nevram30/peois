@@ -31,6 +31,10 @@ const STATUS_BADGES: Record<string, { label: string; className: string }> = {
     label: "FOR IMPLEMENTATION",
     className: "bg-orange-100 text-orange-700",
   },
+  IN_PROCUREMENT: {
+    label: "IN PROCUREMENT",
+    className: "bg-teal-100 text-teal-700",
+  },
   RE_ALIGNMENT: {
     label: "RE-ALIGNED",
     className: "bg-purple-100 text-purple-700",
@@ -52,7 +56,7 @@ const MODE_LABELS: Record<string, string> = {
 const progressBarColor = (status: string, pct: number) => {
   if (status === "SUSPENDED") return "bg-red-500";
   if (pct >= 100) return "bg-emerald-500";
-  if (status === "NOT_YET_STARTED" || status === "FOR_IMPLEMENTATION")
+  if (status === "NOT_YET_STARTED" || status === "IN_PROCUREMENT" || status === "FOR_IMPLEMENTATION")
     return "bg-amber-400";
   return "bg-blue-900";
 };
