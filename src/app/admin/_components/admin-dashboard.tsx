@@ -13,13 +13,19 @@ import { SourceProgressSection } from "./admin-charts/source-progress-section";
 import { YearFilter } from "~/helper/year.filter";
 import { PreparationStageSection } from "./admin-cards/preparation-stage-section";
 import { PreparationStageTable } from "./admin-cards/preparation-stage-table";
+import { StatusProgressModal } from "./admin-charts/status-progress-modal";
 
 // ── Stat Tile ──────────────────────────────────────────────────
 // Status name with its icon at the top right, the count below on the left.
 // Shared by both stat-card layouts (office divisions and district admins).
 // justify-between pins the count to the bottom, so counts stay level across a
 // row even when one status name wraps to two lines and its neighbour doesn't.
-const StatTile = ({ card }: { card: StatCard }) => (
+// Status tiles carry the ProjectStatus they count, so VIEW can open that
+// status's progress chart. The Budget Year and Completed tiles get no button
+// (completed projects all sit at 100%, a flat line with nothing to read).
+type StatusTileCard = StatCard & { status: string };
+
+const StatTile = ({ card, onView }: { card: StatCard; onView?: () => void }) => (
     <div className="bg-white rounded-sm shadow-sm p-3 flex flex-col justify-between gap-2">
         <div className="flex items-start justify-between gap-2">
             {/* min-w-0 lets the name wrap beside the icon instead of pushing it past
@@ -34,7 +40,19 @@ const StatTile = ({ card }: { card: StatCard }) => (
                 {card.icon}
             </div>
         </div>
-        <p className="text-2xl font-extrabold text-slate-900 leading-none">{card.value}</p>
+        <div className="flex items-end justify-between gap-2">
+            <p className="text-2xl font-extrabold text-slate-900 leading-none">{card.value}</p>
+            {onView && (
+                <button
+                    type="button"
+                    onClick={onView}
+                    aria-label={`View ${card.label.toLowerCase()} progress chart`}
+                    className="shrink-0 rounded-sm border border-slate-200 px-2 py-0.5 text-[10px] font-bold tracking-wide text-[#1e3a8a] transition-colors hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
+                >
+                    VIEW
+                </button>
+            )}
+        </div>
     </div>
 );
 
@@ -74,6 +92,8 @@ type DashboardTab = (typeof DASHBOARD_TABS)[number]["id"];
 // ── Main Dashboard ─────────────────────────────────────────────
 export const AdminDashboardContent = () => {
     const [activeTab, setActiveTab] = useState<DashboardTab>("status");
+    // The status tile whose VIEW button opened the progress chart popup.
+    const [viewTile, setViewTile] = useState<StatusTileCard | null>(null);
 
     // Calendar year filter shared by the dashboard cards (driven by the header
     // YEAR button). The years come back newest first, and the newest is the
@@ -104,21 +124,17 @@ export const AdminDashboardContent = () => {
         ? Object.values(projectAllocationData.bySource).reduce((s, v) => s + v, 0)
         : 0;
 
-    const statusTiles: StatCard[] = [
-        { label: "COMPLETED PROJECTS", value: statsData?.completed ?? "0", borderColor: "border-green-600", iconBg: "bg-green-100", iconColor: "text-green-600", icon: "✅" },
-        { label: "ON-GOING PROJECTS", value: statsData?.ongoing ?? "0", borderColor: "border-blue-500", iconBg: "bg-blue-100", iconColor: "text-blue-500", icon: "▷" },
-        { label: "IN PROCUREMENT", value: statsData?.inProcurement ?? "0", borderColor: "border-teal-500", iconBg: "bg-teal-100", iconColor: "text-teal-600", icon: "🛒" },
-        { label: "FOR IMPLEMENTATION", value: statsData?.forImplementation ?? "0", borderColor: "border-amber-500", iconBg: "bg-amber-100", iconColor: "text-amber-500", icon: "⚠" },
-        { label: "SUSPENDED PROJECTS", value: statsData?.suspended ?? "0", borderColor: "border-red-600", iconBg: "bg-red-100", iconColor: "text-red-600", icon: "⊗" },
-        { label: "RE-ALIGNED PROJECTS", value: statsData?.reAlignment ?? "0", borderColor: "border-red-500", iconBg: "bg-red-100", iconColor: "text-red-500", icon: "↔" },
-        { label: "OTHERS", value: statsData?.others ?? "0", borderColor: "border-slate-400", iconBg: "bg-slate-100", iconColor: "text-slate-500", icon: "⋯" },
+    const statusTiles: StatusTileCard[] = [
+        { status: "COMPLETED", label: "COMPLETED PROJECTS", value: statsData?.completed ?? "0", borderColor: "border-green-600", iconBg: "bg-green-100", iconColor: "text-green-600", icon: "✅" },
+        { status: "ON_GOING", label: "ON-GOING PROJECTS", value: statsData?.ongoing ?? "0", borderColor: "border-blue-500", iconBg: "bg-blue-100", iconColor: "text-blue-500", icon: "▷" },
+        { status: "IN_PROCUREMENT", label: "IN PROCUREMENT", value: statsData?.inProcurement ?? "0", borderColor: "border-teal-500", iconBg: "bg-teal-100", iconColor: "text-teal-600", icon: "⧖" },
+        { status: "FOR_IMPLEMENTATION", label: "FOR IMPLEMENTATION", value: statsData?.forImplementation ?? "0", borderColor: "border-amber-500", iconBg: "bg-amber-100", iconColor: "text-amber-500", icon: "⚠" },
+        { status: "SUSPENDED", label: "SUSPENDED PROJECTS", value: statsData?.suspended ?? "0", borderColor: "border-red-600", iconBg: "bg-red-100", iconColor: "text-red-600", icon: "⊗" },
+        { status: "RE_ALIGNMENT", label: "RE-ALIGNED PROJECTS", value: statsData?.reAlignment ?? "0", borderColor: "border-red-500", iconBg: "bg-red-100", iconColor: "text-red-500", icon: "↔" },
+        { status: "OTHERS", label: "OTHERS", value: statsData?.others ?? "0", borderColor: "border-slate-400", iconBg: "bg-slate-100", iconColor: "text-slate-500", icon: "⋯" },
     ];
 
     const budgetYearTile: StatCard = { label: "BUDGET YEAR", value: dashboardYear || "All", borderColor: "border-transparent", iconBg: "bg-blue-100", iconColor: "text-blue-600", icon: "📅" };
-
-    // Office divisions keep the original single-row layout: small Budget Year
-    // tile + seven status tiles (incl. OTHERS).
-    const statCards: StatCard[] = [budgetYearTile, ...statusTiles];
 
     // All projects, listed in the Preparation Stage tab's table.
     const { data: projects, isLoading } = api.project.getAll.useQuery();
@@ -211,13 +227,16 @@ export const AdminDashboardContent = () => {
                                     <p className="text-3xl font-extrabold text-slate-900 leading-none">{dashboardYear || "All"}</p>
                                 </div>
                                 {statusTiles.map((c) => (
-                                    <StatTile key={c.label} card={c} />
+                                    <StatTile key={c.label} card={c} onView={c.status === "COMPLETED" ? undefined : () => setViewTile(c)} />
                                 ))}
                             </div>
                         ) : (
                             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
-                                {statCards.map((c) => (
-                                    <StatTile key={c.label} card={c} />
+                                {/* Office divisions keep the original single-row layout: small
+                                    Budget Year tile + seven status tiles (incl. OTHERS). */}
+                                <StatTile card={budgetYearTile} />
+                                {statusTiles.map((c) => (
+                                    <StatTile key={c.label} card={c} onView={c.status === "COMPLETED" ? undefined : () => setViewTile(c)} />
                                 ))}
                             </div>
                         )}
@@ -405,6 +424,15 @@ export const AdminDashboardContent = () => {
                 {/* One slippage timeline per project. */}
                 <SlippageHistorySection budgetYear={dashboardYear} />
             </div>
+
+            {viewTile && (
+                <StatusProgressModal
+                    status={viewTile.status}
+                    label={viewTile.label}
+                    budgetYear={dashboardYear}
+                    onClose={() => setViewTile(null)}
+                />
+            )}
         </div>
     );
 }

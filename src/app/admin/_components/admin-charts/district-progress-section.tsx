@@ -25,7 +25,7 @@ export type ChartType = "line" | "bar";
 // the districts are told apart by dash, legend and end-of-line label instead.
 export const LINE_COLOR = "#cbd5e1";
 
-const DISTRICT_META: Record<string, { label: string; short: string; dash?: string }> = {
+export const DISTRICT_META: Record<string, { label: string; short: string; dash?: string }> = {
     DISTRICT_I: { label: "1ST ENGINEERING DISTRICT", short: "District I" },
     DISTRICT_II: { label: "2ND ENGINEERING DISTRICT", short: "District II", dash: "5 5" },
 };
