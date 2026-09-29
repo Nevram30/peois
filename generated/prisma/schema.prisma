@@ -509,17 +509,20 @@ model TimelineAdjustment {
 // ~/lib/slippage, so only the two inputs are stored. `date` is the assessment
 // date, which may be back-dated and is therefore separate from `createdAt`.
 model SlippageAssessment {
-  id          String   @id @default(cuid())
-  projectId   String
-  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  date        DateTime
-  target      Float
-  actual      Float
-  revision    Int      @default(0)
-  remarks     String?
-  createdBy   User     @relation(fields: [createdById], references: [id])
-  createdById String
-  createdAt   DateTime @default(now())
+  id            String   @id @default(cuid())
+  projectId     String
+  project       Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  date          DateTime
+  target        Float
+  // The revised target at the assessment date, when the schedule has been
+  // revised. Slippage is still measured against `target` (the original plan).
+  revisedTarget Float?
+  actual        Float
+  revision      Int      @default(0)
+  remarks       String?
+  createdBy     User     @relation(fields: [createdById], references: [id])
+  createdById   String
+  createdAt     DateTime @default(now())
 
   @@index([projectId])
   @@index([createdById])

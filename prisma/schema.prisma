@@ -514,6 +514,9 @@ model SlippageAssessment {
   project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   date        DateTime
   target      Float
+  // The revised target at the assessment date, when the schedule has been
+  // revised. Slippage is still measured against `target` (the original plan).
+  revisedTarget Float?
   actual      Float
   revision    Int      @default(0)
   remarks     String?

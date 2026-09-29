@@ -16942,12 +16942,14 @@ export namespace Prisma {
 
   export type SlippageAssessmentAvgAggregateOutputType = {
     target: number | null
+    revisedTarget: number | null
     actual: number | null
     revision: number | null
   }
 
   export type SlippageAssessmentSumAggregateOutputType = {
     target: number | null
+    revisedTarget: number | null
     actual: number | null
     revision: number | null
   }
@@ -16957,6 +16959,7 @@ export namespace Prisma {
     projectId: string | null
     date: Date | null
     target: number | null
+    revisedTarget: number | null
     actual: number | null
     revision: number | null
     remarks: string | null
@@ -16969,6 +16972,7 @@ export namespace Prisma {
     projectId: string | null
     date: Date | null
     target: number | null
+    revisedTarget: number | null
     actual: number | null
     revision: number | null
     remarks: string | null
@@ -16981,6 +16985,7 @@ export namespace Prisma {
     projectId: number
     date: number
     target: number
+    revisedTarget: number
     actual: number
     revision: number
     remarks: number
@@ -16992,12 +16997,14 @@ export namespace Prisma {
 
   export type SlippageAssessmentAvgAggregateInputType = {
     target?: true
+    revisedTarget?: true
     actual?: true
     revision?: true
   }
 
   export type SlippageAssessmentSumAggregateInputType = {
     target?: true
+    revisedTarget?: true
     actual?: true
     revision?: true
   }
@@ -17007,6 +17014,7 @@ export namespace Prisma {
     projectId?: true
     date?: true
     target?: true
+    revisedTarget?: true
     actual?: true
     revision?: true
     remarks?: true
@@ -17019,6 +17027,7 @@ export namespace Prisma {
     projectId?: true
     date?: true
     target?: true
+    revisedTarget?: true
     actual?: true
     revision?: true
     remarks?: true
@@ -17031,6 +17040,7 @@ export namespace Prisma {
     projectId?: true
     date?: true
     target?: true
+    revisedTarget?: true
     actual?: true
     revision?: true
     remarks?: true
@@ -17130,6 +17140,7 @@ export namespace Prisma {
     projectId: string
     date: Date
     target: number
+    revisedTarget: number | null
     actual: number
     revision: number
     remarks: string | null
@@ -17161,6 +17172,7 @@ export namespace Prisma {
     projectId?: boolean
     date?: boolean
     target?: boolean
+    revisedTarget?: boolean
     actual?: boolean
     revision?: boolean
     remarks?: boolean
@@ -17175,6 +17187,7 @@ export namespace Prisma {
     projectId?: boolean
     date?: boolean
     target?: boolean
+    revisedTarget?: boolean
     actual?: boolean
     revision?: boolean
     remarks?: boolean
@@ -17189,6 +17202,7 @@ export namespace Prisma {
     projectId?: boolean
     date?: boolean
     target?: boolean
+    revisedTarget?: boolean
     actual?: boolean
     revision?: boolean
     remarks?: boolean
@@ -17203,6 +17217,7 @@ export namespace Prisma {
     projectId?: boolean
     date?: boolean
     target?: boolean
+    revisedTarget?: boolean
     actual?: boolean
     revision?: boolean
     remarks?: boolean
@@ -17210,7 +17225,7 @@ export namespace Prisma {
     createdAt?: boolean
   }
 
-  export type SlippageAssessmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "date" | "target" | "actual" | "revision" | "remarks" | "createdById" | "createdAt", ExtArgs["result"]["slippageAssessment"]>
+  export type SlippageAssessmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "date" | "target" | "revisedTarget" | "actual" | "revision" | "remarks" | "createdById" | "createdAt", ExtArgs["result"]["slippageAssessment"]>
   export type SlippageAssessmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
@@ -17235,6 +17250,7 @@ export namespace Prisma {
       projectId: string
       date: Date
       target: number
+      revisedTarget: number | null
       actual: number
       revision: number
       remarks: string | null
@@ -17669,6 +17685,7 @@ export namespace Prisma {
     readonly projectId: FieldRef<"SlippageAssessment", 'String'>
     readonly date: FieldRef<"SlippageAssessment", 'DateTime'>
     readonly target: FieldRef<"SlippageAssessment", 'Float'>
+    readonly revisedTarget: FieldRef<"SlippageAssessment", 'Float'>
     readonly actual: FieldRef<"SlippageAssessment", 'Float'>
     readonly revision: FieldRef<"SlippageAssessment", 'Int'>
     readonly remarks: FieldRef<"SlippageAssessment", 'String'>
@@ -26445,6 +26462,7 @@ export namespace Prisma {
     projectId: 'projectId',
     date: 'date',
     target: 'target',
+    revisedTarget: 'revisedTarget',
     actual: 'actual',
     revision: 'revision',
     remarks: 'remarks',
@@ -28026,6 +28044,7 @@ export namespace Prisma {
     projectId?: StringFilter<"SlippageAssessment"> | string
     date?: DateTimeFilter<"SlippageAssessment"> | Date | string
     target?: FloatFilter<"SlippageAssessment"> | number
+    revisedTarget?: FloatNullableFilter<"SlippageAssessment"> | number | null
     actual?: FloatFilter<"SlippageAssessment"> | number
     revision?: IntFilter<"SlippageAssessment"> | number
     remarks?: StringNullableFilter<"SlippageAssessment"> | string | null
@@ -28040,6 +28059,7 @@ export namespace Prisma {
     projectId?: SortOrder
     date?: SortOrder
     target?: SortOrder
+    revisedTarget?: SortOrderInput | SortOrder
     actual?: SortOrder
     revision?: SortOrder
     remarks?: SortOrderInput | SortOrder
@@ -28057,6 +28077,7 @@ export namespace Prisma {
     projectId?: StringFilter<"SlippageAssessment"> | string
     date?: DateTimeFilter<"SlippageAssessment"> | Date | string
     target?: FloatFilter<"SlippageAssessment"> | number
+    revisedTarget?: FloatNullableFilter<"SlippageAssessment"> | number | null
     actual?: FloatFilter<"SlippageAssessment"> | number
     revision?: IntFilter<"SlippageAssessment"> | number
     remarks?: StringNullableFilter<"SlippageAssessment"> | string | null
@@ -28071,6 +28092,7 @@ export namespace Prisma {
     projectId?: SortOrder
     date?: SortOrder
     target?: SortOrder
+    revisedTarget?: SortOrderInput | SortOrder
     actual?: SortOrder
     revision?: SortOrder
     remarks?: SortOrderInput | SortOrder
@@ -28091,6 +28113,7 @@ export namespace Prisma {
     projectId?: StringWithAggregatesFilter<"SlippageAssessment"> | string
     date?: DateTimeWithAggregatesFilter<"SlippageAssessment"> | Date | string
     target?: FloatWithAggregatesFilter<"SlippageAssessment"> | number
+    revisedTarget?: FloatNullableWithAggregatesFilter<"SlippageAssessment"> | number | null
     actual?: FloatWithAggregatesFilter<"SlippageAssessment"> | number
     revision?: IntWithAggregatesFilter<"SlippageAssessment"> | number
     remarks?: StringNullableWithAggregatesFilter<"SlippageAssessment"> | string | null
@@ -29932,6 +29955,7 @@ export namespace Prisma {
     id?: string
     date: Date | string
     target: number
+    revisedTarget?: number | null
     actual: number
     revision?: number
     remarks?: string | null
@@ -29945,6 +29969,7 @@ export namespace Prisma {
     projectId: string
     date: Date | string
     target: number
+    revisedTarget?: number | null
     actual: number
     revision?: number
     remarks?: string | null
@@ -29956,6 +29981,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     target?: FloatFieldUpdateOperationsInput | number
+    revisedTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     actual?: FloatFieldUpdateOperationsInput | number
     revision?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
@@ -29969,6 +29995,7 @@ export namespace Prisma {
     projectId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     target?: FloatFieldUpdateOperationsInput | number
+    revisedTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     actual?: FloatFieldUpdateOperationsInput | number
     revision?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
@@ -29981,6 +30008,7 @@ export namespace Prisma {
     projectId: string
     date: Date | string
     target: number
+    revisedTarget?: number | null
     actual: number
     revision?: number
     remarks?: string | null
@@ -29992,6 +30020,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     target?: FloatFieldUpdateOperationsInput | number
+    revisedTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     actual?: FloatFieldUpdateOperationsInput | number
     revision?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30003,6 +30032,7 @@ export namespace Prisma {
     projectId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     target?: FloatFieldUpdateOperationsInput | number
+    revisedTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     actual?: FloatFieldUpdateOperationsInput | number
     revision?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31829,6 +31859,7 @@ export namespace Prisma {
     projectId?: SortOrder
     date?: SortOrder
     target?: SortOrder
+    revisedTarget?: SortOrder
     actual?: SortOrder
     revision?: SortOrder
     remarks?: SortOrder
@@ -31838,6 +31869,7 @@ export namespace Prisma {
 
   export type SlippageAssessmentAvgOrderByAggregateInput = {
     target?: SortOrder
+    revisedTarget?: SortOrder
     actual?: SortOrder
     revision?: SortOrder
   }
@@ -31847,6 +31879,7 @@ export namespace Prisma {
     projectId?: SortOrder
     date?: SortOrder
     target?: SortOrder
+    revisedTarget?: SortOrder
     actual?: SortOrder
     revision?: SortOrder
     remarks?: SortOrder
@@ -31859,6 +31892,7 @@ export namespace Prisma {
     projectId?: SortOrder
     date?: SortOrder
     target?: SortOrder
+    revisedTarget?: SortOrder
     actual?: SortOrder
     revision?: SortOrder
     remarks?: SortOrder
@@ -31868,6 +31902,7 @@ export namespace Prisma {
 
   export type SlippageAssessmentSumOrderByAggregateInput = {
     target?: SortOrder
+    revisedTarget?: SortOrder
     actual?: SortOrder
     revision?: SortOrder
   }
@@ -35363,6 +35398,7 @@ export namespace Prisma {
     id?: string
     date: Date | string
     target: number
+    revisedTarget?: number | null
     actual: number
     revision?: number
     remarks?: string | null
@@ -35375,6 +35411,7 @@ export namespace Prisma {
     projectId: string
     date: Date | string
     target: number
+    revisedTarget?: number | null
     actual: number
     revision?: number
     remarks?: string | null
@@ -36028,6 +36065,7 @@ export namespace Prisma {
     projectId?: StringFilter<"SlippageAssessment"> | string
     date?: DateTimeFilter<"SlippageAssessment"> | Date | string
     target?: FloatFilter<"SlippageAssessment"> | number
+    revisedTarget?: FloatNullableFilter<"SlippageAssessment"> | number | null
     actual?: FloatFilter<"SlippageAssessment"> | number
     revision?: IntFilter<"SlippageAssessment"> | number
     remarks?: StringNullableFilter<"SlippageAssessment"> | string | null
@@ -36725,6 +36763,7 @@ export namespace Prisma {
     id?: string
     date: Date | string
     target: number
+    revisedTarget?: number | null
     actual: number
     revision?: number
     remarks?: string | null
@@ -36736,6 +36775,7 @@ export namespace Prisma {
     id?: string
     date: Date | string
     target: number
+    revisedTarget?: number | null
     actual: number
     revision?: number
     remarks?: string | null
@@ -42932,6 +42972,7 @@ export namespace Prisma {
     projectId: string
     date: Date | string
     target: number
+    revisedTarget?: number | null
     actual: number
     revision?: number
     remarks?: string | null
@@ -43556,6 +43597,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     target?: FloatFieldUpdateOperationsInput | number
+    revisedTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     actual?: FloatFieldUpdateOperationsInput | number
     revision?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43568,6 +43610,7 @@ export namespace Prisma {
     projectId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     target?: FloatFieldUpdateOperationsInput | number
+    revisedTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     actual?: FloatFieldUpdateOperationsInput | number
     revision?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43579,6 +43622,7 @@ export namespace Prisma {
     projectId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     target?: FloatFieldUpdateOperationsInput | number
+    revisedTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     actual?: FloatFieldUpdateOperationsInput | number
     revision?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43896,6 +43940,7 @@ export namespace Prisma {
     id?: string
     date: Date | string
     target: number
+    revisedTarget?: number | null
     actual: number
     revision?: number
     remarks?: string | null
@@ -44175,6 +44220,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     target?: FloatFieldUpdateOperationsInput | number
+    revisedTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     actual?: FloatFieldUpdateOperationsInput | number
     revision?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44186,6 +44232,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     target?: FloatFieldUpdateOperationsInput | number
+    revisedTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     actual?: FloatFieldUpdateOperationsInput | number
     revision?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44197,6 +44244,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     target?: FloatFieldUpdateOperationsInput | number
+    revisedTarget?: NullableFloatFieldUpdateOperationsInput | number | null
     actual?: FloatFieldUpdateOperationsInput | number
     revision?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null

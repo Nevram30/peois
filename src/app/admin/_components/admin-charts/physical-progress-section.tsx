@@ -16,10 +16,12 @@ import { STAGE_HEX } from "./slippage-history-section";
 
 // ── Types ──────────────────────────────────────────────────────
 
-type Assessment = {
+export type SCurveAssessment = {
     id: string;
-    date: Date;
+    date: Date | string;
     target: number;
+    // Null when the schedule had not been revised at that assessment.
+    revisedTarget?: number | null;
     actual: number;
     revision: number;
 };
@@ -29,11 +31,11 @@ export type SCurveProject = {
     projectCode: string;
     title: string;
     cityMunicipality: string | null;
-    dateStarted: Date | null;
-    targetCompletionDate: Date | null;
-    revisedCompletionDate: Date | null;
+    dateStarted: Date | string | null;
+    targetCompletionDate: Date | string | null;
+    revisedCompletionDate: Date | string | null;
     // Oldest first.
-    slippageAssessments: Assessment[];
+    slippageAssessments: SCurveAssessment[];
 };
 
 type CurvePoint = { t: number; value: number };
@@ -54,14 +56,15 @@ const dayOf = (d: Date | string) => new Date(d).setHours(0, 0, 0, 0);
 
 // ── Curves ─────────────────────────────────────────────────────
 // Built from the project's filed assessments:
-//  • Planned  — the 0% baseline at the start date, each Rev. 0 assessment's
-//               target, and 100% at the target completion date.
-//  • Revised  — only once a target has been revised (a Rev. 1+ assessment or a
-//               revised completion date): it branches off the last Rev. 0
-//               target, runs through the revised targets and ends at 100% on
-//               the revised completion date.
+//  • Planned  — the 0% baseline at the start date, each assessment's target,
+//               and 100% at the target completion date.
+//  • Revised  — only once the schedule has been revised (an assessment with a
+//               revised target, or a revised completion date): the baseline,
+//               each revised target, and 100% on the revised completion date.
+//               Assessments filed before the revision have no revised target
+//               and are skipped.
 //  • Actual   — the 0% baseline, then each assessment's recorded actual.
-const buildCurves = (project: SCurveProject) => {
+export const buildCurves = (project: SCurveProject) => {
     const assessments = project.slippageAssessments;
     const first = assessments[0];
     const start = project.dateStarted ? dayOf(project.dateStarted) : null;
@@ -70,12 +73,11 @@ const buildCurves = (project: SCurveProject) => {
     const baseline: CurvePoint | null =
         start !== null && (!first || start <= dayOf(first.date)) ? { t: start, value: 0 } : null;
 
-    const original = assessments.filter((a) => a.revision === 0);
-    const revisedRows = assessments.filter((a) => a.revision > 0);
+    const revisedRows = assessments.filter((a) => a.revisedTarget != null);
 
     const planned: CurvePoint[] = [
         ...(baseline ? [baseline] : []),
-        ...original.map((a) => ({ t: dayOf(a.date), value: a.target })),
+        ...assessments.map((a) => ({ t: dayOf(a.date), value: a.target })),
     ];
     const lastPlanned = planned[planned.length - 1];
     const targetEnd = project.targetCompletionDate ? dayOf(project.targetCompletionDate) : null;
@@ -87,10 +89,9 @@ const buildCurves = (project: SCurveProject) => {
     const hasRevision = revisedRows.length > 0 || (revisedEndRaw !== null && revisedEndRaw !== targetEnd);
     let revised: CurvePoint[] = [];
     if (hasRevision) {
-        const anchor = [...planned].reverse().find((p) => p.value < 100) ?? baseline;
         revised = [
-            ...(anchor ? [anchor] : []),
-            ...revisedRows.map((a) => ({ t: dayOf(a.date), value: a.target })),
+            ...(baseline ? [baseline] : []),
+            ...revisedRows.map((a) => ({ t: dayOf(a.date), value: a.revisedTarget! })),
         ];
         const lastRevised = revised[revised.length - 1];
         if (revisedEndRaw !== null && (!lastRevised || revisedEndRaw > lastRevised.t)) {
@@ -185,8 +186,10 @@ export const SCurveChart = ({ project, height = 340 }: { project: SCurveProject;
     const plotBottom = PAD.top + plotH;
 
     const allT = [...curves.planned, ...curves.revised, ...curves.actual].map((p) => p.t);
-    const tMin = Math.min(...allT);
-    const tMax = Math.max(...allT);
+    // Nothing dated yet (no start date, no assessments): the axis collapses to
+    // one point rather than to ±Infinity.
+    const tMin = allT.length ? Math.min(...allT) : 0;
+    const tMax = allT.length ? Math.max(...allT) : 0;
     const xOf = (t: number) => (tMax === tMin ? PAD.left + plotW / 2 : PAD.left + ((t - tMin) / (tMax - tMin)) * plotW);
     const yOf = (v: number) => PAD.top + (1 - Math.min(100, Math.max(0, v)) / 100) * plotH;
     const path = (pts: CurvePoint[]) => pts.map((p, i) => `${i ? "L" : "M"} ${xOf(p.t)} ${yOf(p.value)}`).join(" ");
@@ -402,8 +405,12 @@ export const SCurveChart = ({ project, height = 340 }: { project: SCurveProject;
                         {SLIPPAGE_STAGE_CONFIG[current.stage].label.toUpperCase()}
                     </p>
                     <p className="mt-1 text-[10px] text-slate-500">
-                        {current.a.revision > 0 ? "Revised target" : "Planned"}{" "}
-                        <span className="font-bold text-slate-700">{formatPct(current.a.target)}</span>
+                        Planned <span className="font-bold text-slate-700">{formatPct(current.a.target)}</span>
+                        {current.a.revisedTarget != null && (
+                            <>
+                                {" · "}Revised <span className="font-bold text-blue-600">{formatPct(current.a.revisedTarget)}</span>
+                            </>
+                        )}
                         {" · "}Actual <span className="font-bold text-slate-700">{formatPct(current.a.actual)}</span>
                     </p>
                     <p className="text-[9px] text-slate-400">Revision {current.a.revision}</p>
@@ -433,11 +440,79 @@ const LineLegend = ({ hasRevised }: { hasRevised: boolean }) => (
     </div>
 );
 
-const TrendIcon = () => (
+export const TrendIcon = () => (
     <svg className="h-5 w-5 shrink-0 text-[#1e3a8a]" fill="none" viewBox="0 0 24 24" strokeWidth={2.2} stroke="currentColor" aria-hidden>
         <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
     </svg>
 );
+
+// ── Stage legend strip ─────────────────────────────────────────
+export const StageLegendStrip = () => (
+    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-sm border border-slate-200 bg-white px-4 py-3">
+        {SLIPPAGE_STAGE_VALUES.map((s) => (
+            <div key={s} className="flex items-center gap-2">
+                <span className="h-3 w-3 shrink-0 rounded-full" style={{ background: STAGE_HEX[s] }} />
+                <span className="text-[12px] font-semibold text-slate-700">
+                    {SLIPPAGE_STAGE_CONFIG[s].range}: {SLIPPAGE_STAGE_CONFIG[s].label}
+                </span>
+            </div>
+        ))}
+    </div>
+);
+
+// ── S-curve card ───────────────────────────────────────────────
+// Title, line legend, the chart and the footer note. Shared by the dashboard
+// tab and the project forms; `children` sits between the header and the chart
+// (the dashboard puts the picked project's name there).
+export const SCurveCard = ({
+    project,
+    children,
+}: {
+    project: SCurveProject;
+    children?: React.ReactNode;
+}) => {
+    const curves = buildCurves(project);
+    const hasRevised = curves.revised.length > 1;
+    const empty = curves.planned.length < 2 && curves.actual.length === 0;
+    return (
+        <div className="rounded-sm border border-slate-200 bg-white shadow-sm">
+            <div className="p-5">
+                <div className="mb-2 flex flex-wrap items-start justify-between gap-3">
+                    <div className="flex min-w-0 items-start gap-2">
+                        <TrendIcon />
+                        <div className="min-w-0">
+                            <p className="text-[16px] font-bold text-slate-900">Progress S-Curve &amp; Timeline Trendline</p>
+                            <p className="text-[12px] text-slate-600">
+                                Comparison of cumulative planned target baseline vs. recorded actual accomplishment
+                            </p>
+                        </div>
+                    </div>
+                    <LineLegend hasRevised={hasRevised} />
+                </div>
+                {children}
+                {empty ? (
+                    <div className="flex h-[200px] items-center justify-center rounded-sm border border-dashed border-slate-200 text-center text-sm text-slate-400">
+                        Set the start and target completion dates, or record the first progress entry, to draw the S-curve.
+                    </div>
+                ) : (
+                    <SCurveChart project={project} />
+                )}
+            </div>
+            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-200 px-5 py-3 text-[11.5px]">
+                <p className="text-slate-600">
+                    <span className="font-bold text-[#1e3a8a]">Pre-Construction Baseline &amp; Cumulative Progress:</span>{" "}
+                    Milestones and slippage plot automatically as progress entries are recorded.
+                </p>
+                <p className="flex items-center gap-1.5 text-slate-600">
+                    <svg className="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" aria-hidden>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    Verified by Provincial Engineers Office MIS
+                </p>
+            </div>
+        </div>
+    );
+};
 
 // ── Section ────────────────────────────────────────────────────
 // Physical Progress & Slippage Overview: pick a project, read its planned vs.
@@ -466,7 +541,6 @@ export const PhysicalProgressSection = ({ budgetYear }: { budgetYear: string }) 
     const latest = project?.slippageAssessments[project.slippageAssessments.length - 1];
     const latestSlippage = latest ? computeSlippage(latest.target, latest.actual) : null;
     const stage = latestSlippage === null ? null : SLIPPAGE_STAGE_CONFIG[getSlippageStage(latestSlippage)];
-    const hasRevised = project ? buildCurves(project).revised.length > 1 : false;
 
     return (
         <div>
@@ -475,16 +549,8 @@ export const PhysicalProgressSection = ({ budgetYear }: { budgetYear: string }) 
                 <p className="text-[16px] font-bold text-slate-800">Physical Progress &amp; Slippage Overview</p>
             </div>
 
-            {/* Stage legend */}
-            <div className="mb-4 flex flex-wrap items-center gap-x-6 gap-y-2 rounded-sm border border-slate-200 bg-white px-4 py-3">
-                {SLIPPAGE_STAGE_VALUES.map((s) => (
-                    <div key={s} className="flex items-center gap-2">
-                        <span className="h-3 w-3 shrink-0 rounded-full" style={{ background: STAGE_HEX[s] }} />
-                        <span className="text-[12px] font-semibold text-slate-700">
-                            {SLIPPAGE_STAGE_CONFIG[s].range}: {SLIPPAGE_STAGE_CONFIG[s].label}
-                        </span>
-                    </div>
-                ))}
+            <div className="mb-4">
+                <StageLegendStrip />
             </div>
 
             {/* Project picker */}
@@ -525,58 +591,29 @@ export const PhysicalProgressSection = ({ budgetYear }: { budgetYear: string }) 
                     {search ? "No projects match your search." : "No slippage assessments filed yet."}
                 </div>
             ) : (
-                <div className="rounded-sm border border-slate-200 bg-white shadow-sm">
-                    <div className="p-5">
-                        <div className="mb-2 flex flex-wrap items-start justify-between gap-3">
-                            <div className="flex min-w-0 items-start gap-2">
-                                <TrendIcon />
-                                <div className="min-w-0">
-                                    <p className="text-[16px] font-bold text-slate-900">Progress S-Curve &amp; Timeline Trendline</p>
-                                    <p className="text-[12px] text-slate-600">
-                                        Comparison of cumulative planned target baseline vs. recorded actual accomplishment
-                                    </p>
-                                </div>
-                            </div>
-                            <LineLegend hasRevised={hasRevised} />
+                <SCurveCard key={project.id} project={project}>
+                    {/* Which project, and where it stands now */}
+                    <div className="mb-1 flex flex-wrap items-center justify-between gap-2 rounded-sm bg-slate-50 px-3 py-2">
+                        <div className="min-w-0">
+                            <p className="truncate text-xs font-bold text-slate-800" title={project.title}>{project.title}</p>
+                            <p className="truncate text-[10.5px] text-slate-500">
+                                <span className="text-blue-500">{project.projectCode}</span>
+                                {project.cityMunicipality ? ` · ${project.cityMunicipality}` : ""}
+                            </p>
                         </div>
-
-                        {/* Which project, and where it stands now */}
-                        <div className="mb-1 flex flex-wrap items-center justify-between gap-2 rounded-sm bg-slate-50 px-3 py-2">
-                            <div className="min-w-0">
-                                <p className="truncate text-xs font-bold text-slate-800" title={project.title}>{project.title}</p>
-                                <p className="truncate text-[10.5px] text-slate-500">
-                                    <span className="text-blue-500">{project.projectCode}</span>
-                                    {project.cityMunicipality ? ` · ${project.cityMunicipality}` : ""}
-                                </p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <FyBadge year={budgetYear} />
-                                {stage && latestSlippage !== null && (
-                                    <>
-                                        <span className={`text-sm font-extrabold ${stage.text}`} style={{ fontVariantNumeric: "tabular-nums" }}>
-                                            {formatSlippage(latestSlippage)}%
-                                        </span>
-                                        <span className={`rounded-full px-2 py-px text-[9px] font-bold ${stage.badge}`}>{stage.label}</span>
-                                    </>
-                                )}
-                            </div>
+                        <div className="flex items-center gap-2">
+                            <FyBadge year={budgetYear} />
+                            {stage && latestSlippage !== null && (
+                                <>
+                                    <span className={`text-sm font-extrabold ${stage.text}`} style={{ fontVariantNumeric: "tabular-nums" }}>
+                                        {formatSlippage(latestSlippage)}%
+                                    </span>
+                                    <span className={`rounded-full px-2 py-px text-[9px] font-bold ${stage.badge}`}>{stage.label}</span>
+                                </>
+                            )}
                         </div>
-
-                        <SCurveChart key={project.id} project={project} />
                     </div>
-                    <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-200 px-5 py-3 text-[11.5px]">
-                        <p className="text-slate-600">
-                            <span className="font-bold text-[#1e3a8a]">Pre-Construction Baseline &amp; Cumulative Progress:</span>{" "}
-                            Milestones and slippage plot automatically as progress entries are recorded.
-                        </p>
-                        <p className="flex items-center gap-1.5 text-slate-600">
-                            <svg className="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" aria-hidden>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                            </svg>
-                            Verified by Provincial Engineers Office MIS
-                        </p>
-                    </div>
-                </div>
+                </SCurveCard>
             )}
         </div>
     );

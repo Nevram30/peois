@@ -28,12 +28,10 @@ import {
   getBarangaysByMunicipality,
 } from "~/lib/davao-del-norte-locations";
 import {
-  SLIPPAGE_STAGE_VALUES,
-  SLIPPAGE_STAGE_CONFIG,
-  computeSlippage,
-  formatSlippage,
-  getSlippageStageConfig,
-} from "~/lib/slippage";
+  ProgressSlippagePanel,
+  type ProgressEntry,
+  type ProgressEntryInput,
+} from "~/app/admin/projects/_components/progress-slippage-panel";
 import {
   DOC_CHECKLIST,
   docFileType,
@@ -58,8 +56,6 @@ const inputClass =
   "block w-full rounded-sm border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none";
 const labelClass =
   "mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-gray-500";
-// Larger sentence-case labels used by the Slippage card.
-const fieldLabelClass = "mb-1.5 block text-sm font-bold text-gray-600";
 const cardClass = "rounded-sm border border-gray-200 bg-white shadow-sm";
 const errorRingClass =
   "border-red-400 focus:border-red-500 focus:ring-red-500/20";
@@ -144,26 +140,6 @@ const fmtInputDate = (d: string) => {
   return new Date(d).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" });
 };
 
-// Today as a `yyyy-mm-dd` value for a date input, in local time — toISOString
-// would hand back the UTC day and shift the date for evening entries.
-const todayInputDate = () => {
-  const d = new Date();
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${d.getFullYear()}-${month}-${day}`;
-};
-
-// ─── Slippage history (filed locally, one row per saved assessment) ───────
-type SlippageEntry = {
-  id: string;
-  /** Assessment date, `yyyy-mm-dd`. Back-dating an assessment is allowed. */
-  date: string;
-  target: number;
-  actual: number;
-  /** Revision this row was filed as; Rev. 0 is the first assessment. */
-  revision: number;
-  remarks: string;
-};
 
 // ─── Section wrappers ─────────────────────────────────────────────────────
 const SectionHeader = ({
@@ -299,26 +275,6 @@ const FolderIcon = (
     <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
   </svg>
 );
-const TrendDownIcon = (
-  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6 9 12.75l4.286-4.286a11.948 11.948 0 0 1 4.306 6.43l.776 2.898m0 0 3.182-5.511m-3.182 5.51-5.511-3.181" />
-  </svg>
-);
-const SaveIcon = (
-  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M3 6.75A2.25 2.25 0 0 1 5.25 4.5h9.129c.597 0 1.17.237 1.591.659l2.871 2.871c.422.422.659.994.659 1.591v9.129A2.25 2.25 0 0 1 17.25 21H5.25A2.25 2.25 0 0 1 3 18.75V6.75Z" />
-    <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 4.5v4.125c0 .621.504 1.125 1.125 1.125h4.5c.621 0 1.125-.504 1.125-1.125V4.5M7.5 21v-5.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125V21" />
-  </svg>
-);
-// Same idea for the slippage inputs: anything that is not a 0–100 percentage
-// reads as "not entered yet" rather than NaN.
-const parsePercent = (value: string) => {
-  const trimmed = value.trim();
-  if (!trimmed) return null;
-  const parsed = Number(trimmed);
-  if (!Number.isFinite(parsed) || parsed < 0 || parsed > 100) return null;
-  return parsed;
-};
 
 export const AddProjectForm = () => {
   const router = useRouter();
@@ -370,18 +326,10 @@ export const AddProjectForm = () => {
   const [adjError, setAdjError] = useState<string | null>(null);
   const [pendingAdjustments, setPendingAdjustments] = useState<PendingAdjustment[]>([]);
 
-  // ── Slippage ─────────────────────────────────────────────────────────
-  // Percentages live as strings so a half-typed value survives editing.
-  // `slippageRevision` is the revision the current figures will be filed as;
-  // saving files them and the next edit rolls the counter forward.
-  const [slippageTargetInput, setSlippageTargetInput] = useState("");
-  const [slippageActualInput, setSlippageActualInput] = useState("");
-  const [slippageRevision, setSlippageRevision] = useState(0);
-  const [savedSlippage, setSavedSlippage] = useState<string | null>(null);
-  // Each save also files a row in the history table below the card.
-  const [slippageDate, setSlippageDate] = useState(todayInputDate);
-  const [slippageRemarks, setSlippageRemarks] = useState("");
-  const [slippageHistory, setSlippageHistory] = useState<SlippageEntry[]>([]);
+  // ── Physical Progress & Slippage ─────────────────────────────────────
+  // Recorded entries are queued here and filed against the project once it
+  // is created. Revisions run in filing order: the first is Rev. 0.
+  const [progressEntries, setProgressEntries] = useState<ProgressEntry[]>([]);
 
   // ── Workforce Distribution ───────────────────────────────────────────
   const [numFemale, setNumFemale] = useState(0);
@@ -446,58 +394,40 @@ export const AddProjectForm = () => {
       Math.max(0, Math.min(100, parseFloat(completionPercentage) || 0)) * 100,
     ) / 100;
 
-  // ── Slippage derived values ──────────────────────────────────────────
-  const slippageTarget = useMemo(
-    () => parsePercent(slippageTargetInput),
-    [slippageTargetInput],
-  );
-  const slippageActual = useMemo(
-    () => parsePercent(slippageActualInput),
-    [slippageActualInput],
-  );
-  const slippage =
-    slippageTarget !== null && slippageActual !== null
-      ? computeSlippage(slippageTarget, slippageActual)
-      : null;
-  const slippageStage = slippage !== null ? getSlippageStageConfig(slippage) : null;
-  // Identity of the figures currently on screen, compared against the last
-  // saved pair to tell a filed revision from an edited one.
-  const slippageKey =
-    slippage !== null ? `${slippageTarget}|${slippageActual}` : null;
-  const isSlippageDirty = slippageKey !== null && slippageKey !== savedSlippage;
-  const canFileSlippage = isSlippageDirty && slippageDate !== "";
-
-  // Newest assessment first, matching how the history reads on the detail page.
-  // The sort is stable, so same-day entries keep the order they were filed in.
-  const slippageHistoryRows = useMemo(
-    () => [...slippageHistory].sort((a, b) => b.date.localeCompare(a.date)),
-    [slippageHistory],
-  );
-
-  const handleSaveSlippage = () => {
-    if (slippageTarget === null || slippageActual === null) return;
-    if (!canFileSlippage) return;
-    // The first save files Rev. 0; every later change files the next revision.
-    const filedRevision =
-      savedSlippage !== null ? slippageRevision + 1 : slippageRevision;
-    if (savedSlippage !== null) setSlippageRevision(filedRevision);
-    setSavedSlippage(slippageKey);
-    setSlippageHistory((prev) => [
+  const recordProgressEntry = (input: ProgressEntryInput) =>
+    setProgressEntries((prev) => [
+      ...prev,
       {
         id: `${Date.now()}-${Math.random()}`,
-        date: slippageDate,
-        target: slippageTarget,
-        actual: slippageActual,
-        revision: filedRevision,
-        remarks: slippageRemarks.trim(),
+        date: input.date,
+        target: input.target,
+        revisedTarget: input.revisedTarget,
+        actual: input.actual,
+        revision: prev.length,
+        remarks: input.remarks,
       },
-      ...prev,
     ]);
-    setSlippageRemarks("");
-  };
+  const updateProgressEntry = (id: string, input: ProgressEntryInput) =>
+    setProgressEntries((prev) =>
+      prev.map((e) =>
+        e.id === id
+          ? { ...e, date: input.date, target: input.target, revisedTarget: input.revisedTarget, actual: input.actual, remarks: input.remarks }
+          : e,
+      ),
+    );
+  const removeProgressEntry = (id: string) =>
+    setProgressEntries((prev) => prev.filter((e) => e.id !== id));
 
-  const removeSlippageEntry = (id: string) =>
-    setSlippageHistory((prev) => prev.filter((e) => e.id !== id));
+  // The project's current slippage figures are the latest entry by date
+  // (filing order breaks ties), the same pair the edit page keeps on file.
+  const latestProgressEntry = useMemo(
+    () =>
+      progressEntries.reduce<ProgressEntry | undefined>(
+        (latest, e) => (!latest || String(e.date) >= String(latest.date) ? e : latest),
+        undefined,
+      ),
+    [progressEntries],
+  );
 
   const availableMunicipalities = useMemo(
     () => getMunicipalitiesByDistrict(district as "DISTRICT_I" | "DISTRICT_II" | ""),
@@ -677,14 +607,15 @@ export const AddProjectForm = () => {
             justification: a.justification || undefined,
           }),
         ),
-        ...slippageHistory.map((entry) =>
+        ...progressEntries.map((entry) =>
           createSlippageAssessment.mutateAsync({
             projectId: project.id,
             date: new Date(entry.date),
             target: entry.target,
+            revisedTarget: entry.revisedTarget,
             actual: entry.actual,
             revision: entry.revision,
-            remarks: entry.remarks || undefined,
+            remarks: entry.remarks ?? undefined,
           }),
         ),
       ]);
@@ -728,10 +659,6 @@ export const AddProjectForm = () => {
         !!targetCompletionDate &&
         new Date(targetCompletionDate) < new Date(dateStarted),
       workforce: totalWorkforce < 1,
-      // The slippage assessment is optional, but a typed-in percentage must
-      // be a valid 0–100 figure.
-      slippageTarget: slippageTargetInput.trim() !== "" && slippageTarget === null,
-      slippageActual: slippageActualInput.trim() !== "" && slippageActual === null,
       engineers: engineers.length === 0,
     }),
     [
@@ -764,10 +691,6 @@ export const AddProjectForm = () => {
       dateStarted,
       targetCompletionDate,
       totalWorkforce,
-      slippageTargetInput,
-      slippageTarget,
-      slippageActualInput,
-      slippageActual,
       engineers,
     ],
   );
@@ -827,11 +750,11 @@ export const AddProjectForm = () => {
       endLatitude: isRoad ? parsedEndLat : null,
       endLongitude: isRoad ? parsedEndLng : null,
       description: description || undefined,
-      // Sent whether or not the card was saved, so a filled-in assessment is
-      // never dropped; the revision counter only moves on an explicit save.
-      slippageTarget,
-      slippageActual,
-      slippageRevision,
+      // Current figures = the latest recorded entry; the full history is
+      // filed row by row once the project exists.
+      slippageTarget: latestProgressEntry?.target ?? null,
+      slippageActual: latestProgressEntry?.actual ?? null,
+      slippageRevision: Math.max(0, progressEntries.length - 1),
       status: isDraft ? "NOT_YET_STARTED" : status,
       imageUrl: images[0],
       imageUrls: images,
@@ -1545,195 +1468,16 @@ export const AddProjectForm = () => {
           </div>
         </section>
 
-        {/* ── Slippage ──────────────────────────────────────────────── */}
-        <section className={cardClass}>
-          <SectionHeader icon={TrendDownIcon} title="Slippage" />
-          <div className="p-5">
-            <div className="flex flex-wrap items-end gap-4">
-              {/* Live readout — actual minus target, with its stage */}
-              <div
-                className={`flex min-w-70 flex-1 items-center justify-between gap-4 rounded-sm border px-4 py-3 ${slippageStage ? slippageStage.tile : "border-gray-200 bg-gray-50"
-                  }`}
-              >
-                <div>
-                  <p
-                    className={`text-[10px] font-bold uppercase tracking-widest ${slippageStage ? slippageStage.text : "text-gray-400"
-                      }`}
-                  >
-                    Slippage
-                  </p>
-                  <p
-                    className={`mt-0.5 text-3xl font-extrabold ${slippageStage ? slippageStage.text : "text-gray-300"
-                      }`}
-                  >
-                    {slippage !== null ? formatSlippage(slippage) : "—"}
-                    <span className="ml-0.5 text-base font-bold">%</span>
-                  </p>
-                </div>
-                {slippageStage && (
-                  <span
-                    className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest ${slippageStage.badge}`}
-                  >
-                    {slippageStage.label}
-                  </span>
-                )}
-              </div>
-
-              <div className="w-45 shrink-0">
-                <label className={fieldLabelClass}>Assessment Date</label>
-                <input
-                  type="date"
-                  value={slippageDate}
-                  onChange={(e) => setSlippageDate(e.target.value)}
-                  className={inputClass}
-                />
-              </div>
-
-              <div className="w-45 shrink-0">
-                <label className={fieldLabelClass}>Target %</label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    inputMode="decimal"
-                    value={slippageTargetInput}
-                    onChange={(e) => setSlippageTargetInput(e.target.value)}
-                    placeholder="0.00"
-                    className={`${inputClass} pr-8 ${showErrors && fieldErrors.slippageTarget ? errorRingClass : ""}`}
-                  />
-                  <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-sm text-gray-400">%</span>
-                </div>
-                <FieldError
-                  show={showErrors && fieldErrors.slippageTarget}
-                  message="Enter a value between 0 and 100"
-                />
-              </div>
-
-              <div className="w-45 shrink-0">
-                <label className={fieldLabelClass}>Actual %</label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    inputMode="decimal"
-                    value={slippageActualInput}
-                    onChange={(e) => setSlippageActualInput(e.target.value)}
-                    placeholder="0.00"
-                    className={`${inputClass} pr-8 ${showErrors && fieldErrors.slippageActual ? errorRingClass : ""}`}
-                  />
-                  <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-sm text-gray-400">%</span>
-                </div>
-                <FieldError
-                  show={showErrors && fieldErrors.slippageActual}
-                  message="Enter a value between 0 and 100"
-                />
-              </div>
-
-              {/* Revision counter — advanced by Save, never typed */}
-              <div className="w-35 shrink-0">
-                <label className={fieldLabelClass}>Revision</label>
-                <div className={`${inputClass} bg-gray-50 text-gray-600`}>
-                  Rev. {isSlippageDirty && savedSlippage !== null ? slippageRevision + 1 : slippageRevision}
-                </div>
-              </div>
-
-              <div className="min-w-50 flex-1">
-                <label className={fieldLabelClass}>Remarks</label>
-                <input
-                  type="text"
-                  value={slippageRemarks}
-                  onChange={(e) => setSlippageRemarks(e.target.value)}
-                  placeholder="Remarks / basis of assessment..."
-                  className={inputClass}
-                />
-              </div>
-
-              <button
-                type="button"
-                onClick={handleSaveSlippage}
-                disabled={!canFileSlippage}
-                className="flex h-10.5 shrink-0 items-center justify-center gap-2 rounded-sm bg-blue-600 px-6 text-xs font-bold uppercase tracking-widest text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {SaveIcon}
-                Save
-              </button>
-            </div>
-
-            {/* Prescribed action for the current stage / save state */}
-            {slippageStage && (
-              <p className="mt-3 text-xs text-gray-500">
-                <span className="font-semibold text-gray-700">{slippageStage.label}:</span>{" "}
-                {slippageStage.action}
-                {savedSlippage !== null && !isSlippageDirty && (
-                  <span className="ml-1 text-gray-400">
-                    — filed as Rev. {slippageRevision}.
-                  </span>
-                )}
-              </p>
-            )}
-
-            {/* Slippage history — one row per filed assessment */}
-            <div className="mt-5">
-              <label className={labelClass}>Slippage History</label>
-              <div className="overflow-y-auto rounded-sm border border-gray-200" style={{ maxHeight: "392px" }}>
-                <table className="w-full border-separate border-spacing-0 text-xs">
-                  <thead className="sticky top-0 z-10 bg-gray-50">
-                    <tr className="[&>th]:border-b [&>th]:border-gray-100">
-                      <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Date</th>
-                      <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Target %</th>
-                      <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Actual %</th>
-                      <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Slippage (%)</th>
-                      <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Remarks</th>
-                      <th className="px-3 py-2" />
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {slippageHistoryRows.length > 0 ? slippageHistoryRows.map((entry) => {
-                      const value = computeSlippage(entry.target, entry.actual);
-                      const cfg = getSlippageStageConfig(value);
-                      return (
-                        <tr key={entry.id} className="hover:bg-gray-50/50">
-                          <td className="px-3 py-2.5 text-gray-600">{fmtInputDate(entry.date)}</td>
-                          <td className="px-3 py-2.5 text-gray-600">{entry.target.toFixed(2)}%</td>
-                          <td className="px-3 py-2.5 text-gray-600">{entry.actual.toFixed(2)}%</td>
-                          <td className={`px-3 py-2.5 font-bold ${cfg.text}`}>
-                            {formatSlippage(value)}%
-                          </td>
-                          <td className="px-3 py-2.5 text-gray-600">{entry.remarks || "—"}</td>
-                          <td className="px-3 py-2.5 text-right">
-                            <button
-                              type="button"
-                              onClick={() => removeSlippageEntry(entry.id)}
-                              className="text-gray-300 hover:text-red-500"
-                              aria-label="Remove slippage assessment"
-                            >
-                              ×
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    }) : (
-                      <tr><td colSpan={6} className="px-3 py-6 text-center text-gray-400">No slippage assessment has been filed yet.</td></tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Stage legend */}
-            <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-gray-100 pt-4">
-              {SLIPPAGE_STAGE_VALUES.map((stage) => {
-                const cfg = SLIPPAGE_STAGE_CONFIG[stage];
-                return (
-                  <span key={stage} className="flex items-center gap-2">
-                    <span className={`h-2 w-2 rounded-full ${cfg.dot}`} />
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
-                      {cfg.range}: {cfg.label}
-                    </span>
-                  </span>
-                );
-              })}
-            </div>
-          </div>
-        </section>
+        {/* ── Physical Progress & Slippage ──────────────────────────── */}
+        <ProgressSlippagePanel
+          entries={progressEntries}
+          dateStarted={dateStarted || null}
+          targetCompletionDate={targetCompletionDate || null}
+          revisedCompletionDate={null}
+          onRecord={recordProgressEntry}
+          onUpdate={updateProgressEntry}
+          onDelete={removeProgressEntry}
+        />
 
         {/* ── Workforce Distribution + Project In-Charge & Profile ──── */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">

@@ -290,6 +290,7 @@ exports.Prisma.SlippageAssessmentScalarFieldEnum = {
   projectId: 'projectId',
   date: 'date',
   target: 'target',
+  revisedTarget: 'revisedTarget',
   actual: 'actual',
   revision: 'revision',
   remarks: 'remarks',

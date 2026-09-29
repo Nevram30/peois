@@ -300,6 +300,7 @@ export const projectRouter = createTRPCRouter({
         id: z.string(),
         slippageTarget: z.number().min(0).max(100).nullable(),
         slippageActual: z.number().min(0).max(100).nullable(),
+        revisedTarget: z.number().min(0).max(100).nullable().optional(),
         // Assessment date and remarks for the history row this save files.
         // The date may be back-dated; it defaults to the moment of filing.
         date: z.date().optional(),
@@ -317,27 +318,28 @@ export const projectRouter = createTRPCRouter({
       });
       if (!current) throw new Error("Project not found");
 
-      // Rev. 0 is the first assessment on file; every later change to the pair
-      // rolls the counter forward.
+      // Rev. 0 is the first assessment on file; every later filing rolls the
+      // counter forward. Each Record files its own history row, even when the
+      // figures repeat — a later date at the same percentage is itself a
+      // reading (the project stalled).
       const hadAssessment =
         current.slippageTarget !== null && current.slippageActual !== null;
-      const changed =
-        current.slippageTarget !== input.slippageTarget ||
-        current.slippageActual !== input.slippageActual;
+      const filing = input.slippageTarget !== null && input.slippageActual !== null;
       const slippageRevision =
-        hadAssessment && changed
+        hadAssessment && filing
           ? current.slippageRevision + 1
           : current.slippageRevision;
 
       // Clearing the assessment leaves the history untouched — a filed
       // revision stays on the record even once the current figures are gone.
       const historyRow =
-        input.slippageTarget !== null && input.slippageActual !== null && changed
+        input.slippageTarget !== null && input.slippageActual !== null
           ? ctx.db.slippageAssessment.create({
             data: {
               projectId: input.id,
               date: input.date ?? new Date(),
               target: input.slippageTarget,
+              revisedTarget: input.revisedTarget ?? null,
               actual: input.slippageActual,
               revision: slippageRevision,
               remarks: input.remarks?.trim() ?? null,
@@ -370,6 +372,7 @@ export const projectRouter = createTRPCRouter({
         projectId: z.string(),
         date: z.date(),
         target: z.number().min(0).max(100),
+        revisedTarget: z.number().min(0).max(100).nullable().optional(),
         actual: z.number().min(0).max(100),
         revision: z.number().int().min(0).default(0),
         remarks: z.string().optional(),
@@ -381,6 +384,7 @@ export const projectRouter = createTRPCRouter({
           projectId: input.projectId,
           date: input.date,
           target: input.target,
+          revisedTarget: input.revisedTarget ?? null,
           actual: input.actual,
           revision: input.revision,
           remarks: input.remarks?.trim() ?? null,
@@ -397,6 +401,7 @@ export const projectRouter = createTRPCRouter({
         id: z.string(),
         date: z.date(),
         target: z.number().min(0).max(100),
+        revisedTarget: z.number().min(0).max(100).nullable().optional(),
         actual: z.number().min(0).max(100),
         remarks: z.string().optional().nullable(),
       }),
@@ -407,6 +412,7 @@ export const projectRouter = createTRPCRouter({
         data: {
           date: input.date,
           target: input.target,
+          revisedTarget: input.revisedTarget ?? null,
           actual: input.actual,
           remarks: input.remarks?.trim() ?? null,
         },
@@ -1164,7 +1170,7 @@ export const projectRouter = createTRPCRouter({
           targetCompletionDate: true,
           revisedCompletionDate: true,
           slippageAssessments: {
-            select: { id: true, date: true, target: true, actual: true, revision: true },
+            select: { id: true, date: true, target: true, revisedTarget: true, actual: true, revision: true },
             orderBy: [{ date: "asc" }, { createdAt: "asc" }],
           },
         },
