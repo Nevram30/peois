@@ -449,9 +449,9 @@ export const projectRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-        reason: z.string().min(1, "Reason is required"),
-        title: z.string().min(1),
-        projectCode: z.string().min(1, "Project ID is required").optional(),
+        reason: z.string().optional().default(""),
+        title: z.string(),
+        projectCode: z.string().optional(),
         modeOfImplementation: z.enum([
           "BY_ADMINISTRATION",
           "BY_CONTRACT",
@@ -526,7 +526,7 @@ export const projectRouter = createTRPCRouter({
         ctx.db.projectActivity.create({
           data: {
             projectId: id,
-            description: `[OVERRIDE] ${reason}`,
+            description: `[OVERRIDE] ${reason.trim() || "No reason provided"}`,
             createdById: ctx.session.user.id,
           },
         }),

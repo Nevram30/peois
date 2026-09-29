@@ -468,7 +468,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
 
   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!reason.trim() || !project) return;
+    if (!project) return;
 
     // "Commit & Save Updates" persists edits made in the Project Identity &
     // Status, Project Location, Funding Information, Workforce Distribution, and
@@ -715,13 +715,13 @@ export function OverrideForm({ projectId }: { projectId: string }) {
 
               <div className="flex-1 space-y-3">
                 <div>
-                  <FieldLabel required>Project Title</FieldLabel>
-                  <TextInput value={form.title} onChange={(v) => set("title", v)} required />
+                  <FieldLabel>Project Title</FieldLabel>
+                  <TextInput value={form.title} onChange={(v) => set("title", v)} />
                 </div>
                 {/* Project Cost | Current Status */}
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div>
-                    <FieldLabel required>Project Cost</FieldLabel>
+                    <FieldLabel>Project Cost</FieldLabel>
                     <div className="flex items-center rounded-lg border border-gray-200 focus-within:ring-2 focus-within:ring-blue-500">
                       <span className="pl-3 text-sm text-gray-400">₱</span>
                       <input
@@ -738,7 +738,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                     </div>
                   </div>
                   <div>
-                    <FieldLabel required>Current Status</FieldLabel>
+                    <FieldLabel>Current Status</FieldLabel>
                     <select
                       value={form.status}
                       onChange={(e) => set("status", e.target.value as typeof form.status)}
@@ -755,16 +755,15 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                 {/* Project ID | Implementation Mode */}
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div>
-                    <FieldLabel required>Project ID</FieldLabel>
+                    <FieldLabel>Project ID</FieldLabel>
                     <TextInput
                       value={form.projectCode}
                       onChange={(v) => set("projectCode", v)}
                       placeholder="Enter project ID"
-                      required
                     />
                   </div>
                   <div>
-                    <FieldLabel required>Implementation Mode</FieldLabel>
+                    <FieldLabel>Implementation Mode</FieldLabel>
                     <select
                       value={form.modeOfImplementation}
                       onChange={(e) => {
@@ -829,7 +828,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
           >
             <div className="space-y-3">
               <div>
-                <FieldLabel required>District</FieldLabel>
+                <FieldLabel>District</FieldLabel>
                 <select
                   value={form.locationImplementation}
                   onChange={(e) => set("locationImplementation", e.target.value as typeof form.locationImplementation)}
@@ -840,11 +839,11 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                 </select>
               </div>
               <div>
-                <FieldLabel required>Municipality</FieldLabel>
+                <FieldLabel>Municipality</FieldLabel>
                 <TextInput value={form.cityMunicipality} onChange={(v) => set("cityMunicipality", v)} placeholder="Enter municipality" />
               </div>
               <div>
-                <FieldLabel required>Barangay</FieldLabel>
+                <FieldLabel>Barangay</FieldLabel>
                 <TextInput value={form.barangay} onChange={(v) => set("barangay", v)} placeholder="Enter barangay" />
               </div>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -1882,7 +1881,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
             <span className="text-xs font-semibold uppercase tracking-wide text-gray-200">Administrative Authorization</span>
           </div>
           <label className="mb-1.5 block text-[10px] font-semibold uppercase tracking-wide text-gray-400">
-            Reason for Comprehensive Update <span className="text-red-400">*</span>
+            Reason for Comprehensive Update
           </label>
           <textarea
             value={reason}
@@ -1890,13 +1889,12 @@ export function OverrideForm({ projectId }: { projectId: string }) {
             rows={2}
             placeholder="State legal or administrative basis for manual data changes..."
             className="w-full rounded-lg border border-gray-600 bg-gray-800 px-3 py-2.5 text-sm text-gray-100 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
           />
           <p className="mt-2 flex items-center gap-1.5 text-[11px] text-gray-400">
             <svg className="h-3.5 w-3.5 shrink-0 text-amber-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
             </svg>
-            <span><span className="font-semibold text-gray-300">Mandatory:</span> These changes will be signed and logged in the immutable system audit trail.</span>
+            <span><span className="font-semibold text-gray-300">Note:</span> These changes will be signed and logged in the immutable system audit trail.</span>
           </p>
         </div>
 
@@ -1988,7 +1986,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
             </button>
             <button
               type="submit"
-              disabled={override.isPending || !reason.trim()}
+              disabled={override.isPending}
               className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold uppercase tracking-wide text-white shadow transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {override.isPending ? (
