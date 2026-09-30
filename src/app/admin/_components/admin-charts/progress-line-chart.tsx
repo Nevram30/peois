@@ -39,6 +39,9 @@ export type ProgressPoint = {
     // is progress rank, not time.
     date: Date;
     estimated: boolean;
+    // Overrides the tooltip's "Started" / "Added" word when `date` means
+    // something else (e.g. "Recorded" on the Actual % chart).
+    dateLabel?: string;
 };
 
 export type ProgressSeries = {
@@ -421,7 +424,7 @@ export const ProgressLineChart = ({ series, maxRank, height = 260 }: ProgressLin
                                 {statusLabel(row.coord.point.status)}
                             </p>
                             <p className="text-[9px] text-slate-400">
-                                {row.coord.point.estimated ? "Added " : "Started "}
+                                {row.coord.point.dateLabel ? `${row.coord.point.dateLabel} ` : row.coord.point.estimated ? "Added " : "Started "}
                                 {fullDate.format(row.coord.point.date)}
                             </p>
                         </div>

@@ -6,10 +6,10 @@ import { api } from "~/trpc/react";
 import type { StatCard } from "~/app/super-admin/dashboardv2/super.admin.types";
 import { AllocationRatioCard, AllocationTotalCard, AnnualAllocationCard, DistrictCard, SourceBreakdownCard, toCardData } from "./admin-cards/cards";
 import { DistrictCardsSkeleton, FinancialCardSkeleton, StatCardsSkeleton } from "./admin-cards/skeleton.cards";
-import { DistrictProgressSection } from "./admin-charts/district-progress-section";
 import { LocationBreakdownSection } from "./admin-charts/location-breakdown-section";
 import { SlippageHistorySection } from "./admin-charts/slippage-history-section";
 import { SourceProgressSection } from "./admin-charts/source-progress-section";
+import { ActualProgressSection } from "./admin-charts/actual-progress-section";
 import { YearFilter } from "~/helper/year.filter";
 import { PreparationStageSection } from "./admin-cards/preparation-stage-section";
 import { PreparationStageTable } from "./admin-cards/preparation-stage-table";
@@ -260,11 +260,10 @@ export const AdminDashboardContent = () => {
                     </div>
                 )}
 
-                {/* Project progress line chart(s). Office divisions
-                    (SMAD/PDPM/EPM/QACD) get both districts with a combined/separate
-                    toggle; engineering-district admins get their own district only.
+                {/* Actual % progress curve from the recorded Physical Progress &
+                    Slippage entries, filtered by the month they were recorded.
                     Scoped by the same YEAR filter as the cards above. */}
-                <DistrictProgressSection budgetYear={dashboardYear} />
+                <ActualProgressSection budgetYear={dashboardYear} />
 
                 {/* The same progress line chart, cut by source of fund and
                     sub-type. Same YEAR filter and district scope. */}

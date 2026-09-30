@@ -41,6 +41,12 @@ export const projectRouter = createTRPCRouter({
           },
         },
         disbursements: { select: { amount: true } },
+        // Latest Physical Progress & Slippage entry, for the Actual % column.
+        slippageAssessments: {
+          select: { actual: true, date: true },
+          orderBy: [{ date: "desc" }, { createdAt: "desc" }],
+          take: 1,
+        },
       },
       orderBy: { createdAt: "desc" },
     });
@@ -986,6 +992,45 @@ export const projectRouter = createTRPCRouter({
   // progress curve. Ordering by date instead was tried and abandoned: progress
   // barely correlates with start date, so the line became noise, and a segment
   // drawn between two unrelated projects implied a trend that isn't there.
+  // Actual % entries (Physical Progress & Slippage) per project, grouped by
+  // district, for the dashboard's Actual % chart. Every entry is returned so
+  // the month filter runs client-side without a refetch; projects with no
+  // entry are left out.
+  getActualProgressByDistrict: districtScopedProcedure
+    .input(z.object({ budgetYear: z.string().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      const districts: readonly District[] = ctx.districtScope
+        ? [ctx.districtScope]
+        : (["DISTRICT_I", "DISTRICT_II"] as const);
+
+      const projects = await ctx.db.project.findMany({
+        where: {
+          locationImplementation: { in: [...districts] },
+          ...(input?.budgetYear ? { budgetYear: input.budgetYear } : {}),
+          slippageAssessments: { some: {} },
+        },
+        select: {
+          id: true,
+          projectCode: true,
+          title: true,
+          status: true,
+          locationImplementation: true,
+          slippageAssessments: {
+            select: { actual: true, date: true },
+            // Newest first, so the first entry in a month is that month's latest.
+            orderBy: [{ date: "desc" }, { createdAt: "desc" }],
+          },
+        },
+      });
+
+      return districts.map((district) => ({
+        district,
+        projects: projects
+          .filter((p) => p.locationImplementation === district)
+          .map(({ locationImplementation: _, ...p }) => p),
+      }));
+    }),
+
   getProgressByDistrict: districtScopedProcedure
     .input(z.object({ budgetYear: z.string().optional() }).optional())
     .query(async ({ ctx, input }) => {

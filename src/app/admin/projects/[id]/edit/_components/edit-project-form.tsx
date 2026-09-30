@@ -37,6 +37,7 @@ import {
   ProgressSlippagePanel,
   type ProgressEntryInput,
 } from "~/app/admin/projects/_components/progress-slippage-panel";
+import { LatestActualField, latestEntry } from "~/app/admin/projects/_components/latest-actual";
 import { parseCoord } from "~/lib/geo";
 import { handleAmountChange, parseAmount, formatAmountValue } from "~/lib/currency";
 import { GeospatialFields } from "~/app/_components/geospatial-fields";
@@ -1179,6 +1180,10 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                       />
                     </div>
                   </div>
+
+                  {/* Actual % from the latest Physical Progress & Slippage entry
+                      (recorded in that section below) */}
+                  <LatestActualField entry={latestEntry(slippageAssessments)} />
                 </div>
               </div>
             </SectionCard>

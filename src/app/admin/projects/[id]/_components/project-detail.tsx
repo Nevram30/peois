@@ -18,6 +18,7 @@ import {
   type FundingProgramValue,
 } from "~/lib/fund-constants";
 import { ProgressSlippagePanel } from "~/app/admin/projects/_components/progress-slippage-panel";
+import { LatestActualField, latestEntry } from "~/app/admin/projects/_components/latest-actual";
 import { GeospatialMap, GeospatialSummary } from "~/app/_components/geospatial-summary";
 import { MODE_LABELS } from "~/app/admin/_components/admin-constant/constant";
 import { DOC_CHECKLIST, inferDocType, type DocType } from "~/lib/project-documents";
@@ -425,6 +426,9 @@ export const ProjectDetail = ({ projectId }: Props) => {
                     />
                   </div>
                 </div>
+
+                {/* Actual % from the latest Physical Progress & Slippage entry */}
+                <LatestActualField entry={latestEntry(slippageAssessments)} />
               </div>
             </div>
           </section>

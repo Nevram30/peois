@@ -24,6 +24,7 @@ import { HardHat } from "lucide-react";
 import { PreparationStageBadge } from "~/app/_components/preparation-stage-badge";
 import { preparationStageLabel } from "~/lib/preparation-stage";
 import { isEngineerInCharge } from "~/lib/names";
+import { LatestActualCell } from "./latest-actual";
 
 const STATUS_LABELS: Record<string, { label: string; className: string }> = {
   NOT_YET_STARTED: {
@@ -801,6 +802,14 @@ const ProjectsList = () => {
                         <dd className="text-gray-600">{p.budgetYear ?? "—"}</dd>
                       </div>
                       <div>
+                        <dt className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                          Actual %
+                        </dt>
+                        <dd>
+                          <LatestActualCell entry={p.slippageAssessments[0]} />
+                        </dd>
+                      </div>
+                      <div>
                         <dt className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
                           Involved Users
                         </dt>
@@ -831,6 +840,7 @@ const ProjectsList = () => {
                       <th className="px-4 py-3 font-medium">Preparation Stage</th>
                       <th className="px-4 py-3 font-medium">Involved Users</th>
                       <th className="px-4 py-3 font-medium">Progress</th>
+                      <th className="px-4 py-3 font-medium">Actual %</th>
                       <th className="px-4 py-3 font-medium">Actions</th>
                     </tr>
                   </thead>
@@ -888,6 +898,9 @@ const ProjectsList = () => {
                         </td>
                         <td className="px-4 py-3">
                           <ProjectProgress project={p} />
+                        </td>
+                        <td className="px-4 py-3">
+                          <LatestActualCell entry={p.slippageAssessments[0]} />
                         </td>
                         <td className="px-4 py-3">
                           <ProjectActions id={p.id} />
