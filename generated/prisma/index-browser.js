@@ -449,7 +449,8 @@ exports.SourceOfFund = exports.$Enums.SourceOfFund = {
   PRDP: 'PRDP',
   MIADP: 'MIADP',
   CONFIDENTIAL: 'CONFIDENTIAL',
-  FIVE_PERCENT_CALAMITY_FUND: 'FIVE_PERCENT_CALAMITY_FUND'
+  FIVE_PERCENT_CALAMITY_FUND: 'FIVE_PERCENT_CALAMITY_FUND',
+  LBP_LOAN: 'LBP_LOAN'
 };
 
 exports.LocationType = exports.$Enums.LocationType = {

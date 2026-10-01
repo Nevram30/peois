@@ -65,6 +65,7 @@ const FUND_SOURCE_COLORS: Record<string, string> = {
   NCDC: "#9333EA",
   PRDP: "#0891B2",
   MIADP: "#DB2777",
+  LBP_LOAN: "#15803D",
 };
 
 const SUB_TYPE_COLORS: Record<ProjectSubTypeValue, string> = {

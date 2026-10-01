@@ -50,6 +50,7 @@ enum SourceOfFund {
   MIADP
   CONFIDENTIAL
   FIVE_PERCENT_CALAMITY_FUND
+  LBP_LOAN
 }
 
 enum District {

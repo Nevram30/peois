@@ -165,7 +165,8 @@ export const SourceOfFund: {
   PRDP: 'PRDP',
   MIADP: 'MIADP',
   CONFIDENTIAL: 'CONFIDENTIAL',
-  FIVE_PERCENT_CALAMITY_FUND: 'FIVE_PERCENT_CALAMITY_FUND'
+  FIVE_PERCENT_CALAMITY_FUND: 'FIVE_PERCENT_CALAMITY_FUND',
+  LBP_LOAN: 'LBP_LOAN'
 };
 
 export type SourceOfFund = (typeof SourceOfFund)[keyof typeof SourceOfFund]

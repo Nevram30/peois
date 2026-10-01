@@ -15,6 +15,7 @@ export const SOURCE_OF_FUND_VALUES = [
   "MIADP",
   "CONFIDENTIAL",
   "FIVE_PERCENT_CALAMITY_FUND",
+  "LBP_LOAN",
 ] as const;
 
 export type SourceOfFundValue = (typeof SOURCE_OF_FUND_VALUES)[number];
@@ -85,6 +86,7 @@ export const SOURCE_OF_FUND_LABEL: Record<SourceOfFundValue, string> = {
   MIADP: "MIADP (Mindanao Inclusive Agriculture Development Project)",
   AID: "Aid",
   LOAN: "Loan",
+  LBP_LOAN: "LBP Loan",
   OTHERS: "Others",
   CONFIDENTIAL: "5% Confidential Fund",
 };
@@ -175,6 +177,7 @@ export const SOURCE_TO_SUB_TYPES: Record<SourceOfFundValue, ProjectSubTypeValue[
   MIADP: [],
   AID: [],
   LOAN: [],
+  LBP_LOAN: [],
   OTHERS: [],
   CONFIDENTIAL: [],
 };
@@ -280,6 +283,7 @@ export const SOURCE_OF_FUND_ORDER: SourceOfFundValue[] = [
   "NCDC",
   "PRDP",
   "MIADP",
+  "LBP_LOAN",
 ];
 
 // Sources selectable when creating a new project (Funding Information).
@@ -293,6 +297,7 @@ export const SOURCE_OF_FUND_SELECTABLE: SourceOfFundValue[] = [
   "NCDC",
   "PRDP",
   "MIADP",
+  "LBP_LOAN",
 ];
 
 // ─── Funding Information cascade (Source of Fund → Program → Project) ────
@@ -393,6 +398,7 @@ export const SOURCE_TO_PROGRAMS: Record<SourceOfFundValue, FundingProgramValue[]
   LDRRM: ["NOT_APPLICABLE"],
   AID: ["NOT_APPLICABLE"],
   LOAN: ["NOT_APPLICABLE"],
+  LBP_LOAN: ["NOT_APPLICABLE"],
   OTHERS: ["NOT_APPLICABLE"],
   CONFIDENTIAL: ["NOT_APPLICABLE"],
 };

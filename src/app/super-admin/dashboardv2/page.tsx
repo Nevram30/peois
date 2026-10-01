@@ -168,6 +168,7 @@ const SOURCE_COLORS: Record<string, string> = {
     TRUST_FUND: "#292524",
     AID: "#0891b2",
     LOAN: "#7c3aed",
+    LBP_LOAN: "#15803d",
     OTHERS: "#a8a29e",
 };
 
@@ -186,6 +187,7 @@ const SOURCE_SHORT_LABEL: Record<string, string> = {
     TRUST_FUND: "TRUST FUND",
     AID: "AID",
     LOAN: "LOAN",
+    LBP_LOAN: "LBP LOAN",
     OTHERS: "OTHERS",
 };
 
@@ -315,6 +317,7 @@ const REM_SOURCE_LABEL: Record<string, string> = {
     TRUST_FUND: "Trust Fund",
     AID: "Aid",
     LOAN: "Loan",
+    LBP_LOAN: "LBP Loan",
     OTHERS: "Others",
 };
 
