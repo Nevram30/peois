@@ -16,6 +16,7 @@ import { PreparationStageSection } from "./admin-cards/preparation-stage-section
 import { PreparationStageTable } from "./admin-cards/preparation-stage-table";
 import { StatusProgressModal } from "./admin-charts/status-progress-modal";
 import { PhysicalProgressSection } from "./admin-charts/physical-progress-section";
+import { OriginalIpSection } from "./admin-charts/original-ip-section";
 
 // ── Stat Tile ──────────────────────────────────────────────────
 // Status name with its icon at the top right, the count below on the left.
@@ -266,6 +267,9 @@ export const AdminDashboardContent = () => {
                     toggle; engineering-district admins get their own district only.
                     Scoped by the same YEAR filter as the cards above. */}
                 <DistrictProgressSection budgetYear={dashboardYear} />
+
+                {/* 2ND ENGR DIST only: its original projects under the IP. */}
+                {districtScope === "DISTRICT_II" && <OriginalIpSection />}
 
                 {/* The same curve from the recorded Actual % (Physical Progress &
                     Slippage entries), filtered by the month they were recorded. */}

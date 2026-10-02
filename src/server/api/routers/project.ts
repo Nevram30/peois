@@ -8,9 +8,16 @@ import {
 } from "~/server/api/trpc";
 import { isReachableFromDistrict } from "~/lib/divisions";
 import { getMunicipalitiesByDistrict } from "~/lib/davao-del-norte-locations";
+import {
+  ORIGINAL_IP_PROJECT_CODES,
+  ORIGINAL_IP_PROJECT_SUB_TYPES,
+  ORIGINAL_IP_PROJECT_TITLES,
+} from "~/lib/original-ip-projects";
 import { type District } from "../../../../generated/prisma";
 import { notificationEmitter } from "~/server/api/events";
 import {
+  PROJECT_SUB_TYPE_LABEL,
+  type ProjectSubTypeValue,
   SOURCE_OF_FUND_VALUES,
   PROJECT_STATUS_VALUES,
   DISBURSEMENT_TYPE_VALUES,
@@ -1076,6 +1083,67 @@ export const projectRouter = createTRPCRouter({
         return { district, points };
       });
     }),
+
+  // The 2nd Engineering District's original projects under the IP (a fixed
+  // list, see ~/lib/original-ip-projects), in the same point shape as
+  // getProgressByDistrict. Not filtered by budget year: the list names its
+  // projects outright. Callers scoped to another district get nothing.
+  // `missing` names the listed IDs / titles no project matched, so a typo in
+  // the list shows up on the chart instead of a project silently dropping out.
+  getOriginalIpProgress: districtScopedProcedure.query(async ({ ctx }) => {
+    if (ctx.districtScope && ctx.districtScope !== "DISTRICT_II") {
+      return { points: [], missing: [] };
+    }
+
+    const projects = await ctx.db.project.findMany({
+      where: {
+        OR: [
+          { projectCode: { in: [...ORIGINAL_IP_PROJECT_CODES] } },
+          ...ORIGINAL_IP_PROJECT_TITLES.map((title) => ({
+            title: { contains: title, mode: "insensitive" as const },
+          })),
+          { subType: { in: [...ORIGINAL_IP_PROJECT_SUB_TYPES] } },
+        ],
+      },
+      select: {
+        id: true,
+        projectCode: true,
+        title: true,
+        status: true,
+        subType: true,
+        completionPercentage: true,
+        dateStarted: true,
+        createdAt: true,
+      },
+    });
+
+    const missing = [
+      ...ORIGINAL_IP_PROJECT_CODES.filter((code) => !projects.some((p) => p.projectCode === code)),
+      ...ORIGINAL_IP_PROJECT_TITLES.filter(
+        (title) => !projects.some((p) => p.title.toLowerCase().includes(title.toLowerCase())),
+      ),
+      ...ORIGINAL_IP_PROJECT_SUB_TYPES.filter((subType) => !projects.some((p) => p.subType === subType)).map(
+        (subType) => PROJECT_SUB_TYPE_LABEL[subType as ProjectSubTypeValue] ?? subType,
+      ),
+    ];
+
+    // Re-aligned projects are matched above (so they don't read as "not
+    // found") but left off the graph.
+    const points = projects
+      .filter((p) => p.status !== "RE_ALIGNMENT")
+      .map((p) => ({
+        id: p.id,
+        projectCode: p.projectCode,
+        title: p.title,
+        status: p.status,
+        progress: p.completionPercentage ?? 0,
+        date: p.dateStarted ?? p.createdAt,
+        estimated: p.dateStarted === null,
+      }))
+      .sort((a, b) => a.progress - b.progress);
+
+    return { points, missing };
+  }),
 
   // Per-location breakdown for the dashboard's location tab: for each
   // city/municipality, how many projects it has, their average physical
