@@ -18,7 +18,6 @@ import {
   type SourceOfFundValue,
 } from "~/lib/fund-constants";
 import { DOC_CHECKLIST, inferDocType, type DocType } from "~/lib/project-documents";
-import { preparationStageLabel } from "~/lib/preparation-stage";
 
 const STATUS_DOT: Record<string, string> = {
   NOT_YET_STARTED: "bg-gray-400",
@@ -27,6 +26,9 @@ const STATUS_DOT: Record<string, string> = {
   SUSPENDED: "bg-red-500",
   FOR_IMPLEMENTATION: "bg-blue-500",
   IN_PROCUREMENT: "bg-teal-500",
+  FOR_SURVEY: "bg-fuchsia-500",
+  FOR_PLANS: "bg-indigo-500",
+  FOR_POW: "bg-cyan-500",
   RE_ALIGNMENT: "bg-amber-400",
   OTHERS: "bg-gray-400",
 };
@@ -297,13 +299,6 @@ export const UserProjectDetail = ({ projectId }: Props) => {
                       <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${STATUS_DOT[project.status] ?? "bg-gray-400"}`} />
                       {statusLabel}
                     </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label className={fieldLabel}>Preparation Stage</label>
-                  <div className={`${fieldBox} font-semibold ${project.preparationStage ? "" : "text-gray-400"}`}>
-                    {preparationStageLabel(project.preparationStage) ?? "—"}
                   </div>
                 </div>
 

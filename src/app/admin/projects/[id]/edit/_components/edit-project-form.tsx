@@ -58,11 +58,6 @@ import {
   type ProjectImageSlots,
 } from "~/lib/project-images";
 import { ProjectImageUploader } from "~/app/_components/project-image-uploader";
-import {
-  PREPARATION_STAGE_LABEL,
-  PREPARATION_STAGE_VALUES,
-  type PreparationStageValue,
-} from "~/lib/preparation-stage";
 
 const STATUS_CONFIG: Record<string, { label: string; badge: string; dot: string }> = {
   NOT_YET_STARTED: { label: "Not Yet Started", badge: "bg-gray-100 text-gray-600 border-gray-200", dot: "bg-gray-400" },
@@ -71,6 +66,9 @@ const STATUS_CONFIG: Record<string, { label: string; badge: string; dot: string 
   SUSPENDED: { label: "Suspended", badge: "bg-red-50    text-red-700   border-red-200", dot: "bg-red-500" },
   FOR_IMPLEMENTATION: { label: "For Implementation", badge: "bg-blue-50 text-blue-700 border-blue-200", dot: "bg-blue-500" },
   IN_PROCUREMENT: { label: "In Procurement", badge: "bg-teal-50 text-teal-700 border-teal-200", dot: "bg-teal-500" },
+  FOR_SURVEY: { label: "For Survey", badge: "bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200", dot: "bg-fuchsia-500" },
+  FOR_PLANS: { label: "For Plans", badge: "bg-indigo-50 text-indigo-700 border-indigo-200", dot: "bg-indigo-500" },
+  FOR_POW: { label: "For POW", badge: "bg-cyan-50 text-cyan-700 border-cyan-200", dot: "bg-cyan-500" },
   RE_ALIGNMENT: { label: "Re-alignment", badge: "bg-purple-50 text-purple-700 border-purple-200", dot: "bg-purple-500" },
   OTHERS: { label: "Others", badge: "bg-slate-50 text-slate-700 border-slate-200", dot: "bg-slate-500" },
 };
@@ -319,10 +317,6 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
 
   // ─ UI ──────────────────────────────────────────────────────────────────
   const [showSuccess, setShowSuccess] = useState(false);
-  // Advanced on the server by file uploads and disbursements, and can also be
-  // set by hand from the dropdown. Only sent on save when it differs from the
-  // loaded value, so a plain save never undoes an automatic advance.
-  const [preparationStage, setPreparationStage] = useState<string | null>(null);
 
   // populate state from project
   useEffect(() => {
@@ -330,7 +324,6 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     setCompletion(project.completionPercentage);
     setCompletionText(String(project.completionPercentage));
     setStatus(project.status);
-    setPreparationStage(project.preparationStage);
     setContractorName(project.contractorName ?? "");
     setModeOfImplementation(project.modeOfImplementation);
     setLocDistrict(project.district ?? project.locationImplementation ?? "");
@@ -567,8 +560,6 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   const createProjectFile = api.projectFile.create.useMutation({
     onSuccess: (data, variables) => {
       void refetchFiles();
-      // The upload may have moved the project into Preparation of Plans.
-      if (data.advancedTo) setPreparationStage(data.advancedTo);
       addActivity.mutate({
         projectId: variables.projectId,
         description: `Uploaded ${(variables.fileType ?? "OTHER").toLowerCase()} document "${variables.fileName}".`,
@@ -667,7 +658,6 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     // the audit trail shows what was updated, not just the card.
     const identityFields: string[] = [];
     if (status !== project.status) identityFields.push("Current Status");
-    if (preparationStage !== project.preparationStage) identityFields.push("Preparation Stage");
     if (modeOfImplementation !== project.modeOfImplementation) identityFields.push("Implementation Mode");
     if (contractorName !== (project.contractorName ?? "")) identityFields.push("Contractor Name");
     if (completion !== project.completionPercentage) identityFields.push("Project Progress");
@@ -777,9 +767,6 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
         completionPercentage: completion,
         imageUrl: images[0] ?? null,
         imageUrls: images,
-        ...(preparationStage && preparationStage !== project.preparationStage
-          ? { preparationStage: preparationStage as PreparationStageValue }
-          : {}),
       },
       {
         onSuccess: () => {
@@ -1069,29 +1056,6 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                           ))}
                       </Select>
                     </div>
-                  </div>
-
-                  <div>
-                    <FieldLabel>Preparation Stage</FieldLabel>
-                    <Select
-                      value={preparationStage ?? ""}
-                      onChange={(e) => setPreparationStage(e.target.value)}
-                    >
-                      {/* Only for projects that predate stages; can't be picked back. */}
-                      {!preparationStage && (
-                        <option value="" disabled>
-                          — Not set —
-                        </option>
-                      )}
-                      {PREPARATION_STAGE_VALUES.map((k) => (
-                        <option key={k} value={k}>
-                          {PREPARATION_STAGE_LABEL[k]}
-                        </option>
-                      ))}
-                    </Select>
-                    <p className="mt-1 text-xs text-gray-400">
-                      Also updates automatically on file upload and disbursement.
-                    </p>
                   </div>
 
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">

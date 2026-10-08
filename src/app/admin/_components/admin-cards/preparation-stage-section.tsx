@@ -7,11 +7,11 @@ import {
     PREPARATION_STAGE_COLOR,
     PREPARATION_STAGE_DESCRIPTION,
     PREPARATION_STAGE_LABEL,
-    PREPARATION_STAGE_VALUES,
-    type PreparationStageValue,
+    PREPARATION_STATUS_VALUES,
+    type PreparationStatusValue,
 } from "~/lib/preparation-stage";
 
-type StageCounts = Record<PreparationStageValue, number>;
+type StageCounts = Record<PreparationStatusValue, number>;
 
 type Props = {
     data?: {
@@ -31,10 +31,10 @@ const DISTRICT_TITLE: Record<string, string> = {
 
 // ── Stage tile ──────────────────────────────────────────────────
 // Same shape as the status StatTile, plus the stage's meaning. Each tile opens
-// the project list filtered to that stage.
-const StageTile = ({ stage, count }: { stage: PreparationStageValue; count: number }) => (
+// the project list filtered to that status.
+const StageTile = ({ stage, count }: { stage: PreparationStatusValue; count: number }) => (
     <Link
-        href={`/admin/projects?stage=${stage}`}
+        href={`/admin/projects?status=${stage}`}
         className="group flex flex-col justify-between gap-2 rounded-sm bg-white p-3 shadow-sm transition hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
     >
         <div className="flex items-start justify-between gap-2">
@@ -54,7 +54,7 @@ const StageTile = ({ stage, count }: { stage: PreparationStageValue; count: numb
 // Each stage's share of the projects that have a stage, left to right in the
 // order projects move through them.
 const PipelineBar = ({ totals }: { totals: StageCounts }) => {
-    const total = PREPARATION_STAGE_VALUES.reduce((s, k) => s + totals[k], 0);
+    const total = PREPARATION_STATUS_VALUES.reduce((s, k) => s + totals[k], 0);
     return (
         <div className="rounded-sm bg-white p-3 shadow-sm">
             <div className="mb-2 flex items-center justify-between text-[11px] font-bold uppercase tracking-wide text-slate-500">
@@ -63,7 +63,7 @@ const PipelineBar = ({ totals }: { totals: StageCounts }) => {
             </div>
             <div className="flex h-3 w-full overflow-hidden rounded-full bg-slate-100">
                 {total > 0 &&
-                    PREPARATION_STAGE_VALUES.map((stage) =>
+                    PREPARATION_STATUS_VALUES.map((stage) =>
                         totals[stage] > 0 ? (
                             <div
                                 key={stage}
@@ -77,7 +77,7 @@ const PipelineBar = ({ totals }: { totals: StageCounts }) => {
                     )}
             </div>
             <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
-                {PREPARATION_STAGE_VALUES.map((stage) => (
+                {PREPARATION_STATUS_VALUES.map((stage) => (
                     <span key={stage} className="flex items-center gap-1.5 text-xs text-slate-500">
                         <span className="h-2 w-2 rounded-full" style={{ background: PREPARATION_STAGE_COLOR[stage] }} />
                         {PREPARATION_STAGE_LABEL[stage]}
@@ -99,9 +99,8 @@ const TileSkeleton = () => (
 );
 
 // ── Preparation Stage section ───────────────────────────────────
-// Top of the dashboard's Preparation Stage Overview tab. Stages are tracked
-// apart from status, so this reads as its own block rather than more status
-// tiles.
+// Top of the dashboard's Preparation Stage Overview tab: counts of projects
+// whose current status is For Survey / For Plans / For POW.
 export const PreparationStageSection = ({ data, isLoading, budgetYear, districtOnSide }: Props) => (
     <section className="pb-5" aria-labelledby="preparation-stage-heading">
         <h2
@@ -113,8 +112,8 @@ export const PreparationStageSection = ({ data, isLoading, budgetYear, districtO
 
         {isLoading || !data ? (
             <div className="grid grid-cols-1 gap-4">
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-4">
-                    {PREPARATION_STAGE_VALUES.map((stage) => (
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                    {PREPARATION_STATUS_VALUES.map((stage) => (
                         <TileSkeleton key={stage} />
                     ))}
                 </div>
@@ -123,8 +122,8 @@ export const PreparationStageSection = ({ data, isLoading, budgetYear, districtO
         ) : (
             <div className="grid grid-cols-1 gap-4">
                 <div className="space-y-2">
-                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-4">
-                        {PREPARATION_STAGE_VALUES.map((stage) => (
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                        {PREPARATION_STATUS_VALUES.map((stage) => (
                             <StageTile key={stage} stage={stage} count={data.totals[stage]} />
                         ))}
                     </div>
@@ -137,7 +136,7 @@ export const PreparationStageSection = ({ data, isLoading, budgetYear, districtO
                             key={d.district}
                             budgetYear={budgetYear}
                             title={DISTRICT_TITLE[d.district] ?? `${d.district.replace("_", " ")} PREPARATION STAGE`}
-                            data={PREPARATION_STAGE_VALUES.map((stage) => ({
+                            data={PREPARATION_STATUS_VALUES.map((stage) => ({
                                 label: PREPARATION_STAGE_LABEL[stage].toUpperCase(),
                                 value: d.counts[stage],
                                 color: PREPARATION_STAGE_COLOR[stage],

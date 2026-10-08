@@ -25,10 +25,8 @@ import {
 } from "~/lib/fund-constants";
 import { PROJECT_IMAGE_SLOTS } from "~/lib/project-images";
 import {
-  PREPARATION_STAGE_LABEL,
-  PREPARATION_STAGE_VALUES,
-  advancePreparationStage,
-  type PreparationStageValue,
+  PREPARATION_STATUS_VALUES,
+  type PreparationStatusValue,
 } from "~/lib/preparation-stage";
 
 // Where-clause fragment limiting projects to the caller's district scope
@@ -177,8 +175,6 @@ export const projectRouter = createTRPCRouter({
           endLongitude: input.endLongitude,
           description: input.description,
           status: input.status ?? "ON_GOING",
-          // Every new project starts its preparation at Surveying.
-          preparationStage: "FOR_SURVEY",
           slippageTarget: input.slippageTarget,
           slippageActual: input.slippageActual,
           slippageRevision: input.slippageRevision,
@@ -253,9 +249,6 @@ export const projectRouter = createTRPCRouter({
         imageUrls: z.array(z.string()).max(PROJECT_IMAGE_SLOTS).optional(),
         documentUrl: z.string().optional(),
         documentName: z.string().optional(),
-        // Manual override from the edit form; sent only when the admin changed
-        // it. Not nullable: a stage, once set, can be changed but not cleared.
-        preparationStage: z.enum(PREPARATION_STAGE_VALUES).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -270,37 +263,13 @@ export const projectRouter = createTRPCRouter({
           : 0;
       const numPersons = data.numFemale + data.numMale;
 
-      return ctx.db.$transaction(async (tx) => {
-        const before = data.preparationStage
-          ? await tx.project.findUnique({ where: { id }, select: { preparationStage: true } })
-          : null;
-
-        const project = await tx.project.update({
-          where: { id },
-          data: {
-            ...data,
-            duration,
-            numPersons,
-          },
-        });
-
-        // A manual stage change is logged like the automatic ones. The
-        // automatic rules read the stored stage when they fire, so they carry
-        // on from whatever was set here.
-        if (data.preparationStage && before && before.preparationStage !== data.preparationStage) {
-          const was = before.preparationStage
-            ? PREPARATION_STAGE_LABEL[before.preparationStage]
-            : "not set";
-          await tx.projectActivity.create({
-            data: {
-              projectId: id,
-              description: `Preparation stage manually set to ${PREPARATION_STAGE_LABEL[data.preparationStage]} (was ${was}).`,
-              createdById: ctx.session.user.id,
-            },
-          });
-        }
-
-        return project;
+      return ctx.db.project.update({
+        where: { id },
+        data: {
+          ...data,
+          duration,
+          numPersons,
+        },
       });
     }),
 
@@ -581,27 +550,8 @@ export const projectRouter = createTRPCRouter({
           },
         });
 
-        // Recording the financials moves the project into POW Preparation.
-        // Only the preparation stage changes; the project status is left alone.
-        const project = await tx.project.findUnique({
-          where: { id: input.projectId },
-          select: { preparationStage: true },
-        });
-        const next = project && advancePreparationStage(project.preparationStage, "FOR_POW");
-        if (next) {
-          await tx.project.update({
-            where: { id: input.projectId },
-            data: { preparationStage: next },
-          });
-          await tx.projectActivity.create({
-            data: {
-              projectId: input.projectId,
-              description: `Preparation stage moved to ${PREPARATION_STAGE_LABEL[next]} after recording a disbursement.`,
-              createdById: ctx.session.user.id,
-            },
-          });
-        }
-
+        // Recording a disbursement no longer moves the project's preparation
+        // stage; preparation is part of the status, set by hand.
         return disbursement;
       });
     }),
@@ -946,10 +896,10 @@ export const projectRouter = createTRPCRouter({
       return data;
     }),
 
-  // How many projects sit at each preparation stage (For Survey / For Plans /
+  // How many projects have each preparation status (For Survey / For Plans /
   // For POW), per district and overall, for the admin dashboard. Scoped like
-  // getDistrictData; projects with no stage (created before stages existed)
-  // are left out of the counts.
+  // getDistrictData. Reads the current status, not the retired
+  // preparationStage column.
   getPreparationStageStats: districtScopedProcedure
     .input(z.object({ budgetYear: z.string().optional() }).optional())
     .query(async ({ ctx, input }) => {
@@ -957,26 +907,28 @@ export const projectRouter = createTRPCRouter({
         ? [ctx.districtScope]
         : (["DISTRICT_I", "DISTRICT_II"] as const);
 
-      const emptyCounts = (): Record<PreparationStageValue, number> =>
-        Object.fromEntries(PREPARATION_STAGE_VALUES.map((s) => [s, 0])) as Record<
-          PreparationStageValue,
+      const emptyCounts = (): Record<PreparationStatusValue, number> =>
+        Object.fromEntries(PREPARATION_STATUS_VALUES.map((s) => [s, 0])) as Record<
+          PreparationStatusValue,
           number
         >;
+      const isPreparation = (status: string): status is PreparationStatusValue =>
+        (PREPARATION_STATUS_VALUES as readonly string[]).includes(status);
 
       const byDistrict = await Promise.all(
         districts.map(async (district) => {
           const rows = await ctx.db.project.groupBy({
-            by: ["preparationStage"],
+            by: ["status"],
             where: {
               locationImplementation: district,
-              preparationStage: { not: null },
+              status: { in: [...PREPARATION_STATUS_VALUES] },
               ...(input?.budgetYear ? { budgetYear: input.budgetYear } : {}),
             },
             _count: { _all: true },
           });
           const counts = emptyCounts();
           for (const row of rows) {
-            if (row.preparationStage) counts[row.preparationStage] = row._count._all;
+            if (isPreparation(row.status)) counts[row.status] = row._count._all;
           }
           return { district, counts };
         }),
@@ -984,7 +936,7 @@ export const projectRouter = createTRPCRouter({
 
       const totals = emptyCounts();
       for (const { counts } of byDistrict) {
-        for (const stage of PREPARATION_STAGE_VALUES) totals[stage] += counts[stage];
+        for (const status of PREPARATION_STATUS_VALUES) totals[status] += counts[status];
       }
 
       return { totals, byDistrict };

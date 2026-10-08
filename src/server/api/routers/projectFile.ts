@@ -4,7 +4,6 @@ import {
   DOC_TYPE_VALUES,
   PROJECT_FILE_TYPE_VALUES,
 } from "~/lib/project-documents";
-import { PREPARATION_STAGE_LABEL, advancePreparationStage } from "~/lib/preparation-stage";
 
 export const projectFileRouter = createTRPCRouter({
   getByProjectId: protectedProcedure
@@ -29,42 +28,18 @@ export const projectFileRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.$transaction(async (tx) => {
-        const file = await tx.projectFile.create({
-          data: {
-            projectId: input.projectId,
-            fileName: input.fileName,
-            fileUrl: input.fileUrl,
-            fileType: input.fileType,
-            docType: input.docType,
-            fileSize: input.fileSize,
-            createdById: ctx.session.user.id,
-          },
-        });
-
-        // Uploading project documents moves the project into Preparation of
-        // Plans. Only the preparation stage changes; the status is left alone.
-        const project = await tx.project.findUnique({
-          where: { id: input.projectId },
-          select: { preparationStage: true },
-        });
-        const next = project && advancePreparationStage(project.preparationStage, "FOR_PLANS");
-        if (next) {
-          await tx.project.update({
-            where: { id: input.projectId },
-            data: { preparationStage: next },
-          });
-          await tx.projectActivity.create({
-            data: {
-              projectId: input.projectId,
-              description: `Preparation stage moved to ${PREPARATION_STAGE_LABEL[next]} after uploading "${input.fileName}".`,
-              createdById: ctx.session.user.id,
-            },
-          });
-        }
-
-        // `advancedTo` lets an open edit form show the new stage without a refetch.
-        return { ...file, advancedTo: next ?? null };
+      // Uploading no longer moves the project's preparation stage; preparation
+      // is now part of the status, which only changes when set by hand.
+      return ctx.db.projectFile.create({
+        data: {
+          projectId: input.projectId,
+          fileName: input.fileName,
+          fileUrl: input.fileUrl,
+          fileType: input.fileType,
+          docType: input.docType,
+          fileSize: input.fileSize,
+          createdById: ctx.session.user.id,
+        },
       });
     }),
 

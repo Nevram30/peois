@@ -9,7 +9,10 @@ export type ProjectStatus =
   | 'ON_GOING'
   | 'NOT_YET_STARTED'
   | 'SUSPENDED'
-  | 'OTHERS';
+  | 'OTHERS'
+  | 'FOR_SURVEY'
+  | 'FOR_PLANS'
+  | 'FOR_POW';
 export type StatusCounts = Partial<Record<ProjectStatus, number>>;
 
 export type DistrictData = {
@@ -38,6 +41,9 @@ export const STATUS_COLORS: Record<ProjectStatus, string> = {
   NOT_YET_STARTED: '#0ea5e9',
   SUSPENDED: '#ef4444',
   OTHERS: '#94a3b8',
+  FOR_SURVEY: '#d946ef',
+  FOR_PLANS: '#6366f1',
+  FOR_POW: '#06b6d4',
 };
 
 export const STATUS_LABELS: Record<ProjectStatus, string> = {
@@ -49,6 +55,9 @@ export const STATUS_LABELS: Record<ProjectStatus, string> = {
   NOT_YET_STARTED: 'NOT STARTED',
   SUSPENDED: 'SUSPENDED',
   OTHERS: 'OTHERS',
+  FOR_SURVEY: 'FOR SURVEY',
+  FOR_PLANS: 'FOR PLANS',
+  FOR_POW: 'FOR POW',
 };
 
 export type BySubTypeMap = Record<string, { amount: number; sourceOfFund: string }>;

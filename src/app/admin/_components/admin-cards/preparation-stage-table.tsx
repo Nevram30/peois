@@ -3,21 +3,23 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { RouterOutputs } from "~/trpc/react";
-import { PreparationStageBadge } from "~/app/_components/preparation-stage-badge";
 import { DISTRICT_LABELS, STATUS_CONFIG } from "../admin-constant/constant";
 import {
     PREPARATION_STAGE_LABEL,
-    PREPARATION_STAGE_VALUES,
-    type PreparationStageValue,
+    PREPARATION_STATUS_VALUES,
+    type PreparationStatusValue,
 } from "~/lib/preparation-stage";
 
 type ProjectRow = RouterOutputs["project"]["getAll"][number];
 
 const PAGE_SIZE = 10;
 
-// ── Projects per preparation stage ──────────────────────────────
-// The projects behind the counts above: only those that have a stage, scoped
-// to the dashboard's calendar year. Kept to a few columns, with the stage last.
+const isPreparation = (status: string): status is PreparationStatusValue =>
+    (PREPARATION_STATUS_VALUES as readonly string[]).includes(status);
+
+// ── Projects per preparation status ─────────────────────────────
+// The projects behind the counts above: those whose current status is For
+// Survey / For Plans / For POW, scoped to the dashboard's calendar year.
 export const PreparationStageTable = ({
     projects,
     isLoading,
@@ -27,27 +29,27 @@ export const PreparationStageTable = ({
     isLoading: boolean;
     budgetYear: string;
 }) => {
-    const [stage, setStage] = useState<PreparationStageValue | "">("");
+    const [stage, setStage] = useState<PreparationStatusValue | "">("");
     const [page, setPage] = useState(1);
 
     const staged = useMemo(
         () =>
             (projects ?? []).filter(
-                (p) => p.preparationStage && (!budgetYear || p.budgetYear === budgetYear),
+                (p) => isPreparation(p.status) && (!budgetYear || p.budgetYear === budgetYear),
             ),
         [projects, budgetYear],
     );
-    const rows = stage ? staged.filter((p) => p.preparationStage === stage) : staged;
+    const rows = stage ? staged.filter((p) => p.status === stage) : staged;
     const totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
     const current = Math.min(page, totalPages);
     const visible = rows.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
 
-    const filters: { value: PreparationStageValue | ""; label: string; count: number }[] = [
+    const filters: { value: PreparationStatusValue | ""; label: string; count: number }[] = [
         { value: "", label: "All", count: staged.length },
-        ...PREPARATION_STAGE_VALUES.map((s) => ({
+        ...PREPARATION_STATUS_VALUES.map((s) => ({
             value: s,
             label: PREPARATION_STAGE_LABEL[s],
-            count: staged.filter((p) => p.preparationStage === s).length,
+            count: staged.filter((p) => p.status === s).length,
         })),
     ];
 
@@ -82,28 +84,27 @@ export const PreparationStageTable = ({
             </div>
 
             <div className="overflow-x-auto">
-                <table className="w-full min-w-[560px] text-left text-sm">
+                <table className="w-full min-w-[480px] text-left text-sm">
                     <thead>
                         <tr className="border-b border-gray-100 bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-400">
                             <th className="px-4 py-3">Project</th>
                             <th className="px-4 py-3">District</th>
                             <th className="px-4 py-3">Status</th>
-                            <th className="px-4 py-3">Preparation Stage</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
                         {isLoading ? (
                             Array.from({ length: 4 }, (_, i) => (
                                 <tr key={i}>
-                                    <td colSpan={4} className="px-4 py-3">
+                                    <td colSpan={3} className="px-4 py-3">
                                         <div className="h-4 animate-pulse rounded bg-slate-100" />
                                     </td>
                                 </tr>
                             ))
                         ) : visible.length === 0 ? (
                             <tr>
-                                <td colSpan={4} className="px-4 py-8 text-center text-sm text-gray-400">
-                                    No projects {stage ? `at ${PREPARATION_STAGE_LABEL[stage]}` : "with a preparation stage"}
+                                <td colSpan={3} className="px-4 py-8 text-center text-sm text-gray-400">
+                                    No projects {stage ? `at ${PREPARATION_STAGE_LABEL[stage]}` : "in preparation"}
                                     {budgetYear ? ` for CY ${budgetYear}` : ""}.
                                 </td>
                             </tr>
@@ -131,9 +132,6 @@ export const PreparationStageTable = ({
                                                 <span className={`h-1.5 w-1.5 rounded-full ${status?.dot ?? "bg-gray-400"}`} />
                                                 {status?.label ?? p.status}
                                             </span>
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <PreparationStageBadge stage={p.preparationStage} />
                                         </td>
                                     </tr>
                                 );

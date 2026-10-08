@@ -27,6 +27,9 @@ const STATUS_STYLES: Record<ProjectStatusValue, { bg: string; dot: string; text:
   RE_ALIGNMENT: { bg: "bg-purple-100", dot: "bg-purple-500", text: "text-purple-700" },
   OTHERS: { bg: "bg-slate-100", dot: "bg-slate-500", text: "text-slate-700" },
   NOT_YET_STARTED: { bg: "bg-sky-100", dot: "bg-sky-500", text: "text-sky-700" },
+  FOR_SURVEY: { bg: "bg-fuchsia-100", dot: "bg-fuchsia-500", text: "text-fuchsia-700" },
+  FOR_PLANS: { bg: "bg-indigo-100", dot: "bg-indigo-500", text: "text-indigo-700" },
+  FOR_POW: { bg: "bg-cyan-100", dot: "bg-cyan-500", text: "text-cyan-700" },
 };
 
 const FUND_SOURCE_LABELS: Record<string, string> = {

@@ -21,8 +21,6 @@ import {
 import { projectLabel } from "~/lib/funding-options";
 import { MODE_LABELS } from "~/app/admin/_components/admin-constant/constant";
 import { HardHat } from "lucide-react";
-import { PreparationStageBadge } from "~/app/_components/preparation-stage-badge";
-import { preparationStageLabel } from "~/lib/preparation-stage";
 import { isEngineerInCharge } from "~/lib/names";
 import { LatestActualCell } from "./latest-actual";
 
@@ -45,6 +43,9 @@ const STATUS_LABELS: Record<string, { label: string; className: string }> = {
     label: "In Procurement",
     className: "bg-teal-100 text-teal-700",
   },
+  FOR_SURVEY: { label: "For Survey", className: "bg-fuchsia-100 text-fuchsia-700" },
+  FOR_PLANS: { label: "For Plans", className: "bg-indigo-100 text-indigo-700" },
+  FOR_POW: { label: "For POW", className: "bg-cyan-100 text-cyan-700" },
   RE_ALIGNMENT: {
     label: "Re-alignment",
     className: "bg-purple-100 text-purple-700",
@@ -60,6 +61,9 @@ const STATUS_LABELS: Record<string, { label: string; className: string }> = {
 // unchanged so it keeps matching stored projects.
 const FILTER_STATUS_ORDER: ProjectStatusValue[] = [
   "NOT_YET_STARTED",
+  "FOR_SURVEY",
+  "FOR_PLANS",
+  "FOR_POW",
   "IN_PROCUREMENT",
   "FOR_IMPLEMENTATION",
   "ON_GOING",
@@ -83,6 +87,9 @@ const STATUS_TITLES: Record<string, string> = {
   RE_ALIGNMENT: "Projects For Re-alignment",
   OTHERS: "Other Projects",
   NOT_YET_STARTED: "Projects Not Yet Started",
+  FOR_SURVEY: "Projects For Survey",
+  FOR_PLANS: "Projects For Plans",
+  FOR_POW: "Projects For POW",
   today: "New Projects Today",
 };
 
@@ -236,9 +243,9 @@ const ProjectActions = ({
 
 const ProjectsList = () => {
   const searchParams = useSearchParams();
-  const statusFilter = searchParams.get("status");
-  // Set by the dashboard's Preparation Stage tiles (?stage=FOR_SURVEY etc.).
-  const stageFilter = searchParams.get("stage");
+  // `?stage=` is the old link from the dashboard's Preparation Stage tiles;
+  // the stages are statuses now, so it filters by status too.
+  const statusFilter = searchParams.get("status") ?? searchParams.get("stage");
   const filterToday = searchParams.get("filter") === "today";
   // Set by the sidebar's "My Projects" link (District I / II admins).
   const mineFilter = searchParams.get("mine") === "1";
@@ -307,7 +314,6 @@ const ProjectsList = () => {
     }
     if (mineFilter && !isEngineerInCharge(p.projectEngineer, me?.name)) return false;
     if (statusFilter && p.status !== statusFilter) return false;
-    if (stageFilter && p.preparationStage !== stageFilter) return false;
     if (statusLocal && p.status !== statusLocal) return false;
     if (modeFilter && p.modeOfImplementation !== modeFilter) return false;
     if (districtFilter && p.locationImplementation !== districtFilter)
@@ -400,11 +406,9 @@ const ProjectsList = () => {
       ? STATUS_TITLES.today
       : statusFilter
         ? (STATUS_TITLES[statusFilter] ?? "Projects")
-        : stageFilter
-          ? `Projects ${preparationStageLabel(stageFilter) ?? ""}`.trim()
-          : mineFilter
-            ? "My Projects"
-            : "All Projects";
+        : mineFilter
+          ? "My Projects"
+          : "All Projects";
 
   const selectClass =
     "w-full rounded-sms border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20";
@@ -474,7 +478,7 @@ const ProjectsList = () => {
                 className="w-full rounded-sm border border-gray-300 bg-gray-50 py-2.5 pl-9 pr-3 text-sm text-gray-800 shadow-sm placeholder:text-gray-500 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
-            {(statusFilter ?? stageFilter ?? filterToday) && (
+            {(statusFilter ?? filterToday) && (
               <Link
                 href="/admin/projects"
                 className="grow rounded-sm border border-gray-200 px-4 py-2.5 text-center text-sm font-medium text-gray-600 transition hover:bg-gray-50 sm:grow-0"
@@ -752,7 +756,6 @@ const ProjectsList = () => {
                       </div>
                       <div className="flex shrink-0 flex-col items-end gap-1">
                         <StatusBadge status={p.status} />
-                        <PreparationStageBadge stage={p.preparationStage} />
                       </div>
                     </div>
                     <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-3">
@@ -837,7 +840,6 @@ const ProjectsList = () => {
                       <th className="px-4 py-3 font-medium">Location</th>
                       <th className="px-4 py-3 font-medium">Budget Year</th>
                       <th className="px-4 py-3 font-medium">Status</th>
-                      <th className="px-4 py-3 font-medium">Preparation Stage</th>
                       <th className="px-4 py-3 font-medium">Involved Users</th>
                       <th className="px-4 py-3 font-medium">Progress</th>
                       <th className="px-4 py-3 font-medium">Actual %</th>
@@ -885,13 +887,6 @@ const ProjectsList = () => {
                         </td>
                         <td className="px-4 py-3">
                           <StatusBadge status={p.status} />
-                        </td>
-                        <td className="px-4 py-3">
-                          {p.preparationStage ? (
-                            <PreparationStageBadge stage={p.preparationStage} />
-                          ) : (
-                            <span className="text-gray-400">—</span>
-                          )}
                         </td>
                         <td className="px-4 py-3">
                           <ContributorAvatars project={p} />

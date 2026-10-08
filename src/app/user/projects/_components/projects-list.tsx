@@ -17,7 +17,6 @@ import {
   type SourceOfFundValue,
 } from "~/lib/fund-constants";
 import { projectLabel } from "~/lib/funding-options";
-import { PreparationStageBadge } from "~/app/_components/preparation-stage-badge";
 
 const STATUS_BADGES: Record<string, { label: string; className: string }> = {
   NOT_YET_STARTED: {
@@ -35,6 +34,9 @@ const STATUS_BADGES: Record<string, { label: string; className: string }> = {
     label: "IN PROCUREMENT",
     className: "bg-teal-100 text-teal-700",
   },
+  FOR_SURVEY: { label: "FOR SURVEY", className: "bg-fuchsia-100 text-fuchsia-700" },
+  FOR_PLANS: { label: "FOR PLANS", className: "bg-indigo-100 text-indigo-700" },
+  FOR_POW: { label: "FOR POW", className: "bg-cyan-100 text-cyan-700" },
   RE_ALIGNMENT: {
     label: "RE-ALIGNED",
     className: "bg-purple-100 text-purple-700",
@@ -56,7 +58,9 @@ const MODE_LABELS: Record<string, string> = {
 const progressBarColor = (status: string, pct: number) => {
   if (status === "SUSPENDED") return "bg-red-500";
   if (pct >= 100) return "bg-emerald-500";
-  if (status === "NOT_YET_STARTED" || status === "IN_PROCUREMENT" || status === "FOR_IMPLEMENTATION")
+  if (
+    ["NOT_YET_STARTED", "FOR_SURVEY", "FOR_PLANS", "FOR_POW", "IN_PROCUREMENT", "FOR_IMPLEMENTATION"].includes(status)
+  )
     return "bg-amber-400";
   return "bg-blue-900";
 };
@@ -730,7 +734,6 @@ export const UserProjectsList = () => {
                       </div>
                       <div className="flex shrink-0 flex-col items-end gap-1">
                         <StatusBadge status={p.status} />
-                        <PreparationStageBadge stage={p.preparationStage} />
                       </div>
                     </div>
                     <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-3">
@@ -899,10 +902,7 @@ export const UserProjectsList = () => {
                           )}
                         </td>
                         <td className="px-4 py-4">
-                          <div className="flex flex-col gap-1">
-                            <StatusBadge status={p.status} />
-                            <PreparationStageBadge stage={p.preparationStage} />
-                          </div>
+                          <StatusBadge status={p.status} />
                         </td>
                         <td className="px-4 py-4 text-gray-600">
                           {p.budgetYear ?? "—"}

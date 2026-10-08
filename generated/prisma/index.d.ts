@@ -292,7 +292,10 @@ export const ProjectStatus: {
   FOR_IMPLEMENTATION: 'FOR_IMPLEMENTATION',
   RE_ALIGNMENT: 'RE_ALIGNMENT',
   OTHERS: 'OTHERS',
-  IN_PROCUREMENT: 'IN_PROCUREMENT'
+  IN_PROCUREMENT: 'IN_PROCUREMENT',
+  FOR_SURVEY: 'FOR_SURVEY',
+  FOR_PLANS: 'FOR_PLANS',
+  FOR_POW: 'FOR_POW'
 };
 
 export type ProjectStatus = (typeof ProjectStatus)[keyof typeof ProjectStatus]

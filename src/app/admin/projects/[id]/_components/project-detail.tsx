@@ -22,7 +22,6 @@ import { LatestActualField, latestEntry } from "~/app/admin/projects/_components
 import { GeospatialMap, GeospatialSummary } from "~/app/_components/geospatial-summary";
 import { MODE_LABELS } from "~/app/admin/_components/admin-constant/constant";
 import { DOC_CHECKLIST, inferDocType, type DocType } from "~/lib/project-documents";
-import { preparationStageLabel } from "~/lib/preparation-stage";
 import { TaskNotificationPanel } from "./task-notification-panel";
 
 const FILE_TYPE_PILL: Record<string, string> = {
@@ -386,12 +385,6 @@ export const ProjectDetail = ({ projectId }: Props) => {
                     muted={!project.targetCompletionDate}
                   />
                   <ViewField label="Current Status" value={statusLabel} plain />
-                  <ViewField
-                    plain
-                    label="Preparation Stage"
-                    value={preparationStageLabel(project.preparationStage) ?? "—"}
-                    muted={!project.preparationStage}
-                  />
                   <ViewField label="Project I.D." value={project.projectCode} plain />
                   <ViewField
                     plain
