@@ -36,9 +36,8 @@ export const OriginalIpSection = () => {
     return (
         <div className="mb-5">
             <div className="mb-3">
-                <p className="text-[15px] font-extrabold tracking-wide text-blue-900">ORIGINAL PROJECTS UNDER IP CY 2026</p>
-                <p className="mt-0.5 text-[10px] text-slate-500">
-                    Physical accomplishment of the 2nd Engineering District&apos;s original projects under the IP
+                <p className="text-[15px] font-extrabold tracking-wide text-blue-900">
+                    Projects Under AIP (Annual Investment Plan) CY 2026
                 </p>
             </div>
 
@@ -50,8 +49,6 @@ export const OriginalIpSection = () => {
                 </div>
             ) : (
                 <ChartCard
-                    title="ORIGINAL PROJECTS UNDER IP"
-                    subtitle="Physical accomplishment per project, ranked from least to most advanced"
                     series={series}
                     height={280}
                     chartType="line"

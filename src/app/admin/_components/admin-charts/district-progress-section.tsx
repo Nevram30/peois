@@ -106,7 +106,8 @@ export const ChartCard = ({
     chartType,
     budgetYear,
 }: {
-    title: string;
+    // Omitted when the section header above the card already names it.
+    title?: string;
     subtitle?: string;
     series: ProgressSeries[];
     maxRank?: number | null;
@@ -119,15 +120,17 @@ export const ChartCard = ({
         <div className="bg-white rounded-sm overflow-hidden border border-slate-200">
             <div className="p-4">
                 <div className="flex items-start justify-between gap-3 mb-3">
-                    <div className="min-w-0">
-                        <p className="text-[15px] font-extrabold text-[#1e3a8a] tracking-widest uppercase mb-1">
-                            {title}
-                        </p>
-                        <p className="text-[10px] text-slate-500">{subtitle}</p>
-                    </div>
+                    {title && (
+                        <div className="min-w-0">
+                            <p className="text-[15px] font-extrabold text-[#1e3a8a] tracking-widest uppercase mb-1">
+                                {title}
+                            </p>
+                            <p className="text-[10px] text-slate-500">{subtitle}</p>
+                        </div>
+                    )}
                     {/* Headline figure for the card, top right where it is read
                         first, with the card's calendar year above it */}
-                    <div className="shrink-0 text-right">
+                    <div className="ml-auto shrink-0 text-right">
                         <div className="mb-1 flex justify-end">
                             <FyBadge year={budgetYear} />
                         </div>
