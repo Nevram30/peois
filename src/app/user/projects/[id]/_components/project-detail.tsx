@@ -29,6 +29,8 @@ const STATUS_DOT: Record<string, string> = {
   FOR_SURVEY: "bg-fuchsia-500",
   FOR_PLANS: "bg-indigo-500",
   FOR_POW: "bg-cyan-500",
+  FOR_PLANS_AND_POW: "bg-pink-500",
+  FOR_DETERMINATION: "bg-lime-500",
   RE_ALIGNMENT: "bg-amber-400",
   OTHERS: "bg-gray-400",
 };

@@ -30,6 +30,8 @@ const STATUS_STYLES: Record<ProjectStatusValue, { bg: string; dot: string; text:
   FOR_SURVEY: { bg: "bg-fuchsia-100", dot: "bg-fuchsia-500", text: "text-fuchsia-700" },
   FOR_PLANS: { bg: "bg-indigo-100", dot: "bg-indigo-500", text: "text-indigo-700" },
   FOR_POW: { bg: "bg-cyan-100", dot: "bg-cyan-500", text: "text-cyan-700" },
+  FOR_PLANS_AND_POW: { bg: "bg-pink-100", dot: "bg-pink-500", text: "text-pink-700" },
+  FOR_DETERMINATION: { bg: "bg-lime-100", dot: "bg-lime-500", text: "text-lime-700" },
 };
 
 const FUND_SOURCE_LABELS: Record<string, string> = {

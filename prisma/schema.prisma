@@ -164,6 +164,8 @@ enum ProjectStatus {
   FOR_SURVEY
   FOR_PLANS
   FOR_POW
+  FOR_PLANS_AND_POW // Plans and POW prepared together
+  FOR_DETERMINATION
 }
 
 // Where a project is in its preparation work. Independent of ProjectStatus and

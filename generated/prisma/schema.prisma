@@ -50,6 +50,7 @@ enum SourceOfFund {
   MIADP
   CONFIDENTIAL
   FIVE_PERCENT_CALAMITY_FUND
+  LBP_LOAN
 }
 
 enum District {
@@ -158,6 +159,12 @@ enum ProjectStatus {
   RE_ALIGNMENT
   OTHERS
   IN_PROCUREMENT
+  // Preparation work, picked manually. Replaces PreparationStage in the UI;
+  // that column is kept (no longer updated) so its data is not lost.
+  FOR_SURVEY
+  FOR_PLANS
+  FOR_POW
+  FOR_DETERMINATION
 }
 
 // Where a project is in its preparation work. Independent of ProjectStatus and

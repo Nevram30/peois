@@ -69,6 +69,8 @@ const STATUS_CONFIG: Record<string, { label: string; badge: string; dot: string 
   FOR_SURVEY: { label: "For Survey", badge: "bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200", dot: "bg-fuchsia-500" },
   FOR_PLANS: { label: "For Plans", badge: "bg-indigo-50 text-indigo-700 border-indigo-200", dot: "bg-indigo-500" },
   FOR_POW: { label: "For POW", badge: "bg-cyan-50 text-cyan-700 border-cyan-200", dot: "bg-cyan-500" },
+  FOR_PLANS_AND_POW: { label: "For Plans & POW", badge: "bg-pink-50 text-pink-700 border-pink-200", dot: "bg-pink-500" },
+  FOR_DETERMINATION: { label: "For Determination", badge: "bg-lime-50 text-lime-700 border-lime-200", dot: "bg-lime-500" },
   RE_ALIGNMENT: { label: "Re-alignment", badge: "bg-purple-50 text-purple-700 border-purple-200", dot: "bg-purple-500" },
   OTHERS: { label: "Others", badge: "bg-slate-50 text-slate-700 border-slate-200", dot: "bg-slate-500" },
 };

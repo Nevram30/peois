@@ -469,7 +469,9 @@ exports.ProjectStatus = exports.$Enums.ProjectStatus = {
   IN_PROCUREMENT: 'IN_PROCUREMENT',
   FOR_SURVEY: 'FOR_SURVEY',
   FOR_PLANS: 'FOR_PLANS',
-  FOR_POW: 'FOR_POW'
+  FOR_POW: 'FOR_POW',
+  FOR_PLANS_AND_POW: 'FOR_PLANS_AND_POW',
+  FOR_DETERMINATION: 'FOR_DETERMINATION'
 };
 
 exports.PreparationStage = exports.$Enums.PreparationStage = {

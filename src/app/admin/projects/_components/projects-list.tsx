@@ -46,6 +46,8 @@ const STATUS_LABELS: Record<string, { label: string; className: string }> = {
   FOR_SURVEY: { label: "For Survey", className: "bg-fuchsia-100 text-fuchsia-700" },
   FOR_PLANS: { label: "For Plans", className: "bg-indigo-100 text-indigo-700" },
   FOR_POW: { label: "For POW", className: "bg-cyan-100 text-cyan-700" },
+  FOR_PLANS_AND_POW: { label: "For Plans & POW", className: "bg-pink-100 text-pink-700" },
+  FOR_DETERMINATION: { label: "For Determination", className: "bg-lime-100 text-lime-700" },
   RE_ALIGNMENT: {
     label: "Re-alignment",
     className: "bg-purple-100 text-purple-700",
@@ -64,6 +66,8 @@ const FILTER_STATUS_ORDER: ProjectStatusValue[] = [
   "FOR_SURVEY",
   "FOR_PLANS",
   "FOR_POW",
+  "FOR_PLANS_AND_POW",
+  "FOR_DETERMINATION",
   "IN_PROCUREMENT",
   "FOR_IMPLEMENTATION",
   "ON_GOING",
@@ -90,6 +94,8 @@ const STATUS_TITLES: Record<string, string> = {
   FOR_SURVEY: "Projects For Survey",
   FOR_PLANS: "Projects For Plans",
   FOR_POW: "Projects For POW",
+  FOR_PLANS_AND_POW: "Projects For Plans & POW",
+  FOR_DETERMINATION: "Projects For Determination",
   today: "New Projects Today",
 };
 

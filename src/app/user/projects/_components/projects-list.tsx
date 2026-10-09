@@ -37,6 +37,8 @@ const STATUS_BADGES: Record<string, { label: string; className: string }> = {
   FOR_SURVEY: { label: "FOR SURVEY", className: "bg-fuchsia-100 text-fuchsia-700" },
   FOR_PLANS: { label: "FOR PLANS", className: "bg-indigo-100 text-indigo-700" },
   FOR_POW: { label: "FOR POW", className: "bg-cyan-100 text-cyan-700" },
+  FOR_PLANS_AND_POW: { label: "FOR PLANS & POW", className: "bg-pink-100 text-pink-700" },
+  FOR_DETERMINATION: { label: "FOR DETERMINATION", className: "bg-lime-100 text-lime-700" },
   RE_ALIGNMENT: {
     label: "RE-ALIGNED",
     className: "bg-purple-100 text-purple-700",
@@ -59,7 +61,7 @@ const progressBarColor = (status: string, pct: number) => {
   if (status === "SUSPENDED") return "bg-red-500";
   if (pct >= 100) return "bg-emerald-500";
   if (
-    ["NOT_YET_STARTED", "FOR_SURVEY", "FOR_PLANS", "FOR_POW", "IN_PROCUREMENT", "FOR_IMPLEMENTATION"].includes(status)
+    ["NOT_YET_STARTED", "FOR_SURVEY", "FOR_PLANS", "FOR_POW", "FOR_PLANS_AND_POW", "FOR_DETERMINATION", "IN_PROCUREMENT", "FOR_IMPLEMENTATION"].includes(status)
   )
     return "bg-amber-400";
   return "bg-blue-900";

@@ -134,6 +134,18 @@ export const STATUS_CONFIG: Record<
         text: "text-cyan-700",
         badge: "bg-cyan-50 text-cyan-700",
     },
+    FOR_PLANS_AND_POW: {
+        label: "For Plans & POW",
+        dot: "bg-pink-500",
+        text: "text-pink-700",
+        badge: "bg-pink-50 text-pink-700",
+    },
+    FOR_DETERMINATION: {
+        label: "For Determination",
+        dot: "bg-lime-500",
+        text: "text-lime-700",
+        badge: "bg-lime-50 text-lime-700",
+    },
     RE_ALIGNMENT: {
         label: "Re-alignment",
         dot: "bg-purple-500",
