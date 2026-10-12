@@ -147,13 +147,25 @@ export const AdminDashboardContent = () => {
         <div className="bg-slate-100 min-h-screen p-4 font-sans text-slate-800">
             {/* Section tabs. The YEAR filter sits in the tab bar because both sections
                 share the one year setting — it used to be repeated in each header. */}
-            {/* On phones the filter goes above the tabs (flex-col-reverse), so the
-                active tab's underline still sits on the bar's bottom border. */}
-            <div className="flex flex-col-reverse sm:flex-row sm:items-end justify-between gap-x-4 gap-y-2 border-b border-slate-300 mb-3">
+            {/* Six long tab labels can't share a phone-width row, so below md the
+                tabs give way to a section dropdown beside the filter. */}
+            <div className="flex items-end justify-between gap-x-4 gap-y-2 border-b border-slate-300 mb-3">
+                <label className="md:hidden min-w-0 flex-1 mb-2">
+                    <span className="sr-only">Dashboard section</span>
+                    <select
+                        value={activeTab}
+                        onChange={(e) => setActiveTab(e.target.value as DashboardTab)}
+                        className="w-full truncate rounded-sm border border-slate-300 bg-white px-2 py-1.5 text-[11px] font-extrabold tracking-wide text-blue-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
+                    >
+                        {DASHBOARD_TABS.map((t) => (
+                            <option key={t.id} value={t.id}>{t.label}</option>
+                        ))}
+                    </select>
+                </label>
                 <div
                     role="tablist"
                     aria-label="Dashboard sections"
-                    className="flex min-w-0"
+                    className="hidden md:flex min-w-0"
                     onKeyDown={(e) => {
                         // Arrow keys / Home / End move between tabs, per the WAI-ARIA tabs pattern.
                         const ids = DASHBOARD_TABS.map((t) => t.id);
@@ -182,7 +194,7 @@ export const AdminDashboardContent = () => {
                                 aria-controls={`dashboard-panel-${t.id}`}
                                 tabIndex={selected ? 0 : -1}
                                 onClick={() => setActiveTab(t.id)}
-                                className={`-mb-px border-b-[3px] px-3 py-2 text-left text-[9px] sm:text-[11px] font-extrabold leading-tight tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 ${selected
+                                className={`-mb-px border-b-[3px] px-2 lg:px-3 py-2 text-left text-[10px] lg:text-[11px] font-extrabold leading-tight tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 ${selected
                                     ? "border-blue-900 text-blue-900"
                                     : "border-transparent text-slate-400 hover:text-slate-600"
                                     }`}
@@ -192,7 +204,7 @@ export const AdminDashboardContent = () => {
                         );
                     })}
                 </div>
-                <div className="self-end sm:mb-2">
+                <div className="shrink-0 mb-2">
                     <YearFilter value={dashboardYear} onChange={setYearChoice} years={budgetYears ?? []} />
                 </div>
             </div>
