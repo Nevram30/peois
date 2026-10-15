@@ -4,7 +4,7 @@
  * safe in every runtime.
  */
 
-export const SESSION_MAX_AGE_SECONDS = 5 * 60;
+export const SESSION_MAX_AGE_SECONDS = 15 * 60;
 export const SESSION_MAX_AGE_MS = SESSION_MAX_AGE_SECONDS * 1000;
 
 /** How often an active user's browser pings /api/auth/session to refresh the rolling JWT cookie. Must stay well under SESSION_MAX_AGE_MS. */

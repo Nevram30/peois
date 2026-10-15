@@ -27,7 +27,7 @@ declare module "next-auth" {
 export const edgeAuthConfig = {
   session: {
     strategy: "jwt",
-    maxAge: SESSION_MAX_AGE_SECONDS, // 5 minutes of inactivity
+    maxAge: SESSION_MAX_AGE_SECONDS, // 15 minutes of inactivity
   },
   pages: {
     signIn: "/login",
