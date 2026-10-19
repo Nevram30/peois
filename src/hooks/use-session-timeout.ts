@@ -21,7 +21,7 @@ const ACTIVITY_EVENTS = [
 ] as const;
 
 /**
- * Signs the user out and redirects to /login after SESSION_MAX_AGE_MS of
+ * Signs the user out and redirects to the login page (/) after SESSION_MAX_AGE_MS of
  * inactivity, matching the rolling JWT maxAge in edge-config.ts.
  *
  * While the user IS active, pings /api/auth/session so the rolling cookie is
@@ -42,9 +42,9 @@ export const useSessionTimeout = () => {
       if (expiredRef.current) return;
       expiredRef.current = true;
       try {
-        await signOut({ callbackUrl: "/login?expired=1" });
+        await signOut({ callbackUrl: "/?expired=1" });
       } catch {
-        window.location.href = "/login?expired=1";
+        window.location.href = "/?expired=1";
       }
     };
 

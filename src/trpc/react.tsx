@@ -21,7 +21,7 @@ const onUnauthorized = () => {
   // Batched tRPC requests fail together — only redirect once
   if (redirectingToLogin) return;
   redirectingToLogin = true;
-  void signOut({ callbackUrl: "/login?expired=1" });
+  void signOut({ callbackUrl: "/?expired=1" });
 };
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined;

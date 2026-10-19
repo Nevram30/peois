@@ -30,7 +30,7 @@ export const edgeAuthConfig = {
     maxAge: SESSION_MAX_AGE_SECONDS, // 15 minutes of inactivity
   },
   pages: {
-    signIn: "/login",
+    signIn: "/",
   },
   providers: [], // Providers added in the full config
   callbacks: {

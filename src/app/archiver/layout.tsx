@@ -7,11 +7,11 @@ const ArchiverLayout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth();
 
   if (!session?.user) {
-    redirect("/login");
+    redirect("/");
   }
 
   if (session.user.role !== "ARCHIVER") {
-    redirect("/login");
+    redirect("/");
   }
 
   return (

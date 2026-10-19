@@ -11,11 +11,11 @@ const UserLayout = async ({
   const session = await auth();
 
   if (!session?.user) {
-    redirect("/login");
+    redirect("/");
   }
 
   if (session.user.role !== "USER") {
-    redirect("/login");
+    redirect("/");
   }
 
   return (

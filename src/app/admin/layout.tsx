@@ -11,11 +11,11 @@ const AdminLayout = async ({
   const session = await auth();
 
   if (!session?.user) {
-    redirect("/login");
+    redirect("/");
   }
 
   if (session.user.role !== "ADMIN") {
-    redirect("/login");
+    redirect("/");
   }
 
   return (

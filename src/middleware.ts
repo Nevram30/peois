@@ -8,13 +8,15 @@ export default auth((req) => {
   const token = req.auth;
   const { pathname } = req.nextUrl;
 
-  // Redirect root to login
-  if (pathname === "/") {
-    return NextResponse.redirect(new URL("/login", req.url));
+  // Legacy /login URL now lives at the root; keep query (e.g. ?expired=1)
+  if (pathname === "/login") {
+    const url = req.nextUrl.clone();
+    url.pathname = "/";
+    return NextResponse.redirect(url);
   }
 
-  // Allow access to login page only if NOT authenticated
-  if (pathname === "/login") {
+  // Allow access to the login page (root) only if NOT authenticated
+  if (pathname === "/") {
     if (token) {
       const role = token.user?.role as string | undefined;
       if (role === "SUPER_ADMIN") {
@@ -35,33 +37,33 @@ export default auth((req) => {
   // Protect role-based dashboard routes
   if (pathname.startsWith("/super-admin/")) {
     if (!token) {
-      return NextResponse.redirect(new URL("/login", req.url));
+      return NextResponse.redirect(new URL("/", req.url));
     }
     const role = token.user?.role as string | undefined;
     if (role !== "SUPER_ADMIN") {
-      return NextResponse.redirect(new URL("/login", req.url));
+      return NextResponse.redirect(new URL("/", req.url));
     }
     return NextResponse.next();
   }
 
   if (pathname.startsWith("/archiver/")) {
     if (!token) {
-      return NextResponse.redirect(new URL("/login", req.url));
+      return NextResponse.redirect(new URL("/", req.url));
     }
     const role = token.user?.role as string | undefined;
     if (role !== "ARCHIVER") {
-      return NextResponse.redirect(new URL("/login", req.url));
+      return NextResponse.redirect(new URL("/", req.url));
     }
     return NextResponse.next();
   }
 
   if (pathname.startsWith("/user/")) {
     if (!token) {
-      return NextResponse.redirect(new URL("/login", req.url));
+      return NextResponse.redirect(new URL("/", req.url));
     }
     const role = token.user?.role as string | undefined;
     if (role !== "USER") {
-      return NextResponse.redirect(new URL("/login", req.url));
+      return NextResponse.redirect(new URL("/", req.url));
     }
     return NextResponse.next();
   }
@@ -69,11 +71,11 @@ export default auth((req) => {
   // Admin routes (check after more specific routes)
   if (pathname === "/admin" || pathname.startsWith("/admin/")) {
     if (!token) {
-      return NextResponse.redirect(new URL("/login", req.url));
+      return NextResponse.redirect(new URL("/", req.url));
     }
     const role = token.user?.role as string | undefined;
     if (role !== "ADMIN") {
-      return NextResponse.redirect(new URL("/login", req.url));
+      return NextResponse.redirect(new URL("/", req.url));
     }
   }
 
