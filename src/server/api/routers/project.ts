@@ -6,14 +6,14 @@ import {
   districtScopedProcedure,
   protectedProcedure,
 } from "~/server/api/trpc";
-import { isReachableFromDistrict } from "~/lib/divisions";
+import { canEditProjectCode, isReachableFromDistrict } from "~/lib/divisions";
 import { getMunicipalitiesByDistrict } from "~/lib/davao-del-norte-locations";
 import {
   ORIGINAL_IP_PROJECT_CODES,
   ORIGINAL_IP_PROJECT_SUB_TYPES,
   ORIGINAL_IP_PROJECT_TITLES,
 } from "~/lib/original-ip-projects";
-import { type District } from "../../../../generated/prisma";
+import { type District, type PrismaClient } from "../../../../generated/prisma";
 import { notificationEmitter } from "~/server/api/events";
 import {
   PROJECT_SUB_TYPE_LABEL,
@@ -33,6 +33,25 @@ import {
 // (empty for unrestricted users), spread into each query's where.
 const districtWhere = (scope: District | null) =>
   scope ? { locationImplementation: scope } : {};
+
+// projectCode is unique, so reject a code already held by another project
+// rather than letting the update fail on the constraint.
+const assertProjectCodeFree = async (
+  db: PrismaClient,
+  projectCode: string,
+  id: string,
+) => {
+  const taken = await db.project.findUnique({
+    where: { projectCode },
+    select: { id: true },
+  });
+  if (taken && taken.id !== id) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: `Project ID "${projectCode}" is already used by another project`,
+    });
+  }
+};
 
 export const projectRouter = createTRPCRouter({
   getAll: districtScopedProcedure.query(async ({ ctx }) => {
@@ -249,10 +268,38 @@ export const projectRouter = createTRPCRouter({
         imageUrls: z.array(z.string()).max(PROJECT_IMAGE_SLOTS).optional(),
         documentUrl: z.string().optional(),
         documentName: z.string().optional(),
+        // Only honoured for callers allowed by canEditProjectCode.
+        projectCode: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { id, ...data } = input;
+      const { id, projectCode, ...data } = input;
+
+      // Changing the Project ID is restricted; an unchanged or omitted code
+      // skips the check so everyone else's saves keep working.
+      const newProjectCode = projectCode?.trim();
+      let codeChanged = false;
+      if (newProjectCode) {
+        const current = await ctx.db.project.findUnique({
+          where: { id },
+          select: { projectCode: true },
+        });
+        codeChanged = current?.projectCode !== newProjectCode;
+      }
+      if (newProjectCode && codeChanged) {
+        const caller = await ctx.db.user.findUnique({
+          where: { id: ctx.session.user.id },
+          select: { role: true, designation: true, division: true },
+        });
+        if (!canEditProjectCode(caller)) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You are not allowed to change the Project ID",
+          });
+        }
+        await assertProjectCodeFree(ctx.db, newProjectCode, id);
+      }
+
       const duration =
         data.dateStarted && data.targetCompletionDate
           ? Math.ceil(
@@ -267,6 +314,7 @@ export const projectRouter = createTRPCRouter({
         where: { id },
         data: {
           ...data,
+          ...(newProjectCode && codeChanged ? { projectCode: newProjectCode } : {}),
           duration,
           numPersons,
         },
@@ -485,20 +533,9 @@ export const projectRouter = createTRPCRouter({
           )
           : 0;
 
-      // projectCode is unique, so reject a code already held by another project
-      // rather than letting the update fail on the constraint.
       const newProjectCode = projectCode?.trim();
       if (newProjectCode) {
-        const taken = await ctx.db.project.findUnique({
-          where: { projectCode: newProjectCode },
-          select: { id: true },
-        });
-        if (taken && taken.id !== id) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: `Project ID "${newProjectCode}" is already used by another project`,
-          });
-        }
+        await assertProjectCodeFree(ctx.db, newProjectCode, id);
       }
 
       const [project] = await ctx.db.$transaction([

@@ -39,6 +39,7 @@ import {
 } from "~/app/admin/projects/_components/progress-slippage-panel";
 import { LatestActualField, latestEntry } from "~/app/admin/projects/_components/latest-actual";
 import { parseCoord } from "~/lib/geo";
+import { canEditProjectCode } from "~/lib/divisions";
 import { handleAmountChange, parseAmount, formatAmountValue } from "~/lib/currency";
 import { GeospatialFields } from "~/app/_components/geospatial-fields";
 import { UploadDocumentModal } from "~/app/_components/upload-document-modal";
@@ -213,8 +214,13 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   // Programs / Projects / LBP-TL numbers a super admin registered from the
   // project override page, merged into the Funding Information dropdowns below.
   const { data: customOptions } = api.fundingOption.getAll.useQuery();
+  // Only super admins and PDPM's Administrative Assistant II may change the
+  // Project ID; everyone else sees it read-only. The server enforces the same.
+  const { data: me } = api.user.me.useQuery();
+  const canEditCode = canEditProjectCode(me);
 
   // ─ Identity & Status ───────────────────────────────────────────────────
+  const [projectCode, setProjectCode] = useState("");
   const [completion, setCompletion] = useState(0);
   // Raw text of the percentage box, kept apart from `completion` so the field
   // can sit empty while it is being retyped instead of snapping back to 0.
@@ -323,6 +329,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   // populate state from project
   useEffect(() => {
     if (!project) return;
+    setProjectCode(project.projectCode);
     setCompletion(project.completionPercentage);
     setCompletionText(String(project.completionPercentage));
     setStatus(project.status);
@@ -659,6 +666,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     // For Project Identity & Status, name the specific fields that changed so
     // the audit trail shows what was updated, not just the card.
     const identityFields: string[] = [];
+    if (canEditCode && projectCode.trim() && projectCode.trim() !== project.projectCode) identityFields.push("Track Number");
     if (status !== project.status) identityFields.push("Current Status");
     if (modeOfImplementation !== project.modeOfImplementation) identityFields.push("Implementation Mode");
     if (contractorName !== (project.contractorName ?? "")) identityFields.push("Contractor Name");
@@ -769,6 +777,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
         completionPercentage: completion,
         imageUrl: images[0] ?? null,
         imageUrls: images,
+        projectCode: canEditCode ? projectCode.trim() || undefined : undefined,
       },
       {
         onSuccess: () => {
@@ -1044,7 +1053,16 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <div>
                       <FieldLabel>Track Number</FieldLabel>
-                      <p className="font-mono text-sm text-gray-700">{project.projectCode}</p>
+                      {canEditCode ? (
+                        <Input
+                          value={projectCode}
+                          onChange={(e) => setProjectCode(e.target.value)}
+                          placeholder="Project ID"
+                          className="font-mono"
+                        />
+                      ) : (
+                        <p className="font-mono text-sm text-gray-700">{project.projectCode}</p>
+                      )}
                     </div>
                     <div>
                       <FieldLabel>Current Status</FieldLabel>

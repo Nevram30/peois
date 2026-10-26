@@ -49,6 +49,28 @@ export const isReachableFromDistrict = (
   return district === null || district === scope;
 }
 
+/**
+ * Whether the user may change a project's Project ID (`projectCode`): super
+ * admins, and the PDPM division's Administrative Assistant II. Matching is
+ * tolerant the same way as `divisionToDistrict`, but exact, so "Administrative
+ * Assistant III" does not qualify.
+ */
+export const canEditProjectCode = (
+  user:
+    | { role?: string | null; designation?: string | null; division?: string | null }
+    | null
+    | undefined,
+): boolean => {
+  if (!user) return false;
+  if (user.role === "SUPER_ADMIN") return true;
+  const normalize = (value: string | null | undefined) =>
+    (value ?? "").trim().toUpperCase().replace(/\s+/g, " ");
+  return (
+    normalize(user.designation) === "ADMINISTRATIVE ASSISTANT II" &&
+    normalize(user.division) === "PDPM"
+  );
+}
+
 // Reader-facing names for the stored codes. Only the district divisions need
 // spelling out; the office divisions are known by their acronym.
 const DIVISION_LABEL: Record<string, string> = {
