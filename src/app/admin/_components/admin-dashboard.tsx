@@ -355,10 +355,17 @@ export const AdminDashboardContent = () => {
                     }
                 />
 
-                {/* Report: the Annual Allocation & Source Breakdown as a record
-                    table, down to the project. Office divisions can filter it
-                    by district. */}
-                {financialView === "report" && <AllocationRecordsTable budgetYear={dashboardYear} />}
+                {/* Report: the Annual Allocation & Source Breakdown, the
+                    Remaining Balance and the Disbursement Summary as record
+                    tables, down to the project. Office divisions can filter
+                    each by district. */}
+                {financialView === "report" && (
+                    <>
+                        <AllocationRecordsTable budgetYear={dashboardYear} report="allocation" />
+                        <AllocationRecordsTable budgetYear={dashboardYear} report="remaining" />
+                        <AllocationRecordsTable budgetYear={dashboardYear} report="disbursed" />
+                    </>
+                )}
 
                 <div hidden={financialView !== "graph"}>
                 {/* Utilisation of the annual allocation: what is left and what

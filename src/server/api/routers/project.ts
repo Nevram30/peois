@@ -1367,9 +1367,10 @@ export const projectRouter = createTRPCRouter({
 
     }),
 
-  // Per-project records behind the Annual Allocation & Source Breakdown card:
-  // each project's allocation and variation orders, with its district, so the
-  // dashboard can list (and print) the source breakdown down to the project.
+  // Per-project records behind the Annual Allocation & Source Breakdown and
+  // Remaining Balance cards: each project's allocation, variation orders and
+  // disbursements, with its district, so the dashboard can list (and print)
+  // the source breakdown down to the project.
   // Scoped and filtered like getFinancialOverview.
   getAllocationRecords: districtScopedProcedure
     .input(z.object({ budgetYear: z.string().optional() }).optional())
@@ -1384,9 +1385,11 @@ export const projectRouter = createTRPCRouter({
           projectCode: true,
           title: true,
           locationImplementation: true,
+          modeOfImplementation: true,
           sourceOfFund: true,
           subType: true,
           projectCost: true,
+          disbursements: { select: { amount: true } },
           variationOrders: { select: { amount: true, sourceOfFund: true } },
         },
         orderBy: { projectCode: "asc" },
