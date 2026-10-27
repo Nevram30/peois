@@ -185,14 +185,14 @@ export const ActualProgressSection = ({ budgetYear }: { budgetYear: string }) =>
         budgetYear ? { budgetYear } : undefined,
     );
     const [month, setMonth] = useState<string>(ALL);
-    // Office divisions (SMAD/PDPM/EPM/QACD) have no district scope; only they
-    // get the graph/table toggle and printing.
+    // Every division gets the graph/table toggle and printing.
+    const [view, setView] = useState<View>("graph");
+    const activeView = view;
+    // Office divisions (SMAD/PDPM/EPM/QACD) have no district scope, so only
+    // they choose which district to show; the district admins are already
+    // scoped to their own by the server.
     const { data: districtScope, isLoading: scopeLoading } = api.project.getMyDistrictScope.useQuery();
     const isOfficeDivision = !scopeLoading && districtScope == null;
-    const [view, setView] = useState<View>("graph");
-    const activeView: View = isOfficeDivision ? view : "graph";
-    // They also choose which district to show; the district admins are
-    // already scoped to their own by the server.
     const [district, setDistrict] = useState<string>(ALL);
     const activeDistrict = isOfficeDivision ? district : ALL;
 
@@ -264,7 +264,6 @@ export const ActualProgressSection = ({ budgetYear }: { budgetYear: string }) =>
                     </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                {isOfficeDivision && (
                         <div role="group" aria-label="View" className="inline-flex rounded-md bg-slate-200 p-0.5">
                             {(["graph", "table"] as const).map((option) => (
                                 <button
@@ -281,7 +280,6 @@ export const ActualProgressSection = ({ budgetYear }: { budgetYear: string }) =>
                                 </button>
                             ))}
                         </div>
-                )}
                 {isOfficeDivision && (
                     <label className="flex items-center gap-2">
                         <span className="text-[11px] font-bold tracking-wide text-slate-600">DISTRICT</span>
@@ -315,17 +313,15 @@ export const ActualProgressSection = ({ budgetYear }: { budgetYear: string }) =>
                         ))}
                     </select>
                 </label>
-                {isOfficeDivision && (
-                    <button
-                        type="button"
-                        onClick={() => printTable(rows, title, periodText, budgetYear)}
-                        disabled={!rows.length}
-                        className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-bold tracking-wide text-[#1e3a8a] transition-colors hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 disabled:cursor-not-allowed disabled:opacity-50 inline-flex items-center gap-1.5"
-                    >
-                        <Printer className="h-3.5 w-3.5" aria-hidden="true" />
-                        PRINT
-                    </button>
-                )}
+                <button
+                    type="button"
+                    onClick={() => printTable(rows, title, periodText, budgetYear)}
+                    disabled={!rows.length}
+                    className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-bold tracking-wide text-[#1e3a8a] transition-colors hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 disabled:cursor-not-allowed disabled:opacity-50 inline-flex items-center gap-1.5"
+                >
+                    <Printer className="h-3.5 w-3.5" aria-hidden="true" />
+                    PRINT
+                </button>
                 </div>
             </div>
 
