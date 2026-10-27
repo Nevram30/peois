@@ -851,15 +851,11 @@ export const UserProjectsList = () => {
                     <th className="px-4 py-4 font-semibold">Status</th>
                     <th className="px-4 py-4 font-semibold">Budget Year</th>
                     <th className="px-4 py-4 font-semibold">Involved Users</th>
-                    <th className="px-4 py-4 font-semibold">
-                      Physical Progress
-                    </th>
                     <th className="px-4 py-4 font-semibold">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {paginated?.map((p) => {
-                    const pct = p.completionPercentage ?? 0;
                     return (
                       <tr
                         key={p.id}
@@ -911,17 +907,6 @@ export const UserProjectsList = () => {
                         </td>
                         <td className="px-4 py-4">
                           <ContributorAvatars project={p} />
-                        </td>
-                        <td className="px-4 py-4">
-                          <p className="mb-1 text-xs font-semibold text-gray-800">
-                            {pct}%
-                          </p>
-                          <div className="h-1.5 w-28 overflow-hidden rounded-full bg-gray-200">
-                            <div
-                              className={`h-full rounded-full ${progressBarColor(p.status, pct)}`}
-                              style={{ width: `${Math.min(pct, 100)}%` }}
-                            />
-                          </div>
                         </td>
                         <td className="px-4 py-4">
                           <button

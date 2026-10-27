@@ -847,7 +847,6 @@ const ProjectsList = () => {
                       <th className="px-4 py-3 font-medium">Budget Year</th>
                       <th className="px-4 py-3 font-medium">Status</th>
                       <th className="px-4 py-3 font-medium">Involved Users</th>
-                      <th className="px-4 py-3 font-medium">Progress</th>
                       <th className="px-4 py-3 font-medium">Actual %</th>
                       <th className="px-4 py-3 font-medium">Actions</th>
                     </tr>
@@ -896,9 +895,6 @@ const ProjectsList = () => {
                         </td>
                         <td className="px-4 py-3">
                           <ContributorAvatars project={p} />
-                        </td>
-                        <td className="px-4 py-3">
-                          <ProjectProgress project={p} />
                         </td>
                         <td className="px-4 py-3">
                           <LatestActualCell entry={p.slippageAssessments[0]} />
