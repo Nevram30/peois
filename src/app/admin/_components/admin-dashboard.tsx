@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { api } from "~/trpc/react";
 
 import type { StatCard } from "~/app/super-admin/dashboardv2/super.admin.types";
@@ -14,6 +14,7 @@ import { ActualProgressSection } from "./admin-charts/actual-progress-section";
 import { YearFilter } from "~/helper/year.filter";
 import { PreparationStageSection } from "./admin-cards/preparation-stage-section";
 import { PreparationStageTable } from "./admin-cards/preparation-stage-table";
+import { AllocationRecordsTable } from "./admin-cards/allocation-records-table";
 import { StatusProgressModal } from "./admin-charts/status-progress-modal";
 import { PhysicalProgressSection } from "./admin-charts/physical-progress-section";
 import { OriginalIpSection } from "./admin-charts/original-ip-section";
@@ -65,13 +66,14 @@ const StatTile = ({ card, onView }: { card: StatCard; onView?: () => void }) => 
 // read as "all projects", and the badge stays in view when the header filter
 // has scrolled away. The year and subtitle stack on the right, level with the
 // panel's optional section label on the left.
-const PanelHeading = ({ subtitle, year, label }: { subtitle: string; year: string; label?: string }) => (
+// A panel can put its own controls (e.g. sub-tabs) on the left instead of a label.
+const PanelHeading = ({ subtitle, year, label, left }: { subtitle: string; year: string; label?: string; left?: ReactNode }) => (
     <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        {label ? (
+        {left ?? (label ? (
             <h2 className="text-[11px] font-extrabold uppercase tracking-widest text-[#1e3a8a]">{label}</h2>
         ) : (
             <span />
-        )}
+        ))}
         <div className="flex flex-col items-end gap-1 text-right">
             <span className="rounded-sm bg-blue-50 px-2.5 py-1 text-sm font-extrabold uppercase tracking-widest text-[#1e3a8a]">
                 {year ? `CY ${year}` : "NO CALENDAR YEAR"}
@@ -93,11 +95,21 @@ const DASHBOARD_TABS = [
 
 type DashboardTab = (typeof DASHBOARD_TABS)[number]["id"];
 
+// Sub-tabs of the Financial Allocation Overview: the cards and charts, or the
+// per-project record table.
+const FINANCIAL_VIEWS = [
+    { id: "graph", label: "GRAPH" },
+    { id: "report", label: "REPORT" },
+] as const;
+
+type FinancialView = (typeof FINANCIAL_VIEWS)[number]["id"];
+
 // ── Main Dashboard ─────────────────────────────────────────────
 export const AdminDashboardContent = () => {
     const [activeTab, setActiveTab] = useState<DashboardTab>("status");
     // The status tile whose VIEW button opened the progress chart popup.
     const [viewTile, setViewTile] = useState<StatusTileCard | null>(null);
+    const [financialView, setFinancialView] = useState<FinancialView>("graph");
 
     // Calendar year filter shared by the dashboard cards (driven by the header
     // YEAR button). The years come back newest first, and the newest is the
@@ -319,8 +331,36 @@ export const AdminDashboardContent = () => {
                 aria-labelledby="dashboard-tab-financial"
                 hidden={activeTab !== "financial"}
             >
-                <PanelHeading subtitle="Aggregated project funding sources and allocations" year={dashboardYear} />
+                <PanelHeading
+                    subtitle="Aggregated project funding sources and allocations"
+                    year={dashboardYear}
+                    left={
+                        <div role="tablist" aria-label="Financial view" className="inline-flex rounded-md bg-slate-200 p-0.5">
+                            {FINANCIAL_VIEWS.map((v) => (
+                                <button
+                                    key={v.id}
+                                    type="button"
+                                    role="tab"
+                                    aria-selected={financialView === v.id}
+                                    onClick={() => setFinancialView(v.id)}
+                                    className={`rounded-[5px] px-4 py-1.5 text-[11px] font-bold tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 ${financialView === v.id
+                                        ? "bg-[#1e3a8a] text-white"
+                                        : "text-slate-600 hover:text-slate-900"
+                                        }`}
+                                >
+                                    {v.label}
+                                </button>
+                            ))}
+                        </div>
+                    }
+                />
 
+                {/* Report: the Annual Allocation & Source Breakdown as a record
+                    table, down to the project. Office divisions can filter it
+                    by district. */}
+                {financialView === "report" && <AllocationRecordsTable budgetYear={dashboardYear} />}
+
+                <div hidden={financialView !== "graph"}>
                 {/* Utilisation of the annual allocation: what is left and what
                     has gone out, each as a share of the same total. Above the
                     allocation card, as the headline reading of this tab. */}
@@ -419,6 +459,7 @@ export const AdminDashboardContent = () => {
                             />
                         </>
                     )}
+                </div>
                 </div>
             </div>
 
