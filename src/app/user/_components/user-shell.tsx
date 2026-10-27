@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { api } from "~/trpc/react";
 import { signOut } from "next-auth/react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { SideNav } from "~/app/_components/side-nav";
 import { Footer } from "~/app/_components/footer";
 import { usePollToast } from "~/hooks/use-poll-toast";
@@ -81,6 +81,15 @@ export function UserShell({
   const notifRef = useRef<HTMLDivElement>(null);
 
   const isActive = (href: string) => pathname.startsWith(href);
+
+  // Projects is split into All Projects and My Projects (the ones listing the
+  // user under Engineers In-Charge).
+  const searchParams = useSearchParams();
+  const onMyProjects = pathname === "/user/projects" && searchParams.get("mine") === "1";
+  const projectLinks = [
+    { label: "All Projects", href: "/user/projects", active: isActive("/user/projects") && !onMyProjects },
+    { label: "My Projects", href: "/user/projects?mine=1", active: onMyProjects },
+  ];
 
   const { data: me } = api.user.me.useQuery();
   const avatarImage = me?.image ?? user.image;
@@ -303,11 +312,15 @@ export function UserShell({
 
         {/* Navigation Tabs — mobile/tablet only; desktop uses the left sidebar */}
         <nav className="flex items-center gap-2 overflow-x-auto bg-white px-4 border-b border-gray-200 mt-3 sm:px-6 lg:hidden">
-          {navItems.map((item) => (
+          {navItems.flatMap((item) =>
+            item.href === "/user/projects"
+              ? projectLinks.map((link) => ({ ...item, ...link }))
+              : [{ ...item, active: isActive(item.href) }],
+          ).map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className={`-mb-px flex shrink-0 items-center gap-2 whitespace-nowrap border-b-[3px] px-4 py-2.5 text-sm transition ${isActive(item.href)
+              className={`-mb-px flex shrink-0 items-center gap-2 whitespace-nowrap border-b-[3px] px-4 py-2.5 text-sm transition ${item.active
                 ? "border-amber-500 font-medium text-amber-600"
                 : "border-transparent font-normal text-gray-600 hover:border-gray-300 hover:text-gray-900"
                 }`}
@@ -334,6 +347,7 @@ export function UserShell({
             icon: item.icon,
             active: isActive(item.href),
             badge: item.label === "My Tasks" ? taskCount : 0,
+            children: item.href === "/user/projects" ? projectLinks : undefined,
           }))}
           helpHref="/user/it-help-desk"
         />

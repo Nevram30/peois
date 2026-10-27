@@ -17,6 +17,7 @@ import {
   type SourceOfFundValue,
 } from "~/lib/fund-constants";
 import { projectLabel } from "~/lib/funding-options";
+import { isEngineerInCharge } from "~/lib/names";
 
 const STATUS_BADGES: Record<string, { label: string; className: string }> = {
   NOT_YET_STARTED: {
@@ -285,6 +286,8 @@ export const UserProjectsList = () => {
   const searchParams = useSearchParams();
   const statusFilterParam = searchParams.get("status");
   const filterToday = searchParams.get("filter") === "today";
+  // Set by the sidebar's "My Projects" link.
+  const mineFilter = searchParams.get("mine") === "1";
 
   const [search, setSearch] = useState("");
   const [modeFilter, setModeFilter] = useState("");
@@ -305,6 +308,15 @@ export const UserProjectsList = () => {
   const { data: stats, isLoading: statsLoading } = api.project.getStats.useQuery(
     yearFilter ? { budgetYear: yearFilter } : undefined,
   );
+  const { data: me } = api.user.me.useQuery();
+
+  // All Projects and My Projects share this page, so switching between them
+  // keeps the component mounted; start the new list from its first page.
+  const [prevMineFilter, setPrevMineFilter] = useState(mineFilter);
+  if (prevMineFilter !== mineFilter) {
+    setPrevMineFilter(mineFilter);
+    setPage(1);
+  }
 
   // Distinct city / barangay options derived from the loaded projects.
   const cityOptions = Array.from(
@@ -340,6 +352,7 @@ export const UserProjectsList = () => {
       )
         return false;
     }
+    if (mineFilter && !isEngineerInCharge(p.projectEngineer, me?.name)) return false;
     if (statusLocal && p.status !== statusLocal) return false;
     if (modeFilter && p.modeOfImplementation !== modeFilter) return false;
     if (districtFilter && p.locationImplementation !== districtFilter)
@@ -443,7 +456,7 @@ export const UserProjectsList = () => {
 
       {/* Heading */}
       <h2 className="text-lg font-extrabold uppercase tracking-wide text-blue-900">
-        Projects
+        {mineFilter ? "My Projects" : "All Projects"}
       </h2>
 
       {/* Filter bar */}
