@@ -179,6 +179,36 @@ const GEO_INPUT_CLASS =
 const GEO_LABEL_CLASS =
   "mb-1 block text-[10px] font-bold uppercase tracking-widest text-gray-400";
 
+// Project Identity & Status card styling — mirrors the new-project form so the
+// card reads the same whether a project is being created or updated.
+const idLabelClass = "mb-2 block text-sm font-medium text-gray-700";
+const idInputClass =
+  "block w-full rounded-md border border-gray-100 bg-gray-100 px-4 py-3 text-sm text-gray-900 shadow-[inset_0_2px_4px_rgba(0,0,0,0.08)] transition placeholder:text-gray-400 focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:outline-none disabled:cursor-not-allowed disabled:text-gray-500";
+const idSelectClass =
+  "block w-full cursor-pointer appearance-none rounded-md border border-gray-100 bg-slate-50 px-4 py-3 pr-10 text-sm text-gray-900 shadow-md transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 disabled:shadow-none";
+
+const IdSelect = ({ className = "", children, ...props }: React.SelectHTMLAttributes<HTMLSelectElement>) => (
+  <div className="relative">
+    <select {...props} className={`${idSelectClass} ${className}`}>
+      {children}
+    </select>
+    <svg className="pointer-events-none absolute top-1/2 right-3.5 h-4 w-4 -translate-y-1/2 text-slate-700" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+    </svg>
+  </div>
+);
+
+// A peso amount laid out like the cost inputs; `value` is already formatted.
+const PesoField = ({ label, children }: { label: string; children: React.ReactNode }) => (
+  <div>
+    <label className={idLabelClass}>{label}</label>
+    <div className="relative">
+      <span className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-sm text-gray-600">₱</span>
+      {children}
+    </div>
+  </div>
+);
+
 // ─── Icons ───────────────────────────────────────────────────────────────────
 const EditIcon = () => (
   <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
@@ -228,6 +258,8 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   const [status, setStatus] = useState("ON_GOING");
   const [contractorName, setContractorName] = useState("");
   const [modeOfImplementation, setModeOfImplementation] = useState("BY_CONTRACT");
+  // Formatted "1,234.50" text, parsed back to a number on save.
+  const [contractCost, setContractCost] = useState("");
 
   // ─ Location ────────────────────────────────────────────────────────────
   const [locDistrict, setLocDistrict] = useState("");
@@ -335,6 +367,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     setStatus(project.status);
     setContractorName(project.contractorName ?? "");
     setModeOfImplementation(project.modeOfImplementation);
+    setContractCost(project.contractCost ? formatAmountValue(project.contractCost) : "");
     setLocDistrict(project.district ?? project.locationImplementation ?? "");
     setCityMunicipality(project.cityMunicipality ?? "");
     setBarangay(project.barangay ?? "");
@@ -666,7 +699,8 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     // For Project Identity & Status, name the specific fields that changed so
     // the audit trail shows what was updated, not just the card.
     const identityFields: string[] = [];
-    if (canEditCode && projectCode.trim() && projectCode.trim() !== project.projectCode) identityFields.push("Track Number");
+    if (canEditCode && projectCode.trim() && projectCode.trim() !== project.projectCode) identityFields.push("Project I.D.");
+    if ((parseAmount(contractCost) || 0) !== (project.contractCost ?? 0)) identityFields.push("Contract Cost");
     if (status !== project.status) identityFields.push("Current Status");
     if (modeOfImplementation !== project.modeOfImplementation) identityFields.push("Implementation Mode");
     if (contractorName !== (project.contractorName ?? "")) identityFields.push("Contractor Name");
@@ -747,7 +781,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
           | "UNASSIGNED_FOR_DETERMINATION",
         locationImplementation: (locDistrict as "DISTRICT_I" | "DISTRICT_II") || project.locationImplementation,
         sourceOfFund: (sourceOfFund || project.sourceOfFund) as Parameters<typeof updateProject.mutate>[0]["sourceOfFund"],
-        contractCost: project.contractCost,
+        contractCost: parseAmount(contractCost) || 0,
         contractorName: contractorName || undefined,
         projectEngineer: engineers.join(", ") || undefined,
         budgetYear: budgetYear || undefined,
@@ -1016,15 +1050,16 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                 title="Project Identity & Status"
                 action={<button type="button" className="text-gray-400 hover:text-gray-600"><EditIcon /></button>}
               />
-              <div className="flex flex-col sm:flex-row">
-                {/* Photo gallery — four slots down the side of the card body */}
-                <div className="w-full shrink-0 p-4 sm:w-72">
+              <div className="space-y-5 p-6">
+                {/* Project photos — four tiles across the top of the card */}
+                <div>
                   <ProjectImageUploader
+                    variant="tiles"
                     slots={imageSlots}
                     onChange={setImageSlot}
                     onUploadingChange={setIsUploadingMedia}
                     badge={
-                      <span className="absolute top-2 left-2 rounded-md bg-gray-900/90 px-2 py-1 font-mono text-[10px] font-bold tracking-wider text-white">
+                      <span className="absolute top-3 left-3 rounded-md bg-gray-900/90 px-3 py-1.5 font-mono text-[10px] font-bold tracking-wider text-white">
                         #{project.projectCode}
                       </span>
                     }
@@ -1037,137 +1072,168 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                   )}
                 </div>
 
-                {/* Fields */}
-                <div className="min-w-0 flex-1 space-y-3 p-4">
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <div className="min-w-0">
-                      <FieldLabel>Project Title</FieldLabel>
-                      <p className="truncate text-sm font-semibold text-gray-900">{project.title}</p>
-                    </div>
-                    <div>
-                      <FieldLabel>Project Cost</FieldLabel>
-                      <p className="text-sm font-semibold text-gray-900">₱ {project.projectCost?.toLocaleString("en-PH", { minimumFractionDigits: 2 }) ?? "—"}</p>
-                    </div>
+                {/* Physical Progress */}
+                <div className="rounded-md border border-gray-200 p-5">
+                  <div className="mb-4 flex items-center justify-between gap-3">
+                    <span className="text-sm font-semibold text-gray-900">Physical Progress</span>
+                    <span className="text-base font-bold text-blue-800">{completion}%</span>
                   </div>
-
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <div>
-                      <FieldLabel>Track Number</FieldLabel>
-                      {canEditCode ? (
-                        <Input
-                          value={projectCode}
-                          onChange={(e) => setProjectCode(e.target.value)}
-                          placeholder="Project ID"
-                          className="font-mono"
-                        />
-                      ) : (
-                        <p className="font-mono text-sm text-gray-700">{project.projectCode}</p>
-                      )}
-                    </div>
-                    <div>
-                      <FieldLabel>Current Status</FieldLabel>
-                      <Select value={status} onChange={(e) => setStatus(e.target.value)}>
-                        {PROJECT_STATUS_ORDER
-                          .filter((k) => k !== "NOT_YET_STARTED" || status === "NOT_YET_STARTED")
-                          .map((k) => (
-                            <option key={k} value={k}>
-                              {PROJECT_STATUS_LABEL[k]}
-                            </option>
-                          ))}
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <div>
-                      <FieldLabel>Implementation Mode</FieldLabel>
-                      <Select
-                        value={modeOfImplementation}
-                        onChange={(e) => {
-                          setModeOfImplementation(e.target.value);
-                          // The disbursement type options depend on the mode, so
-                          // drop a selection that is no longer valid.
-                          const types =
-                            MODE_TO_DISBURSEMENT_TYPES[
-                            e.target.value as keyof typeof MODE_TO_DISBURSEMENT_TYPES
-                            ] ?? [];
-                          if (disbType && !types.includes(disbType)) setDisbType("");
-                        }}
-                      >
-                        <option value="BY_ADMINISTRATION">By Administration</option>
-                        <option value="BY_CONTRACT">By Contract</option>
-                        <option value="UNASSIGNED_FOR_DETERMINATION">
-                          Unassigned - For Determination
-                        </option>
-                      </Select>
-                    </div>
-                    <div>
-                      <FieldLabel>Contractor Name</FieldLabel>
-                      <Input value={contractorName} onChange={(e) => setContractorName(e.target.value)} placeholder="Contractor name" />
-                    </div>
-                  </div>
-
-                  {/* Progress — sits with the rest of the identity fields */}
-                  <div>
-                    <div className="mb-1.5 flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-2">
-                        <FieldLabel>Project Progress</FieldLabel>
-                        <span className="flex items-center gap-1 text-[10px] font-semibold text-green-500">
-                          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
-                          Real-time
-                        </span>
-                      </div>
-                      <div className="relative w-24 shrink-0">
-                        <input
-                          type="number" min={0} max={100} step={0.01} value={completionText}
-                          onChange={(e) => {
-                            // Keep whatever was typed — including an empty box or a
-                            // half-written decimal like "45." — and only mirror it
-                            // into `completion` once it parses.
-                            const raw = e.target.value;
-                            setCompletionText(raw);
-                            if (raw === "") return;
-                            const parsed = Number(raw);
-                            if (Number.isNaN(parsed)) return;
-                            setCompletion(clampPercent(parsed));
-                          }}
-                          onBlur={() => setCompletionText(String(completion))}
-                          className="block w-full rounded-sm border border-gray-200 bg-white py-1.5 pl-2.5 pr-6 text-sm font-bold text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-sm font-bold text-blue-400">%</span>
-                      </div>
-                    </div>
-                    <div className="relative flex h-5 w-full items-center">
-                      {/* Track */}
-                      <div className="absolute inset-x-0 h-2.5 overflow-hidden rounded-full bg-gray-100">
-                        <div
-                          className="h-full rounded-full bg-blue-500 transition-all duration-150"
-                          style={{ width: `${completion}%` }}
-                        />
-                      </div>
-                      {/* Thumb circle */}
-                      <div
-                        className="pointer-events-none absolute z-10 h-5 w-5 -translate-x-1/2 rounded-full border-2 border-blue-500 bg-white shadow-md transition-all duration-150"
-                        style={{ left: `${completion}%` }}
-                      />
-                      {/* Draggable range — overlaid transparently. Steps in
-                          0.25 so dragging can land on a decimal instead of
-                          snapping a typed 45.75 back to a whole number. */}
+                  <div className="flex items-center gap-4 sm:gap-6">
+                    <input
+                      type="range"
+                      min={0}
+                      max={100}
+                      // Steps in 0.25 so dragging can land on a decimal instead of
+                      // snapping a typed 45.75 back to a whole number.
+                      step={0.25}
+                      value={completion}
+                      onChange={(e) => {
+                        const next = clampPercent(Number(e.target.value));
+                        setCompletion(next);
+                        setCompletionText(String(next));
+                      }}
+                      aria-label="Physical progress"
+                      style={{
+                        background: `linear-gradient(to right, var(--color-blue-600) ${completion}%, var(--color-blue-200) ${completion}%)`,
+                      }}
+                      className="h-2.5 min-w-0 flex-1 cursor-pointer appearance-none rounded-full [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:cursor-grab [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-blue-700 [&::-moz-range-thumb]:bg-white [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:cursor-grab [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-700 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-sm"
+                    />
+                    <div className="relative w-28 shrink-0 sm:w-36">
                       <input
-                        type="range" min={0} max={100} step={0.25} value={completion}
+                        type="number" min={0} max={100} step={0.01} value={completionText}
                         onChange={(e) => {
-                          const next = clampPercent(Number(e.target.value));
-                          setCompletion(next);
-                          setCompletionText(String(next));
+                          // Keep whatever was typed — including an empty box or a
+                          // half-written decimal like "45." — and only mirror it
+                          // into `completion` once it parses.
+                          const raw = e.target.value;
+                          setCompletionText(raw);
+                          if (raw === "") return;
+                          const parsed = Number(raw);
+                          if (Number.isNaN(parsed)) return;
+                          setCompletion(clampPercent(parsed));
                         }}
-                        className="absolute inset-0 h-full w-full cursor-grab appearance-none bg-transparent opacity-0 active:cursor-grabbing"
+                        onBlur={() => setCompletionText(String(completion))}
+                        aria-label="Physical progress percentage"
+                        className="block w-full rounded-md border border-gray-400 bg-white py-2.5 pr-9 pl-4 text-sm text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
                       />
+                      <span className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-sm text-gray-700">%</span>
                     </div>
                   </div>
+                </div>
 
-                  {/* Actual % from the latest Physical Progress & Slippage entry
-                      (recorded in that section below) */}
-                  <LatestActualField entry={latestEntry(slippageAssessments)} />
+                {/* Actual % from the latest Physical Progress & Slippage entry
+                    (recorded in that section below) */}
+                <LatestActualField entry={latestEntry(slippageAssessments)} />
+
+                {/* Title and Project Cost are set when the project is created and
+                    are not changed from this form. */}
+                <div>
+                  <label className={idLabelClass}>Project Title</label>
+                  <input type="text" value={project.title} disabled className={idInputClass} />
+                </div>
+
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+                  <PesoField label="Project Cost">
+                    <input
+                      type="text"
+                      disabled
+                      value={formatAmountValue(project.projectCost ?? 0)}
+                      className={`${idInputClass} pl-9`}
+                    />
+                  </PesoField>
+                  <PesoField label="Contract Cost">
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      placeholder="0.00"
+                      value={contractCost}
+                      onChange={(e) => handleAmountChange(e.target, setContractCost)}
+                      onBlur={() => {
+                        const n = parseAmount(contractCost);
+                        setContractCost(Number.isNaN(n) ? "" : formatAmountValue(n));
+                      }}
+                      className={`${idInputClass} pl-9`}
+                    />
+                  </PesoField>
+                  {/* Revised total from the variation orders recorded in the
+                      Revised Contract Cost History below. */}
+                  <PesoField label="Revised Contract Cost">
+                    <input
+                      type="text"
+                      disabled
+                      placeholder="0.00"
+                      value={variationOrders && variationOrders.length > 0 ? formatAmountValue(currentRevisedTotal) : ""}
+                      title="Recorded as variation orders in the Revised Contract Cost History."
+                      className={`${idInputClass} pl-9`}
+                    />
+                  </PesoField>
+
+                  <div>
+                    <label className={idLabelClass}>Project I.D.</label>
+                    <input
+                      type="text"
+                      value={canEditCode ? projectCode : project.projectCode}
+                      onChange={(e) => setProjectCode(e.target.value)}
+                      disabled={!canEditCode}
+                      placeholder="PEO-2025-XXXXX"
+                      className={idInputClass}
+                    />
+                  </div>
+                  {/* As Per Plan mirrors the Target Completion Date set in the
+                      Project Timeline card; read-only so there is one source. */}
+                  <div>
+                    <label className={idLabelClass}>As Per Plan</label>
+                    <div className={idInputClass}>
+                      <span className={`block truncate ${targetCompletion ? "text-gray-900" : "text-gray-400"}`}>
+                        {targetCompletion ? fmt(targetCompletion) : "Set in Project Timeline"}
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className={idLabelClass}>Current Status</label>
+                    <IdSelect value={status} onChange={(e) => setStatus(e.target.value)}>
+                      {PROJECT_STATUS_ORDER
+                        .filter((k) => k !== "NOT_YET_STARTED" || status === "NOT_YET_STARTED")
+                        .map((k) => (
+                          <option key={k} value={k}>
+                            {PROJECT_STATUS_LABEL[k]}
+                          </option>
+                        ))}
+                    </IdSelect>
+                  </div>
+
+                  <div>
+                    <label className={idLabelClass}>Implementation Mode</label>
+                    <IdSelect
+                      value={modeOfImplementation}
+                      onChange={(e) => {
+                        setModeOfImplementation(e.target.value);
+                        // The disbursement type options depend on the mode, so
+                        // drop a selection that is no longer valid.
+                        const types =
+                          MODE_TO_DISBURSEMENT_TYPES[
+                          e.target.value as keyof typeof MODE_TO_DISBURSEMENT_TYPES
+                          ] ?? [];
+                        if (disbType && !types.includes(disbType)) setDisbType("");
+                      }}
+                    >
+                      <option value="BY_ADMINISTRATION">By Administration</option>
+                      <option value="BY_CONTRACT">By Contract</option>
+                      <option value="UNASSIGNED_FOR_DETERMINATION">
+                        Unassigned - For Determination
+                      </option>
+                    </IdSelect>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className={idLabelClass}>Contractor Name</label>
+                    <input
+                      type="text"
+                      value={contractorName}
+                      onChange={(e) => setContractorName(e.target.value)}
+                      placeholder="Enter contractor name"
+                      className={idInputClass}
+                    />
+                  </div>
                 </div>
               </div>
             </SectionCard>
