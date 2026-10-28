@@ -132,7 +132,96 @@ export const DistrictCard = ({ title, data, budgetYear }: DistrictCardProps & { 
 }
 
 // ── AnnualAllocationCard ─────────────────────────────────────────────────
-export const AnnualAllocationCard = ({ bySource, bySubType, variationBySource, variationProjectsBySource, total, budgetYear }: AnnualAllocationCardProps) => {
+// Heading for a funding group key from getFinancialOverview's
+// projectGroupsBySource: "SB:<no>:<year>" or "LBP:<LBP-TL#>". The "" group (no
+// supplemental budget or loan) has none — its projects sit directly under the
+// source of fund.
+const fundingGroupLabel = (key: string) => {
+    if (key.startsWith("SB:")) {
+        const [, no, year] = key.split(":");
+        return `Supplemental Budget No. ${no}${year ? ` (${year})` : ""}`;
+    }
+    if (key.startsWith("LBP:")) {
+        const ref = key.slice(4);
+        return /^lbp/i.test(ref) ? ref : `LBP Term Loan ${ref}`;
+    }
+    return null;
+};
+
+// Regular projects first, then supplemental budgets, then LBP term loans.
+const fundingGroupRank = (key: string) => (key === "" ? 0 : key.startsWith("SB:") ? 1 : 2);
+
+type FundingGroupSubs = Record<string, { amount: number; count: number }>;
+type FundingLine = { label: string; amount: number; count?: number };
+type FundingGroup = { key: string; label: string | null; amount: number; lines: FundingLine[] };
+
+// One source's projects per sub-type, split into the regular group and one
+// indented group per supplemental budget / LBP term loan. Projects with no
+// sub-type are left out of the regular group (as before) but listed as
+// "Unspecified" inside a named group, so its count adds up. Without grouped
+// data (`groups` undefined) the plain sub-type lines are used, uncounted.
+const toFundingGroups = (groups: Record<string, FundingGroupSubs> | undefined, fallback: FundingLine[]): FundingGroup[] =>
+    groups
+        ? Object.entries(groups)
+            .sort(([a], [b]) => fundingGroupRank(a) - fundingGroupRank(b) || a.localeCompare(b, undefined, { numeric: true }))
+            .map(([key, subs]) => {
+                const lines = Object.entries(subs)
+                    .filter(([subKey]) => key !== "" || !subKey.startsWith("__NONE__"))
+                    .map(([subKey, v]) => ({
+                        label: subKey.startsWith("__NONE__")
+                            ? "Unspecified"
+                            : (PROJECT_SUB_TYPE_LABEL[subKey as ProjectSubTypeValue] ?? subKey),
+                        amount: v.amount,
+                        count: v.count,
+                    }))
+                    .sort((a, b) => b.amount - a.amount);
+                return { key, label: fundingGroupLabel(key), amount: lines.reduce((s, l) => s + l.amount, 0), lines };
+            })
+            .filter((g) => g.lines.length > 0)
+        : [{ key: "", label: null, amount: 0, lines: fallback }];
+
+// Sub-type lines with their project count on the left, regular projects first
+// and each supplemental budget / LBP term loan as an indented group below.
+const FundingGroupLines = ({ groups }: { groups: FundingGroup[] }) => (
+    <>
+        {groups.map((g) => {
+            const lines = g.lines.map((s) => (
+                <div key={s.label} className="flex items-center justify-between gap-2">
+                    <span className="flex min-w-0 items-baseline gap-1.5">
+                        {s.count !== undefined && (
+                            <span
+                                className="w-5 shrink-0 text-right text-[10.5px] font-bold text-slate-700 tabular-nums"
+                                title={`${s.count} project${s.count === 1 ? "" : "s"}`}
+                            >
+                                {s.count}
+                            </span>
+                        )}
+                        <span className="text-[10.5px] text-slate-500 truncate">{s.label}</span>
+                    </span>
+                    <span className="text-[10.5px] text-slate-500 tabular-nums shrink-0">
+                        {formatPeso(s.amount)}
+                    </span>
+                </div>
+            ));
+            if (!g.label) return <div key={g.key} className="contents">{lines}</div>;
+            return (
+                <div key={g.key} className="mt-1 flex flex-col gap-0.5">
+                    <div className="flex items-center justify-between gap-2">
+                        <span className="truncate text-[10.5px] font-semibold text-blue-800">
+                            {g.label}
+                        </span>
+                        <span className="shrink-0 text-[10.5px] font-semibold text-slate-600 tabular-nums">
+                            {formatPeso(g.amount)}
+                        </span>
+                    </div>
+                    <div className="ml-3 flex flex-col gap-0.5 border-l border-slate-200 pl-2">{lines}</div>
+                </div>
+            );
+        })}
+    </>
+);
+
+export const AnnualAllocationCard = ({ bySource, bySubType, variationBySource, variationProjectsBySource, projectGroupsBySource, total, budgetYear }: AnnualAllocationCardProps) => {
     // Order known sources first, then append any unmapped sources that have allocations.
     const ordered = [...SOURCE_OF_FUND_ORDER, "CONFIDENTIAL", ...Object.keys(bySource)].filter(
         (src, i, arr) => arr.indexOf(src) === i && (bySource[src] ?? 0) > 0,
@@ -153,6 +242,7 @@ export const AnnualAllocationCard = ({ bySource, bySubType, variationBySource, v
                 amount: v.amount,
             }))
             .sort((a, b) => b.amount - a.amount);
+        const groups = toFundingGroups(projectGroupsBySource ? (projectGroupsBySource[src] ?? {}) : undefined, subTypes);
         return {
             src,
             label: SOURCE_SHORT_LABEL[src] ?? src,
@@ -161,7 +251,7 @@ export const AnnualAllocationCard = ({ bySource, bySubType, variationBySource, v
             variationFund,
             variationProjects,
             pct: total > 0 ? Math.round((amount / total) * 100) : 0,
-            subTypes,
+            groups,
         };
     });
 
@@ -201,15 +291,11 @@ export const AnnualAllocationCard = ({ bySource, bySubType, variationBySource, v
                                 </div>
 
                                 <div className="mt-1 ml-1 border-l border-slate-200 pl-3 flex flex-col gap-0.5">
-                                    {/* Project sub-type breakdown */}
-                                    {e.subTypes.map((s) => (
-                                        <div key={s.label} className="flex items-center justify-between gap-2">
-                                            <span className="text-[10.5px] text-slate-500 truncate">{s.label}</span>
-                                            <span className="text-[10.5px] text-slate-500 tabular-nums shrink-0">
-                                                {formatPeso(s.amount)}
-                                            </span>
-                                        </div>
-                                    ))}
+                                    {/* Project sub-type breakdown, each with its number of
+                                        projects on the left. Supplemental budgets and LBP
+                                        term loans are indented groups below the regular
+                                        projects. */}
+                                    <FundingGroupLines groups={e.groups} />
 
                                     {/* Variation Fund (variation orders for this source, per project tracking number) */}
                                     {e.variationFund > 0 && (
@@ -299,7 +385,21 @@ export const AllocationTotalCard = ({ label, amount, budgetYear }: { label: stri
 );
 
 // ── SourceBreakdownCard ─────────────────────────────────────────────────
-export const SourceBreakdownCard = ({ title, footerLabel, bySource, bySubType, variationProjectsBySource, total, budgetYear }: SourceBreakdownCardProps & { budgetYear?: string }) => {
+// `projectGroupsBySource`, when given, adds project counts and the
+// supplemental budget / LBP term loan groups (as on the Annual Allocation card).
+export const SourceBreakdownCard = ({
+    title,
+    footerLabel,
+    bySource,
+    bySubType,
+    variationProjectsBySource,
+    projectGroupsBySource,
+    total,
+    budgetYear,
+}: SourceBreakdownCardProps & {
+    budgetYear?: string;
+    projectGroupsBySource?: Record<string, Record<string, FundingGroupSubs>>;
+}) => {
     const ordered = [...SOURCE_OF_FUND_ORDER, "CONFIDENTIAL", ...Object.keys(bySource)].filter(
         (src, i, arr) => arr.indexOf(src) === i && (bySource[src] ?? undefined) !== undefined,
     );
@@ -322,7 +422,7 @@ export const SourceBreakdownCard = ({ title, footerLabel, bySource, bySubType, v
             label: REM_SOURCE_LABEL[src] ?? src,
             color: SOURCE_COLORS[src] ?? "#94a3b8",
             amount,
-            subTypes,
+            groups: toFundingGroups(projectGroupsBySource ? (projectGroupsBySource[src] ?? {}) : undefined, subTypes),
             variationProjects,
         };
     });
@@ -361,16 +461,9 @@ export const SourceBreakdownCard = ({ title, footerLabel, bySource, bySubType, v
                                     </span>
                                 </div>
 
-                                {(e.subTypes.length > 0 || e.variationProjects.length > 0) && (
+                                {(e.groups.some((g) => g.lines.length > 0) || e.variationProjects.length > 0) && (
                                     <div className="mt-1 ml-1 border-l border-slate-200 pl-3 flex flex-col gap-0.5">
-                                        {e.subTypes.map((s) => (
-                                            <div key={s.label} className="flex items-center justify-between gap-2">
-                                                <span className="text-[10.5px] text-slate-500 truncate">{s.label}</span>
-                                                <span className="text-[10.5px] text-slate-500 tabular-nums shrink-0">
-                                                    {formatPeso(s.amount)}
-                                                </span>
-                                            </div>
-                                        ))}
+                                        <FundingGroupLines groups={e.groups} />
 
                                         {/* Variation-order portion, per project tracking number */}
                                         {e.variationProjects.length > 0 && (

@@ -73,6 +73,9 @@ export type AnnualAllocationCardProps = {
   bySubType: BySubTypeMap;
   variationBySource: Record<string, number>;
   variationProjectsBySource: Record<string, Record<string, number>>;
+  // Source → funding group ("" | "SB:<no>:<year>" | "LBP:<LBP-TL#>") →
+  // sub-type → allocation and project count.
+  projectGroupsBySource?: Record<string, Record<string, Record<string, { amount: number; count: number }>>>;
   total: number;
   budgetYear: string;
 };

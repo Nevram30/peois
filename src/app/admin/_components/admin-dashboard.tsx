@@ -432,6 +432,7 @@ export const AdminDashboardContent = () => {
                         bySubType={projectAllocationData?.bySubType ?? {}}
                         variationBySource={projectAllocationData?.variationBySource ?? {}}
                         variationProjectsBySource={projectAllocationData?.variationProjectsBySource ?? {}}
+                        projectGroupsBySource={projectAllocationData?.projectGroupsBySource ?? {}}
                         total={TotalAllocation}
                         budgetYear={dashboardYear}
                     />
@@ -453,6 +454,7 @@ export const AdminDashboardContent = () => {
                                 bySource={remainingBalanceData?.remaining.bySource ?? {}}
                                 bySubType={remainingBalanceData?.remaining.bySubType ?? {}}
                                 variationProjectsBySource={remainingBalanceData?.remaining.variationProjectsBySource ?? {}}
+                                projectGroupsBySource={remainingBalanceData?.remaining.projectGroupsBySource ?? {}}
                                 total={remainingBalanceData?.remaining.total ?? 0}
                             />
                             <SourceBreakdownCard
@@ -462,6 +464,7 @@ export const AdminDashboardContent = () => {
                                 bySource={remainingBalanceData?.disbursed.bySource ?? {}}
                                 bySubType={remainingBalanceData?.disbursed.bySubType ?? {}}
                                 variationProjectsBySource={remainingBalanceData?.disbursed.variationProjectsBySource ?? {}}
+                                projectGroupsBySource={remainingBalanceData?.disbursed.projectGroupsBySource ?? {}}
                                 total={remainingBalanceData?.disbursed.total ?? 0}
                             />
                         </>

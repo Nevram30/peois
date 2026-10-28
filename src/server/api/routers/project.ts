@@ -34,6 +34,29 @@ import {
 const districtWhere = (scope: District | null) =>
   scope ? { locationImplementation: scope } : {};
 
+// Funding group a project's allocation is listed under on the dashboard's
+// source breakdown cards: "" for regular projects, "SB:<no>:<year>" for a
+// supplemental budget, or "LBP:<LBP-TL#>" for an LBP term loan. A project
+// with both sits under its supplemental budget.
+type FundingGroupMap = Record<string, Record<string, Record<string, { amount: number; count: number }>>>;
+const fundingGroupKey = (p: {
+  supplementalBudgetNumber: string | null;
+  supplementalBudgetYear: string | null;
+  landbankNumber: string | null;
+}) => {
+  const sb = p.supplementalBudgetNumber?.trim();
+  const lbp = p.landbankNumber?.trim();
+  if (sb) return `SB:${sb}:${p.supplementalBudgetYear?.trim() ?? ""}`;
+  if (lbp) return `LBP:${lbp}`;
+  return "";
+};
+// Adds one project's amount to source → group → sub-type.
+const addToFundingGroup = (map: FundingGroupMap, source: string, group: string, subKey: string, amount: number) => {
+  const line = ((map[source] ??= {})[group] ??= {})[subKey] ??= { amount: 0, count: 0 };
+  line.amount += amount;
+  line.count += 1;
+};
+
 // projectCode is unique, so reject a code already held by another project
 // rather than letting the update fail on the constraint.
 const assertProjectCodeFree = async (
@@ -1297,11 +1320,17 @@ export const projectRouter = createTRPCRouter({
           subType: true,
           projectCost: true,
           completionPercentage: true,
+          supplementalBudgetNumber: true,
+          supplementalBudgetYear: true,
+          landbankNumber: true,
           variationOrders: { select: { amount: true, sourceOfFund: true } },
         },
       });
 
       const bySource: Record<string, number> = {};
+      // Project allocation and project count per source → funding group
+      // (see fundingGroupKey) → sub-type.
+      const projectGroupsBySource: FundingGroupMap = {};
       const bySubType: Record<string, { amount: number; sourceOfFund: string }> = {};
       // Portion of each source's allocation that comes from variation orders, kept
       // separate from the base project fund so the dashboard can show the split.
@@ -1332,6 +1361,8 @@ export const projectRouter = createTRPCRouter({
               sourceOfFund: p.sourceOfFund,
             };
           }
+
+          addToFundingGroup(projectGroupsBySource, p.sourceOfFund, fundingGroupKey(p), subKey, p.projectCost);
         }
 
         // Variation orders add to the annual allocation under the source of fund
@@ -1361,6 +1392,7 @@ export const projectRouter = createTRPCRouter({
         bySubType,
         variationBySource,
         variationProjectsBySource,
+        projectGroupsBySource,
         executionRate: Math.round(executionRate * 10) / 10,
       };
 
@@ -1388,6 +1420,9 @@ export const projectRouter = createTRPCRouter({
           modeOfImplementation: true,
           sourceOfFund: true,
           subType: true,
+          supplementalBudgetNumber: true,
+          supplementalBudgetYear: true,
+          landbankNumber: true,
           projectCost: true,
           disbursements: { select: { amount: true } },
           variationOrders: { select: { amount: true, sourceOfFund: true } },
@@ -1414,11 +1449,21 @@ export const projectRouter = createTRPCRouter({
           projectCode: true,
           sourceOfFund: true,
           subType: true,
+          supplementalBudgetNumber: true,
+          supplementalBudgetYear: true,
+          landbankNumber: true,
           projectCost: true,
           disbursements: { select: { amount: true } },
           variationOrders: { select: { amount: true, sourceOfFund: true } },
         },
       });
+
+      // Remaining project-cost balance and project count per source → funding
+      // group (see fundingGroupKey) → sub-type.
+      const remainingGroupsBySource: FundingGroupMap = {};
+      // Same for the amount disbursed, counting only projects that have
+      // disbursed against their own source.
+      const disbursedGroupsBySource: FundingGroupMap = {};
 
       type SubTypeMap = Record<string, { amount: number; sourceOfFund: string }>;
 
@@ -1470,6 +1515,7 @@ export const projectRouter = createTRPCRouter({
 
           remainingBySource[p.sourceOfFund] = (remainingBySource[p.sourceOfFund] ?? 0) + primaryRemaining;
           addToSubType(remainingBySubType, subKey, p.sourceOfFund, primaryRemaining);
+          addToFundingGroup(remainingGroupsBySource, p.sourceOfFund, fundingGroupKey(p), subKey, primaryRemaining);
         }
 
         if (primaryDisbursed > 0) {
@@ -1518,6 +1564,14 @@ export const projectRouter = createTRPCRouter({
           disbursedBySource[p.sourceOfFund] = (disbursedBySource[p.sourceOfFund] ?? 0) + overflow;
           addToSubType(disbursedBySubType, subKey, p.sourceOfFund, overflow);
         }
+
+        // Everything charged to the project's own source (project cost plus any
+        // overflow past its variation orders), counted once per project that
+        // has disbursed against it.
+        const ownSourceDisbursed = primaryDisbursed + overflow;
+        if (ownSourceDisbursed > 0) {
+          addToFundingGroup(disbursedGroupsBySource, p.sourceOfFund, fundingGroupKey(p), subKey, ownSourceDisbursed);
+        }
       }
 
       return {
@@ -1528,12 +1582,14 @@ export const projectRouter = createTRPCRouter({
           bySource: remainingBySource,
           bySubType: remainingBySubType,
           variationProjectsBySource: remainingVariationBySource,
+          projectGroupsBySource: remainingGroupsBySource,
         },
         disbursed: {
           total: totalDisbursed,
           bySource: disbursedBySource,
           bySubType: disbursedBySubType,
           variationProjectsBySource: disbursedVariationBySource,
+          projectGroupsBySource: disbursedGroupsBySource,
         },
       };
     }),

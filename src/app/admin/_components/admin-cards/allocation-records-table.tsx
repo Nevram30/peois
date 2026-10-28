@@ -20,6 +20,9 @@ type Project = {
     modeOfImplementation: string;
     sourceOfFund: string;
     subType: string | null;
+    supplementalBudgetNumber: string | null;
+    supplementalBudgetYear: string | null;
+    landbankNumber: string | null;
     projectCost: number;
     disbursements: { amount: number }[];
     variationOrders: { amount: number; sourceOfFund: string | null }[];
@@ -32,6 +35,9 @@ type Row = {
     projectCode: string;
     title: string;
     subType: string;
+    // Supplemental Budget No. (with its year) and LBP Term Loan number, "—" if none.
+    sbNo: string;
+    lbpNo: string;
     // Project cost charged to this source.
     allocation: number;
     // Project cost plus variation orders charged to this source.
@@ -89,9 +95,16 @@ const REPORTS: Record<
     },
 };
 
-// # District, Implementation, Project Code, Project Title, Sub-Type come
-// before the amounts.
-const LEADING_COLUMNS = 6;
+// # District, Implementation, Project Code, Project Title, Sub-Type, SB No.,
+// LBP-TL# come before the amounts.
+const LEADING_COLUMNS = 8;
+
+const sbLabel = (no: string | null, year: string | null) => {
+    const n = no?.trim();
+    if (!n) return "—";
+    const y = year?.trim();
+    return y ? `SB No. ${n} (${y})` : `SB No. ${n}`;
+};
 
 // Implementation modes the tables can be narrowed to. Unassigned projects
 // only show under All.
@@ -124,6 +137,8 @@ const toGroups = (projects: Project[], report: Report): Group[] => {
                 projectCode: p.projectCode,
                 title: p.title,
                 subType: subTypeLabel(p.subType),
+                sbNo: sbLabel(p.supplementalBudgetNumber, p.supplementalBudgetYear),
+                lbpNo: p.landbankNumber?.trim() ? p.landbankNumber.trim() : "—",
                 allocation: 0,
                 total: 0,
                 disbursed: 0,
@@ -199,6 +214,8 @@ const printTable = (groups: Group[], grandTotal: number, report: Report, heading
                         <td>${escapeHtml(r.projectCode)}</td>
                         <td>${escapeHtml(r.title)}</td>
                         <td>${escapeHtml(r.subType)}</td>
+                        <td>${escapeHtml(r.sbNo)}</td>
+                        <td>${escapeHtml(r.lbpNo)}</td>
                         ${columns.map((c) => `<td class="num">${formatPeso(c.value(r))}</td>`).join("")}
                     </tr>`,
                 )
@@ -224,7 +241,7 @@ const printTable = (groups: Group[], grandTotal: number, report: Report, heading
         <h1>${escapeHtml(heading)}</h1>
         <p>${escapeHtml(budgetYear ? `CY ${budgetYear}` : "All calendar years")} · ${escapeHtml(mode === ALL ? "All implementation modes" : (MODE_LABELS[mode] ?? mode))} · ${escapeHtml(subtitle)}</p>
         <table>
-            <thead><tr><th class="num">#</th><th>District</th><th>Implementation</th><th>Project Code</th><th>Project Title</th><th>Sub-Type</th>${columns.map((c) => `<th class="num">${escapeHtml(c.label)}</th>`).join("")}</tr></thead>
+            <thead><tr><th class="num">#</th><th>District</th><th>Implementation</th><th>Project Code</th><th>Project Title</th><th>Sub-Type</th><th>Supplemental Budget No.</th><th>LBP Term Loan No.</th>${columns.map((c) => `<th class="num">${escapeHtml(c.label)}</th>`).join("")}</tr></thead>
             <tbody>${body}</tbody>
             <tfoot><tr><td colspan="${span}">${escapeHtml(footer)}</td><td class="num">${formatPeso(grandTotal)}</td></tr></tfoot>
         </table>
@@ -344,7 +361,7 @@ export const AllocationRecordsTable = ({ budgetYear, report = "allocation" }: { 
                 </div>
             ) : (
                 <div className="max-h-[520px] overflow-auto border-t border-slate-200">
-                    <table className="w-full min-w-[900px] text-left text-[11px]">
+                    <table className="w-full min-w-[1100px] text-left text-[11px]">
                         <thead className="sticky top-0 z-10 bg-[#1e3a8a] text-[10px] font-bold uppercase tracking-wide text-white">
                             <tr>
                                 <th className="px-3 py-2 text-right">#</th>
@@ -353,6 +370,8 @@ export const AllocationRecordsTable = ({ budgetYear, report = "allocation" }: { 
                                 <th className="px-3 py-2">Project Code</th>
                                 <th className="px-3 py-2">Project Title</th>
                                 <th className="px-3 py-2">Sub-Type</th>
+                                <th className="whitespace-nowrap px-3 py-2">Supplemental Budget No.</th>
+                                <th className="whitespace-nowrap px-3 py-2">LBP Term Loan No.</th>
                                 {columns.map((c) => (
                                     <th key={c.label} className="whitespace-nowrap px-3 py-2 text-right">{c.label}</th>
                                 ))}
@@ -381,6 +400,8 @@ export const AllocationRecordsTable = ({ budgetYear, report = "allocation" }: { 
                                         <td className="whitespace-nowrap px-3 py-2 font-semibold text-slate-700">{r.projectCode}</td>
                                         <td className="px-3 py-2 text-slate-700">{r.title}</td>
                                         <td className="px-3 py-2 text-slate-600">{r.subType}</td>
+                                        <td className="whitespace-nowrap px-3 py-2 text-slate-600">{r.sbNo}</td>
+                                        <td className="whitespace-nowrap px-3 py-2 text-slate-600">{r.lbpNo}</td>
                                         {columns.map((c, i) => (
                                             <td
                                                 key={c.label}
