@@ -101,6 +101,18 @@ const STATUS_TITLES: Record<string, string> = {
 
 type ProjectRow = RouterOutputs["project"]["getAll"][number];
 
+// A project's supplemental budget as "<no>|<year>" (year may be blank), or
+// null if it has none — the Supplemental Budget filter's option value.
+const sbKey = (p: { supplementalBudgetNumber: string | null; supplementalBudgetYear: string | null }) => {
+  const no = p.supplementalBudgetNumber?.trim();
+  return no ? `${no}|${p.supplementalBudgetYear?.trim() ?? ""}` : null;
+};
+const sbLabelOf = (key: string | null) => {
+  if (!key) return "—";
+  const [no, year] = key.split("|");
+  return year ? `SB No. ${no} (${year})` : `SB No. ${no}`;
+};
+
 const StatusBadge = ({ status }: { status: string }) => {
   const s = STATUS_LABELS[status] ?? {
     label: status,
@@ -266,6 +278,8 @@ const ProjectsList = () => {
   const [barangayFilter, setBarangayFilter] = useState("");
   const [statusLocal, setStatusLocal] = useState("");
   const [yearFilter, setYearFilter] = useState("");
+  const [sbFilter, setSbFilter] = useState("");
+  const [lbpFilter, setLbpFilter] = useState("");
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [page, setPage] = useState(1);
@@ -307,6 +321,14 @@ const ProjectsList = () => {
     ),
   ).sort();
 
+  // Supplemental budgets and LBP term loans found on the loaded projects.
+  const sbOptions = Array.from(
+    new Set(projects?.map((p) => sbKey(p)).filter((k): k is string => Boolean(k))),
+  ).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+  const lbpOptions = Array.from(
+    new Set(projects?.map((p) => p.landbankNumber?.trim()).filter((n): n is string => Boolean(n))),
+  ).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+
   const filtered = projects?.filter((p) => {
     if (filterToday) {
       const today = new Date();
@@ -331,6 +353,8 @@ const ProjectsList = () => {
     if (programFilter && p.program !== programFilter) return false;
     if (subTypeFilter && p.subType !== subTypeFilter) return false;
     if (yearFilter && p.budgetYear !== yearFilter) return false;
+    if (sbFilter && sbKey(p) !== sbFilter) return false;
+    if (lbpFilter && p.landbankNumber?.trim() !== lbpFilter) return false;
     if (search) {
       const q = search.toLowerCase();
       if (
@@ -429,7 +453,9 @@ const ProjectsList = () => {
     cityFilter ||
     barangayFilter ||
     statusLocal ||
-    yearFilter
+    yearFilter ||
+    sbFilter ||
+    lbpFilter
   );
 
   const clearFilters = () => {
@@ -443,6 +469,8 @@ const ProjectsList = () => {
     setBarangayFilter("");
     setStatusLocal("");
     setYearFilter("");
+    setSbFilter("");
+    setLbpFilter("");
     setPage(1);
   };
 
@@ -550,7 +578,7 @@ const ProjectsList = () => {
 
           <div className={`${filtersOpen ? "block" : "hidden"} border-t border-gray-100 px-4 py-4 sm:px-5 lg:block lg:border-t-0`}>
             <div
-              className={`grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 ${districtScope ? "xl:grid-cols-9" : "xl:grid-cols-10"}`}
+              className={`grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 ${districtScope ? "xl:grid-cols-11" : "xl:grid-cols-12"}`}
             >
               {/* Mode */}
               <div>
@@ -711,6 +739,42 @@ const ProjectsList = () => {
                 </select>
               </div>
 
+              {/* SB Number */}
+              <div>
+                <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                  SB Number
+                </p>
+                <select
+                  value={sbFilter}
+                  onChange={(e) => { setSbFilter(e.target.value); setPage(1); }}
+                  disabled={sbOptions.length === 0}
+                  className={`${selectClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
+                >
+                  <option value="">{sbOptions.length === 0 ? "None" : "All"}</option>
+                  {sbOptions.map((k) => (
+                    <option key={k} value={k}>{sbLabelOf(k)}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* LBP Term Loan */}
+              <div>
+                <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                  LBP Term Loan
+                </p>
+                <select
+                  value={lbpFilter}
+                  onChange={(e) => { setLbpFilter(e.target.value); setPage(1); }}
+                  disabled={lbpOptions.length === 0}
+                  className={`${selectClass} disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400`}
+                >
+                  <option value="">{lbpOptions.length === 0 ? "None" : "All"}</option>
+                  {lbpOptions.map((n) => (
+                    <option key={n} value={n}>{n}</option>
+                  ))}
+                </select>
+              </div>
+
               {/* Clear Filters */}
               <div className="flex items-end">
                 <button
@@ -812,6 +876,18 @@ const ProjectsList = () => {
                       </div>
                       <div>
                         <dt className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                          Supplemental Budget
+                        </dt>
+                        <dd className="text-gray-600">{sbLabelOf(sbKey(p))}</dd>
+                      </div>
+                      <div>
+                        <dt className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                          LBP Term Loan
+                        </dt>
+                        <dd className="text-gray-600">{p.landbankNumber?.trim() ? p.landbankNumber : "—"}</dd>
+                      </div>
+                      <div>
+                        <dt className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
                           Actual %
                         </dt>
                         <dd>
@@ -845,6 +921,8 @@ const ProjectsList = () => {
                       <th className="px-4 py-3 font-medium">Source / Sub</th>
                       <th className="px-4 py-3 font-medium">Location</th>
                       <th className="px-4 py-3 font-medium">Budget Year</th>
+                      <th className="px-4 py-3 font-medium">Supplemental Budget</th>
+                      <th className="px-4 py-3 font-medium">LBP Term Loan</th>
                       <th className="px-4 py-3 font-medium">Status</th>
                       <th className="px-4 py-3 font-medium">Involved Users</th>
                       <th className="px-4 py-3 font-medium">Actual %</th>
@@ -889,6 +967,12 @@ const ProjectsList = () => {
                         </td>
                         <td className="px-4 py-3 text-gray-600">
                           {p.budgetYear ?? "—"}
+                        </td>
+                        <td className="whitespace-nowrap px-4 py-3 text-gray-600">
+                          {sbLabelOf(sbKey(p))}
+                        </td>
+                        <td className="whitespace-nowrap px-4 py-3 text-gray-600">
+                          {p.landbankNumber?.trim() ? p.landbankNumber : "—"}
                         </td>
                         <td className="px-4 py-3">
                           <StatusBadge status={p.status} />
