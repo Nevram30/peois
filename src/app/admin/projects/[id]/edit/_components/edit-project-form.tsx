@@ -96,6 +96,14 @@ const toInputDate = (d: Date | string | null | undefined) => {
   return new Date(d).toISOString().slice(0, 10);
 }
 
+// Whole days from one `yyyy-mm-dd` value to another; 0 when either is missing
+// or the end comes first.
+const daysBetween = (start: string, end: string) => {
+  if (!start || !end) return 0;
+  const ms = new Date(end).getTime() - new Date(start).getTime();
+  return Math.max(0, Math.ceil(ms / (1000 * 60 * 60 * 24)));
+};
+
 // Today as a `yyyy-mm-dd` value for a date input, in local time — toISOString
 // would hand back the UTC day and shift the date for evening entries.
 const todayInputDate = () => {
@@ -335,14 +343,18 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   const [disbErrors, setDisbErrors] = useState<{ amount?: string; ref?: string; type?: string; date?: string }>({});
 
   // ─ Timeline Adjustment ──────────────────────────────────────────────────
-  const [adjDays, setAdjDays] = useState("");
+  // Duration runs from the start date to the revised target completion when
+  // one is set, otherwise to the end date.
+  const adjDays = useMemo(
+    () => daysBetween(dateStarted, revisedCompletion || targetCompletion),
+    [dateStarted, targetCompletion, revisedCompletion],
+  );
   const [adjType, setAdjType] = useState<"" | "EXTENSION" | "SUSPENSION" | "RESUMPTION" | "NTP">("");
   // Inline editing of a recorded adjustment: the row being edited and its draft.
   const [editingAdjId, setEditingAdjId] = useState<string | null>(null);
   const [adjDraft, setAdjDraft] = useState({
     startDate: "",
     endDate: "",
-    duration: "",
     type: "" as "" | "EXTENSION" | "SUSPENSION" | "RESUMPTION" | "NTP" | "ON_SCHEDULE",
     justification: "",
   });
@@ -556,7 +568,6 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     setAdjDraft({
       startDate: toInputDate(adjustment.startDate),
       endDate: toInputDate(adjustment.endDate),
-      duration: String(adjustment.duration),
       type: adjustment.type as "EXTENSION" | "SUSPENSION" | "RESUMPTION" | "NTP" | "ON_SCHEDULE",
       justification: adjustment.justification ?? "",
     });
@@ -575,17 +586,12 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
       setAdjRowError("Adjustment type is required.");
       return;
     }
-    const duration = Number(adjDraft.duration);
-    if (!Number.isInteger(duration) || duration < 0) {
-      setAdjRowError("Duration must be a whole number of days.");
-      return;
-    }
     setAdjRowError(null);
     updateTimelineAdjustment.mutate({
       id,
       startDate: new Date(adjDraft.startDate),
       endDate: new Date(adjDraft.endDate),
-      duration,
+      duration: daysBetween(adjDraft.startDate, adjDraft.endDate),
       type: adjDraft.type,
       justification: adjDraft.justification.trim() || null,
     });
@@ -593,7 +599,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
 
   const recordTimelineAdjustment = api.project.createTimelineAdjustment.useMutation({
     onSuccess: (_data, variables) => {
-      setAdjDays(""); setAdjType(""); setAdjJustification(""); setAdjError(null);
+      setAdjType(""); setAdjJustification(""); setAdjError(null);
       void refetchTimelineAdjustments();
       void utils.project.invalidate();
       addActivity.mutate({
@@ -897,15 +903,18 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
 
   const handleRecordTimelineAdjustment = () => {
     if (!dateStarted || !targetCompletion) { setAdjError("Start date and end date are required."); return; }
+    const durationEnd = revisedCompletion || targetCompletion;
+    if (new Date(durationEnd) < new Date(dateStarted)) {
+      setAdjError(`The ${revisedCompletion ? "revised target completion" : "end date"} cannot come before the start date.`);
+      return;
+    }
     if (!adjType) { setAdjError("Adjustment type is required."); return; }
-    const days = parseInt(adjDays, 10);
-    if (!adjDays || isNaN(days) || days < 0) { setAdjError("Days must be 0 or greater."); return; }
     setAdjError(null);
     recordTimelineAdjustment.mutate({
       projectId,
       startDate: new Date(dateStarted),
       endDate: new Date(targetCompletion),
-      duration: days,
+      duration: adjDays,
       type: adjType,
       justification: adjJustification.trim() || undefined,
     });
@@ -1861,15 +1870,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                           </td>
                           <td className="px-3 py-2.5 font-semibold text-gray-800">
                             {isEditing ? (
-                              <Input
-                                type="number"
-                                min={0}
-                                value={adjDraft.duration}
-                                onChange={(e) => setAdjDraft((d) => ({ ...d, duration: e.target.value }))}
-                                placeholder="0"
-                                className="w-20"
-                                error={adjDraft.duration.trim() === ""}
-                              />
+                              `${daysBetween(adjDraft.startDate, adjDraft.endDate)} Days`
                             ) : (
                               `${a.duration} Days`
                             )}
@@ -1979,11 +1980,11 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                 </div>
                 <div className="w-full shrink-0 sm:w-40">
                   <FieldLabel>Revised Target Completion</FieldLabel>
-                  <Input type="date" value={revisedCompletion} onChange={(e) => setRevisedCompletion(e.target.value)} />
+                  <Input type="date" value={revisedCompletion} onChange={(e) => { setRevisedCompletion(e.target.value); setAdjError(null); }} />
                 </div>
                 <div className="w-full shrink-0 sm:w-24">
                   <FieldLabel>Duration</FieldLabel>
-                  <Input type="number" min={0} placeholder="0" value={adjDays} onChange={(e) => { setAdjDays(e.target.value); setAdjError(null); }} error={!!adjError && !adjDays} />
+                  <Input type="text" readOnly placeholder="0" value={adjDays || ""} className="cursor-not-allowed bg-gray-50 text-gray-600" />
                 </div>
                 <div className="w-full shrink-0 sm:w-40">
                   <FieldLabel>Type</FieldLabel>

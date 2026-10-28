@@ -554,6 +554,10 @@ export const AddProjectForm = () => {
       setAdjError("Start and end dates are required.");
       return;
     }
+    if (new Date(targetCompletionDate) < new Date(dateStarted)) {
+      setAdjError("The end date cannot come before the start date.");
+      return;
+    }
     if (!adjType) {
       setAdjError("Adjustment type is required.");
       return;
