@@ -36,8 +36,9 @@ const districtWhere = (scope: District | null) =>
 
 // Funding group a project's allocation is listed under on the dashboard's
 // source breakdown cards: "" for regular projects, "SB:<no>:<year>" for a
-// supplemental budget, or "LBP:<LBP-TL#>" for an LBP term loan. A project
-// with both sits under its supplemental budget.
+// supplemental budget, "LBP:<LBP-TL#>" for an LBP term loan, or both joined
+// as "SB:<no>:<year>|LBP:<LBP-TL#>" — the loan then shows nested under its
+// supplemental budget.
 type FundingGroupMap = Record<string, Record<string, Record<string, { amount: number; count: number }>>>;
 const fundingGroupKey = (p: {
   supplementalBudgetNumber: string | null;
@@ -46,9 +47,9 @@ const fundingGroupKey = (p: {
 }) => {
   const sb = p.supplementalBudgetNumber?.trim();
   const lbp = p.landbankNumber?.trim();
-  if (sb) return `SB:${sb}:${p.supplementalBudgetYear?.trim() ?? ""}`;
-  if (lbp) return `LBP:${lbp}`;
-  return "";
+  return [sb ? `SB:${sb}:${p.supplementalBudgetYear?.trim() ?? ""}` : null, lbp ? `LBP:${lbp}` : null]
+    .filter(Boolean)
+    .join("|");
 };
 // Adds one project's amount to source → group → sub-type.
 const addToFundingGroup = (map: FundingGroupMap, source: string, group: string, subKey: string, amount: number) => {

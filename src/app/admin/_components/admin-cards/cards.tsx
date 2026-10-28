@@ -132,56 +132,101 @@ export const DistrictCard = ({ title, data, budgetYear }: DistrictCardProps & { 
 }
 
 // ── AnnualAllocationCard ─────────────────────────────────────────────────
-// Heading for a funding group key from getFinancialOverview's
-// projectGroupsBySource: "SB:<no>:<year>" or "LBP:<LBP-TL#>". The "" group (no
-// supplemental budget or loan) has none — its projects sit directly under the
-// source of fund.
-const fundingGroupLabel = (key: string) => {
-    if (key.startsWith("SB:")) {
-        const [, no, year] = key.split(":");
-        return `Supplemental Budget No. ${no}${year ? ` (${year})` : ""}`;
-    }
-    if (key.startsWith("LBP:")) {
-        const ref = key.slice(4);
-        return /^lbp/i.test(ref) ? ref : `LBP Term Loan ${ref}`;
-    }
-    return null;
+// Funding group keys from projectGroupsBySource: "" (regular projects),
+// "SB:<no>:<year>", "LBP:<LBP-TL#>", or "SB:<no>:<year>|LBP:<LBP-TL#>" for a
+// loan within a supplemental budget.
+const parseFundingKey = (key: string) => {
+    const parts = key.split("|");
+    return {
+        sb: parts.find((p) => p.startsWith("SB:")) ?? "",
+        lbp: parts.find((p) => p.startsWith("LBP:")) ?? "",
+    };
 };
 
-// Regular projects first, then supplemental budgets, then LBP term loans.
-const fundingGroupRank = (key: string) => (key === "" ? 0 : key.startsWith("SB:") ? 1 : 2);
+const sbGroupLabel = (sb: string) => {
+    const [, no, year] = sb.split(":");
+    return `Supplemental Budget No. ${no}${year ? ` (${year})` : ""}`;
+};
+
+const lbpGroupLabel = (lbp: string) => {
+    const ref = lbp.slice(4);
+    return /^lbp/i.test(ref) ? ref : `LBP Term Loan ${ref}`;
+};
+
+const byNumber = (a: string, b: string) => a.localeCompare(b, undefined, { numeric: true });
 
 type FundingGroupSubs = Record<string, { amount: number; count: number }>;
 type FundingLine = { label: string; amount: number; count?: number };
-type FundingGroup = { key: string; label: string | null; amount: number; lines: FundingLine[] };
+// A group's own sub-type lines, then its nested groups (LBP term loans
+// within a supplemental budget).
+type FundingGroup = { key: string; label: string | null; amount: number; lines: FundingLine[]; children: FundingGroup[] };
 
-// One source's projects per sub-type, split into the regular group and one
-// indented group per supplemental budget / LBP term loan. Projects with no
-// sub-type are left out of the regular group (as before) but listed as
-// "Unspecified" inside a named group, so its count adds up. Without grouped
-// data (`groups` undefined) the plain sub-type lines are used, uncounted.
-const toFundingGroups = (groups: Record<string, FundingGroupSubs> | undefined, fallback: FundingLine[]): FundingGroup[] =>
-    groups
-        ? Object.entries(groups)
-            .sort(([a], [b]) => fundingGroupRank(a) - fundingGroupRank(b) || a.localeCompare(b, undefined, { numeric: true }))
-            .map(([key, subs]) => {
-                const lines = Object.entries(subs)
-                    .filter(([subKey]) => key !== "" || !subKey.startsWith("__NONE__"))
-                    .map(([subKey, v]) => ({
-                        label: subKey.startsWith("__NONE__")
-                            ? "Unspecified"
-                            : (PROJECT_SUB_TYPE_LABEL[subKey as ProjectSubTypeValue] ?? subKey),
-                        amount: v.amount,
-                        count: v.count,
-                    }))
-                    .sort((a, b) => b.amount - a.amount);
-                return { key, label: fundingGroupLabel(key), amount: lines.reduce((s, l) => s + l.amount, 0), lines };
+// Sub-type lines with their project counts. Projects with no sub-type are left
+// out of the regular group (as before) but listed as "Unspecified" inside a
+// named group, so its count adds up.
+const toFundingLines = (subs: FundingGroupSubs, regular: boolean): FundingLine[] =>
+    Object.entries(subs)
+        .filter(([subKey]) => !regular || !subKey.startsWith("__NONE__"))
+        .map(([subKey, v]) => ({
+            label: subKey.startsWith("__NONE__")
+                ? "Unspecified"
+                : (PROJECT_SUB_TYPE_LABEL[subKey as ProjectSubTypeValue] ?? subKey),
+            amount: v.amount,
+            count: v.count,
+        }))
+        .sort((a, b) => b.amount - a.amount);
+
+const groupAmount = (lines: FundingLine[], children: FundingGroup[]) =>
+    lines.reduce((s, l) => s + l.amount, 0) + children.reduce((s, c) => s + c.amount, 0);
+
+// One source's projects as a tree: regular projects first, then each
+// supplemental budget with its LBP term loans nested inside it, then any LBP
+// term loan outside a supplemental budget. Without grouped data (`groups`
+// undefined) the plain sub-type lines are used, uncounted.
+const toFundingGroups = (groups: Record<string, FundingGroupSubs> | undefined, fallback: FundingLine[]): FundingGroup[] => {
+    if (!groups) return [{ key: "", label: null, amount: 0, lines: fallback, children: [] }];
+
+    // sb ("" for none) → lbp ("" for none) → sub-types
+    const tree = new Map<string, Map<string, FundingGroupSubs>>();
+    for (const [key, subs] of Object.entries(groups)) {
+        const { sb, lbp } = parseFundingKey(key);
+        let loans = tree.get(sb);
+        if (!loans) tree.set(sb, (loans = new Map<string, FundingGroupSubs>()));
+        loans.set(lbp, subs);
+    }
+
+    const loanGroups = (sb: string, loans: Map<string, FundingGroupSubs>) =>
+        [...loans.entries()]
+            .filter(([lbp]) => lbp !== "")
+            .sort(([a], [b]) => byNumber(a, b))
+            .map(([lbp, subs]): FundingGroup => {
+                const lines = toFundingLines(subs, false);
+                return { key: `${sb}|${lbp}`, label: lbpGroupLabel(lbp), amount: groupAmount(lines, []), lines, children: [] };
             })
-            .filter((g) => g.lines.length > 0)
-        : [{ key: "", label: null, amount: 0, lines: fallback }];
+            .filter((g) => g.lines.length > 0);
+
+    const regularLoans = tree.get("");
+    const regularLines = toFundingLines(regularLoans?.get("") ?? {}, true);
+    const sbGroups = [...tree.entries()]
+        .filter(([sb]) => sb !== "")
+        .sort(([a], [b]) => byNumber(a, b))
+        .map(([sb, loans]): FundingGroup => {
+            const lines = toFundingLines(loans.get("") ?? {}, false);
+            const children = loanGroups(sb, loans);
+            return { key: sb, label: sbGroupLabel(sb), amount: groupAmount(lines, children), lines, children };
+        })
+        .filter((g) => g.lines.length > 0 || g.children.length > 0);
+
+    return [
+        { key: "", label: null, amount: groupAmount(regularLines, []), lines: regularLines, children: [] },
+        ...sbGroups,
+        ...(regularLoans ? loanGroups("", regularLoans) : []),
+    ];
+};
 
 // Sub-type lines with their project count on the left, regular projects first
-// and each supplemental budget / LBP term loan as an indented group below.
+// and each supplemental budget as an indented group below, with its LBP term
+// loans indented once more inside it.
 const FundingGroupLines = ({ groups }: { groups: FundingGroup[] }) => (
     <>
         {groups.map((g) => {
@@ -214,7 +259,10 @@ const FundingGroupLines = ({ groups }: { groups: FundingGroup[] }) => (
                             {formatPeso(g.amount)}
                         </span>
                     </div>
-                    <div className="ml-3 flex flex-col gap-0.5 border-l border-slate-200 pl-2">{lines}</div>
+                    <div className="ml-3 flex flex-col gap-0.5 border-l border-slate-200 pl-2">
+                        {lines}
+                        {g.children.length > 0 && <FundingGroupLines groups={g.children} />}
+                    </div>
                 </div>
             );
         })}
