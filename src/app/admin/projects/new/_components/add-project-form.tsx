@@ -118,12 +118,13 @@ const fmtDate = (d: Date) => {
 };
 
 // ─── Timeline adjustments (queued locally, saved after project create) ────
-type TimelineAdjType = "EXTENSION" | "SUSPENSION" | "RESUMPTION";
+type TimelineAdjType = "EXTENSION" | "SUSPENSION" | "RESUMPTION" | "NTP";
 
 const TIMELINE_ADJ_TYPE_CONFIG: Record<TimelineAdjType, { label: string; badge: string }> = {
   EXTENSION: { label: "Extension", badge: "bg-blue-50 text-blue-700 border-blue-200" },
   SUSPENSION: { label: "Suspension", badge: "bg-red-50 text-red-700 border-red-200" },
   RESUMPTION: { label: "Resumption", badge: "bg-green-50 text-green-700 border-green-200" },
+  NTP: { label: "NTP", badge: "bg-emerald-50 text-emerald-700 border-emerald-200" },
 };
 
 type PendingAdjustment = {
