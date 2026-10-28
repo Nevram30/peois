@@ -39,7 +39,7 @@ import {
 } from "~/app/admin/projects/_components/progress-slippage-panel";
 import { LatestActualField, latestEntry } from "~/app/admin/projects/_components/latest-actual";
 import { parseCoord } from "~/lib/geo";
-import { canEditProjectCode } from "~/lib/divisions";
+import { canEditProjectCode, canEditProjectTitle } from "~/lib/divisions";
 import { handleAmountChange, parseAmount, formatAmountValue } from "~/lib/currency";
 import { GeospatialFields } from "~/app/_components/geospatial-fields";
 import { UploadDocumentModal } from "~/app/_components/upload-document-modal";
@@ -245,12 +245,15 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   // project override page, merged into the Funding Information dropdowns below.
   const { data: customOptions } = api.fundingOption.getAll.useQuery();
   // Only super admins and PDPM's Administrative Assistant II may change the
-  // Project ID; everyone else sees it read-only. The server enforces the same.
+  // Project ID and Project Title; everyone else sees them read-only. The
+  // server enforces the same.
   const { data: me } = api.user.me.useQuery();
   const canEditCode = canEditProjectCode(me);
+  const canEditTitle = canEditProjectTitle(me);
 
   // ─ Identity & Status ───────────────────────────────────────────────────
   const [projectCode, setProjectCode] = useState("");
+  const [title, setTitle] = useState("");
   const [completion, setCompletion] = useState(0);
   // Raw text of the percentage box, kept apart from `completion` so the field
   // can sit empty while it is being retyped instead of snapping back to 0.
@@ -362,6 +365,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   useEffect(() => {
     if (!project) return;
     setProjectCode(project.projectCode);
+    setTitle(project.title);
     setCompletion(project.completionPercentage);
     setCompletionText(String(project.completionPercentage));
     setStatus(project.status);
@@ -699,6 +703,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     // For Project Identity & Status, name the specific fields that changed so
     // the audit trail shows what was updated, not just the card.
     const identityFields: string[] = [];
+    if (canEditTitle && title.trim() && title.trim() !== project.title.trim()) identityFields.push("Project Title");
     if (canEditCode && projectCode.trim() && projectCode.trim() !== project.projectCode) identityFields.push("Project I.D.");
     if ((parseAmount(contractCost) || 0) !== (project.contractCost ?? 0)) identityFields.push("Contract Cost");
     if (status !== project.status) identityFields.push("Current Status");
@@ -774,7 +779,8 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     updateProject.mutate(
       {
         id: projectId,
-        title: project.title,
+        // A blank title falls back to the saved one rather than failing the save.
+        title: canEditTitle ? title.trim() || project.title : project.title,
         modeOfImplementation: modeOfImplementation as
           | "BY_ADMINISTRATION"
           | "BY_CONTRACT"
@@ -1125,11 +1131,18 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                     (recorded in that section below) */}
                 <LatestActualField entry={latestEntry(slippageAssessments)} />
 
-                {/* Title and Project Cost are set when the project is created and
-                    are not changed from this form. */}
+                {/* Project Cost is set when the project is created and is not
+                    changed from this form. The title is editable only by those
+                    allowed by canEditProjectTitle. */}
                 <div>
                   <label className={idLabelClass}>Project Title</label>
-                  <input type="text" value={project.title} disabled className={idInputClass} />
+                  <input
+                    type="text"
+                    value={canEditTitle ? title : project.title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    disabled={!canEditTitle}
+                    className={idInputClass}
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">

@@ -6,7 +6,7 @@ import {
   districtScopedProcedure,
   protectedProcedure,
 } from "~/server/api/trpc";
-import { canEditProjectCode, isReachableFromDistrict } from "~/lib/divisions";
+import { canEditProjectCode, canEditProjectTitle, isReachableFromDistrict } from "~/lib/divisions";
 import { getMunicipalitiesByDistrict } from "~/lib/davao-del-norte-locations";
 import {
   ORIGINAL_IP_PROJECT_CODES,
@@ -245,7 +245,9 @@ export const projectRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-        title: z.string().min(1, "Project title is required"),
+        // Trimmed so a whitespace-only title is rejected. Changing it is only
+        // honoured for callers allowed by canEditProjectTitle.
+        title: z.string().trim().min(1, "Project title is required"),
         subType: z.string().optional().nullable(),
         program: z.string().optional().nullable(),
         projectAccount: z.enum(PROJECT_ACCOUNT_VALUES).optional().nullable(),
@@ -299,28 +301,34 @@ export const projectRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { id, projectCode, ...data } = input;
 
-      // Changing the Project ID is restricted; an unchanged or omitted code
-      // skips the check so everyone else's saves keep working.
+      // Changing the Project ID or title is restricted; unchanged values skip
+      // the check so everyone else's saves keep working.
       const newProjectCode = projectCode?.trim();
-      let codeChanged = false;
-      if (newProjectCode) {
-        const current = await ctx.db.project.findUnique({
-          where: { id },
-          select: { projectCode: true },
-        });
-        codeChanged = current?.projectCode !== newProjectCode;
-      }
-      if (newProjectCode && codeChanged) {
+      const current = await ctx.db.project.findUnique({
+        where: { id },
+        select: { projectCode: true, title: true },
+      });
+      const codeChanged = !!newProjectCode && current?.projectCode !== newProjectCode;
+      const titleChanged = current?.title.trim() !== data.title;
+      if (codeChanged || titleChanged) {
         const caller = await ctx.db.user.findUnique({
           where: { id: ctx.session.user.id },
           select: { role: true, designation: true, division: true },
         });
-        if (!canEditProjectCode(caller)) {
+        if (codeChanged && !canEditProjectCode(caller)) {
           throw new TRPCError({
             code: "FORBIDDEN",
             message: "You are not allowed to change the Project ID",
           });
         }
+        if (titleChanged && !canEditProjectTitle(caller)) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You are not allowed to change the Project Title",
+          });
+        }
+      }
+      if (newProjectCode && codeChanged) {
         await assertProjectCodeFree(ctx.db, newProjectCode, id);
       }
 

@@ -71,6 +71,13 @@ export const canEditProjectCode = (
   );
 }
 
+/**
+ * Whether the user may change a project's title from the update form. Same
+ * people as `canEditProjectCode`: super admins and PDPM's Administrative
+ * Assistant II.
+ */
+export const canEditProjectTitle = canEditProjectCode;
+
 // Reader-facing names for the stored codes. Only the district divisions need
 // spelling out; the office divisions are known by their acronym.
 const DIVISION_LABEL: Record<string, string> = {
