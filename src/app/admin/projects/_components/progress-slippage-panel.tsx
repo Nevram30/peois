@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Check, CircleCheck, Pencil, Trash2, X } from "lucide-react";
 import {
-    computeSlippage,
+    computeEntrySlippage,
     formatSlippage,
     getSlippageStageConfig,
 } from "~/lib/slippage";
@@ -113,12 +113,15 @@ const emptyDraft = () => ({ date: todayInputDate(), target: "", revised: "", act
 type Draft = ReturnType<typeof emptyDraft>;
 
 // Validates a draft into the values the parent files. Returns an error
-// message instead when a required field is missing or out of range.
-const readDraft = (draft: Draft): ProgressEntryInput | string => {
+// message instead when a required field is missing or out of range. Every
+// entry after the first is measured against its revised target, so those
+// must carry one (`requireRevised`).
+const readDraft = (draft: Draft, requireRevised: boolean): ProgressEntryInput | string => {
     if (!draft.date) return "Enter the date recorded.";
     const target = parsePercent(draft.target);
     const actual = parsePercent(draft.actual);
     if (target === null || actual === null) return "Target and actual must each be between 0 and 100.";
+    if (requireRevised && draft.revised.trim() === "") return "Revised target is required after the first entry.";
     const revisedTarget = draft.revised.trim() === "" ? null : parsePercent(draft.revised);
     if (draft.revised.trim() !== "" && revisedTarget === null) return "Revised target must be between 0 and 100.";
     return { date: draft.date, target, revisedTarget, actual, remarks: draft.remarks.trim() };
@@ -165,6 +168,10 @@ export const ProgressSlippagePanel = ({
         () => [...entries].sort((a, b) => toDate(b.date).getTime() - toDate(a.date).getTime()),
         [entries],
     );
+    // The oldest entry is measured against its target; later ones against
+    // their revised target.
+    const firstId = rows[rows.length - 1]?.id ?? null;
+    const recordingFirst = rows.length === 0;
     const curveProject = useMemo<SCurveProject>(
         () => ({
             id: "project",
@@ -188,13 +195,20 @@ export const ProgressSlippagePanel = ({
 
     // Live reading of what Record would file, with the stage's prescribed action.
     const previewTarget = parsePercent(draft.target);
+    const previewRevised = parsePercent(draft.revised);
     const previewActual = parsePercent(draft.actual);
+    const previewBaseline = recordingFirst ? previewTarget : previewRevised;
     const preview =
-        previewTarget !== null && previewActual !== null ? computeSlippage(previewTarget, previewActual) : null;
+        previewTarget !== null && previewBaseline !== null && previewActual !== null
+            ? computeEntrySlippage(
+                  { target: previewTarget, revisedTarget: previewRevised, actual: previewActual },
+                  recordingFirst,
+              )
+            : null;
     const previewStage = preview !== null ? getSlippageStageConfig(preview) : null;
 
     const handleRecord = async () => {
-        const input = readDraft(draft);
+        const input = readDraft(draft, !recordingFirst);
         if (typeof input === "string") {
             setFormError(input);
             return;
@@ -225,7 +239,7 @@ export const ProgressSlippagePanel = ({
     };
 
     const saveEdit = async (id: string) => {
-        const input = readDraft(rowDraft);
+        const input = readDraft(rowDraft, id !== firstId);
         if (typeof input === "string") {
             setRowError(input);
             return;
@@ -300,7 +314,7 @@ export const ProgressSlippagePanel = ({
                             rows.map((entry) => {
                                 const isEditing = editingId === entry.id;
                                 const busy = busyRowId === entry.id;
-                                const slippage = computeSlippage(entry.target, entry.actual);
+                                const slippage = computeEntrySlippage(entry, entry.id === firstId);
                                 const cfg = getSlippageStageConfig(slippage);
                                 if (isEditing) {
                                     return (
@@ -318,7 +332,7 @@ export const ProgressSlippagePanel = ({
                                                 <PercentInput label="Planned %" className={cellInput} value={rowDraft.target} onChange={(v) => setRowDraft((d) => ({ ...d, target: v }))} />
                                             </td>
                                             <td className="px-4 py-3">
-                                                <PercentInput label="Revised target %" className={cellInput} placeholder="—" value={rowDraft.revised} onChange={(v) => setRowDraft((d) => ({ ...d, revised: v }))} />
+                                                <PercentInput label="Revised target %" className={cellInput} placeholder={entry.id === firstId ? "—" : "Required"} value={rowDraft.revised} onChange={(v) => setRowDraft((d) => ({ ...d, revised: v }))} />
                                             </td>
                                             <td className="px-4 py-3">
                                                 <PercentInput label="Actual %" className={cellInput} value={rowDraft.actual} onChange={(v) => setRowDraft((d) => ({ ...d, actual: v }))} />
@@ -445,9 +459,9 @@ export const ProgressSlippagePanel = ({
                             <span className={fieldLabel}>Revised Target %</span>
                             <PercentInput
                                 label="Revised target %"
-                                placeholder="Optional"
+                                placeholder={recordingFirst ? "Optional" : "Required"}
                                 value={draft.revised}
-                                invalid={draft.revised.trim() !== "" && parsePercent(draft.revised) === null}
+                                invalid={draft.revised.trim() !== "" && previewRevised === null}
                                 onChange={(v) => {
                                     setDraft((d) => ({ ...d, revised: v }));
                                     setFormError(null);

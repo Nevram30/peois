@@ -1,6 +1,8 @@
-// Slippage = actual physical accomplishment − target accomplishment, in
-// percentage points. A negative value means the project is behind schedule,
-// and each band carries a prescribed administrative action.
+// Slippage = actual physical accomplishment − baseline accomplishment, in
+// percentage points. The first entry of a project's history is measured
+// against its target; every later entry against its revised target. A
+// negative value means the project is behind schedule, and each band carries
+// a prescribed administrative action.
 //
 // The published bands are 0%+, −1 to −4.99, −5 to −9.99, −10 to −14.99 and
 // −15 to −20. They are matched here as open ranges so that the gaps between
@@ -81,9 +83,23 @@ export const SLIPPAGE_STAGE_CONFIG: Record<SlippageStage, SlippageStageConfig> =
   },
 };
 
-/** Percentage-point difference between actual and target accomplishment. */
-export const computeSlippage = (target: number, actual: number) =>
-  actual - target;
+/** Percentage-point difference between actual and baseline accomplishment. */
+export const computeSlippage = (baseline: number, actual: number) =>
+  actual - baseline;
+
+/**
+ * Slippage of one entry in a project's history. The first entry is measured
+ * against its target; every later one against its revised target, falling
+ * back to the target for older rows filed without one.
+ */
+export const computeEntrySlippage = (
+  entry: { target: number; revisedTarget?: number | null; actual: number },
+  isFirst: boolean,
+) =>
+  computeSlippage(
+    isFirst ? entry.target : (entry.revisedTarget ?? entry.target),
+    entry.actual,
+  );
 
 export const getSlippageStage = (slippage: number): SlippageStage => {
   if (slippage > -1) return "ON_TRACK";

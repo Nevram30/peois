@@ -380,13 +380,27 @@ export const projectRouter = createTRPCRouter({
       });
       if (!current) throw new Error("Project not found");
 
+      // Every entry after the first is measured against its revised target,
+      // so a later filing without one could not be assessed.
+      const filing = input.slippageTarget !== null && input.slippageActual !== null;
+      if (filing && input.revisedTarget == null) {
+        const filed = await ctx.db.slippageAssessment.count({
+          where: { projectId: input.id },
+        });
+        if (filed > 0) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Revised target is required after the first entry.",
+          });
+        }
+      }
+
       // Rev. 0 is the first assessment on file; every later filing rolls the
       // counter forward. Each Record files its own history row, even when the
       // figures repeat — a later date at the same percentage is itself a
       // reading (the project stalled).
       const hadAssessment =
         current.slippageTarget !== null && current.slippageActual !== null;
-      const filing = input.slippageTarget !== null && input.slippageActual !== null;
       const slippageRevision =
         hadAssessment && filing
           ? current.slippageRevision + 1

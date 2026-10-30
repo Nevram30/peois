@@ -6,7 +6,7 @@ import { api } from "~/trpc/react";
 import {
     SLIPPAGE_STAGE_CONFIG,
     SLIPPAGE_STAGE_VALUES,
-    computeSlippage,
+    computeEntrySlippage,
     formatSlippage,
     getSlippageStage,
 } from "~/lib/slippage";
@@ -200,8 +200,8 @@ export const SCurveChart = ({ project, height = 340 }: { project: SCurveProject;
 
     // Actual points that are filed assessments (the baseline is not one), with
     // their slippage — these are what hover and keyboard step through.
-    const marks = assessments.map((a) => {
-        const slippage = computeSlippage(a.target, a.actual);
+    const marks = assessments.map((a, i) => {
+        const slippage = computeEntrySlippage(a, i === 0);
         return { a, slippage, stage: getSlippageStage(slippage), x: xOf(dayOf(a.date)), y: yOf(a.actual) };
     });
     const latest = marks[marks.length - 1];
@@ -539,7 +539,7 @@ export const PhysicalProgressSection = ({ budgetYear }: { budgetYear: string }) 
     // are projects — including after the year or search changes the list.
     const project = projects.find((p) => p.id === selectedId) ?? projects[0] ?? null;
     const latest = project?.slippageAssessments[project.slippageAssessments.length - 1];
-    const latestSlippage = latest ? computeSlippage(latest.target, latest.actual) : null;
+    const latestSlippage = latest ? computeEntrySlippage(latest, project.slippageAssessments.length === 1) : null;
     const stage = latestSlippage === null ? null : SLIPPAGE_STAGE_CONFIG[getSlippageStage(latestSlippage)];
 
     return (

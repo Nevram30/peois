@@ -6,7 +6,7 @@ import {
     SLIPPAGE_STAGE_CONFIG,
     SLIPPAGE_STAGE_VALUES,
     type SlippageStage,
-    computeSlippage,
+    computeEntrySlippage,
     formatSlippage,
     getSlippageStage,
 } from "~/lib/slippage";
@@ -20,6 +20,7 @@ export type SlippagePoint = {
     date: Date;
     target: number;
     actual: number;
+    revisedTarget: number | null;
     revision: number;
 };
 
@@ -111,7 +112,7 @@ export const SlippageHistoryChart = ({
         const tMin = Math.min(...times);
         const tMax = Math.max(...times);
         return points.map((p, i) => {
-            const slippage = computeSlippage(p.target, p.actual);
+            const slippage = computeEntrySlippage(p, i === 0);
             const t = times[i]!;
             return {
                 point: p,
@@ -335,7 +336,7 @@ export const SlippageHistoryChart = ({
 // project that never left On Track doesn't get a scale of its own noise.
 // Rounded outwards to whole 5s, which is where the ticks fall.
 const domainFor = (points: SlippagePoint[]): [number, number] => {
-    const values = points.map((p) => computeSlippage(p.target, p.actual));
+    const values = points.map((p, i) => computeEntrySlippage(p, i === 0));
     return [
         Math.floor(Math.min(-20, ...values) / 5) * 5,
         Math.ceil(Math.max(5, ...values) / 5) * 5,
@@ -347,7 +348,7 @@ const SlippageProjectCard = ({ project, budgetYear }: { project: SlippageProject
     const points = project.slippageAssessments;
     const domain = useMemo(() => domainFor(points), [points]);
     const latest = points[points.length - 1]!;
-    const latestSlippage = computeSlippage(latest.target, latest.actual);
+    const latestSlippage = computeEntrySlippage(latest, points.length === 1);
     const stage = SLIPPAGE_STAGE_CONFIG[getSlippageStage(latestSlippage)];
 
     return (
