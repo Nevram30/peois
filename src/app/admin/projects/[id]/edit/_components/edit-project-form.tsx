@@ -39,6 +39,7 @@ import {
 } from "~/app/admin/projects/_components/progress-slippage-panel";
 import { LatestActualField, latestEntry } from "~/app/admin/projects/_components/latest-actual";
 import { parseCoord } from "~/lib/geo";
+import { daysBetween } from "~/lib/dates";
 import { canEditProjectCode, canEditProjectTitle } from "~/lib/divisions";
 import { handleAmountChange, parseAmount, formatAmountValue } from "~/lib/currency";
 import { GeospatialFields } from "~/app/_components/geospatial-fields";
@@ -95,14 +96,6 @@ const toInputDate = (d: Date | string | null | undefined) => {
   if (!d) return "";
   return new Date(d).toISOString().slice(0, 10);
 }
-
-// Whole days from one `yyyy-mm-dd` value to another; 0 when either is missing
-// or the end comes first.
-const daysBetween = (start: string, end: string) => {
-  if (!start || !end) return 0;
-  const ms = new Date(end).getTime() - new Date(start).getTime();
-  return Math.max(0, Math.ceil(ms / (1000 * 60 * 60 * 24)));
-};
 
 // Today as a `yyyy-mm-dd` value for a date input, in local time — toISOString
 // would hand back the UTC day and shift the date for evening entries.
@@ -298,6 +291,8 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   // ─ Dates ───────────────────────────────────────────────────────────────
   const [dateStarted, setDateStarted] = useState("");
   const [targetCompletion, setTargetCompletion] = useState("");
+  // Not editable on this form; the saved value is carried through unchanged so
+  // a save never wipes it.
   const [revisedCompletion, setRevisedCompletion] = useState("");
 
   // ─ Workforce ───────────────────────────────────────────────────────────
@@ -343,11 +338,9 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
   const [disbErrors, setDisbErrors] = useState<{ amount?: string; ref?: string; type?: string; date?: string }>({});
 
   // ─ Timeline Adjustment ──────────────────────────────────────────────────
-  // Duration runs from the start date to the revised target completion when
-  // one is set, otherwise to the end date.
   const adjDays = useMemo(
-    () => daysBetween(dateStarted, revisedCompletion || targetCompletion),
-    [dateStarted, targetCompletion, revisedCompletion],
+    () => daysBetween(dateStarted, targetCompletion),
+    [dateStarted, targetCompletion],
   );
   const [adjType, setAdjType] = useState<"" | "EXTENSION" | "SUSPENSION" | "RESUMPTION" | "NTP">("");
   // Inline editing of a recorded adjustment: the row being edited and its draft.
@@ -903,9 +896,8 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
 
   const handleRecordTimelineAdjustment = () => {
     if (!dateStarted || !targetCompletion) { setAdjError("Start date and end date are required."); return; }
-    const durationEnd = revisedCompletion || targetCompletion;
-    if (new Date(durationEnd) < new Date(dateStarted)) {
-      setAdjError(`The ${revisedCompletion ? "revised target completion" : "end date"} cannot come before the start date.`);
+    if (new Date(targetCompletion) < new Date(dateStarted)) {
+      setAdjError("The end date cannot come before the start date.");
       return;
     }
     if (!adjType) { setAdjError("Adjustment type is required."); return; }
@@ -1977,10 +1969,6 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                 <div className="w-full shrink-0 sm:w-40">
                   <FieldLabel>End Date</FieldLabel>
                   <Input type="date" value={targetCompletion} onChange={(e) => { setTargetCompletion(e.target.value); setAdjError(null); }} error={!!adjError && !targetCompletion} />
-                </div>
-                <div className="w-full shrink-0 sm:w-40">
-                  <FieldLabel>Revised Target Completion</FieldLabel>
-                  <Input type="date" value={revisedCompletion} onChange={(e) => { setRevisedCompletion(e.target.value); setAdjError(null); }} />
                 </div>
                 <div className="w-full shrink-0 sm:w-24">
                   <FieldLabel>Duration</FieldLabel>

@@ -48,6 +48,7 @@ import { UploadDocumentModal } from "~/app/_components/upload-document-modal";
 import { ProjectImageUploader } from "~/app/_components/project-image-uploader";
 import { GeospatialFields } from "~/app/_components/geospatial-fields";
 import { parseCoord, type LocationTypeValue } from "~/lib/geo";
+import { daysBetween } from "~/lib/dates";
 import { handleAmountChange, parseAmount, formatAmountValue } from "~/lib/currency";
 
 // ─── Shared styles ────────────────────────────────────────────────────────
@@ -379,12 +380,10 @@ export const AddProjectForm = () => {
     satisfiedDocs.has(item.key),
   ).length;
 
-  const duration = useMemo(() => {
-    if (!dateStarted || !targetCompletionDate) return 0;
-    const start = new Date(dateStarted);
-    const end = new Date(targetCompletionDate);
-    return Math.max(0, Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)));
-  }, [dateStarted, targetCompletionDate]);
+  const duration = useMemo(
+    () => daysBetween(dateStarted, targetCompletionDate),
+    [dateStarted, targetCompletionDate],
+  );
 
   const totalWorkforce = numFemale + numMale;
 
