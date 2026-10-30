@@ -375,9 +375,7 @@ const SlippageProjectCard = ({ project, budgetYear }: { project: SlippageProject
             </div>
             <SlippageHistoryChart points={points} domain={domain} />
             <p className="mt-1 text-[10px] text-slate-400">
-                {points.length === 1
-                    ? `1 assessment · ${fullDate.format(new Date(latest.date))} · the trend line starts with the next assessment`
-                    : `${points.length} assessments · latest ${fullDate.format(new Date(latest.date))}`}
+                {`${points.length} assessments · latest ${fullDate.format(new Date(latest.date))}`}
             </p>
         </div>
     );
@@ -386,46 +384,43 @@ const SlippageProjectCard = ({ project, budgetYear }: { project: SlippageProject
 // ── Section ────────────────────────────────────────────────────
 const PAGE_SIZE = 12;
 
-export const SlippageHistorySection = ({ budgetYear }: { budgetYear: string }) => {
+// The search box lives in the dashboard's panel heading; its text comes in as
+// `search`.
+export const SlippageHistorySection = ({ budgetYear, search }: { budgetYear: string; search: string }) => {
     const { data, isLoading } = api.project.getSlippageHistory.useQuery(
         budgetYear ? { budgetYear } : undefined,
     );
-    const [search, setSearch] = useState("");
     const [shown, setShown] = useState(PAGE_SIZE);
+
+    // A new search starts again from the first page.
+    useEffect(() => setShown(PAGE_SIZE), [search]);
+
+    // A history needs two assessments to draw a line, so single-entry
+    // projects are left to the Physical Progress tab.
+    const charted = useMemo(() => (data ?? []).filter((p) => p.slippageAssessments.length >= 2), [data]);
 
     const projects = useMemo(() => {
         const q = search.trim().toLowerCase();
-        if (!q) return data ?? [];
-        return (data ?? []).filter(
+        if (!q) return charted;
+        return charted.filter(
             (p) =>
                 p.title.toLowerCase().includes(q) ||
                 p.projectCode.toLowerCase().includes(q) ||
                 (p.cityMunicipality ?? "").toLowerCase().includes(q),
         );
-    }, [data, search]);
+    }, [charted, search]);
 
     return (
         <div>
-            <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
-                <div>
-                    <p className="text-[15px] font-extrabold uppercase tracking-widest text-[#1e3a8a]">
-                        Slippage History per Project
-                    </p>
-                    <p className="text-[10px] text-slate-500">
-                        Assessment dates run across, slippage (actual − target) runs up; below 0% is behind schedule.
-                        Each chart is scaled to its own range, so check the axis before comparing two projects.
-                    </p>
-                </div>
-                <input
-                    type="text"
-                    placeholder="Search projects..."
-                    value={search}
-                    onChange={(e) => {
-                        setSearch(e.target.value);
-                        setShown(PAGE_SIZE);
-                    }}
-                    className="w-full rounded-sm border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-[#1e3a4f] focus:outline-none focus:ring-2 focus:ring-[#1e3a4f]/20 sm:w-64"
-                />
+            <div className="mb-3">
+                <p className="text-[15px] font-extrabold uppercase tracking-widest text-[#1e3a8a]">
+                    Slippage History per Project
+                </p>
+                <p className="text-[10px] text-slate-500">
+                    Assessment dates run across, slippage runs up (actual − target on the first assessment,
+                    actual − revised target after); below 0% is behind schedule.
+                    Each chart is scaled to its own range, so check the axis before comparing two projects.
+                </p>
             </div>
 
             {/* Stage legend: what the band and dot colours mean */}
@@ -448,7 +443,9 @@ export const SlippageHistorySection = ({ budgetYear }: { budgetYear: string }) =
                 </div>
             ) : !projects.length ? (
                 <div className="bg-white rounded-sm border border-slate-200 p-10 text-center text-sm text-slate-400">
-                    {search ? "No projects match your search." : "No slippage assessments filed yet."}
+                    {search
+                        ? "No projects match your search."
+                        : "No project has two or more slippage assessments yet."}
                 </div>
             ) : (
                 <>

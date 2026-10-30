@@ -1,6 +1,7 @@
 "use client";
 
 import { type ReactNode, useState } from "react";
+import { Search } from "lucide-react";
 import { api } from "~/trpc/react";
 
 import type { StatCard } from "~/app/super-admin/dashboardv2/super.admin.types";
@@ -110,6 +111,10 @@ export const AdminDashboardContent = () => {
     // The status tile whose VIEW button opened the progress chart popup.
     const [viewTile, setViewTile] = useState<StatusTileCard | null>(null);
     const [financialView, setFinancialView] = useState<FinancialView>("graph");
+    // Lives here so the Slippage History search can sit in the panel heading.
+    // The box holds a draft; the Search button (or Enter) applies it.
+    const [slippageSearchDraft, setSlippageSearchDraft] = useState("");
+    const [slippageSearch, setSlippageSearch] = useState("");
 
     // Calendar year filter shared by the dashboard cards (driven by the header
     // YEAR button). The years come back newest first, and the newest is the
@@ -494,9 +499,39 @@ export const AdminDashboardContent = () => {
                 <PanelHeading
                     subtitle="Filed slippage assessments per project"
                     year={dashboardYear}
+                    left={
+                        <form
+                            role="search"
+                            className="flex w-full gap-2 sm:w-[32rem]"
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                setSlippageSearch(slippageSearchDraft);
+                            }}
+                        >
+                            <button
+                                type="submit"
+                                className="flex h-10 shrink-0 items-center gap-2 rounded-sm bg-[#0b1f6b] px-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#1e3a8a] focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/30"
+                            >
+                                <Search aria-hidden="true" className="h-4 w-4" />
+                                Search
+                            </button>
+                            <input
+                                type="search"
+                                aria-label="Search projects"
+                                placeholder="Search projects by title, code or city / municipality..."
+                                value={slippageSearchDraft}
+                                onChange={(e) => {
+                                    setSlippageSearchDraft(e.target.value);
+                                    // Clearing the box shows every project again without a click.
+                                    if (!e.target.value.trim()) setSlippageSearch("");
+                                }}
+                                className="h-10 min-w-0 flex-1 rounded-sm border border-slate-300 bg-white px-3 text-sm text-slate-700 shadow-sm placeholder:text-slate-400 focus:border-[#1e3a4f] focus:outline-none focus:ring-2 focus:ring-[#1e3a4f]/20"
+                            />
+                        </form>
+                    }
                 />
                 {/* One slippage timeline per project. */}
-                <SlippageHistorySection budgetYear={dashboardYear} />
+                <SlippageHistorySection budgetYear={dashboardYear} search={slippageSearch} />
             </div>
 
             <div
