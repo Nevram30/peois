@@ -90,7 +90,7 @@ export const computeSlippage = (baseline: number, actual: number) =>
 /**
  * Slippage of one entry in a project's history. The first entry is measured
  * against its target; every later one against its revised target, falling
- * back to the target for older rows filed without one.
+ * back to the target for rows filed without one.
  */
 export const computeEntrySlippage = (
   entry: { target: number; revisedTarget?: number | null; actual: number },

@@ -523,8 +523,8 @@ model SlippageAssessment {
   date        DateTime
   target      Float
   // The revised target at the assessment date. The first assessment of a
-  // project is measured against `target`; every later one against this
-  // (required for those, falling back to `target` on older rows without one).
+  // project is measured against `target`; every later one against this,
+  // falling back to `target` on rows without one.
   revisedTarget Float?
   actual      Float
   revision    Int      @default(0)
