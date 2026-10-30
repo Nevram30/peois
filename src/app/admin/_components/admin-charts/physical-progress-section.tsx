@@ -62,7 +62,8 @@ const dayOf = (d: Date | string) => new Date(d).setHours(0, 0, 0, 0);
 //               revised target, or a revised completion date): the baseline,
 //               each revised target, and 100% on the revised completion date.
 //               Assessments filed before the revision have no revised target
-//               and are skipped.
+//               and are skipped. A lone revised point is kept, so it still
+//               plots as a marker until the next one draws the line.
 //  • Actual   — the 0% baseline, then each assessment's recorded actual.
 export const buildCurves = (project: SCurveProject) => {
     const assessments = project.slippageAssessments;
@@ -97,7 +98,6 @@ export const buildCurves = (project: SCurveProject) => {
         if (revisedEndRaw !== null && (!lastRevised || revisedEndRaw > lastRevised.t)) {
             revised.push({ t: revisedEndRaw, value: 100 });
         }
-        if (revised.length < 2) revised = [];
     }
 
     const actual: CurvePoint[] = [
@@ -421,20 +421,27 @@ export const SCurveChart = ({ project, height = 340 }: { project: SCurveProject;
 };
 
 // ── Legend key ─────────────────────────────────────────────────
+// Each key is the line with its point marker, as drawn on the chart. Revised
+// Target is always listed; it reads "none recorded" until an entry has one.
+const LegendKey = ({ stroke, width, dash, hollow }: { stroke: string; width: number; dash?: string; hollow: boolean }) => (
+    <svg width="24" height="10" aria-hidden>
+        <line x1="0" x2="24" y1="5" y2="5" stroke={stroke} strokeWidth={width} strokeDasharray={dash} />
+        <circle cx="12" cy="5" r="3.5" fill={hollow ? "#ffffff" : stroke} stroke={stroke} strokeWidth="1.5" />
+    </svg>
+);
+
 const LineLegend = ({ hasRevised }: { hasRevised: boolean }) => (
     <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5">
         <span className="flex items-center gap-1.5 text-[11.5px] text-slate-600">
-            <svg width="20" height="4" aria-hidden><line x1="0" x2="20" y1="2" y2="2" stroke={PLANNED} strokeWidth="2" strokeDasharray="5 3" /></svg>
+            <LegendKey stroke={PLANNED} width={2} dash="5 3" hollow />
             Planned (Target)
         </span>
-        {hasRevised && (
-            <span className="flex items-center gap-1.5 text-[11.5px] text-slate-600">
-                <svg width="20" height="4" aria-hidden><line x1="0" x2="20" y1="2" y2="2" stroke={REVISED} strokeWidth="2" /></svg>
-                Revised Target
-            </span>
-        )}
+        <span className={`flex items-center gap-1.5 text-[11.5px] ${hasRevised ? "text-slate-600" : "text-slate-400"}`}>
+            <LegendKey stroke={REVISED} width={2} hollow />
+            Revised Target{!hasRevised && " (none recorded)"}
+        </span>
         <span className="flex items-center gap-1.5 text-[11.5px] font-bold text-slate-800">
-            <svg width="20" height="4" aria-hidden><line x1="0" x2="20" y1="2" y2="2" stroke={ACTUAL} strokeWidth="3.5" /></svg>
+            <LegendKey stroke={ACTUAL} width={3.5} hollow={false} />
             Actual Recorded
         </span>
     </div>
@@ -472,7 +479,8 @@ export const SCurveCard = ({
     children?: React.ReactNode;
 }) => {
     const curves = buildCurves(project);
-    const hasRevised = curves.revised.length > 1;
+    // The shared baseline alone is not a revision.
+    const hasRevised = curves.revised.some((p) => p !== curves.baseline);
     const empty = curves.planned.length < 2 && curves.actual.length === 0;
     return (
         <div className="rounded-sm border border-slate-200 bg-white shadow-sm">
@@ -483,7 +491,7 @@ export const SCurveCard = ({
                         <div className="min-w-0">
                             <p className="text-[16px] font-bold text-slate-900">Progress S-Curve &amp; Timeline Trendline</p>
                             <p className="text-[12px] text-slate-600">
-                                Comparison of cumulative planned target baseline vs. recorded actual accomplishment
+                                Comparison of cumulative planned and revised targets vs. recorded actual accomplishment
                             </p>
                         </div>
                     </div>
