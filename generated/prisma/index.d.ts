@@ -357,7 +357,9 @@ export const TimelineAdjustmentType: {
   RESUMPTION: 'RESUMPTION',
   REVISION: 'REVISION',
   ON_SCHEDULE: 'ON_SCHEDULE',
-  NTP: 'NTP'
+  NTP: 'NTP',
+  PROJECT_COMPLETION_DATE: 'PROJECT_COMPLETION_DATE',
+  REVISED_PROJECT_COMPLETION_DATE: 'REVISED_PROJECT_COMPLETION_DATE'
 };
 
 export type TimelineAdjustmentType = (typeof TimelineAdjustmentType)[keyof typeof TimelineAdjustmentType]

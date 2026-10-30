@@ -218,6 +218,8 @@ enum TimelineAdjustmentType {
   // Legacy value kept for existing records; not selectable in the UI.
   ON_SCHEDULE
   NTP
+  PROJECT_COMPLETION_DATE
+  REVISED_PROJECT_COMPLETION_DATE
 }
 
 enum DocumentStatus {

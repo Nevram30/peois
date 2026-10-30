@@ -84,6 +84,8 @@ const TIMELINE_ADJ_TYPE_CONFIG: Record<string, { label: string; badge: string; l
   SUSPENSION: { label: "Suspension", badge: "bg-red-50 text-red-700 border-red-200" },
   RESUMPTION: { label: "Resumption", badge: "bg-green-50 text-green-700 border-green-200" },
   NTP: { label: "NTP", badge: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+  PROJECT_COMPLETION_DATE: { label: "Project Completion Date", badge: "bg-indigo-50 text-indigo-700 border-indigo-200" },
+  REVISED_PROJECT_COMPLETION_DATE: { label: "Revised Project Completion Date", badge: "bg-violet-50 text-violet-700 border-violet-200" },
   ON_SCHEDULE: { label: "On-Schedule", badge: "bg-emerald-50 text-emerald-700 border-emerald-200", legacy: true },
 };
 
@@ -342,13 +344,13 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     () => daysBetween(dateStarted, targetCompletion),
     [dateStarted, targetCompletion],
   );
-  const [adjType, setAdjType] = useState<"" | "EXTENSION" | "SUSPENSION" | "RESUMPTION" | "NTP">("");
+  const [adjType, setAdjType] = useState<"" | "EXTENSION" | "SUSPENSION" | "RESUMPTION" | "NTP" | "PROJECT_COMPLETION_DATE" | "REVISED_PROJECT_COMPLETION_DATE">("");
   // Inline editing of a recorded adjustment: the row being edited and its draft.
   const [editingAdjId, setEditingAdjId] = useState<string | null>(null);
   const [adjDraft, setAdjDraft] = useState({
     startDate: "",
     endDate: "",
-    type: "" as "" | "EXTENSION" | "SUSPENSION" | "RESUMPTION" | "NTP" | "ON_SCHEDULE",
+    type: "" as "" | "EXTENSION" | "SUSPENSION" | "RESUMPTION" | "NTP" | "PROJECT_COMPLETION_DATE" | "REVISED_PROJECT_COMPLETION_DATE" | "ON_SCHEDULE",
     justification: "",
   });
   const [adjRowError, setAdjRowError] = useState<string | null>(null);
@@ -561,7 +563,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
     setAdjDraft({
       startDate: toInputDate(adjustment.startDate),
       endDate: toInputDate(adjustment.endDate),
-      type: adjustment.type as "EXTENSION" | "SUSPENSION" | "RESUMPTION" | "NTP" | "ON_SCHEDULE",
+      type: adjustment.type as "EXTENSION" | "SUSPENSION" | "RESUMPTION" | "NTP" | "PROJECT_COMPLETION_DATE" | "REVISED_PROJECT_COMPLETION_DATE" | "ON_SCHEDULE",
       justification: adjustment.justification ?? "",
     });
   };
@@ -1874,7 +1876,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                                 onChange={(e) =>
                                   setAdjDraft((d) => ({ ...d, type: e.target.value as typeof d.type }))
                                 }
-                                className={`w-36 ${!adjDraft.type ? "border-red-300" : ""}`}
+                                className={`w-56 ${!adjDraft.type ? "border-red-300" : ""}`}
                               >
                                 <option value="">Type</option>
                                 {/* A legacy type stays listed only on the row that already has it. */}
@@ -1974,7 +1976,7 @@ export const EditProjectForm = ({ projectId }: { projectId: string }) => {
                   <FieldLabel>Duration</FieldLabel>
                   <Input type="text" readOnly placeholder="0" value={adjDays || ""} className="cursor-not-allowed bg-gray-50 text-gray-600" />
                 </div>
-                <div className="w-full shrink-0 sm:w-40">
+                <div className="w-full shrink-0 sm:w-56">
                   <FieldLabel>Type</FieldLabel>
                   <Select
                     value={adjType}

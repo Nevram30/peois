@@ -47,12 +47,19 @@ const DISTRICT_LABEL: Record<string, string> = {
   DISTRICT_II: "District 2",
 };
 
+const ADJUSTMENT_TYPE_LABEL: Record<string, string> = {
+  PROJECT_COMPLETION_DATE: "Project Completion Date",
+  REVISED_PROJECT_COMPLETION_DATE: "Revised Project Completion Date",
+};
+
 const ADJUSTMENT_TYPE_PILL: Record<string, string> = {
   EXTENSION: "bg-blue-50 text-blue-600 border border-blue-200",
   SUSPENSION: "bg-red-50 text-red-600 border border-red-200",
   RESUMPTION: "bg-green-50 text-green-600 border border-green-200",
   REVISION: "bg-amber-50 text-amber-600 border border-amber-200",
   NTP: "bg-emerald-50 text-emerald-600 border border-emerald-200",
+  PROJECT_COMPLETION_DATE: "bg-indigo-50 text-indigo-600 border border-indigo-200",
+  REVISED_PROJECT_COMPLETION_DATE: "bg-violet-50 text-violet-600 border border-violet-200",
   ON_SCHEDULE: "bg-emerald-50 text-emerald-600 border border-emerald-200",
 };
 
@@ -752,7 +759,7 @@ export const ProjectDetail = ({ projectId }: Props) => {
                             <span
                               className={`inline-flex rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${ADJUSTMENT_TYPE_PILL[t.type] ?? "bg-gray-50 text-gray-600 border border-gray-200"}`}
                             >
-                              {t.type.replace(/_/g, "-")}
+                              {ADJUSTMENT_TYPE_LABEL[t.type] ?? t.type.replace(/_/g, "-")}
                             </span>
                           </td>
                           <td className="px-4 py-3 italic text-gray-600">

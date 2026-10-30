@@ -507,7 +507,9 @@ exports.TimelineAdjustmentType = exports.$Enums.TimelineAdjustmentType = {
   RESUMPTION: 'RESUMPTION',
   REVISION: 'REVISION',
   ON_SCHEDULE: 'ON_SCHEDULE',
-  NTP: 'NTP'
+  NTP: 'NTP',
+  PROJECT_COMPLETION_DATE: 'PROJECT_COMPLETION_DATE',
+  REVISED_PROJECT_COMPLETION_DATE: 'REVISED_PROJECT_COMPLETION_DATE'
 };
 
 exports.NotificationPriority = exports.$Enums.NotificationPriority = {

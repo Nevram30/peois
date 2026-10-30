@@ -1459,7 +1459,7 @@ export function OverrideForm({ projectId }: { projectId: string }) {
                       </td>
                       <td className="px-4 py-3">
                         <span className="inline-flex items-center rounded bg-blue-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-600">
-                          {tl.type}
+                          {tl.type.replace(/_/g, " ")}
                         </span>
                       </td>
                       <td className="max-w-md px-4 py-3 text-xs italic text-gray-600">

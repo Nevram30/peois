@@ -119,13 +119,15 @@ const fmtDate = (d: Date) => {
 };
 
 // ─── Timeline adjustments (queued locally, saved after project create) ────
-type TimelineAdjType = "EXTENSION" | "SUSPENSION" | "RESUMPTION" | "NTP";
+type TimelineAdjType = "EXTENSION" | "SUSPENSION" | "RESUMPTION" | "NTP" | "PROJECT_COMPLETION_DATE" | "REVISED_PROJECT_COMPLETION_DATE";
 
 const TIMELINE_ADJ_TYPE_CONFIG: Record<TimelineAdjType, { label: string; badge: string }> = {
   EXTENSION: { label: "Extension", badge: "bg-blue-50 text-blue-700 border-blue-200" },
   SUSPENSION: { label: "Suspension", badge: "bg-red-50 text-red-700 border-red-200" },
   RESUMPTION: { label: "Resumption", badge: "bg-green-50 text-green-700 border-green-200" },
   NTP: { label: "NTP", badge: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+  PROJECT_COMPLETION_DATE: { label: "Project Completion Date", badge: "bg-indigo-50 text-indigo-700 border-indigo-200" },
+  REVISED_PROJECT_COMPLETION_DATE: { label: "Revised Project Completion Date", badge: "bg-violet-50 text-violet-700 border-violet-200" },
 };
 
 type PendingAdjustment = {
@@ -1425,7 +1427,7 @@ export const AddProjectForm = () => {
                   className={`${inputClass} cursor-not-allowed bg-gray-50 text-gray-600`}
                 />
               </div>
-              <div className="w-40 shrink-0">
+              <div className="w-56 shrink-0">
                 <label className={labelClass}>Type</label>
                 <select
                   value={adjType}
