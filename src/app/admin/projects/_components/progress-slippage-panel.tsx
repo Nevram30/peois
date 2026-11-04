@@ -57,6 +57,7 @@ const toInputDate = (d: Date | string) => {
     const day = String(date.getDate()).padStart(2, "0");
     return `${date.getFullYear()}-${month}-${day}`;
 };
+
 const todayInputDate = () => toInputDate(new Date());
 
 const fullDate = new Intl.DateTimeFormat("en-PH", { month: "short", day: "numeric", year: "numeric" });
@@ -198,9 +199,8 @@ export const ProgressSlippagePanel = ({
     const preview =
         previewTarget !== null && previewActual !== null
             ? computeEntrySlippage(
-                  { target: previewTarget, revisedTarget: previewRevised, actual: previewActual },
-                  recordingFirst,
-              )
+                { target: previewTarget, revisedTarget: previewRevised, actual: previewActual }
+            )
             : null;
     const previewStage = preview !== null ? getSlippageStageConfig(preview) : null;
 
@@ -311,7 +311,7 @@ export const ProgressSlippagePanel = ({
                             rows.map((entry) => {
                                 const isEditing = editingId === entry.id;
                                 const busy = busyRowId === entry.id;
-                                const slippage = computeEntrySlippage(entry, entry.id === firstId);
+                                const slippage = computeEntrySlippage(entry);
                                 const cfg = getSlippageStageConfig(slippage);
                                 if (isEditing) {
                                     return (

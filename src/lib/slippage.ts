@@ -94,10 +94,9 @@ export const computeSlippage = (baseline: number, actual: number) =>
  */
 export const computeEntrySlippage = (
   entry: { target: number; revisedTarget?: number | null; actual: number },
-  isFirst: boolean,
 ) =>
   computeSlippage(
-    isFirst ? entry.target : (entry.revisedTarget ?? entry.target),
+    entry.revisedTarget ?? entry.target,
     entry.actual,
   );
 
