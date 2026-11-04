@@ -7,7 +7,7 @@ import { api } from "~/trpc/react";
 import type { StatCard } from "~/app/super-admin/dashboardv2/super.admin.types";
 import { AllocationRatioCard, AllocationTotalCard, AnnualAllocationCard, DistrictCard, SourceBreakdownCard, toCardData } from "./admin-cards/cards";
 import { DistrictCardsSkeleton, FinancialCardSkeleton, StatCardsSkeleton } from "./admin-cards/skeleton.cards";
-import { DistrictProgressSection } from "./admin-charts/district-progress-section";
+// import { DistrictProgressSection } from "./admin-charts/district-progress-section";
 import { LocationBreakdownSection } from "./admin-charts/location-breakdown-section";
 import { SlippageHistorySection } from "./admin-charts/slippage-history-section";
 import { SourceProgressSection } from "./admin-charts/source-progress-section";
@@ -295,7 +295,7 @@ export const AdminDashboardContent = () => {
                     (SMAD/PDPM/EPM/QACD) get both districts with a combined/separate
                     toggle; engineering-district admins get their own district only.
                     Scoped by the same YEAR filter as the cards above. */}
-                <DistrictProgressSection budgetYear={dashboardYear} />
+                {/* <DistrictProgressSection budgetYear={dashboardYear} /> */}
 
                 {/* 2ND ENGR DIST only: its original projects under the IP. */}
                 {districtScope === "DISTRICT_II" && <OriginalIpSection />}
@@ -373,108 +373,108 @@ export const AdminDashboardContent = () => {
                 )}
 
                 <div hidden={financialView !== "graph"}>
-                {/* Utilisation of the annual allocation: what is left and what
+                    {/* Utilisation of the annual allocation: what is left and what
                     has gone out, each as a share of the same total. Above the
                     allocation card, as the headline reading of this tab. */}
-                <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    {remainingLoading || allocationLoading ? (
-                        <>
-                            <FinancialCardSkeleton />
-                            <FinancialCardSkeleton />
-                        </>
-                    ) : (
-                        <>
-                            <AllocationRatioCard
-                                budgetYear={dashboardYear}
-                                label="Remaining Balance Percentage"
-                                amount={remainingBalanceData?.remaining.total ?? 0}
-                                total={TotalAllocation}
-                            />
-                            <AllocationRatioCard
-                                budgetYear={dashboardYear}
-                                label="Disbursement Percentage"
-                                amount={remainingBalanceData?.disbursed.total ?? 0}
-                                total={TotalAllocation}
-                            />
-                        </>
-                    )}
-                </div>
-
-                {/* The same three figures as amounts: the allocation the two
-                    percentages are measured against, and each of its parts. */}
-                <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                    {remainingLoading || allocationLoading ? (
-                        <>
-                            <FinancialCardSkeleton />
-                            <FinancialCardSkeleton />
-                            <FinancialCardSkeleton />
-                        </>
-                    ) : (
-                        <>
-                            <AllocationTotalCard label="Total Combined Allocation" amount={TotalAllocation} budgetYear={dashboardYear} />
-                            <AllocationTotalCard
-                                budgetYear={dashboardYear}
-                                label="Total Amount of Disbursement"
-                                amount={remainingBalanceData?.disbursed.total ?? 0}
-                            />
-                            <AllocationTotalCard
-                                budgetYear={dashboardYear}
-                                label="Total Amount of Remaining Balance"
-                                amount={remainingBalanceData?.remaining.total ?? 0}
-                            />
-                        </>
-                    )}
-                </div>
-
-                {/* Annual Allocation & Source Breakdown */}
-                {allocationLoading ? (
-                    <div className="mb-3">
-                        <FinancialCardSkeleton />
+                    <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        {remainingLoading || allocationLoading ? (
+                            <>
+                                <FinancialCardSkeleton />
+                                <FinancialCardSkeleton />
+                            </>
+                        ) : (
+                            <>
+                                <AllocationRatioCard
+                                    budgetYear={dashboardYear}
+                                    label="Remaining Balance Percentage"
+                                    amount={remainingBalanceData?.remaining.total ?? 0}
+                                    total={TotalAllocation}
+                                />
+                                <AllocationRatioCard
+                                    budgetYear={dashboardYear}
+                                    label="Disbursement Percentage"
+                                    amount={remainingBalanceData?.disbursed.total ?? 0}
+                                    total={TotalAllocation}
+                                />
+                            </>
+                        )}
                     </div>
-                ) : (
-                    <AnnualAllocationCard
-                        bySource={projectAllocationData?.bySource ?? {}}
-                        bySubType={projectAllocationData?.bySubType ?? {}}
-                        variationBySource={projectAllocationData?.variationBySource ?? {}}
-                        variationProjectsBySource={projectAllocationData?.variationProjectsBySource ?? {}}
-                        projectGroupsBySource={projectAllocationData?.projectGroupsBySource ?? {}}
-                        total={TotalAllocation}
-                        budgetYear={dashboardYear}
-                    />
-                )}
 
-                {/* Remaining Balance & Disbursement Summary */}
-                <div className="grid grid-cols-1 gap-3">
-                    {remainingLoading ? (
-                        <>
+                    {/* The same three figures as amounts: the allocation the two
+                    percentages are measured against, and each of its parts. */}
+                    <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                        {remainingLoading || allocationLoading ? (
+                            <>
+                                <FinancialCardSkeleton />
+                                <FinancialCardSkeleton />
+                                <FinancialCardSkeleton />
+                            </>
+                        ) : (
+                            <>
+                                <AllocationTotalCard label="Total Combined Allocation" amount={TotalAllocation} budgetYear={dashboardYear} />
+                                <AllocationTotalCard
+                                    budgetYear={dashboardYear}
+                                    label="Total Amount of Disbursement"
+                                    amount={remainingBalanceData?.disbursed.total ?? 0}
+                                />
+                                <AllocationTotalCard
+                                    budgetYear={dashboardYear}
+                                    label="Total Amount of Remaining Balance"
+                                    amount={remainingBalanceData?.remaining.total ?? 0}
+                                />
+                            </>
+                        )}
+                    </div>
+
+                    {/* Annual Allocation & Source Breakdown */}
+                    {allocationLoading ? (
+                        <div className="mb-3">
                             <FinancialCardSkeleton />
-                            <FinancialCardSkeleton />
-                        </>
+                        </div>
                     ) : (
-                        <>
-                            <SourceBreakdownCard
-                                budgetYear={dashboardYear}
-                                title="Remaining Balance from Annual Allocation"
-                                footerLabel="Grand Total Balance"
-                                bySource={remainingBalanceData?.remaining.bySource ?? {}}
-                                bySubType={remainingBalanceData?.remaining.bySubType ?? {}}
-                                variationProjectsBySource={remainingBalanceData?.remaining.variationProjectsBySource ?? {}}
-                                projectGroupsBySource={remainingBalanceData?.remaining.projectGroupsBySource ?? {}}
-                                total={remainingBalanceData?.remaining.total ?? 0}
-                            />
-                            <SourceBreakdownCard
-                                budgetYear={dashboardYear}
-                                title="Disbursement Summary"
-                                footerLabel="Total Disbursement"
-                                bySource={remainingBalanceData?.disbursed.bySource ?? {}}
-                                bySubType={remainingBalanceData?.disbursed.bySubType ?? {}}
-                                variationProjectsBySource={remainingBalanceData?.disbursed.variationProjectsBySource ?? {}}
-                                projectGroupsBySource={remainingBalanceData?.disbursed.projectGroupsBySource ?? {}}
-                                total={remainingBalanceData?.disbursed.total ?? 0}
-                            />
-                        </>
+                        <AnnualAllocationCard
+                            bySource={projectAllocationData?.bySource ?? {}}
+                            bySubType={projectAllocationData?.bySubType ?? {}}
+                            variationBySource={projectAllocationData?.variationBySource ?? {}}
+                            variationProjectsBySource={projectAllocationData?.variationProjectsBySource ?? {}}
+                            projectGroupsBySource={projectAllocationData?.projectGroupsBySource ?? {}}
+                            total={TotalAllocation}
+                            budgetYear={dashboardYear}
+                        />
                     )}
-                </div>
+
+                    {/* Remaining Balance & Disbursement Summary */}
+                    <div className="grid grid-cols-1 gap-3">
+                        {remainingLoading ? (
+                            <>
+                                <FinancialCardSkeleton />
+                                <FinancialCardSkeleton />
+                            </>
+                        ) : (
+                            <>
+                                <SourceBreakdownCard
+                                    budgetYear={dashboardYear}
+                                    title="Remaining Balance from Annual Allocation"
+                                    footerLabel="Grand Total Balance"
+                                    bySource={remainingBalanceData?.remaining.bySource ?? {}}
+                                    bySubType={remainingBalanceData?.remaining.bySubType ?? {}}
+                                    variationProjectsBySource={remainingBalanceData?.remaining.variationProjectsBySource ?? {}}
+                                    projectGroupsBySource={remainingBalanceData?.remaining.projectGroupsBySource ?? {}}
+                                    total={remainingBalanceData?.remaining.total ?? 0}
+                                />
+                                <SourceBreakdownCard
+                                    budgetYear={dashboardYear}
+                                    title="Disbursement Summary"
+                                    footerLabel="Total Disbursement"
+                                    bySource={remainingBalanceData?.disbursed.bySource ?? {}}
+                                    bySubType={remainingBalanceData?.disbursed.bySubType ?? {}}
+                                    variationProjectsBySource={remainingBalanceData?.disbursed.variationProjectsBySource ?? {}}
+                                    projectGroupsBySource={remainingBalanceData?.disbursed.projectGroupsBySource ?? {}}
+                                    total={remainingBalanceData?.disbursed.total ?? 0}
+                                />
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
 

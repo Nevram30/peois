@@ -63,7 +63,7 @@ const printTable = (rows: ReturnType<typeof toRows>, heading: string, period: st
             tr { page-break-inside: avoid; }
         </style></head><body>
         <h1>${escapeHtml(heading)}</h1>
-        <p>${escapeHtml(budgetYear ? `CY ${budgetYear}` : "All calendar years")} · Actual % per project (${escapeHtml(period)})</p>
+        <p>${escapeHtml(budgetYear ? `CY ${budgetYear}` : "All calendar years")} ·  per project (${escapeHtml(period)})</p>
         <table>
             <thead><tr><th class="num">#</th><th>District</th><th>Project Code</th><th>Project Title</th><th>Status</th><th class="num">Actual %</th><th>Date Recorded</th></tr></thead>
             <tbody>${body}</tbody>
@@ -86,50 +86,51 @@ const ActualProgressTable = ({ rows }: { rows: ReturnType<typeof toRows> }) => {
     const current = Math.min(page, totalPages);
     const offset = (current - 1) * PAGE_SIZE;
     const visible = rows.slice(offset, offset + PAGE_SIZE);
+
     return (
         <div className="overflow-hidden rounded-sm border border-slate-200 bg-white">
-        <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] text-left text-[11px]">
-                <thead className="bg-[#1e3a8a] text-[10px] font-bold uppercase tracking-wide text-white">
-                    <tr>
-                        <th className="px-3 py-2 text-right">#</th>
-                        <th className="px-3 py-2">District</th>
-                        <th className="px-3 py-2">Project Code</th>
-                        <th className="px-3 py-2">Project Title</th>
-                        <th className="px-3 py-2">Status</th>
-                        <th className="px-3 py-2 text-right">Actual %</th>
-                        <th className="px-3 py-2">Date Recorded</th>
-                    </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                    {visible.map((r, i) => (
-                        <tr key={r.id} className="hover:bg-slate-50">
-                            <td className="px-3 py-2 text-right text-slate-400">{offset + i + 1}</td>
-                            <td className="whitespace-nowrap px-3 py-2 text-slate-600">{r.district}</td>
-                            <td className="whitespace-nowrap px-3 py-2 font-semibold text-slate-700">{r.projectCode}</td>
-                            <td className="px-3 py-2 text-slate-700">{r.title}</td>
-                            <td className="whitespace-nowrap px-3 py-2">
-                                <span className="inline-flex items-center gap-1.5 text-slate-600">
-                                    <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: statusColor(r.status) }} />
-                                    {statusLabel(r.status)}
-                                </span>
-                            </td>
-                            <td className="whitespace-nowrap px-3 py-2 text-right font-bold text-slate-900">{formatPct(r.actual)}</td>
-                            <td className="whitespace-nowrap px-3 py-2 text-slate-600">{dateLabel.format(r.date)}</td>
+            <div className="overflow-x-auto">
+                <table className="w-full min-w-[720px] text-left text-[11px]">
+                    <thead className="bg-[#1e3a8a] text-[10px] font-bold uppercase tracking-wide text-white">
+                        <tr>
+                            <th className="px-3 py-2 text-right">#</th>
+                            <th className="px-3 py-2">District</th>
+                            <th className="px-3 py-2">Project Code</th>
+                            <th className="px-3 py-2">Project Title</th>
+                            <th className="px-3 py-2">Status</th>
+                            <th className="px-3 py-2 text-right">Actual %</th>
+                            <th className="px-3 py-2">Date Recorded</th>
                         </tr>
-                    ))}
-                </tbody>
-                <tfoot className="border-t border-slate-300 bg-slate-50 text-[11px] font-bold uppercase tracking-wide text-slate-700">
-                    <tr>
-                        <td colSpan={5} className="px-3 py-2">
-                            {rows.length} project{rows.length === 1 ? "" : "s"} · Average
-                        </td>
-                        <td className="px-3 py-2 text-right text-slate-900">{formatPct(avg)}</td>
-                        <td />
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                        {visible.map((r, i) => (
+                            <tr key={r.id} className="hover:bg-slate-50">
+                                <td className="px-3 py-2 text-right text-slate-400">{offset + i + 1}</td>
+                                <td className="whitespace-nowrap px-3 py-2 text-slate-600">{r.district}</td>
+                                <td className="whitespace-nowrap px-3 py-2 font-semibold text-slate-700">{r.projectCode}</td>
+                                <td className="px-3 py-2 text-slate-700">{r.title}</td>
+                                <td className="whitespace-nowrap px-3 py-2">
+                                    <span className="inline-flex items-center gap-1.5 text-slate-600">
+                                        <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: statusColor(r.status) }} />
+                                        {statusLabel(r.status)}
+                                    </span>
+                                </td>
+                                <td className="whitespace-nowrap px-3 py-2 text-right font-bold text-slate-900">{formatPct(r.actual)}</td>
+                                <td className="whitespace-nowrap px-3 py-2 text-slate-600">{dateLabel.format(r.date)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                    <tfoot className="border-t border-slate-300 bg-slate-50 text-[11px] font-bold uppercase tracking-wide text-slate-700">
+                        <tr>
+                            <td colSpan={5} className="px-3 py-2">
+                                {rows.length} project{rows.length === 1 ? "" : "s"} · Average
+                            </td>
+                            <td className="px-3 py-2 text-right text-slate-900">{formatPct(avg)}</td>
+                            <td />
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
 
             {rows.length > PAGE_SIZE && (
                 <div className="flex items-center justify-between gap-3 border-t border-slate-200 px-4 py-3 text-[11px] text-slate-500">
@@ -204,6 +205,7 @@ export const ActualProgressSection = ({ budgetYear }: { budgetYear: string }) =>
                 for (const a of p.slippageAssessments) keys.add(monthKey(new Date(a.date)));
         return [...keys].sort().reverse();
     }, [data]);
+
     // A month from a previous year's data falls back to All months.
     const activeMonth = month === ALL || months.includes(month) ? month : ALL;
 
@@ -251,77 +253,85 @@ export const ActualProgressSection = ({ budgetYear }: { budgetYear: string }) =>
     const maxRank = series.reduce((max, s) => Math.max(max, s.points.length), 0);
     const periodText = activeMonth === ALL ? "latest entry per project" : `entries recorded in ${labelOf(activeMonth)}`;
     const title =
-        series.length === 1 && series[0] ? `${series[0].label} ACTUAL %` : "DISTRICT I & DISTRICT II ACTUAL %";
+        series.length === 1 && series[0] ? `${series[0].label} PROJECT ACCOMPLISHMENT` : "DISTRICT I & DISTRICT II PROJECT PROGRESS OVERVIEW";
     const rows = useMemo(() => toRows(series), [series]);
 
     return (
         <div className="mb-5">
             <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
-                <div>
+                {/* <div>
                     <p className="text-[15px] font-extrabold tracking-wide text-blue-900">ACTUAL % PROGRESS OVERVIEW</p>
                     <p className="mt-0.5 text-[10px] text-slate-500">
                         Actual accomplishment from Physical Progress &amp; Slippage entries, filtered by the month recorded
                     </p>
+                </div> */}
+                <div>
+                    <p className="text-[15px] font-extrabold text-blue-900 tracking-wide">
+                        PROJECT PROGRESS OVERVIEW
+                    </p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">
+                        Physical accomplishment of all projects by engineering district
+                    </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                        <div role="group" aria-label="View" className="inline-flex rounded-md bg-slate-200 p-0.5">
-                            {(["graph", "table"] as const).map((option) => (
-                                <button
-                                    key={option}
-                                    type="button"
-                                    onClick={() => setView(option)}
-                                    aria-pressed={activeView === option}
-                                    className={`rounded-[5px] px-3 py-1 text-[11px] font-bold tracking-wide transition-colors ${activeView === option
-                                        ? "bg-[#1e3a8a] text-white"
-                                        : "text-slate-600 hover:text-slate-900"
-                                        }`}
-                                >
-                                    {option === "graph" ? "GRAPH" : "TABLE"}
-                                </button>
-                            ))}
-                        </div>
-                {isOfficeDivision && (
+                    <div role="group" aria-label="View" className="inline-flex rounded-md bg-slate-200 p-0.5">
+                        {(["graph", "table"] as const).map((option) => (
+                            <button
+                                key={option}
+                                type="button"
+                                onClick={() => setView(option)}
+                                aria-pressed={activeView === option}
+                                className={`rounded-[5px] px-3 py-1 text-[11px] font-bold tracking-wide transition-colors ${activeView === option
+                                    ? "bg-[#1e3a8a] text-white"
+                                    : "text-slate-600 hover:text-slate-900"
+                                    }`}
+                            >
+                                {option === "graph" ? "GRAPH" : "TABLE"}
+                            </button>
+                        ))}
+                    </div>
+                    {isOfficeDivision && (
+                        <label className="flex items-center gap-2">
+                            <span className="text-[11px] font-bold tracking-wide text-slate-600">DISTRICT</span>
+                            <select
+                                value={district}
+                                onChange={(e) => setDistrict(e.target.value)}
+                                className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-[12px] font-semibold text-slate-700 focus:border-[#1e3a8a] focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                            >
+                                <option value={ALL}>All districts</option>
+                                {Object.entries(DISTRICT_META).map(([key, meta]) => (
+                                    <option key={key} value={key}>
+                                        {meta.short}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                    )}
                     <label className="flex items-center gap-2">
-                        <span className="text-[11px] font-bold tracking-wide text-slate-600">DISTRICT</span>
+                        <span className="text-[11px] font-bold tracking-wide text-slate-600">MONTH</span>
                         <select
-                            value={district}
-                            onChange={(e) => setDistrict(e.target.value)}
+                            value={activeMonth}
+                            onChange={(e) => setMonth(e.target.value)}
+                            disabled={!months.length}
                             className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-[12px] font-semibold text-slate-700 focus:border-[#1e3a8a] focus:outline-none focus:ring-2 focus:ring-blue-500/30"
                         >
-                            <option value={ALL}>All districts</option>
-                            {Object.entries(DISTRICT_META).map(([key, meta]) => (
-                                <option key={key} value={key}>
-                                    {meta.short}
+                            <option value={ALL}>All months (latest)</option>
+                            {months.map((m) => (
+                                <option key={m} value={m}>
+                                    {labelOf(m)}
                                 </option>
                             ))}
                         </select>
                     </label>
-                )}
-                <label className="flex items-center gap-2">
-                    <span className="text-[11px] font-bold tracking-wide text-slate-600">MONTH</span>
-                    <select
-                        value={activeMonth}
-                        onChange={(e) => setMonth(e.target.value)}
-                        disabled={!months.length}
-                        className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-[12px] font-semibold text-slate-700 focus:border-[#1e3a8a] focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                    <button
+                        type="button"
+                        onClick={() => printTable(rows, title, periodText, budgetYear)}
+                        disabled={!rows.length}
+                        className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-bold tracking-wide text-[#1e3a8a] transition-colors hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 disabled:cursor-not-allowed disabled:opacity-50 inline-flex items-center gap-1.5"
                     >
-                        <option value={ALL}>All months (latest)</option>
-                        {months.map((m) => (
-                            <option key={m} value={m}>
-                                {labelOf(m)}
-                            </option>
-                        ))}
-                    </select>
-                </label>
-                <button
-                    type="button"
-                    onClick={() => printTable(rows, title, periodText, budgetYear)}
-                    disabled={!rows.length}
-                    className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-bold tracking-wide text-[#1e3a8a] transition-colors hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 disabled:cursor-not-allowed disabled:opacity-50 inline-flex items-center gap-1.5"
-                >
-                    <Printer className="h-3.5 w-3.5" aria-hidden="true" />
-                    PRINT
-                </button>
+                        <Printer className="h-3.5 w-3.5" aria-hidden="true" />
+                        PRINT
+                    </button>
                 </div>
             </div>
 
@@ -339,7 +349,7 @@ export const ActualProgressSection = ({ budgetYear }: { budgetYear: string }) =>
             ) : (
                 <ChartCard
                     title={title}
-                    subtitle={`Actual % per project (${periodText}), ranked from least to most advanced`}
+                    subtitle={`PROJECT PROGRESS OVERVIEW per project (${periodText}), ranked from least to most advanced`}
                     series={series}
                     maxRank={maxRank}
                     height={280}
