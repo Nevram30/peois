@@ -45,7 +45,7 @@ const printTable = (rows: ReturnType<typeof toRows>, heading: string, period: st
                 <td>${escapeHtml(r.title)}</td>
                 <td>${escapeHtml(statusLabel(r.status))}</td>
                 <td class="num">${formatPct(r.actual)}</td>
-                <td>${dateLabel.format(r.date)}</td>
+                <td>As of ${dateLabel.format(r.date)}</td>
             </tr>`,
         )
         .join("");
@@ -65,7 +65,7 @@ const printTable = (rows: ReturnType<typeof toRows>, heading: string, period: st
         <h1>${escapeHtml(heading)}</h1>
         <p>${escapeHtml(budgetYear ? `CY ${budgetYear}` : "All calendar years")} ·  per project (${escapeHtml(period)})</p>
         <table>
-            <thead><tr><th class="num">#</th><th>District</th><th>Project Code</th><th>Project Title</th><th>Status</th><th class="num">Actual %</th><th>Date Recorded</th></tr></thead>
+            <thead><tr><th class="num">#</th><th>District</th><th>Project Code</th><th>Project Title</th><th>Status</th><th class="num">Physical Progress</th><th>Date Recorded</th></tr></thead>
             <tbody>${body}</tbody>
             <tfoot><tr><td colspan="5">${rows.length} project${rows.length === 1 ? "" : "s"} · Average</td><td class="num">${formatPct(avg)}</td><td></td></tr></tfoot>
         </table>
@@ -98,7 +98,7 @@ const ActualProgressTable = ({ rows }: { rows: ReturnType<typeof toRows> }) => {
                             <th className="px-3 py-2">Project Code</th>
                             <th className="px-3 py-2">Project Title</th>
                             <th className="px-3 py-2">Status</th>
-                            <th className="px-3 py-2 text-right">Actual %</th>
+                            <th className="px-3 py-2 text-right">Physical Progress</th>
                             <th className="px-3 py-2">Date Recorded</th>
                         </tr>
                     </thead>
@@ -258,6 +258,8 @@ export const ActualProgressSection = ({ budgetYear }: { budgetYear: string }) =>
 
     return (
         <div className="mb-5">
+
+            {/* SUPPLEMENTARY BUDGET TABLE AND CHART - ADMIN DASHBOARD - PROJECT STATUS OVERVIEW */}
             <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
                 {/* <div>
                     <p className="text-[15px] font-extrabold tracking-wide text-blue-900">ACTUAL % PROGRESS OVERVIEW</p>
@@ -357,6 +359,102 @@ export const ActualProgressSection = ({ budgetYear }: { budgetYear: string }) =>
                     budgetYear={budgetYear}
                 />
             )}
+
+            {/* PHYSICAL PROGRESS TABLE AND CHART - ADMIN DASHBOARD - PROJECT STATUS OVERVIEW */}
+            <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
+                <div>
+                    <p className="text-[15px] font-extrabold text-blue-900 tracking-wide">
+                        PROJECT PROGRESS OVERVIEW
+                    </p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">
+                        Physical accomplishment of all projects by engineering district
+                    </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                    <div role="group" aria-label="View" className="inline-flex rounded-md bg-slate-200 p-0.5">
+                        {(["graph", "table"] as const).map((option) => (
+                            <button
+                                key={option}
+                                type="button"
+                                onClick={() => setView(option)}
+                                aria-pressed={activeView === option}
+                                className={`rounded-[5px] px-3 py-1 text-[11px] font-bold tracking-wide transition-colors ${activeView === option
+                                    ? "bg-[#1e3a8a] text-white"
+                                    : "text-slate-600 hover:text-slate-900"
+                                    }`}
+                            >
+                                {option === "graph" ? "GRAPH" : "TABLE"}
+                            </button>
+                        ))}
+                    </div>
+                    {isOfficeDivision && (
+                        <label className="flex items-center gap-2">
+                            <span className="text-[11px] font-bold tracking-wide text-slate-600">DISTRICT</span>
+                            <select
+                                value={district}
+                                onChange={(e) => setDistrict(e.target.value)}
+                                className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-[12px] font-semibold text-slate-700 focus:border-[#1e3a8a] focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                            >
+                                <option value={ALL}>All districts</option>
+                                {Object.entries(DISTRICT_META).map(([key, meta]) => (
+                                    <option key={key} value={key}>
+                                        {meta.short}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                    )}
+                    <label className="flex items-center gap-2">
+                        <span className="text-[11px] font-bold tracking-wide text-slate-600">MONTH</span>
+                        <select
+                            value={activeMonth}
+                            onChange={(e) => setMonth(e.target.value)}
+                            disabled={!months.length}
+                            className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-[12px] font-semibold text-slate-700 focus:border-[#1e3a8a] focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                        >
+                            <option value={ALL}>All months (latest)</option>
+                            {months.map((m) => (
+                                <option key={m} value={m}>
+                                    {labelOf(m)}
+                                </option>
+                            ))}
+                        </select>
+                    </label>
+                    <button
+                        type="button"
+                        onClick={() => printTable(rows, title, periodText, budgetYear)}
+                        disabled={!rows.length}
+                        className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-bold tracking-wide text-[#1e3a8a] transition-colors hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 disabled:cursor-not-allowed disabled:opacity-50 inline-flex items-center gap-1.5"
+                    >
+                        <Printer className="h-3.5 w-3.5" aria-hidden="true" />
+                        PRINT
+                    </button>
+                </div>
+            </div>
+
+            {isLoading ? (
+                <ProgressChartSkeleton />
+            ) : !series.length ? (
+                <div className="rounded-sm border border-slate-200 bg-white p-10 text-center text-sm text-slate-400">
+                    {months.length
+                        ? `No actual % was recorded${activeDistrict === ALL ? "" : ` for ${DISTRICT_META[activeDistrict]?.short ?? activeDistrict}`}${activeMonth === ALL ? "" : ` in ${labelOf(activeMonth)}`}.`
+                        : "No Physical Progress & Slippage entries recorded yet."}
+                </div>
+            ) : activeView === "table" ? (
+                // Keyed by the filters so a new filter starts back on page 1.
+                <ActualProgressTable key={`${budgetYear}-${activeMonth}-${activeDistrict}`} rows={rows} />
+            ) : (
+                <ChartCard
+                    title={title}
+                    subtitle={`PROJECT PROGRESS OVERVIEW per project (${periodText}), ranked from least to most advanced`}
+                    series={series}
+                    maxRank={maxRank}
+                    height={280}
+                    chartType="line"
+                    budgetYear={budgetYear}
+                />
+            )}
+
         </div>
     );
 };
