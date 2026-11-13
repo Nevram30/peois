@@ -169,8 +169,8 @@ export const ProgressSlippagePanel = ({
     // The oldest entry is measured against its target; later ones against
     // their revised target, or their target when they have none. Every entry
     // still records its own target.
-    const firstId = rows[rows.length - 1]?.id ?? null;
-    const recordingFirst = rows.length === 0;
+    // const firstId = rows[rows.length - 1]?.id ?? null;
+    // const recordingFirst = rows.length === 0;
     const curveProject = useMemo<SCurveProject>(
         () => ({
             id: "project",

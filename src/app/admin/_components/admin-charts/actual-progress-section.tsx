@@ -8,6 +8,7 @@ import { ChartCard, DISTRICT_META, LINE_COLOR } from "./district-progress-sectio
 import { ProgressChartSkeleton } from "../admin-cards/skeleton.cards";
 
 type View = "graph" | "table";
+type LayoutMode = "combined" | "separate";
 
 const formatPct = (value: number) => `${Number(value.toFixed(2)).toLocaleString("en-PH")}%`;
 const dateLabel = new Intl.DateTimeFormat("en-PH", { month: "short", day: "numeric", year: "numeric" });
@@ -18,6 +19,7 @@ const toRows = (series: ProgressSeries[]) =>
     series.flatMap((s) =>
         s.points.map((p) => ({
             id: `${s.key}-${p.id}`,
+            districtKey: s.key,
             district: s.shortLabel,
             projectCode: p.projectCode,
             title: p.title,
@@ -164,8 +166,6 @@ const ActualProgressTable = ({ rows }: { rows: ReturnType<typeof toRows> }) => {
 };
 
 // ── Month helpers ──────────────────────────────────────────────
-// A month is keyed "yyyy-mm" in local time, the calendar the entries were
-// recorded against.
 const ALL = "all";
 const monthKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 const monthLabel = new Intl.DateTimeFormat("en-PH", { month: "long", year: "numeric" });
@@ -175,29 +175,21 @@ const labelOf = (key: string) => {
 };
 
 // ── Section ────────────────────────────────────────────────────
-// Actual % progress: the same ranked progress curve as the Project Progress
-// Overview, but each project's value is the Actual % from its Physical
-// Progress & Slippage entries rather than the Project Progress field.
-//  • A month selected → the latest entry each project recorded in that month;
-//    projects with no entry that month are left out.
-//  • All months → each project's latest entry overall (its current actual).
 export const ActualProgressSection = ({ budgetYear }: { budgetYear: string }) => {
     const { data, isLoading } = api.project.getActualProgressByDistrict.useQuery(
         budgetYear ? { budgetYear } : undefined,
     );
+
     const [month, setMonth] = useState<string>(ALL);
-    // Every division gets the graph/table toggle and printing.
     const [view, setView] = useState<View>("graph");
+    const [layoutMode, setLayoutMode] = useState<LayoutMode>("combined");
+    const [tableDistrict, setTableDistrict] = useState<string>(ALL);
     const activeView = view;
-    // Office divisions (SMAD/PDPM/EPM/QACD) have no district scope, so only
-    // they choose which district to show; the district admins are already
-    // scoped to their own by the server.
+
     const { data: districtScope, isLoading: scopeLoading } = api.project.getMyDistrictScope.useQuery();
     const isOfficeDivision = !scopeLoading && districtScope == null;
-    const [district, setDistrict] = useState<string>(ALL);
-    const activeDistrict = isOfficeDivision ? district : ALL;
+    const activeTableDistrict = isOfficeDivision && activeView === "table" ? tableDistrict : ALL;
 
-    // Months that have at least one entry, newest first.
     const months = useMemo(() => {
         const keys = new Set<string>();
         for (const d of data ?? [])
@@ -206,20 +198,17 @@ export const ActualProgressSection = ({ budgetYear }: { budgetYear: string }) =>
         return [...keys].sort().reverse();
     }, [data]);
 
-    // A month from a previous year's data falls back to All months.
     const activeMonth = month === ALL || months.includes(month) ? month : ALL;
 
     const series = useMemo<ProgressSeries[]>(
         () =>
             (data ?? [])
-                .filter((d) => activeDistrict === ALL || d.district === activeDistrict)
                 .map((d) => {
                     const meta = DISTRICT_META[d.district] ?? {
                         label: d.district.replace("_", " "),
                         short: d.district.replace("_", " "),
                     };
                     const points = d.projects.flatMap((p) => {
-                        // Entries come newest first, so the first match is the latest.
                         const entry = p.slippageAssessments.find(
                             (a) => activeMonth === ALL || monthKey(new Date(a.date)) === activeMonth,
                         );
@@ -247,30 +236,32 @@ export const ActualProgressSection = ({ budgetYear }: { budgetYear: string }) =>
                     };
                 })
                 .filter((s) => s.points.length > 0),
-        [data, activeMonth, activeDistrict],
+        [data, activeMonth],
     );
 
     const maxRank = series.reduce((max, s) => Math.max(max, s.points.length), 0);
     const periodText = activeMonth === ALL ? "latest entry per project" : `entries recorded in ${labelOf(activeMonth)}`;
-    const title =
-        series.length === 1 && series[0] ? `${series[0].label} PROJECT ACCOMPLISHMENT` : "DISTRICT I & DISTRICT II PROJECT PROGRESS OVERVIEW";
-    const rows = useMemo(() => toRows(series), [series]);
+
+    const rows = useMemo(() => {
+        const allRows = toRows(series);
+        if (activeTableDistrict === ALL) return allRows;
+        return allRows.filter((r) => r.districtKey === activeTableDistrict);
+    }, [series, activeTableDistrict]);
+
+    const title = useMemo(() => {
+        if (activeView === "table" && activeTableDistrict !== ALL) {
+            const label = DISTRICT_META[activeTableDistrict]?.label ?? activeTableDistrict;
+            return `${label} PROJECT ACCOMPLISHMENT`;
+        }
+        return series.length === 1 && series[0]
+            ? `${series[0].label} PROJECT ACCOMPLISHMENT for General Appropriations Infrastructure Projects`
+            : "DISTRICT I & DISTRICT II PROJECT PROGRESS OVERVIEW for General Appropriations Infrastructure Projects";
+    }, [activeView, activeTableDistrict, series]);
 
     return (
         <div className="mb-5">
-
-            {/* SUPPLEMENTARY BUDGET TABLE AND CHART - ADMIN DASHBOARD - PROJECT STATUS OVERVIEW */}
-            {/* PHYSICAL PROGRESS TABLE AND CHART - ADMIN DASHBOARD - PROJECT STATUS OVERVIEW */}
-            <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
-                <div>
-                    <p className="text-[15px] font-extrabold text-blue-900 tracking-wide">
-                        PROJECT PROGRESS OVERVIEW
-                    </p>
-                    <p className="text-[10px] text-slate-500 mt-0.5">
-                        Physical accomplishment of all projects by engineering district
-                    </p>
-                </div>
-                <div className="flex flex-wrap items-center gap-2">
+            <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                     <div role="group" aria-label="View" className="inline-flex rounded-md bg-slate-200 p-0.5">
                         {(["graph", "table"] as const).map((option) => (
                             <button
@@ -287,12 +278,34 @@ export const ActualProgressSection = ({ budgetYear }: { budgetYear: string }) =>
                             </button>
                         ))}
                     </div>
-                    {isOfficeDivision && (
+
+                    {isOfficeDivision && activeView === "graph" && series.length > 1 && (
+                        <div role="group" aria-label="Chart Layout" className="inline-flex rounded-md bg-slate-200 p-0.5">
+                            {(["combined", "separate"] as const).map((mode) => (
+                                <button
+                                    key={mode}
+                                    type="button"
+                                    onClick={() => setLayoutMode(mode)}
+                                    aria-pressed={layoutMode === mode}
+                                    className={`rounded-[5px] px-3 py-1 text-[11px] font-bold tracking-wide transition-colors ${layoutMode === mode
+                                        ? "bg-[#1e3a8a] text-white"
+                                        : "text-slate-600 hover:text-slate-900"
+                                        }`}
+                                >
+                                    {mode === "combined" ? "COMBINED" : "SEPARATE"}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3">
+                    {isOfficeDivision && activeView === "table" && (
                         <label className="flex items-center gap-2">
                             <span className="text-[11px] font-bold tracking-wide text-slate-600">DISTRICT</span>
                             <select
-                                value={district}
-                                onChange={(e) => setDistrict(e.target.value)}
+                                value={tableDistrict}
+                                onChange={(e) => setTableDistrict(e.target.value)}
                                 className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-[12px] font-semibold text-slate-700 focus:border-[#1e3a8a] focus:outline-none focus:ring-2 focus:ring-blue-500/30"
                             >
                                 <option value={ALL}>All districts</option>
@@ -334,16 +347,15 @@ export const ActualProgressSection = ({ budgetYear }: { budgetYear: string }) =>
 
             {isLoading ? (
                 <ProgressChartSkeleton />
-            ) : !series.length ? (
+            ) : !series.length || (activeView === "table" && !rows.length) ? (
                 <div className="rounded-sm border border-slate-200 bg-white p-10 text-center text-sm text-slate-400">
                     {months.length
-                        ? `No actual % was recorded${activeDistrict === ALL ? "" : ` for ${DISTRICT_META[activeDistrict]?.short ?? activeDistrict}`}${activeMonth === ALL ? "" : ` in ${labelOf(activeMonth)}`}.`
+                        ? `No Physical Progress was recorded${activeTableDistrict === ALL ? "" : ` for ${DISTRICT_META[activeTableDistrict]?.short ?? activeTableDistrict}`}${activeMonth === ALL ? "" : ` in ${labelOf(activeMonth)}`}.`
                         : "No Physical Progress & Slippage entries recorded yet."}
                 </div>
             ) : activeView === "table" ? (
-                // Keyed by the filters so a new filter starts back on page 1.
-                <ActualProgressTable key={`${budgetYear}-${activeMonth}-${activeDistrict}`} rows={rows} />
-            ) : (
+                <ActualProgressTable key={`${budgetYear}-${activeMonth}-${activeTableDistrict}`} rows={rows} />
+            ) : layoutMode === "combined" || !isOfficeDivision ? (
                 <ChartCard
                     title={title}
                     subtitle={`PROJECT PROGRESS OVERVIEW per project (${periodText}), ranked from least to most advanced`}
@@ -353,8 +365,22 @@ export const ActualProgressSection = ({ budgetYear }: { budgetYear: string }) =>
                     chartType="line"
                     budgetYear={budgetYear}
                 />
+            ) : (
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                    {series.map((s) => (
+                        <ChartCard
+                            key={s.key}
+                            title={`${s.label} PROJECT ACCOMPLISHMENT for General Appropriations Infrastructure Projects`}
+                            subtitle={`PROJECT PROGRESS OVERVIEW per project (${periodText}), ranked from least to most advanced`}
+                            series={[s]}
+                            maxRank={s.points.length}
+                            height={280}
+                            chartType="line"
+                            budgetYear={budgetYear}
+                        />
+                    ))}
+                </div>
             )}
-
         </div>
     );
 };

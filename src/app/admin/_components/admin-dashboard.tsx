@@ -12,6 +12,7 @@ import { LocationBreakdownSection } from "./admin-charts/location-breakdown-sect
 import { SlippageHistorySection } from "./admin-charts/slippage-history-section";
 import { SourceProgressSection } from "./admin-charts/source-progress-section";
 import { ActualProgressSection } from "./admin-charts/actual-progress-section";
+import { ActualProgressSectionSB } from "./admin-charts/sb-chart-table";
 import { YearFilter } from "~/helper/year.filter";
 import { PreparationStageSection } from "./admin-cards/preparation-stage-section";
 import { PreparationStageTable } from "./admin-cards/preparation-stage-table";
@@ -300,6 +301,7 @@ export const AdminDashboardContent = () => {
                 {/* 2ND ENGR DIST only: its original projects under the IP. */}
                 {districtScope === "DISTRICT_II" && <OriginalIpSection />}
 
+                <ActualProgressSectionSB budgetYear={dashboardYear} />
                 {/* The same curve from the recorded Actual % (Physical Progress &
                     Slippage entries), filtered by the month they were recorded. */}
                 <ActualProgressSection budgetYear={dashboardYear} />

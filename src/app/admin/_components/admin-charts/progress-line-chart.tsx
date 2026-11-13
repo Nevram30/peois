@@ -414,7 +414,7 @@ export const ProgressLineChart = ({ series, maxRank, height = 260 }: ProgressLin
                             <p className="mt-0.5 truncate text-[10px] font-semibold text-slate-700">
                                 {row.coord.point.projectCode}
                             </p>
-                            <p className="truncate text-[10px] text-slate-500">{row.coord.point.title}</p>
+                            <p className="text-[10px] text-slate-500 font-bold">{row.coord.point.title}</p>
                             {/* Status in words beside its dot — colour alone never carries it */}
                             <p className="mt-0.5 flex items-center gap-1 text-[9px] font-bold tracking-wide text-slate-600">
                                 <span

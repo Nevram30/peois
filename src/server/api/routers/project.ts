@@ -40,6 +40,7 @@ const districtWhere = (scope: District | null) =>
 // as "SB:<no>:<year>|LBP:<LBP-TL#>" — the loan then shows nested under its
 // supplemental budget.
 type FundingGroupMap = Record<string, Record<string, Record<string, { amount: number; count: number }>>>;
+
 const fundingGroupKey = (p: {
   supplementalBudgetNumber: string | null;
   supplementalBudgetYear: string | null;
@@ -51,6 +52,7 @@ const fundingGroupKey = (p: {
     .filter(Boolean)
     .join("|");
 };
+
 // Adds one project's amount to source → group → sub-type.
 const addToFundingGroup = (map: FundingGroupMap, source: string, group: string, subKey: string, amount: number) => {
   const line = ((map[source] ??= {})[group] ??= {})[subKey] ??= { amount: 0, count: 0 };
@@ -78,6 +80,7 @@ const assertProjectCodeFree = async (
 };
 
 export const projectRouter = createTRPCRouter({
+
   getAll: districtScopedProcedure.query(async ({ ctx }) => {
     return ctx.db.project.findMany({
       where: districtWhere(ctx.districtScope),
@@ -1027,6 +1030,7 @@ export const projectRouter = createTRPCRouter({
   getActualProgressByDistrict: districtScopedProcedure
     .input(z.object({ budgetYear: z.string().optional() }).optional())
     .query(async ({ ctx, input }) => {
+
       const districts: readonly District[] = ctx.districtScope
         ? [ctx.districtScope]
         : (["DISTRICT_I", "DISTRICT_II"] as const);
@@ -1036,6 +1040,9 @@ export const projectRouter = createTRPCRouter({
           locationImplementation: { in: [...districts] },
           ...(input?.budgetYear ? { budgetYear: input.budgetYear } : {}),
           slippageAssessments: { some: {} },
+          landbankNumber: null,
+          supplementalBudgetYear: null,
+          supplementalBudgetNumber: null,
         },
         select: {
           id: true,
@@ -1058,6 +1065,51 @@ export const projectRouter = createTRPCRouter({
           .map(({ locationImplementation: _, ...p }) => p),
       }));
     }),
+  
+  //--> This is for SB chart 
+  getActualProgressByDistrictWithSB: districtScopedProcedure
+      .input(z.object({ budgetYear: z.string().optional() }).optional())
+      .query(async ({ ctx, input }) => {
+        
+        const districts: readonly District[] = ctx.districtScope
+          ? [ctx.districtScope]
+          : (["DISTRICT_I", "DISTRICT_II"] as const);
+
+        //projects that has only Supplementary Budget...
+        const projects = await ctx.db.project.findMany({
+          where: {
+            locationImplementation: { in: [...districts] },
+            ...(input?.budgetYear ? { budgetYear: input.budgetYear } : {}),
+            landbankNumber: { not: null },
+            supplementalBudgetYear: { not: null },
+            supplementalBudgetNumber: { not: null },
+          },
+          select: {
+            id: true,
+            projectCode: true,
+            title: true,
+            status: true,
+            locationImplementation: true,
+            sourceOfFund: true,
+            program: true,
+            subType: true,
+            landbankNumber: true,
+            supplementalBudgetYear: true,
+            supplementalBudgetNumber: true,
+            slippageAssessments: {
+              select: { actual: true, date: true },
+              orderBy: [{ date: "desc" }, { createdAt: "desc" }],
+            },
+          },
+        });
+
+        return districts.map((district) => ({
+          district,
+          projects: projects
+            .filter((p) => p.locationImplementation === district)
+            .map(({ locationImplementation: _, ...p }) => p),
+        }));
+      }),
 
   getProgressByDistrict: districtScopedProcedure
     .input(z.object({ budgetYear: z.string().optional() }).optional())
@@ -1091,6 +1143,59 @@ export const projectRouter = createTRPCRouter({
             projectCode: p.projectCode,
             title: p.title,
             status: p.status,
+            progress: p.completionPercentage ?? 0,
+            // Not an axis — the tooltip shows it so a point on the curve can
+            // still be placed in time.
+            date: p.dateStarted ?? p.createdAt,
+            // Distinguishes a real start date from the createdAt stand-in, so
+            // the chart can say "added" rather than "started" in its tooltip.
+            estimated: p.dateStarted === null,
+          }))
+          .sort((a, b) => a.progress - b.progress);
+
+        return { district, points };
+      });
+    }),
+  
+  
+    getProgressByDistrictWithSB: districtScopedProcedure
+    .input(z.object({ budgetYear: z.string().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      const districts: readonly District[] = ctx.districtScope
+        ? [ctx.districtScope]
+        : (["DISTRICT_I", "DISTRICT_II"] as const);
+
+      const projects = await ctx.db.project.findMany({
+        where: {
+          locationImplementation: { in: [...districts] },
+          ...(input?.budgetYear ? { budgetYear: input.budgetYear } : {}),
+        },
+        select: {
+          id: true,
+          projectCode: true,
+          title: true,
+          status: true,
+          landbankNumber: true,
+          supplementalBudgetYear: true,
+          supplementalBudgetNumber: true,
+          locationImplementation: true,
+          completionPercentage: true,
+          dateStarted: true,
+          createdAt: true,
+        },
+      });
+
+      return districts.map((district) => {
+        const points = projects
+          .filter((p) => p.locationImplementation === district)
+          .map((p) => ({
+            id: p.id,
+            projectCode: p.projectCode,
+            title: p.title,
+            status: p.status,
+            landbankNumber: p.landbankNumber,
+            supplementalBudgetYear: p.supplementalBudgetYear,
+            supplementalBudgetNumber: p.supplementalBudgetNumber,
             progress: p.completionPercentage ?? 0,
             // Not an axis — the tooltip shows it so a point on the curve can
             // still be placed in time.
@@ -1171,7 +1276,7 @@ export const projectRouter = createTRPCRouter({
   // accomplishment, and how they split by status. One entry per district, with
   // the same scoping as getProgressByDistrict — district-scoped callers
   // (1ST/2ND ENGR DIST) get only their own district.
-  //
+
   // Every municipality the static location list assigns to the district is
   // returned even with zero projects, so a gap in coverage is visible rather
   // than silently missing. Names found on projects but not in that list
